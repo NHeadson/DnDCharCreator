@@ -1,23 +1,26 @@
-/**
- * main.js
- *
- * Bootstraps Vuetify and other plugins then mounts the App`
- */
+import { createApp } from "vue";
+import router from "@/plugins/router.js";
+import vuetify from "@/plugins/vuetify.js";
+import App from "./App.vue";
+import "unfonts.css";
+import { initializeApp } from "firebase/app";
+import { getFirestore } from "firebase/firestore";
+import { getAuth } from "firebase/auth";
 
-// Composables
-import { createApp } from 'vue'
+// Your web app's Firebase configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyDu-z_oN1psAA-HkuUXIN4WX5SjK8DTpC4",
+  authDomain: "dndcharcreator-93e5a.firebaseapp.com",
+  projectId: "dndcharcreator-93e5a",
+  storageBucket: "dndcharcreator-93e5a.firebasestorage.app",
+  messagingSenderId: "60182926274",
+  appId: "1:60182926274:web:d54ce2b1688b13d1a87c5b",
+};
 
-// Plugins
-import { registerPlugins } from '@/plugins'
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const auth = getAuth(app);
 
-// Components
-import App from './App.vue'
+export { app, db, auth };
 
-// Styles
-import 'unfonts.css'
-
-const app = createApp(App)
-
-registerPlugins(app)
-
-app.mount('#app')
+createApp(App).use(vuetify).use(router).mount("#app");
