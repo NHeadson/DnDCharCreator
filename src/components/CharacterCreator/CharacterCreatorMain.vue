@@ -1,6 +1,6 @@
 <template>
   <v-container class="character-creator">
-    <h1 class="text-center my-4">🧝‍♀️ D&D Character Creator</h1>
+    <h1 class="text-center">🧝‍♀️ D&D Character Creator</h1>
     <h2 class="text-center mb-6">Create your Character - Choose wisely...</h2>
 
     <CharacterCreatorStepper :character="character" :current-step="currentStep"

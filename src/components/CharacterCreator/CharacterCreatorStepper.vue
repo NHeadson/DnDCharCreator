@@ -7,44 +7,57 @@
   <v-stepper v-else v-model="localCurrentStep" elevation="2" :items="stepItems">
     <!-- Step 1: Basic Info -->
     <template #item.1>
-      <v-card class="pa-6" flat>
+      <v-card class="px-8" flat>
         <v-card-title class="text-h5">Basic Info</v-card-title>
         <v-card-text>
-          <v-text-field v-model="character.name" density="comfortable" label="Character Name" variant="outlined" />
-
-          <v-select v-model="character.species" density="comfortable" item-title="name" item-value="id"
-            :items="characterData?.speciesOptions?.value || []" label="Species" variant="outlined"
-            @update:model-value="characterData?.updateSpeciesTraits" />
-
-          <v-select v-model="character.class" density="comfortable" item-title="name" item-value="id"
-            :items="characterData?.classOptions?.value || []" label="Class" variant="outlined"
-            @update:model-value="characterData?.updateClassTraits" />
-
-          <v-select v-model="character.background" density="comfortable" item-title="name" item-value="id"
-            :items="characterData?.backgroundOptions?.value || []" label="Background" variant="outlined"
-            @update:model-value="characterData?.updateBackgroundTraits" />
-
-          <v-text-field v-model.number="character.level" density="comfortable" label="Level" max="20" min="1"
+          <v-row>
+            <v-col>
+              <v-text-field v-model="character.name" density="comfortable" label="Character Name" variant="outlined" />
+            </v-col>
+            <v-col>
+              <v-select v-model="character.species" density="comfortable" item-title="name" item-value="id"
+                :items="characterData?.speciesOptions?.value || []" label="Species" variant="outlined"
+                @update:model-value="characterData?.updateSpeciesTraits" />
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-col>
+              <v-select v-model="character.class" density="comfortable" item-title="name" item-value="id"
+                :items="characterData?.classOptions?.value || []" label="Class" variant="outlined"
+                @update:model-value="characterData?.updateClassTraits" />
+            </v-col>
+            <v-col>
+              <v-select v-model="character.background" density="comfortable" item-title="name" item-value="id"
+                :items="characterData?.backgroundOptions?.value || []" label="Background" variant="outlined"
+                @update:model-value="characterData?.updateBackgroundTraits" />
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-col>
+              <v-text-field v-model.number="character.level" density="comfortable" label="Level" max="20" min="1"
             type="number" variant="outlined" />
-
-          <v-select v-model="character.alignment" density="comfortable" :items="characterData?.alignmentOptions || []"
+            </v-col>
+            <v-col>
+              <v-select v-model="character.alignment" density="comfortable" :items="characterData?.alignmentOptions || []"
             label="Alignment" variant="outlined" />
+            </v-col>
+          </v-row>
         </v-card-text>
       </v-card>
     </template>
 
     <!-- Step 2: Ability Scores -->
     <template #item.2>
-      <v-card class="pa-6" flat>
-        <v-card-title class="text-h5">Ability Scores</v-card-title>
+      <v-card class="px-6" flat>
+        <v-card-title class="text-h5 pb-10">Ability Scores</v-card-title>
         <v-card-text>
-          <v-row>
-            <v-col v-for="statName in (characterData?.abilityNames || [])" :key="statName" cols="12" md="4" sm="6">
+          <v-row class="px-16 mx-16">
+            <v-col v-for="statName in (characterData?.abilityNames || [])" :key="statName" cols="12" sm="6">
               <v-text-field v-model.number="character.abilityScores[statName].score" density="comfortable"
                 :label="statName.toUpperCase()" type="number" variant="outlined"
                 @input="characterData?.updateAbilityModifier?.(statName)">
                 <template #append>
-                  <v-chip class="ms-2" label size="small">
+                  <v-chip class="ms-1 me-5" label size="small">
                     {{ character.abilityScores[statName].modifier >= 0 ? '+' : '' }}{{
                       character.abilityScores[statName].modifier }}
                   </v-chip>
@@ -102,18 +115,20 @@
         <v-card-text>
           <v-textarea v-model="character.notes" auto-grow density="comfortable" label="Notes" rows="3"
             variant="outlined" />
-          <v-btn block class="mt-4" color="primary" @click="$emit('submit-character')">
-            Submit Character
-          </v-btn>
+          <v-row justify="end">
+            <v-btn flex class="mt-4 mr-3" color="#822522" @click="$emit('submit-character')">
+              Submit Character
+            </v-btn>
+          </v-row>
         </v-card-text>
       </v-card>
     </template>
 
     <!-- Navigation Actions -->
     <template #actions>
-      <v-btn v-if="localCurrentStep > 1" @click="previousStep">Back</v-btn>
-      <v-spacer />
-      <v-btn v-if="localCurrentStep < 5" color="primary" @click="nextStep">Next</v-btn>
+      <v-btn v-if="localCurrentStep > 1" class="ml-5 mb-5" variant="elevated" @click="previousStep">Back</v-btn>
+      <v-btn v-if="localCurrentStep < 5" class="ml-5 mb-5" variant="elevated" color="#822522"
+        @click="nextStep">Next</v-btn>
     </template>
   </v-stepper>
 </template>

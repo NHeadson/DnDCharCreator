@@ -1,18 +1,18 @@
 <template>
   <div>
-    <h1 class="mt-3" style="text-align: center;">Home</h1>
-    <p class="mt-2" style="text-align: center;">Welcome to your D&D Form!</p>
-    <v-container style="text-align: center;">
+    <h1 class="mt-3 ml-5" style="text-align: start;">Home</h1>
+    <p class="mt-2 ml-5" style="text-align: start;">Welcome to the D&D  Character Creation App</p>
+    <v-container class="pt-0" style="text-align: center;">
       <v-row style="justify-content: center;">
-        <v-col cols="10">
-          <v-card class="mt-3" height="50vh">
-            <v-card-title class="py-4" style="font-size: x-large; font-family: Verdana, Geneva, Tahoma, sans-serif;">Welcome!</v-card-title>
-            <v-banner class="py-0 mx-auto" width="90%" />
-            <v-card-text>
-              <v-container class="mb-5 pt-5" style="font-size: large;" width="85%">
+        <v-col cols="8">
+          <v-card class="my-16 py-10" max-height="50vh">
+            <v-card-title style="font-size: x-large; font-family: Verdana, Geneva, Tahoma, sans-serif;">Welcome!</v-card-title>
+            <v-banner class="py-1 mx-auto" width="90%" />
+            <v-card-text class="py-1">
+              <v-container style="font-size: large;" width="85%">
                 ** Please make sure you are finished creating your player before submitting your form **
               </v-container>
-              <v-btn color="red" size="large" to="/character-form">
+              <v-btn color="#822522" size="large" to="/character-form">
                 Create Character
               </v-btn>
             </v-card-text>
