@@ -15,6 +15,10 @@
     <v-btn variant="flat" color="orange" to="/character-form" class="text-black mx-3">
       Create Character
     </v-btn>
+
+    <v-btn variant="flat" color="orange" to="/characters" class="text-black me-3">
+      My Characters
+    </v-btn>
   </v-app-bar>
 </template>
 
@@ -26,5 +30,4 @@
 .text-decoration-none {
   text-decoration: none;
 }
-
 </style>

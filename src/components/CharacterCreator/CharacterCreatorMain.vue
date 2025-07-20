@@ -10,7 +10,9 @@
 
 <script setup>
 import { provide } from 'vue'
+import { useRouter } from 'vue-router'
 import { useCharacterData } from '@/composables/useCharacterData'
+import { useFirestore } from '@/composables/useFirestore'
 import CharacterCreatorStepper from './CharacterCreatorStepper.vue'
 
 // Use the character data composable
@@ -38,6 +40,12 @@ const {
   skillList,
   abilityNames,
 } = useCharacterData()
+
+// Use Firestore composable
+const { saveCharacter } = useFirestore()
+
+// Use router for navigation
+const router = useRouter()
 
 // Provide character data to all child components
 provide('characterData', {
@@ -68,14 +76,39 @@ provide('characterData', {
 initializeCharacter()
 
 // Handle character submission
-const handleSubmitCharacter = () => {
-  // TODO: Implement character submission logic (Firebase save)
-  console.log('Submitting character:', character)
+const handleSubmitCharacter = async () => {
+  try {
+    // Validate required fields
+    if (!character.name.trim()) {
+      alert('Please enter a character name')
+      return
+    }
 
-  // Here you would typically:
-  // 1. Validate the character data
-  // 2. Save to Firebase
-  // 3. Navigate to a success page or character sheet
+    if (!character.species || !character.class || !character.background) {
+      alert('Please select species, class, and background')
+      return
+    }
+
+    console.log('Saving character to Firestore...', character)
+
+    // Save to Firestore using the composable
+    const result = await saveCharacter(character)
+
+    if (result.success) {
+      alert(`Character "${character.name}" saved successfully!`)
+      console.log('Character saved with ID:', result.id)
+
+      // Navigate to characters page to see the saved character
+      router.push('/characters')
+
+    } else {
+      throw new Error(result.error)
+    }
+
+  } catch (error) {
+    console.error('Error saving character:', error)
+    alert('Error saving character: ' + error.message)
+  }
 }
 </script>
 

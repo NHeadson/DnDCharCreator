@@ -126,9 +126,11 @@
 
     <!-- Navigation Actions -->
     <template #actions>
-      <v-btn v-if="localCurrentStep > 1" class="ml-5 mb-5" variant="elevated" @click="previousStep">Back</v-btn>
-      <v-btn v-if="localCurrentStep < 5" class="ml-5 mb-5" variant="elevated" color="#822522"
+      <v-row justify="end">
+        <v-btn v-if="localCurrentStep > 1" class="me-10 mb-10" variant="elevated" @click="previousStep">Back</v-btn>
+      <v-btn v-if="localCurrentStep < 5" class="me-10 mb-10" variant="elevated" color="#822522"
         @click="nextStep">Next</v-btn>
+      </v-row>
     </template>
   </v-stepper>
 </template>
