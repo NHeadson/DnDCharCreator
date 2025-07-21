@@ -9,7 +9,7 @@
 </template>
 
 <script setup>
-import { provide } from 'vue'
+import { provide, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useCharacterData } from '@/composables/useCharacterData'
 import { useFirestore } from '@/composables/useFirestore'
@@ -23,6 +23,14 @@ const {
   rolledStats,
   rolling,
   timesRerolled,
+  speciesData,
+  isLoadingSpecies,
+  speciesError,
+  loadSpeciesData,
+  classData,
+  isLoadingClasses,
+  classError,
+  loadClassData,
   speciesOptions,
   classOptions,
   backgroundOptions,
@@ -47,6 +55,18 @@ const { saveCharacter } = useFirestore()
 // Use router for navigation
 const router = useRouter()
 
+// Load API data when component mounts
+onMounted(async () => {
+  // Initialize character first so form shows immediately
+  initializeCharacter()
+
+  // Then load API data in background (parallel loading)
+  await Promise.all([
+    loadSpeciesData(),
+    loadClassData()
+  ])
+})
+
 // Provide character data to all child components
 provide('characterData', {
   character,
@@ -55,6 +75,14 @@ provide('characterData', {
   rolledStats,
   rolling,
   timesRerolled,
+  speciesData,
+  isLoadingSpecies,
+  speciesError,
+  loadSpeciesData,
+  classData,
+  isLoadingClasses,
+  classError,
+  loadClassData,
   speciesOptions,
   classOptions,
   backgroundOptions,
@@ -71,9 +99,6 @@ provide('characterData', {
   skillList,
   abilityNames,
 })
-
-// Initialize character on component mount
-initializeCharacter()
 
 // Handle character submission
 const handleSubmitCharacter = async () => {

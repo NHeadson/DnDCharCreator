@@ -1,7 +1,8 @@
-import { reactive, ref, computed, watch } from "vue";
+import { reactive, ref, computed, watch, onMounted } from "vue";
+import { dndAPI } from "@/services/dndAPI.js";
 
-// Data imports - these would ideally come from a data service or API
-const speciesData = [
+// Fallback species data in case API fails
+const fallbackSpeciesData = [
   {
     id: "dragonborn",
     name: "Dragonborn",
@@ -48,7 +49,8 @@ const speciesData = [
   },
 ];
 
-const classData = [
+// Fallback class data in case API fails
+const fallbackClassData = [
   {
     id: "barbarian",
     name: "Barbarian",
@@ -151,6 +153,60 @@ const classData = [
     expertiseSkills: ["Sleight of Hand", "Stealth"],
   },
 ];
+
+// Dynamic species data loaded from API - start with fallback data
+const speciesData = ref([...fallbackSpeciesData]);
+const isLoadingSpecies = ref(false);
+const speciesError = ref(null);
+
+// Dynamic class data loaded from API - start with fallback data
+const classData = ref([...fallbackClassData]);
+const isLoadingClasses = ref(false);
+const classError = ref(null);
+
+// Function to load species data from API
+const loadSpeciesData = async () => {
+  isLoadingSpecies.value = true;
+  speciesError.value = null;
+
+  try {
+    const apiSpecies = await dndAPI.getRaces();
+
+    if (apiSpecies && apiSpecies.length > 0) {
+      // Replace fallback data with API data
+      speciesData.value = apiSpecies;
+    }
+    // If API fails, we keep the fallback data that's already loaded
+  } catch (error) {
+    console.error("Failed to load species data:", error);
+    speciesError.value = error.message;
+    // Keep fallback data on error
+  } finally {
+    isLoadingSpecies.value = false;
+  }
+};
+
+// Function to load class data from API
+const loadClassData = async () => {
+  isLoadingClasses.value = true;
+  classError.value = null;
+
+  try {
+    const apiClasses = await dndAPI.getClasses();
+
+    if (apiClasses && apiClasses.length > 0) {
+      // Replace fallback data with API data
+      classData.value = apiClasses;
+    }
+    // If API fails, we keep the fallback data that's already loaded
+  } catch (error) {
+    console.error("Failed to load class data:", error);
+    classError.value = error.message;
+    // Keep fallback data on error
+  } finally {
+    isLoadingClasses.value = false;
+  }
+};
 
 const backgroundData = [
   {
@@ -435,10 +491,10 @@ export function useCharacterData() {
 
   // Computed properties
   const speciesOptions = computed(() =>
-    speciesData.map((s) => ({ name: s.name, id: s.id }))
+    speciesData.value.map((s) => ({ name: s.name, id: s.id }))
   );
   const classOptions = computed(() =>
-    classData.map((c) => ({ name: c.name, id: c.id }))
+    classData.value.map((c) => ({ name: c.name, id: c.id }))
   );
   const backgroundOptions = computed(() =>
     backgroundData.map((b) => ({ name: b.name, id: b.id }))
@@ -521,11 +577,14 @@ export function useCharacterData() {
   };
 
   const updateSpeciesTraits = () => {
-    const selectedSpecies = speciesData.find((s) => s.id === character.species);
+    const selectedSpecies = speciesData.value.find(
+      (s) => s.id === character.species
+    );
     if (selectedSpecies) {
       character.speciesDetails = selectedSpecies;
       character.size = selectedSpecies.size;
       character.speed = selectedSpecies.speed;
+
       if (selectedSpecies.id === "human") {
         character.hasHeroicInspiration = true;
       }
@@ -533,6 +592,34 @@ export function useCharacterData() {
         selectedSpecies.lineages.length > 0
           ? selectedSpecies.lineages[0].id
           : null;
+
+      // If we have basic data, fetch detailed info in the background
+      if (selectedSpecies.isBasicData) {
+        // Non-blocking async call to fetch details
+        import("@/services/dndAPI.js").then(({ dndRacesAPI }) => {
+          dndRacesAPI
+            .getRaceDetails(selectedSpecies.id)
+            .then((detailedRace) => {
+              if (detailedRace) {
+                const index = speciesData.value.findIndex(
+                  (s) => s.id === selectedSpecies.id
+                );
+                if (index !== -1) {
+                  speciesData.value[index] = detailedRace;
+                  // Update character if this race is still selected
+                  if (character.species === selectedSpecies.id) {
+                    character.speciesDetails = detailedRace;
+                    character.size = detailedRace.size;
+                    character.speed = detailedRace.speed;
+                  }
+                }
+              }
+            })
+            .catch((error) => {
+              console.error("Failed to fetch detailed race info:", error);
+            });
+        });
+      }
     } else {
       character.speciesDetails = null;
       character.size = "";
@@ -543,7 +630,7 @@ export function useCharacterData() {
   };
 
   const updateClassTraits = () => {
-    const selectedClass = classData.find((c) => c.id === character.class);
+    const selectedClass = classData.value.find((c) => c.id === character.class);
     if (selectedClass) {
       character.classDetails = selectedClass;
       character.armorTraining = { ...selectedClass.armorTraining };
@@ -556,7 +643,7 @@ export function useCharacterData() {
       character.skillProficiencies = {};
       for (const skill of skillList) {
         character.skillProficiencies[skill.name] = {
-          proficient: selectedClass.skills.includes(skill.name),
+          proficient: selectedClass.skills?.includes(skill.name) || false,
           expertise: false,
           bonus: 0,
         };
@@ -566,17 +653,24 @@ export function useCharacterData() {
       character.savingThrowProficiencies = {};
       for (const ability of abilityNames) {
         character.savingThrowProficiencies[ability] = {
-          proficient: selectedClass.savingThrows.includes(ability),
+          proficient: selectedClass.savingThrows?.includes(ability) || false,
           bonus: 0,
         };
       }
 
-      // Handle spellcasting classes
-      if (
+      // Handle spellcasting classes - check if class has spellcasting info
+      if (selectedClass.spellcasting?.isSpellcaster) {
+        character.spellcastingAbilityName =
+          selectedClass.spellcasting.spellcastingAbility;
+        character.damagingCantrips = [
+          { name: "Fire Bolt", damage: "1d10", damageType: "Fire" },
+        ];
+      } else if (
         ["sorcerer", "wizard", "warlock", "bard", "cleric", "druid"].includes(
           character.class
         )
       ) {
+        // Fallback for basic class data
         character.spellcastingAbilityName = selectedClass.primaryAbility;
         character.damagingCantrips = [
           { name: "Fire Bolt", damage: "1d10", damageType: "Fire" },
@@ -682,6 +776,16 @@ export function useCharacterData() {
     rolledStats,
     rolling,
     timesRerolled,
+
+    // API State
+    speciesData,
+    isLoadingSpecies,
+    speciesError,
+    loadSpeciesData,
+    classData,
+    isLoadingClasses,
+    classError,
+    loadClassData,
 
     // Computed
     speciesOptions,

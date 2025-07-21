@@ -4,6 +4,12 @@
     <p>Loading character creator...</p>
   </div>
 
+  <v-alert v-else-if="characterData.speciesError?.value" type="warning" class="ma-4">
+    <v-alert-title>API Warning</v-alert-title>
+    Failed to load races from API: {{ characterData.speciesError.value }}
+    <br>Using fallback data instead.
+  </v-alert>
+
   <v-stepper v-else v-model="localCurrentStep" elevation="2" :items="stepItems">
     <!-- Step 1: Basic Info -->
     <template #item.1>
@@ -35,11 +41,11 @@
           <v-row>
             <v-col>
               <v-text-field v-model.number="character.level" density="comfortable" label="Level" max="20" min="1"
-            type="number" variant="outlined" />
+                type="number" variant="outlined" />
             </v-col>
             <v-col>
-              <v-select v-model="character.alignment" density="comfortable" :items="characterData?.alignmentOptions || []"
-            label="Alignment" variant="outlined" />
+              <v-select v-model="character.alignment" density="comfortable"
+                :items="characterData?.alignmentOptions || []" label="Alignment" variant="outlined" />
             </v-col>
           </v-row>
         </v-card-text>
@@ -128,8 +134,8 @@
     <template #actions>
       <v-row justify="end">
         <v-btn v-if="localCurrentStep > 1" class="me-10 mb-10" variant="elevated" @click="previousStep">Back</v-btn>
-      <v-btn v-if="localCurrentStep < 5" class="me-10 mb-10" variant="elevated" color="#822522"
-        @click="nextStep">Next</v-btn>
+        <v-btn v-if="localCurrentStep < 5" class="me-10 mb-10" variant="elevated" color="#822522"
+          @click="nextStep">Next</v-btn>
       </v-row>
     </template>
   </v-stepper>
