@@ -1,4 +1,5 @@
 import { db } from "@/main.js";
+import { toRaw } from "vue";
 import {
   collection,
   addDoc,
@@ -10,30 +11,42 @@ import {
 } from "firebase/firestore";
 
 export function useFirestore() {
-  // Helper function to sanitize data for Firestore (remove undefined values)
+  // Helper function to sanitize data for Firestore (remove undefined values and convert from Vue reactive)
   const sanitizeData = (obj) => {
-    if (obj === null || typeof obj !== "object") {
-      return obj === undefined ? null : obj;
-    }
+    // First convert Vue reactive object to plain object
+    const plainObj = toRaw(obj);
 
-    if (Array.isArray(obj)) {
-      return obj.map((item) => sanitizeData(item));
-    }
+    // Then use JSON serialization to remove undefined values and ensure plain objects
+    const jsonString = JSON.stringify(plainObj, (key, value) => {
+      // Replace undefined with null for Firestore compatibility
+      return value === undefined ? null : value;
+    });
 
-    const sanitized = {};
-    for (const [key, value] of Object.entries(obj)) {
-      if (value !== undefined) {
-        sanitized[key] = sanitizeData(value);
-      }
-    }
-    return sanitized;
+    return JSON.parse(jsonString);
   };
 
   // Save a character to Firestore
   const saveCharacter = async (characterData) => {
     try {
-      // Sanitize the character data to remove undefined values
+      console.log("Saving character to Firestore...", characterData);
+
+      // Sanitize the character data to remove undefined values and Vue reactivity
       const sanitizedData = sanitizeData(characterData);
+
+      // Extra safety check for the problematic field
+      if (sanitizedData.spellcastingAbilityName === undefined) {
+        sanitizedData.spellcastingAbilityName = "";
+      }
+      if (sanitizedData.spellcastingAbilityName === null) {
+        sanitizedData.spellcastingAbilityName = "";
+      }
+
+      console.log("Sanitized character data:", sanitizedData);
+      console.log(
+        "spellcastingAbilityName value:",
+        sanitizedData.spellcastingAbilityName,
+        typeof sanitizedData.spellcastingAbilityName
+      );
 
       const docRef = await addDoc(collection(db, "characters"), {
         ...sanitizedData,

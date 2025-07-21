@@ -721,6 +721,14 @@ export function useCharacterData() {
     updatePassivePerception();
     updateInitiativeBonus();
 
+    // Ensure all required fields are properly initialized
+    if (
+      character.spellcastingAbilityName === undefined ||
+      character.spellcastingAbilityName === null
+    ) {
+      character.spellcastingAbilityName = "";
+    }
+
     // Initialize all skills
     for (const skill of skillList) {
       character.skillProficiencies[skill.name] = {
