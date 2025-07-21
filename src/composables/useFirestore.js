@@ -10,11 +10,33 @@ import {
 } from "firebase/firestore";
 
 export function useFirestore() {
+  // Helper function to sanitize data for Firestore (remove undefined values)
+  const sanitizeData = (obj) => {
+    if (obj === null || typeof obj !== "object") {
+      return obj === undefined ? null : obj;
+    }
+
+    if (Array.isArray(obj)) {
+      return obj.map((item) => sanitizeData(item));
+    }
+
+    const sanitized = {};
+    for (const [key, value] of Object.entries(obj)) {
+      if (value !== undefined) {
+        sanitized[key] = sanitizeData(value);
+      }
+    }
+    return sanitized;
+  };
+
   // Save a character to Firestore
   const saveCharacter = async (characterData) => {
     try {
+      // Sanitize the character data to remove undefined values
+      const sanitizedData = sanitizeData(characterData);
+
       const docRef = await addDoc(collection(db, "characters"), {
-        ...characterData,
+        ...sanitizedData,
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp(),
       });
@@ -50,9 +72,12 @@ export function useFirestore() {
   // Update a character in Firestore
   const updateCharacter = async (characterId, updates) => {
     try {
+      // Sanitize the updates to remove undefined values
+      const sanitizedUpdates = sanitizeData(updates);
+
       const characterRef = doc(db, "characters", characterId);
       await updateDoc(characterRef, {
-        ...updates,
+        ...sanitizedUpdates,
         updatedAt: serverTimestamp(),
       });
 

@@ -661,7 +661,7 @@ export function useCharacterData() {
       // Handle spellcasting classes - check if class has spellcasting info
       if (selectedClass.spellcasting?.isSpellcaster) {
         character.spellcastingAbilityName =
-          selectedClass.spellcasting.spellcastingAbility;
+          selectedClass.spellcasting.spellcastingAbility || "";
         character.damagingCantrips = [
           { name: "Fire Bolt", damage: "1d10", damageType: "Fire" },
         ];
@@ -671,7 +671,7 @@ export function useCharacterData() {
         )
       ) {
         // Fallback for basic class data
-        character.spellcastingAbilityName = selectedClass.primaryAbility;
+        character.spellcastingAbilityName = selectedClass.primaryAbility || "";
         character.damagingCantrips = [
           { name: "Fire Bolt", damage: "1d10", damageType: "Fire" },
         ];

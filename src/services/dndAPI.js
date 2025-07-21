@@ -360,7 +360,7 @@ export class DnDAPI {
       wizard: "Intelligence",
     };
 
-    return abilities[classIndex] || null;
+    return abilities[classIndex] || "";
   }
 
   getCantripsForClass(classIndex) {
