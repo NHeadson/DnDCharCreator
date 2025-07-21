@@ -8,10 +8,54 @@ export class DnDAPI {
     this.apiKey = apiKey || import.meta.env.VUE_APP_DND_API_KEY;
     this.baseURL = API_BASE_URL;
     this.authType = import.meta.env.VUE_APP_DND_API_AUTH_TYPE || "bearer";
+    this.requestQueue = [];
+    this.isProcessingQueue = false;
+    this.lastRequestTime = 0;
+    this.minRequestInterval = 150; // Minimum 150ms between requests to avoid rate limiting
+  }
+
+  // Rate-limited API request method
+  async apiRequest(endpoint, options = {}) {
+    return new Promise((resolve, reject) => {
+      this.requestQueue.push({ endpoint, options, resolve, reject });
+      this.processQueue();
+    });
+  }
+
+  async processQueue() {
+    if (this.isProcessingQueue || this.requestQueue.length === 0) return;
+
+    this.isProcessingQueue = true;
+
+    while (this.requestQueue.length > 0) {
+      const { endpoint, options, resolve, reject } = this.requestQueue.shift();
+
+      try {
+        // Ensure minimum interval between requests
+        const now = Date.now();
+        const timeSinceLastRequest = now - this.lastRequestTime;
+        if (timeSinceLastRequest < this.minRequestInterval) {
+          await new Promise((resolve) =>
+            setTimeout(resolve, this.minRequestInterval - timeSinceLastRequest)
+          );
+        }
+
+        const result = await this.makeActualRequest(endpoint, options);
+        this.lastRequestTime = Date.now();
+        resolve(result);
+      } catch (error) {
+        reject(error);
+      }
+
+      // Small delay between requests to be API-friendly
+      await new Promise((resolve) => setTimeout(resolve, 50));
+    }
+
+    this.isProcessingQueue = false;
   }
 
   // Generic API request method
-  async apiRequest(endpoint, options = {}) {
+  async makeActualRequest(endpoint, options = {}) {
     const url = `${this.baseURL}${endpoint}`;
 
     const defaultHeaders = {
@@ -63,6 +107,7 @@ export class DnDAPI {
       // We can fetch detailed info later when a race is selected
       const basicRaces = data.results.map((race) => ({
         id: race.index,
+        index: race.index, // Add index property for detail fetching
         name: race.name,
         size: "Medium", // Default values for quick loading
         speed: 30,
@@ -210,6 +255,7 @@ export class DnDAPI {
         // Transform basic class data
         const classes = data.results.map((cls) => ({
           id: cls.index,
+          index: cls.index, // Add index property for detail fetching
           name: cls.name,
           isBasicData: true, // Mark as basic data that needs detail fetching
         }));
@@ -237,13 +283,17 @@ export class DnDAPI {
 
   // Transform single class data
   transformClassData(classData) {
+    console.log("Transforming class data:", classData);
     const classId =
       classData.index || classData.name?.toLowerCase().replace(/\s+/g, "_");
 
-    return {
+    const transformed = {
       id: classId,
+      index: classData.index, // Preserve index for future API calls
       name: classData.name,
+      description: classData.desc?.join(" ") || `The ${classData.name} class.`,
       hitDie: `D${classData.hit_die}`,
+      hpDie: `D${classData.hit_die}`, // Alternative property name
       primaryAbility: this.extractPrimaryAbility(classData),
       savingThrows: classData.saving_throws?.map((st) => st.name) || [],
       skillChoices:
@@ -265,6 +315,9 @@ export class DnDAPI {
       multiclassing: classData.multi_classing || null,
       classLevels: classData.class_levels || null,
     };
+
+    console.log("Transformed class data result:", transformed);
+    return transformed;
   }
 
   // Helper methods for class transformation
@@ -401,28 +454,34 @@ export class DnDAPI {
       const data = await this.apiRequest("/backgrounds");
 
       if (data && data.results) {
-        // Get detailed background data for each background
-        const backgrounds = await Promise.all(
-          data.results.map(async (bg) => {
-            try {
-              const details = await this.getBackgroundDetails(bg.index);
-              return details;
-            } catch (error) {
-              console.error(
-                `Failed to fetch details for background ${bg.index}:`,
-                error
-              );
-              // Return basic data if details fetch fails
-              return {
-                id: bg.index,
-                name: bg.name,
-                isBasicData: true,
-              };
-            }
-          })
+        console.log(
+          `Loading background details for ${data.results.length} backgrounds...`
         );
+        const backgrounds = [];
 
-        return backgrounds.filter((bg) => bg !== null);
+        // Load background details sequentially to avoid rate limiting
+        for (const bg of data.results) {
+          try {
+            const details = await this.getBackgroundDetails(bg.index);
+            if (details) {
+              backgrounds.push(details);
+            }
+          } catch (error) {
+            console.error(
+              `Failed to fetch details for background ${bg.index}:`,
+              error
+            );
+            // Return basic data if details fetch fails
+            backgrounds.push({
+              id: bg.index,
+              name: bg.name,
+              isBasicData: true,
+            });
+          }
+        }
+
+        console.log(`Successfully loaded ${backgrounds.length} backgrounds`);
+        return backgrounds;
       }
 
       return this.getFallbackBackgrounds();
@@ -560,6 +619,128 @@ export class DnDAPI {
         },
         isBasicData: true,
       },
+      {
+        id: "hermit",
+        name: "Hermit",
+        description:
+          "You lived in seclusion for a formative part of your life.",
+        skillProficiencies: ["Medicine", "Religion"],
+        toolProficiencies: ["Herbalism Kit"],
+        languages: [],
+        languageOptions: { choose: 1, from: ["Any"] },
+        startingEquipment: [
+          { name: "Herbalism Kit", quantity: 1 },
+          { name: "Scroll Case", quantity: 1 },
+          { name: "Winter Blanket", quantity: 1 },
+        ],
+        feature: {
+          name: "Discovery",
+          description:
+            "You discovered a unique and powerful secret about the cosmos.",
+        },
+        isBasicData: true,
+      },
+      {
+        id: "soldier",
+        name: "Soldier",
+        description: "You have a military rank from your career as a soldier.",
+        skillProficiencies: ["Athletics", "Intimidation"],
+        toolProficiencies: ["Vehicles (Land)", "Gaming Set"],
+        languages: [],
+        languageOptions: null,
+        startingEquipment: [
+          { name: "Insignia of Rank", quantity: 1 },
+          { name: "Common Clothes", quantity: 1 },
+          { name: "Belt Pouch", quantity: 1 },
+        ],
+        feature: {
+          name: "Military Rank",
+          description:
+            "You have a military rank that commands respect from soldiers.",
+        },
+        isBasicData: true,
+      },
+      {
+        id: "entertainer",
+        name: "Entertainer",
+        description:
+          "You thrive in front of an audience and know how to entrance them.",
+        skillProficiencies: ["Acrobatics", "Performance"],
+        toolProficiencies: ["Disguise Kit", "Musical Instrument"],
+        languages: [],
+        languageOptions: null,
+        startingEquipment: [
+          { name: "Musical Instrument", quantity: 1 },
+          { name: "Costume", quantity: 1 },
+          { name: "Belt Pouch", quantity: 1 },
+        ],
+        feature: {
+          name: "By Popular Demand",
+          description: "You can perform in exchange for lodging and food.",
+        },
+        isBasicData: true,
+      },
+      {
+        id: "guild-artisan",
+        name: "Guild Artisan",
+        description:
+          "You are a member of an artisan's guild and skilled in a particular field.",
+        skillProficiencies: ["Insight", "Persuasion"],
+        toolProficiencies: ["Artisan's Tools"],
+        languages: [],
+        languageOptions: { choose: 1, from: ["Any"] },
+        startingEquipment: [
+          { name: "Artisan's Tools", quantity: 1 },
+          { name: "Letter of Introduction", quantity: 1 },
+          { name: "Traveler's Clothes", quantity: 1 },
+        ],
+        feature: {
+          name: "Guild Membership",
+          description: "You have access to guild resources and lodging.",
+        },
+        isBasicData: true,
+      },
+      {
+        id: "sage",
+        name: "Sage",
+        description: "You spent years learning the lore of the multiverse.",
+        skillProficiencies: ["Arcana", "History"],
+        toolProficiencies: [],
+        languages: [],
+        languageOptions: { choose: 2, from: ["Any"] },
+        startingEquipment: [
+          { name: "Ink", quantity: 1 },
+          { name: "Quill", quantity: 1 },
+          { name: "Small Knife", quantity: 1 },
+          { name: "Letter from Dead Colleague", quantity: 1 },
+        ],
+        feature: {
+          name: "Researcher",
+          description:
+            "You know how to obtain information and where to find it.",
+        },
+        isBasicData: true,
+      },
+      {
+        id: "outlander",
+        name: "Outlander",
+        description: "You grew up in the wilds, far from civilization.",
+        skillProficiencies: ["Athletics", "Survival"],
+        toolProficiencies: ["Herbalism Kit", "Musical Instrument"],
+        languages: [],
+        languageOptions: { choose: 1, from: ["Any"] },
+        startingEquipment: [
+          { name: "Staff", quantity: 1 },
+          { name: "Hunting Trap", quantity: 1 },
+          { name: "Traveler's Clothes", quantity: 1 },
+        ],
+        feature: {
+          name: "Wanderer",
+          description:
+            "You have an excellent memory for geography and can find food and shelter.",
+        },
+        isBasicData: true,
+      },
     ];
   }
 
@@ -571,25 +752,32 @@ export class DnDAPI {
       const data = await this.apiRequest("/equipment");
 
       if (data && data.results) {
-        // Get detailed equipment data for common starting items
-        const equipmentIds = data.results.slice(0, 50).map((eq) => eq.index); // Limit to first 50 for performance
+        // Limit to fewer items and load sequentially to avoid rate limiting
+        const equipmentIds = data.results.slice(0, 20).map((eq) => eq.index); // Reduced from 50 to 20
 
-        const equipment = await Promise.all(
-          equipmentIds.map(async (eqId) => {
-            try {
-              const details = await this.getEquipmentDetails(eqId);
-              return details;
-            } catch (error) {
-              console.error(
-                `Failed to fetch details for equipment ${eqId}:`,
-                error
-              );
-              return null;
-            }
-          })
+        console.log(
+          `Loading equipment details for ${equipmentIds.length} items...`
         );
+        const equipment = [];
 
-        return equipment.filter((eq) => eq !== null);
+        // Load equipment details sequentially to avoid overwhelming the API
+        for (const eqId of equipmentIds) {
+          try {
+            const details = await this.getEquipmentDetails(eqId);
+            if (details) {
+              equipment.push(details);
+            }
+          } catch (error) {
+            console.error(
+              `Failed to fetch details for equipment ${eqId}:`,
+              error
+            );
+            // Continue with other items even if one fails
+          }
+        }
+
+        console.log(`Successfully loaded ${equipment.length} equipment items`);
+        return equipment;
       }
 
       return this.getFallbackEquipment();
@@ -718,6 +906,7 @@ export class DnDAPI {
     return [
       {
         id: "barbarian",
+        index: "barbarian",
         name: "Barbarian",
         hitDie: "D12",
         primaryAbility: "Strength",
@@ -725,6 +914,7 @@ export class DnDAPI {
       },
       {
         id: "fighter",
+        index: "fighter",
         name: "Fighter",
         hitDie: "D10",
         primaryAbility: "Strength or Dexterity",
@@ -732,6 +922,7 @@ export class DnDAPI {
       },
       {
         id: "rogue",
+        index: "rogue",
         name: "Rogue",
         hitDie: "D8",
         primaryAbility: "Dexterity",
@@ -739,6 +930,7 @@ export class DnDAPI {
       },
       {
         id: "wizard",
+        index: "wizard",
         name: "Wizard",
         hitDie: "D6",
         primaryAbility: "Intelligence",
@@ -750,6 +942,7 @@ export class DnDAPI {
     return [
       {
         id: "human",
+        index: "human",
         name: "Human",
         size: "Medium",
         speed: 30,
@@ -760,6 +953,7 @@ export class DnDAPI {
       },
       {
         id: "elf",
+        index: "elf",
         name: "Elf",
         size: "Medium",
         speed: 30,

@@ -33,7 +33,8 @@
                 <v-card-text>
                   <v-select v-model="character.species" :items="characterData?.speciesOptions?.value || []"
                     item-title="name" item-value="id" label="Species" variant="outlined"
-                    @update:model-value="characterData?.updateSpeciesTraits" prepend-inner-icon="mdi-dna" />
+                    @update:model-value="(value) => { character.species = value; characterData?.updateSpeciesTraits(); }"
+                    prepend-inner-icon="mdi-dna" />
                   <v-progress-linear v-if="characterData?.isLoadingSpecies?.value" indeterminate color="primary"
                     class="mb-2" />
                 </v-card-text>
@@ -82,7 +83,8 @@
                 <v-card-text>
                   <v-select v-model="character.class" :items="characterData?.classOptions?.value || []"
                     item-title="name" item-value="id" label="Class" variant="outlined"
-                    @update:model-value="characterData?.updateClassTraits" prepend-inner-icon="mdi-sword" />
+                    @update:model-value="(value) => { character.class = value; characterData?.updateClassTraits(); }"
+                    prepend-inner-icon="mdi-sword" />
                   <v-progress-linear v-if="characterData?.isLoadingClasses?.value" indeterminate color="secondary"
                     class="mb-2" />
                 </v-card-text>
@@ -97,16 +99,29 @@
                     <strong>Description:</strong> {{ character.classDetails.description }}
                   </div>
                   <v-chip-group class="mb-2">
-                    <v-chip size="small" color="red">{{ character.classDetails.hpDie }} Hit Die</v-chip>
-                    <v-chip size="small" color="orange">{{ character.classDetails.primaryAbility }}</v-chip>
+                    <v-chip v-if="character.classDetails.hpDie || character.classDetails.hitDie" size="small"
+                      color="red">
+                      {{ character.classDetails.hpDie || character.classDetails.hitDie }} Hit Die
+                    </v-chip>
+                    <v-chip v-if="character.classDetails.primaryAbility" size="small" color="orange">
+                      {{ character.classDetails.primaryAbility }}
+                    </v-chip>
                   </v-chip-group>
-                  <div v-if="character.classDetails.savingThrows" class="mb-2">
+                  <div v-if="character.classDetails.savingThrows && character.classDetails.savingThrows.length"
+                    class="mb-2">
                     <strong>Saving Throws:</strong> {{ character.classDetails.savingThrows.join(', ') }}
                   </div>
-                  <div v-if="character.classDetails.skills" class="text-caption">
-                    <strong>Skill Options:</strong> Choose {{ character.classDetails.skillChoices || 'from' }} from {{
-                      character.classDetails.skills?.slice(0, 4).join(', ') }}{{ character.classDetails.skills?.length > 4
-                      ? '...' : '' }}
+                  <div v-if="character.classDetails.skills && character.classDetails.skills.length" class="mb-2">
+                    <strong>Skill Options:</strong> Choose {{ character.classDetails.skillChoices || 2 }} from {{
+                      character.classDetails.skills.slice(0, 4).join(', ') }}{{ character.classDetails.skills.length > 4 ?
+                      '...' : '' }}
+                  </div>
+                  <div v-if="character.classDetails.armorTraining" class="text-caption">
+                    <strong>Armor Training:</strong>
+                    <span v-if="character.classDetails.armorTraining.light">Light</span>
+                    <span v-if="character.classDetails.armorTraining.medium">, Medium</span>
+                    <span v-if="character.classDetails.armorTraining.heavy">, Heavy</span>
+                    <span v-if="character.classDetails.armorTraining.shields">, Shields</span>
                   </div>
                 </v-card-text>
               </v-card>
@@ -127,7 +142,7 @@
                 <v-card-text>
                   <v-select v-model="character.background" :items="characterData?.backgroundOptions?.value || []"
                     item-title="name" item-value="id" label="Background" variant="outlined"
-                    @update:model-value="characterData?.updateBackgroundTraits"
+                    @update:model-value="(value) => { character.background = value; characterData?.updateBackgroundTraits(); }"
                     prepend-inner-icon="mdi-book-open-page-variant" />
                   <v-progress-linear v-if="characterData?.isLoadingBackgrounds?.value" indeterminate color="success"
                     class="mb-2" />

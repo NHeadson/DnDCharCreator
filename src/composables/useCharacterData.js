@@ -265,6 +265,127 @@ const fallbackBackgroundData = [
     equipmentChoice: "A or B",
     abilityScores: ["Strength", "Dexterity", "Constitution"],
   },
+  {
+    id: "hermit",
+    name: "Hermit",
+    description: "You lived in seclusion for a formative part of your life.",
+    skillProficiencies: ["Medicine", "Religion"],
+    toolProficiencies: ["Herbalism Kit"],
+    languages: [],
+    languageOptions: { choose: 1, from: ["Any"] },
+    startingEquipment: [
+      { name: "Herbalism Kit", quantity: 1 },
+      { name: "Scroll Case", quantity: 1 },
+      { name: "Winter Blanket", quantity: 1 },
+    ],
+    feature: {
+      name: "Discovery",
+      description:
+        "You discovered a unique and powerful secret about the cosmos.",
+    },
+    feat: "Healer",
+    skillProfs: ["Medicine", "Religion"],
+    toolProf: "Herbalism Kit",
+    equipmentChoice: "A or B",
+    abilityScores: ["Intelligence", "Wisdom", "Charisma"],
+  },
+  {
+    id: "entertainer",
+    name: "Entertainer",
+    description:
+      "You thrive in front of an audience and know how to entrance them.",
+    skillProficiencies: ["Acrobatics", "Performance"],
+    toolProficiencies: ["Disguise Kit", "Musical Instrument"],
+    languages: [],
+    languageOptions: null,
+    startingEquipment: [
+      { name: "Musical Instrument", quantity: 1 },
+      { name: "Costume", quantity: 1 },
+      { name: "Belt Pouch", quantity: 1 },
+    ],
+    feature: {
+      name: "By Popular Demand",
+      description: "You can perform in exchange for lodging and food.",
+    },
+    feat: "Musician",
+    skillProfs: ["Acrobatics", "Performance"],
+    toolProf: "Musical Instrument (choice)",
+    equipmentChoice: "A or B",
+    abilityScores: ["Dexterity", "Constitution", "Charisma"],
+  },
+  {
+    id: "folk-hero",
+    name: "Folk Hero",
+    description:
+      "You come from a humble social rank, but you are destined for so much more.",
+    skillProficiencies: ["Animal Handling", "Survival"],
+    toolProficiencies: ["Artisan's Tools", "Vehicles (Land)"],
+    languages: [],
+    languageOptions: null,
+    startingEquipment: [
+      { name: "Artisan's Tools", quantity: 1 },
+      { name: "Shovel", quantity: 1 },
+      { name: "Common Clothes", quantity: 1 },
+    ],
+    feature: {
+      name: "Rustic Hospitality",
+      description:
+        "Common folk will provide you with simple accommodations and food.",
+    },
+    feat: "Tough",
+    skillProfs: ["Animal Handling", "Survival"],
+    toolProf: "Artisan's Tools (choice)",
+    equipmentChoice: "A or B",
+    abilityScores: ["Strength", "Constitution", "Wisdom"],
+  },
+  {
+    id: "noble",
+    name: "Noble",
+    description: "You understand wealth, power, and privilege from birth.",
+    skillProficiencies: ["History", "Persuasion"],
+    toolProficiencies: ["Gaming Set"],
+    languages: [],
+    languageOptions: { choose: 1, from: ["Any"] },
+    startingEquipment: [
+      { name: "Fine Clothes", quantity: 1 },
+      { name: "Signet Ring", quantity: 1 },
+      { name: "Scroll of Pedigree", quantity: 1 },
+    ],
+    feature: {
+      name: "Position of Privilege",
+      description:
+        "You are welcome in high society and can secure audiences with nobles.",
+    },
+    feat: "Skilled",
+    skillProfs: ["History", "Persuasion"],
+    toolProf: "Gaming Set (choice)",
+    equipmentChoice: "A or B",
+    abilityScores: ["Intelligence", "Wisdom", "Charisma"],
+  },
+  {
+    id: "outlander",
+    name: "Outlander",
+    description: "You grew up in the wilds, far from civilization.",
+    skillProficiencies: ["Athletics", "Survival"],
+    toolProficiencies: ["Herbalism Kit", "Musical Instrument"],
+    languages: [],
+    languageOptions: { choose: 1, from: ["Any"] },
+    startingEquipment: [
+      { name: "Staff", quantity: 1 },
+      { name: "Hunting Trap", quantity: 1 },
+      { name: "Traveler's Clothes", quantity: 1 },
+    ],
+    feature: {
+      name: "Wanderer",
+      description:
+        "You have an excellent memory for geography and can find food and shelter.",
+    },
+    feat: "Magic Initiate (Druid)",
+    skillProfs: ["Athletics", "Survival"],
+    toolProf: "Herbalism Kit",
+    equipmentChoice: "A or B",
+    abilityScores: ["Strength", "Dexterity", "Wisdom"],
+  },
 ];
 
 const backgroundData = ref([...fallbackBackgroundData]);
@@ -329,14 +450,24 @@ const loadBackgroundData = async () => {
     console.log("API Backgrounds loaded:", apiBackgrounds);
 
     if (apiBackgrounds && apiBackgrounds.length > 0) {
-      // Replace fallback data with API data
-      backgroundData.value = apiBackgrounds;
+      // Use API data if we got a reasonable amount of backgrounds
+      if (apiBackgrounds.length >= 4) {
+        backgroundData.value = apiBackgrounds;
+      } else {
+        // If API only returned a few backgrounds, merge with fallback data
+        console.log("API returned limited backgrounds, using fallback data");
+        backgroundData.value = [...fallbackBackgroundData];
+      }
+    } else {
+      // If API returned no data, use fallback
+      console.log("API returned no backgrounds, using fallback data");
+      backgroundData.value = [...fallbackBackgroundData];
     }
-    // If API fails, we keep the fallback data that's already loaded
   } catch (error) {
     console.error("Failed to load background data:", error);
     backgroundError.value = error.message;
-    // Keep fallback data on error
+    // Ensure we always have fallback data available
+    backgroundData.value = [...fallbackBackgroundData];
   } finally {
     isLoadingBackgrounds.value = false;
   }
@@ -612,9 +743,18 @@ export function useCharacterData() {
   const classOptions = computed(() =>
     classData.value.map((c) => ({ name: c.name, id: c.id }))
   );
-  const backgroundOptions = computed(() =>
-    backgroundData.value.map((b) => ({ name: b.name, id: b.id }))
-  );
+  const backgroundOptions = computed(() => {
+    console.log(
+      "Computing backgroundOptions, backgroundData.value:",
+      backgroundData.value
+    );
+    const options = backgroundData.value.map((b) => ({
+      name: b.name,
+      id: b.id,
+    }));
+    console.log("Background options:", options);
+    return options;
+  });
 
   const totalGP = computed(() => {
     return (
@@ -747,8 +887,42 @@ export function useCharacterData() {
 
   const updateClassTraits = () => {
     const selectedClass = classData.value.find((c) => c.id === character.class);
+    console.log("Updating class traits for:", selectedClass?.name);
+
     if (selectedClass) {
+      // Set basic class details immediately
       character.classDetails = selectedClass;
+
+      // If we have an index, fetch detailed data asynchronously
+      if (selectedClass.index) {
+        console.log(
+          "Fetching detailed class data for index:",
+          selectedClass.index
+        );
+        dndAPI
+          .getClassDetails(selectedClass.index)
+          .then((detailedClass) => {
+            console.log("Fetched detailed class data:", detailedClass);
+            if (detailedClass) {
+              // Merge the detailed data with the existing basic data
+              character.classDetails = {
+                ...character.classDetails,
+                ...detailedClass,
+              };
+              console.log(
+                "Updated character.classDetails:",
+                character.classDetails
+              );
+            }
+          })
+          .catch((error) => {
+            console.error("Failed to fetch detailed class data:", error);
+            // Keep the basic class data on error
+          });
+      } else {
+        console.log("No index found for class, using basic data only");
+      }
+
       character.armorTraining = { ...selectedClass.armorTraining };
       character.equipment = [...(selectedClass.startingEquipment || [])];
       character.toolProficiencies = [
@@ -813,11 +987,24 @@ export function useCharacterData() {
   };
 
   const updateBackgroundTraits = () => {
+    console.log("Updating background traits for:", character.background);
+    console.log(
+      "Available backgrounds:",
+      backgroundData.value.map((b) => b.name)
+    );
+
     const selectedBackground = backgroundData.value.find(
       (b) => b.id === character.background
     );
+
+    console.log("Selected background:", selectedBackground);
+
     if (selectedBackground) {
       character.backgroundDetails = selectedBackground;
+      console.log(
+        "Updated character.backgroundDetails:",
+        character.backgroundDetails
+      );
 
       // Handle new API format (skillProficiencies) and legacy format (skillProfs)
       const skillProfs =
