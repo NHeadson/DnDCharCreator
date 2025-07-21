@@ -378,6 +378,326 @@ export class DnDAPI {
   }
 
   getSpellsForClass(classIndex) {
+    // Starting spell slots at level 1
+    const spells = {
+      bard: 4,
+      cleric: 2,
+      druid: 2,
+      paladin: 0, // Paladins don't get spells at level 1
+      ranger: 0, // Rangers don't get spells at level 1
+      sorcerer: 2,
+      warlock: 1,
+      wizard: 6, // Wizards get spells in spellbook
+    };
+
+    return spells[classIndex] || 0;
+  }
+
+  // ========== BACKGROUNDS API ==========
+
+  // Get all available backgrounds
+  async getBackgrounds() {
+    try {
+      const data = await this.apiRequest("/backgrounds");
+
+      if (data && data.results) {
+        // Get detailed background data for each background
+        const backgrounds = await Promise.all(
+          data.results.map(async (bg) => {
+            try {
+              const details = await this.getBackgroundDetails(bg.index);
+              return details;
+            } catch (error) {
+              console.error(
+                `Failed to fetch details for background ${bg.index}:`,
+                error
+              );
+              // Return basic data if details fetch fails
+              return {
+                id: bg.index,
+                name: bg.name,
+                isBasicData: true,
+              };
+            }
+          })
+        );
+
+        return backgrounds.filter((bg) => bg !== null);
+      }
+
+      return this.getFallbackBackgrounds();
+    } catch (error) {
+      console.error("Failed to fetch backgrounds:", error);
+      return this.getFallbackBackgrounds();
+    }
+  }
+
+  // Get detailed background information
+  async getBackgroundDetails(backgroundId) {
+    try {
+      const data = await this.apiRequest(`/backgrounds/${backgroundId}`);
+      return this.transformBackgroundData(data);
+    } catch (error) {
+      console.error(
+        `Failed to fetch background details for ${backgroundId}:`,
+        error
+      );
+      return null;
+    }
+  }
+
+  transformBackgroundData(backgroundData) {
+    return {
+      id: backgroundData.index,
+      name: backgroundData.name,
+      description: backgroundData.description || "",
+      skillProficiencies:
+        backgroundData.skill_proficiencies?.map((skill) => skill.name) || [],
+      toolProficiencies:
+        backgroundData.tool_proficiencies?.map((tool) => tool.name) || [],
+      languages: backgroundData.languages?.map((lang) => lang.name) || [],
+      languageOptions: backgroundData.language_options || null,
+      startingEquipment:
+        backgroundData.starting_equipment?.map((item) => ({
+          name: item.equipment?.name || item.name,
+          quantity: item.quantity || 1,
+        })) || [],
+      startingEquipmentOptions: backgroundData.starting_equipment_options || [],
+      feature: backgroundData.feature || null,
+      personalityTraits: backgroundData.personality_traits || null,
+      ideals: backgroundData.ideals || null,
+      bonds: backgroundData.bonds || null,
+      flaws: backgroundData.flaws || null,
+      isBasicData: false,
+    };
+  }
+
+  getFallbackBackgrounds() {
+    return [
+      {
+        id: "acolyte",
+        name: "Acolyte",
+        description:
+          "You have spent your life in the service of a temple to a specific god or pantheon of gods.",
+        skillProficiencies: ["Insight", "Religion"],
+        toolProficiencies: [],
+        languages: [],
+        languageOptions: {
+          choose: 2,
+          from: ["Common", "Celestial", "Abyssal"],
+        },
+        startingEquipment: [
+          { name: "Holy Symbol", quantity: 1 },
+          { name: "Prayer Book", quantity: 1 },
+          { name: "Incense", quantity: 5 },
+        ],
+        feature: {
+          name: "Shelter of the Faithful",
+          description:
+            "You can perform religious ceremonies and gain shelter at temples.",
+        },
+        isBasicData: true,
+      },
+      {
+        id: "criminal",
+        name: "Criminal",
+        description:
+          "You are an experienced criminal with a history of breaking the law.",
+        skillProficiencies: ["Deception", "Stealth"],
+        toolProficiencies: ["Thieves' Tools", "Gaming Set"],
+        languages: [],
+        languageOptions: null,
+        startingEquipment: [
+          { name: "Crowbar", quantity: 1 },
+          { name: "Dark Common Clothes", quantity: 1 },
+          { name: "Belt Pouch", quantity: 1 },
+        ],
+        feature: {
+          name: "Criminal Contact",
+          description:
+            "You have a reliable contact in the criminal underworld.",
+        },
+        isBasicData: true,
+      },
+      {
+        id: "folk-hero",
+        name: "Folk Hero",
+        description:
+          "You come from a humble social rank, but you are destined for so much more.",
+        skillProficiencies: ["Animal Handling", "Survival"],
+        toolProficiencies: ["Artisan's Tools", "Vehicles (Land)"],
+        languages: [],
+        languageOptions: null,
+        startingEquipment: [
+          { name: "Artisan's Tools", quantity: 1 },
+          { name: "Shovel", quantity: 1 },
+          { name: "Common Clothes", quantity: 1 },
+        ],
+        feature: {
+          name: "Rustic Hospitality",
+          description:
+            "Common folk will provide you with simple accommodations and food.",
+        },
+        isBasicData: true,
+      },
+      {
+        id: "noble",
+        name: "Noble",
+        description: "You understand wealth, power, and privilege from birth.",
+        skillProficiencies: ["History", "Persuasion"],
+        toolProficiencies: ["Gaming Set"],
+        languages: [],
+        languageOptions: { choose: 1, from: ["Any"] },
+        startingEquipment: [
+          { name: "Fine Clothes", quantity: 1 },
+          { name: "Signet Ring", quantity: 1 },
+          { name: "Scroll of Pedigree", quantity: 1 },
+        ],
+        feature: {
+          name: "Position of Privilege",
+          description:
+            "You are welcome in high society and can secure audiences with nobles.",
+        },
+        isBasicData: true,
+      },
+    ];
+  }
+
+  // ========== EQUIPMENT API ==========
+
+  // Get all available equipment
+  async getEquipment() {
+    try {
+      const data = await this.apiRequest("/equipment");
+
+      if (data && data.results) {
+        // Get detailed equipment data for common starting items
+        const equipmentIds = data.results.slice(0, 50).map((eq) => eq.index); // Limit to first 50 for performance
+
+        const equipment = await Promise.all(
+          equipmentIds.map(async (eqId) => {
+            try {
+              const details = await this.getEquipmentDetails(eqId);
+              return details;
+            } catch (error) {
+              console.error(
+                `Failed to fetch details for equipment ${eqId}:`,
+                error
+              );
+              return null;
+            }
+          })
+        );
+
+        return equipment.filter((eq) => eq !== null);
+      }
+
+      return this.getFallbackEquipment();
+    } catch (error) {
+      console.error("Failed to fetch equipment:", error);
+      return this.getFallbackEquipment();
+    }
+  }
+
+  // Get detailed equipment information
+  async getEquipmentDetails(equipmentId) {
+    try {
+      const data = await this.apiRequest(`/equipment/${equipmentId}`);
+      return this.transformEquipmentData(data);
+    } catch (error) {
+      console.error(
+        `Failed to fetch equipment details for ${equipmentId}:`,
+        error
+      );
+      return null;
+    }
+  }
+
+  transformEquipmentData(equipmentData) {
+    return {
+      id: equipmentData.index,
+      name: equipmentData.name,
+      category: equipmentData.equipment_category?.name || "Miscellaneous",
+      cost: equipmentData.cost
+        ? {
+            quantity: equipmentData.cost.quantity,
+            unit: equipmentData.cost.unit,
+          }
+        : { quantity: 0, unit: "gp" },
+      weight: equipmentData.weight || 0,
+      description: equipmentData.desc?.join(" ") || "",
+      // Weapon specific
+      damage: equipmentData.damage
+        ? {
+            dice: equipmentData.damage.damage_dice,
+            type: equipmentData.damage.damage_type?.name,
+          }
+        : null,
+      weaponCategory: equipmentData.weapon_category || null,
+      weaponRange: equipmentData.weapon_range || null,
+      properties: equipmentData.properties?.map((prop) => prop.name) || [],
+      // Armor specific
+      armorCategory: equipmentData.armor_category || null,
+      armorClass: equipmentData.armor_class
+        ? {
+            base: equipmentData.armor_class.base,
+            dexBonus: equipmentData.armor_class.dex_bonus,
+            maxBonus: equipmentData.armor_class.max_bonus,
+          }
+        : null,
+      strengthMinimum: equipmentData.str_minimum || null,
+      stealthDisadvantage: equipmentData.stealth_disadvantage || false,
+      isBasicData: false,
+    };
+  }
+
+  getFallbackEquipment() {
+    return [
+      {
+        id: "longsword",
+        name: "Longsword",
+        category: "Weapon",
+        cost: { quantity: 15, unit: "gp" },
+        weight: 3,
+        description: "A versatile martial weapon.",
+        damage: { dice: "1d8", type: "slashing" },
+        weaponCategory: "Martial Melee",
+        properties: ["Versatile"],
+        isBasicData: true,
+      },
+      {
+        id: "leather-armor",
+        name: "Leather Armor",
+        category: "Armor",
+        cost: { quantity: 10, unit: "gp" },
+        weight: 10,
+        description: "Light armor made of supple leather.",
+        armorCategory: "Light Armor",
+        armorClass: { base: 11, dexBonus: true, maxBonus: null },
+        isBasicData: true,
+      },
+      {
+        id: "backpack",
+        name: "Backpack",
+        category: "Adventuring Gear",
+        cost: { quantity: 2, unit: "gp" },
+        weight: 5,
+        description: "A sturdy backpack for carrying equipment.",
+        isBasicData: true,
+      },
+      {
+        id: "bedroll",
+        name: "Bedroll",
+        category: "Adventuring Gear",
+        cost: { quantity: 1, unit: "gp" },
+        weight: 7,
+        description: "A simple sleeping roll.",
+        isBasicData: true,
+      },
+    ];
+  }
+
+  getSpellsForClass(classIndex) {
     // Starting spells known/prepared at level 1
     const spells = {
       bard: 4,

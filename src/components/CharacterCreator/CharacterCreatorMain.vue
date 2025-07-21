@@ -31,6 +31,14 @@ const {
   isLoadingClasses,
   classError,
   loadClassData,
+  backgroundData,
+  isLoadingBackgrounds,
+  backgroundError,
+  loadBackgroundData,
+  equipmentData,
+  isLoadingEquipment,
+  equipmentError,
+  loadEquipmentData,
   speciesOptions,
   classOptions,
   backgroundOptions,
@@ -60,10 +68,12 @@ onMounted(async () => {
   // Initialize character first so form shows immediately
   initializeCharacter()
 
-  // Then load API data in background (parallel loading)
+  // Then load all API data in background (parallel loading)
   await Promise.all([
     loadSpeciesData(),
-    loadClassData()
+    loadClassData(),
+    loadBackgroundData(),
+    loadEquipmentData()
   ])
 })
 
@@ -83,6 +93,14 @@ provide('characterData', {
   isLoadingClasses,
   classError,
   loadClassData,
+  backgroundData,
+  isLoadingBackgrounds,
+  backgroundError,
+  loadBackgroundData,
+  equipmentData,
+  isLoadingEquipment,
+  equipmentError,
+  loadEquipmentData,
   speciesOptions,
   classOptions,
   backgroundOptions,

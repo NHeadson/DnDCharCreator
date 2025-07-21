@@ -164,7 +164,113 @@ const classData = ref([...fallbackClassData]);
 const isLoadingClasses = ref(false);
 const classError = ref(null);
 
-// Function to load species data from API
+// Dynamic background data loaded from API - start with fallback data
+const fallbackBackgroundData = [
+  {
+    id: "acolyte",
+    name: "Acolyte",
+    description:
+      "You have spent your life in the service of a temple to a specific god or pantheon of gods.",
+    skillProficiencies: ["Insight", "Religion"],
+    toolProficiencies: ["Calligrapher's Supplies"],
+    languages: [],
+    languageOptions: { choose: 2, from: ["Common", "Celestial", "Abyssal"] },
+    startingEquipment: [
+      { name: "Holy Symbol", quantity: 1 },
+      { name: "Prayer Book", quantity: 1 },
+      { name: "Incense", quantity: 5 },
+    ],
+    feature: {
+      name: "Shelter of the Faithful",
+      description:
+        "You can perform religious ceremonies and gain shelter at temples.",
+    },
+    // Legacy fields for compatibility
+    feat: "Magic Initiate (Cleric)",
+    skillProfs: ["Insight", "Religion"],
+    toolProf: "Calligrapher's Supplies",
+    equipmentChoice: "A or B",
+    abilityScores: ["Intelligence", "Wisdom", "Charisma"],
+  },
+  {
+    id: "criminal",
+    name: "Criminal",
+    description:
+      "You are an experienced criminal with a history of breaking the law.",
+    skillProficiencies: ["Deception", "Stealth"],
+    toolProficiencies: ["Thieves' Tools"],
+    languages: [],
+    languageOptions: null,
+    startingEquipment: [
+      { name: "Crowbar", quantity: 1 },
+      { name: "Dark Common Clothes", quantity: 1 },
+      { name: "Belt Pouch", quantity: 1 },
+    ],
+    feature: {
+      name: "Criminal Contact",
+      description: "You have a reliable contact in the criminal underworld.",
+    },
+    // Legacy fields for compatibility
+    feat: "Alert",
+    skillProfs: ["Sleight of Hand", "Stealth"],
+    toolProf: "Thieves' Tools",
+    equipmentChoice: "A or B",
+    abilityScores: ["Dexterity", "Constitution", "Intelligence"],
+  },
+  {
+    id: "sage",
+    name: "Sage",
+    description: "You spent years learning the lore of the multiverse.",
+    skillProficiencies: ["Arcana", "History"],
+    toolProficiencies: ["Calligrapher's Supplies"],
+    languages: [],
+    languageOptions: { choose: 2, from: ["Any"] },
+    startingEquipment: [
+      { name: "Ink and Quill", quantity: 1 },
+      { name: "Small Knife", quantity: 1 },
+      { name: "Common Clothes", quantity: 1 },
+    ],
+    feature: {
+      name: "Researcher",
+      description: "You know where to find information and who to ask.",
+    },
+    // Legacy fields for compatibility
+    feat: "Magic Initiate (Wizard)",
+    skillProfs: ["Arcana", "History"],
+    toolProf: "Calligrapher's Supplies",
+    equipmentChoice: "A or B",
+    abilityScores: ["Constitution", "Intelligence", "Wisdom"],
+  },
+  {
+    id: "soldier",
+    name: "Soldier",
+    description: "You had a military career and are experienced in battle.",
+    skillProficiencies: ["Athletics", "Intimidation"],
+    toolProficiencies: ["Gaming Set"],
+    languages: [],
+    languageOptions: null,
+    startingEquipment: [
+      { name: "Uniform", quantity: 1 },
+      { name: "Belt Pouch", quantity: 1 },
+      { name: "Deck of Cards", quantity: 1 },
+    ],
+    feature: {
+      name: "Military Rank",
+      description: "You have a military rank and soldiers loyal to you.",
+    },
+    // Legacy fields for compatibility
+    feat: "Savage Attacker",
+    skillProfs: ["Athletics", "Intimidation"],
+    toolProf: "Gaming Set (choice)",
+    equipmentChoice: "A or B",
+    abilityScores: ["Strength", "Dexterity", "Constitution"],
+  },
+];
+
+const backgroundData = ref([...fallbackBackgroundData]);
+const isLoadingBackgrounds = ref(false);
+const backgroundError = ref(null);
+
 const loadSpeciesData = async () => {
   isLoadingSpecies.value = true;
   speciesError.value = null;
@@ -208,44 +314,54 @@ const loadClassData = async () => {
   }
 };
 
-const backgroundData = [
-  {
-    id: "acolyte",
-    name: "Acolyte",
-    feat: "Magic Initiate (Cleric)",
-    skillProfs: ["Insight", "Religion"],
-    toolProf: "Calligrapher's Supplies",
-    equipmentChoice: "A or B",
-    abilityScores: ["Intelligence", "Wisdom", "Charisma"],
-  },
-  {
-    id: "criminal",
-    name: "Criminal",
-    feat: "Alert",
-    skillProfs: ["Sleight of Hand", "Stealth"],
-    toolProf: "Thieves' Tools",
-    equipmentChoice: "A or B",
-    abilityScores: ["Dexterity", "Constitution", "Intelligence"],
-  },
-  {
-    id: "sage",
-    name: "Sage",
-    feat: "Magic Initiate (Wizard)",
-    skillProfs: ["Arcana", "History"],
-    toolProf: "Calligrapher's Supplies",
-    equipmentChoice: "A or B",
-    abilityScores: ["Constitution", "Intelligence", "Wisdom"],
-  },
-  {
-    id: "soldier",
-    name: "Soldier",
-    feat: "Savage Attacker",
-    skillProfs: ["Athletics", "Intimidation"],
-    toolProf: "Gaming Set (choice)",
-    equipmentChoice: "A or B",
-    abilityScores: ["Strength", "Dexterity", "Constitution"],
-  },
-];
+// Dynamic equipment data loaded from API
+const equipmentData = ref([]);
+const isLoadingEquipment = ref(false);
+const equipmentError = ref(null);
+
+// Function to load backgrounds data from API
+const loadBackgroundData = async () => {
+  isLoadingBackgrounds.value = true;
+  backgroundError.value = null;
+
+  try {
+    const apiBackgrounds = await dndAPI.getBackgrounds();
+    console.log("API Backgrounds loaded:", apiBackgrounds);
+
+    if (apiBackgrounds && apiBackgrounds.length > 0) {
+      // Replace fallback data with API data
+      backgroundData.value = apiBackgrounds;
+    }
+    // If API fails, we keep the fallback data that's already loaded
+  } catch (error) {
+    console.error("Failed to load background data:", error);
+    backgroundError.value = error.message;
+    // Keep fallback data on error
+  } finally {
+    isLoadingBackgrounds.value = false;
+  }
+};
+
+// Function to load equipment data from API
+const loadEquipmentData = async () => {
+  isLoadingEquipment.value = true;
+  equipmentError.value = null;
+
+  try {
+    const apiEquipment = await dndAPI.getEquipment();
+
+    if (apiEquipment && apiEquipment.length > 0) {
+      // Store API equipment data
+      equipmentData.value = apiEquipment;
+    }
+    // Equipment is optional, so no fallback needed
+  } catch (error) {
+    console.error("Failed to load equipment data:", error);
+    equipmentError.value = error.message;
+  } finally {
+    isLoadingEquipment.value = false;
+  }
+};
 
 const standardLanguages = [
   "Common Sign Language",
@@ -497,7 +613,7 @@ export function useCharacterData() {
     classData.value.map((c) => ({ name: c.name, id: c.id }))
   );
   const backgroundOptions = computed(() =>
-    backgroundData.map((b) => ({ name: b.name, id: b.id }))
+    backgroundData.value.map((b) => ({ name: b.name, id: b.id }))
   );
 
   const totalGP = computed(() => {
@@ -697,16 +813,55 @@ export function useCharacterData() {
   };
 
   const updateBackgroundTraits = () => {
-    const selectedBackground = backgroundData.find(
+    const selectedBackground = backgroundData.value.find(
       (b) => b.id === character.background
     );
     if (selectedBackground) {
       character.backgroundDetails = selectedBackground;
-      if (!selectedBackground.toolProf.includes("(choice)")) {
-        if (
-          !character.toolProficiencies.includes(selectedBackground.toolProf)
-        ) {
-          character.toolProficiencies.push(selectedBackground.toolProf);
+
+      // Handle new API format (skillProficiencies) and legacy format (skillProfs)
+      const skillProfs =
+        selectedBackground.skillProficiencies ||
+        selectedBackground.skillProfs ||
+        [];
+
+      // Update skill proficiencies from background
+      for (const skillName of skillProfs) {
+        if (character.skillProficiencies[skillName]) {
+          character.skillProficiencies[skillName].proficient = true;
+        }
+      }
+
+      // Handle tool proficiencies
+      const toolProfs =
+        selectedBackground.toolProficiencies ||
+        [selectedBackground.toolProf].filter(Boolean);
+      for (const toolProf of toolProfs) {
+        if (toolProf && !toolProf.includes("(choice)")) {
+          if (!character.toolProficiencies.includes(toolProf)) {
+            character.toolProficiencies.push(toolProf);
+          }
+        }
+      }
+
+      // Add starting equipment from background
+      if (selectedBackground.startingEquipment) {
+        for (const item of selectedBackground.startingEquipment) {
+          // Check if item already exists in equipment
+          const existingItem = character.equipment.find(
+            (eq) => eq.name === item.name
+          );
+          if (existingItem) {
+            existingItem.quantity =
+              (existingItem.quantity || 1) + (item.quantity || 1);
+          } else {
+            character.equipment.push({
+              name: item.name,
+              quantity: item.quantity || 1,
+              weight: 0, // We'll get this from equipment API later
+              cost: 0,
+            });
+          }
         }
       }
     } else {
@@ -794,6 +949,14 @@ export function useCharacterData() {
     isLoadingClasses,
     classError,
     loadClassData,
+    backgroundData,
+    isLoadingBackgrounds,
+    backgroundError,
+    loadBackgroundData,
+    equipmentData,
+    isLoadingEquipment,
+    equipmentError,
+    loadEquipmentData,
 
     // Computed
     speciesOptions,
