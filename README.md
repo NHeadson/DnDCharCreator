@@ -1,3 +1,47 @@
+# D&D Character Manager
+
+This is a Vue.js application built with Vuetify for managing D&D 5e characters. It features Firebase integration for data storage and a comprehensive access control system to protect against unauthorized usage.
+
+## 🔐 Security Features
+
+This application includes a two-tier security system:
+
+1. **Access Control**: Prevents random internet users from creating characters and overwhelming your Firebase storage
+2. **Admin Authentication**: Provides additional permissions for editing and deleting existing characters
+
+## ⚙️ Configuration
+
+Copy `.env.example` to `.env` and configure the following variables:
+
+### Firebase Configuration
+```bash
+VITE_FIREBASE_API_KEY=your_firebase_api_key_here
+VITE_FIREBASE_AUTH_DOMAIN=your_firebase_auth_domain_here
+VITE_FIREBASE_PROJECT_ID=your_firebase_project_id_here
+VITE_FIREBASE_STORAGE_BUCKET=your_firebase_storage_bucket_here
+VITE_FIREBASE_MESSAGING_SENDER_ID=your_messaging_sender_id_here
+VITE_FIREBASE_APP_ID=your_firebase_app_id_here
+```
+
+### Security Configuration
+```bash
+# Admin password for edit/delete operations (DM access)
+VITE_ADMIN_PASSWORD=your_secure_admin_password_here
+
+# Group access password for character creation 
+VITE_ACCESS_PASSWORD=your_group_access_password_here
+```
+
+## 🎮 How It Works
+
+- **Public Access**: Anyone can view existing characters
+- **Group Access**: Users must enter the group password to create new characters (2-hour sessions)
+- **Admin Access**: DMs can use the admin password to edit/delete characters (30-minute sessions)
+
+This system protects your Firebase storage from spam while allowing your D&D group easy access to character management.
+
+---
+
 # Vuetify (Default)
 
 This is the official scaffolding tool for Vuetify, designed to give you a head start in building your new Vuetify application. It sets up a base template with all the necessary configurations and standard directory structure, enabling you to begin development without the hassle of setting up the project from scratch.
@@ -22,6 +66,28 @@ Set up your project using your preferred package manager. Use the corresponding 
 | [bun](https://bun.sh/#getting-started)                        | `bun install`  |
 
 After completing the installation, your environment is ready for Vuetify development.
+
+## 🔐 Environment Configuration
+
+**IMPORTANT**: This application requires environment variables to be set for security.
+
+1. Copy `.env.example` to `.env`:
+
+   ```bash
+   cp .env.example .env
+   ```
+
+2. Edit `.env` and set your passwords:
+
+   ```bash
+   # Required for admin authentication (edit/delete characters)
+   VITE_ADMIN_PASSWORD=YourSecureAdminPassword123!
+   
+   # Required for access control (create characters)
+   VITE_ACCESS_PASSWORD=YourGroupAccessCode456!
+   ```
+
+**Security Note**: Never commit your `.env` file to version control. The passwords should only exist in your local environment and deployment environment.
 
 ## ✨ Features
 

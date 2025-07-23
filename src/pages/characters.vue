@@ -34,9 +34,13 @@
           <p class="text-h6 text-grey-darken-1 mb-6">
             You haven't created any characters yet. Start your legendary journey today!
           </p>
-          <v-btn color="#822522" size="large" variant="elevated" to="/character-form" prepend-icon="mdi-plus-circle"
-            class="create-character-btn">
+          <v-btn v-if="hasAccess" color="#822522" size="large" variant="elevated" @click="requireAccessForCreation"
+            prepend-icon="mdi-plus-circle" class="create-character-btn">
             Create Your First Character
+          </v-btn>
+          <v-btn v-else color="grey" size="large" variant="outlined" @click="requireAccessForCreation"
+            prepend-icon="mdi-lock" class="create-character-btn">
+            Get Access to Create Characters
           </v-btn>
         </v-card>
       </div>
@@ -46,7 +50,7 @@
         <!-- Quick Actions Bar -->
         <v-card variant="outlined" class="mb-6 pa-4">
           <v-row align="center">
-            <v-col cols="12" md="4">
+            <v-col cols="12" md="3">
               <div class="d-flex align-center">
                 <v-icon color="primary" class="me-2">mdi-information</v-icon>
                 <span class="text-subtitle-1">
@@ -55,38 +59,57 @@
                 </span>
               </div>
             </v-col>
-            <v-col cols="12" md="4" class="text-center">
-              <!-- Admin Status Indicator -->
+
+            <!-- Access Status -->
+            <v-col cols="12" md="3" class="text-center">
+              <div v-if="hasAccess" class="d-flex flex-column align-center">
+                <v-chip color="primary" variant="elevated" prepend-icon="mdi-account-check" size="small" class="mb-1">
+                  Group Access Active
+                </v-chip>
+                <div class="text-caption text-grey">
+                  {{ getRemainingAccessTime }} minutes remaining
+                </div>
+              </div>
+              <div v-else class="text-center">
+                <v-chip color="grey" variant="outlined" prepend-icon="mdi-lock" size="small">
+                  Access Required
+                </v-chip>
+              </div>
+            </v-col>
+
+            <!-- Admin Status -->
+            <v-col cols="12" md="3" class="text-center">
               <div v-if="isAuthenticated" class="d-flex align-center justify-center">
-                <v-chip color="success" variant="elevated" prepend-icon="mdi-shield-check" class="me-2">
-                  Admin Access Active
+                <v-chip color="success" variant="elevated" prepend-icon="mdi-shield-check" size="small" class="me-2">
+                  Admin Active
                 </v-chip>
                 <v-btn variant="text" size="small" color="grey" @click="logout" title="Logout from admin">
                   <v-icon size="small">mdi-logout</v-icon>
                 </v-btn>
               </div>
               <!-- Admin Login Button -->
-              <div v-else class="d-flex flex-column align-center">
-                <v-btn 
-                  color="warning" 
-                  variant="elevated" 
-                  @click="showAdminLogin" 
-                  prepend-icon="mdi-shield-key"
-                  size="small"
-                  class="mb-1"
-                  data-admin-login
-                >
+              <div v-else-if="hasAccess" class="d-flex flex-column align-center">
+                <v-btn color="warning" variant="elevated" @click="showAdminLogin" prepend-icon="mdi-shield-key"
+                  size="small" class="mb-1" data-admin-login>
                   Admin Login
                 </v-btn>
                 <div class="text-caption text-grey">
-                  <v-icon size="small" class="me-1">mdi-shield-off-outline</v-icon>
-                  For editing/deleting characters
+                  For editing/deleting
                 </div>
               </div>
+              <div v-else class="text-caption text-grey">
+                Admin requires access first
+              </div>
             </v-col>
-            <v-col cols="12" md="4" class="text-md-end">
-              <v-btn color="#822522" variant="elevated" to="/character-form" prepend-icon="mdi-plus" class="text-white create-character-btn">
+
+            <v-col cols="12" md="3" class="text-md-end">
+              <v-btn v-if="hasAccess" color="#822522" variant="elevated" @click="requireAccessForCreation"
+                prepend-icon="mdi-plus" class="text-white create-character-btn">
                 Create New Character
+              </v-btn>
+              <v-btn v-else color="grey" variant="outlined" @click="requireAccessForCreation" prepend-icon="mdi-lock"
+                class="create-character-btn">
+                Create Character (Access Required)
               </v-btn>
             </v-col>
           </v-row>
@@ -422,11 +445,13 @@ import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useFirestore } from '@/composables/useFirestore'
 import { useAdminAuth } from '@/composables/useAdminAuth'
+import { useAccessControl } from '@/composables/useAccessControl'
 import AdminAuthDialog from '@/components/AdminAuthDialog.vue'
 
 const router = useRouter()
 const { getCharacters, deleteCharacter: deleteFromFirestore } = useFirestore()
 const { requireAuth, isAuthenticated, extendSession, logout, showAuthDialog } = useAdminAuth()
+const { hasAccess, requireAccess, extendAccessSession, getRemainingAccessTime } = useAccessControl()
 
 // Reactive data
 const characters = ref([])
@@ -750,6 +775,14 @@ const showAdminLogin = () => {
   showAuthDialog.value = true
 }
 
+// Require access for character creation
+const requireAccessForCreation = () => {
+  requireAccess(() => {
+    // Navigate to character form
+    router.push('/character-form')
+  })
+}
+
 // Load characters on component mount
 onMounted(() => {
   loadCharacters()
@@ -775,9 +808,12 @@ onMounted(() => {
 }
 
 @keyframes gentle-pulse {
-  0%, 100% {
+
+  0%,
+  100% {
     box-shadow: 0 2px 8px rgba(255, 152, 0, 0.3);
   }
+
   50% {
     box-shadow: 0 4px 16px rgba(255, 152, 0, 0.5);
   }

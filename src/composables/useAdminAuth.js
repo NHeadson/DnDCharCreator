@@ -1,8 +1,7 @@
 import { ref, computed } from "vue";
 
-// Admin password - configurable via environment variable
-const ADMIN_PASSWORD =
-  import.meta.env.VITE_ADMIN_PASSWORD || "DungeonMaster2024!";
+// Admin password - must be set in environment variables
+const ADMIN_PASSWORD = import.meta.env.VITE_ADMIN_PASSWORD;
 
 // Reactive state
 const isAuthenticated = ref(false);
@@ -27,6 +26,16 @@ export function useAdminAuth() {
 
   // Authenticate admin user
   const authenticate = (password) => {
+    // Check if environment variable is properly configured
+    if (!ADMIN_PASSWORD) {
+      authError.value =
+        "Admin authentication is not properly configured. Please contact the administrator.";
+      console.error(
+        "Missing required environment variable: VITE_ADMIN_PASSWORD"
+      );
+      return false;
+    }
+
     if (password === ADMIN_PASSWORD) {
       isAuthenticated.value = true;
       authExpiresAt.value = Date.now() + SESSION_TIMEOUT;

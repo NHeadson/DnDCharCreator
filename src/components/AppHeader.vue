@@ -12,8 +12,11 @@
       Home
     </v-btn>
 
-    <v-btn variant="flat" color="orange" to="/character-form" class="text-black mx-3">
+    <v-btn v-if="hasAccess" variant="flat" color="orange" to="/character-form" class="text-black mx-3">
       Create Character
+    </v-btn>
+    <v-btn v-else variant="outlined" color="orange" @click="requireAccessForCreation" class="text-black mx-3">
+      Get Access
     </v-btn>
 
     <v-btn variant="flat" color="orange" to="/characters" class="text-black me-3">
@@ -23,7 +26,17 @@
 </template>
 
 <script setup>
+import { useAccessControl } from '@/composables/useAccessControl'
+import { useRouter } from 'vue-router'
 
+const router = useRouter()
+const { hasAccess, requireAccess } = useAccessControl()
+
+const requireAccessForCreation = () => {
+  requireAccess(() => {
+    router.push('/character-form')
+  }, 'create a new character')
+}
 </script>
 
 <style scoped>
