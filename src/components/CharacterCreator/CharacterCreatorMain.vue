@@ -1,17 +1,18 @@
 <template>
   <v-container class="character-creator">
-    <h1 class="text-center">🧝‍♀️ D&D Character Creator</h1>
-    <h2 class="text-center mb-6">Create your Character - Choose wisely...</h2>
+    <h1 class="text-center">🧝‍♀️ D&D Character {{ isEditing ? 'Editor' : 'Creator' }}</h1>
+    <h2 class="text-center mb-6">{{ isEditing ? 'Edit your Character' : 'Create your Character - Choose wisely...' }}
+    </h2>
 
-    <CharacterCreatorStepper :character="character" :current-step="currentStep"
+    <CharacterCreatorStepper :character="character" :current-step="currentStep" :is-editing="isEditing"
       @update:current-step="currentStep = $event" @update:character="updateCharacter"
       @submit-character="handleSubmitCharacter" />
   </v-container>
 </template>
 
 <script setup>
-import { provide, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
+import { provide, onMounted, ref } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
 import { useCharacterData } from '@/composables/useCharacterData'
 import { useFirestore } from '@/composables/useFirestore'
 import CharacterCreatorStepper from './CharacterCreatorStepper.vue'
@@ -59,13 +60,51 @@ const {
 } = useCharacterData()
 
 // Use Firestore composable
-const { saveCharacter } = useFirestore()
+const { saveCharacter, getCharacters, updateCharacter: updateExistingCharacter } = useFirestore()
 
 // Use router for navigation
 const router = useRouter()
+const route = useRoute()
+
+// Check if we're editing an existing character
+const isEditing = ref(false)
+const editingCharacterId = ref(null)
+
+// Load existing character for editing
+const loadExistingCharacter = async (characterId) => {
+  try {
+    const result = await getCharacters()
+    if (result.success) {
+      const existingCharacter = result.data.find(c => c.id === characterId)
+      if (existingCharacter) {
+        // Load character data into the form
+        Object.assign(character, existingCharacter)
+        isEditing.value = true
+        editingCharacterId.value = characterId
+
+        // Update species, class, and background details if needed
+        if (character.species) updateSpeciesTraits()
+        if (character.class) updateClassTraits()
+        if (character.background) updateBackgroundTraits()
+
+        console.log('Loaded existing character for editing:', existingCharacter)
+      }
+    }
+  } catch (error) {
+    console.error('Error loading character for editing:', error)
+    alert('Error loading character for editing: ' + error.message)
+  }
+}
 
 // Load API data when component mounts
 onMounted(async () => {
+  // Check if we're editing an existing character
+  const editId = route.query.edit
+  if (editId) {
+    isEditing.value = true
+    editingCharacterId.value = editId
+  }
+
   // Initialize character first so form shows immediately
   initializeCharacter()
 
@@ -76,6 +115,11 @@ onMounted(async () => {
     loadBackgroundData(),
     loadEquipmentData()
   ])
+
+  // If editing, load the existing character after API data is loaded
+  if (editId) {
+    await loadExistingCharacter(editId)
+  }
 })
 
 // Provide character data to all child components
@@ -135,6 +179,11 @@ const handleSubmitCharacter = async () => {
       return
     }
 
+    if (!character.userName.trim()) {
+      alert('Please enter your name (player name)')
+      return
+    }
+
     if (!character.species || !character.class || !character.background) {
       alert('Please select species, class, and background')
       return
@@ -142,19 +191,31 @@ const handleSubmitCharacter = async () => {
 
     console.log('Saving character to Firestore...', character)
 
-    // Save to Firestore using the composable
-    const result = await saveCharacter(character)
+    let result
+    if (isEditing.value && editingCharacterId.value) {
+      // Update existing character
+      result = await updateExistingCharacter(editingCharacterId.value, character)
 
-    if (result.success) {
-      alert(`Character "${character.name}" saved successfully!`)
-      console.log('Character saved with ID:', result.id)
-
-      // Navigate to characters page to see the saved character
-      router.push('/characters')
-
+      if (result.success) {
+        alert(`Character "${character.name}" updated successfully!`)
+        console.log('Character updated with ID:', editingCharacterId.value)
+      } else {
+        throw new Error(result.error)
+      }
     } else {
-      throw new Error(result.error)
+      // Save new character
+      result = await saveCharacter(character)
+
+      if (result.success) {
+        alert(`Character "${character.name}" saved successfully!`)
+        console.log('Character saved with ID:', result.id)
+      } else {
+        throw new Error(result.error)
+      }
     }
+
+    // Navigate to characters page to see the saved character
+    router.push('/characters')
 
   } catch (error) {
     console.error('Error saving character:', error)

@@ -730,6 +730,7 @@ export function useCharacterData() {
   // Character state
   const character = reactive({
     name: "",
+    userName: "",
     species: null,
     speciesDetails: null,
     speciesLineage: null,

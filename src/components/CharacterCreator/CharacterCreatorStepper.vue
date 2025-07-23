@@ -16,20 +16,48 @@
       <v-card flat>
         <v-card-title class="text-h4 text-center mb-4">🎭 Who is your character?</v-card-title>
         <v-card-text>
-          <!-- Character Name -->
-          <v-row class="mb-4" justify="center">
-            <v-col cols="12" md="6" lg="5">
-              <v-text-field v-model="character.name" label="Character Name" variant="outlined"
-                placeholder="e.g., Thorin Ironbeard, Luna Silverleaf..." prepend-inner-icon="mdi-account"
-                class="name-field">
-                <template #append>
-                  <v-btn icon variant="flat" color="primary" size="default" @click="generateRandomName"
-                    :loading="isGeneratingName" class="name-randomizer-btn">
-                    <v-icon>mdi-dice-6</v-icon>
-                    <v-tooltip activator="parent" location="top">Generate random name</v-tooltip>
-                  </v-btn>
-                </template>
-              </v-text-field>
+          <!-- Character & Player Names Section -->
+          <v-row class="mb-6" justify="center">
+            <v-col cols="12" md="8" lg="6">
+              <v-card variant="outlined" color="primary-lighten-5" class="pa-3">
+                <v-card-title class="text-subtitle-1 text-center pb-2">
+                  <v-icon class="me-2" color="primary" size="small">mdi-account-group</v-icon>
+                  Character & Player Information
+                </v-card-title>
+                <v-divider class="mb-3" />
+
+                <!-- Character Name -->
+                <div class="mb-1">
+                  <v-text-field v-model="character.name" label="Character Name" variant="outlined"
+                    placeholder="e.g., Thorin Ironbeard, Luna Silverleaf..." prepend-inner-icon="mdi-account"
+                    class="name-field" density="compact">
+                    <template #append>
+                      <v-btn icon variant="flat" color="primary" size="x-small" @click="generateRandomName"
+                        :loading="isGeneratingName" class="name-randomizer-btn pa-1">
+                        <v-icon size="xx-large">mdi-dice-6</v-icon>
+                        <v-tooltip activator="parent" location="top">Generate random name</v-tooltip>
+                      </v-btn>
+                    </template>
+                  </v-text-field>
+                </div>
+
+                <!-- Player Name -->
+                <div class="mb-2">
+                  <v-text-field v-model="character.userName" label="Your Name (Player Name)" variant="outlined"
+                    placeholder="e.g., John Smith, Alex D..." prepend-inner-icon="mdi-account-circle"
+                    hint="So we know whose character this is!" persistent-hint class="user-name-field"
+                    density="compact" />
+                </div>
+
+                <!-- Info Alert -->
+                <v-alert type="info" variant="tonal" density="compact" class="mt-2">
+                  <span class="text-caption">
+                    The character name is what others will see in-game, while your player name helps identify who
+                    created this
+                    character.
+                  </span>
+                </v-alert>
+              </v-card>
             </v-col>
           </v-row>
 
@@ -196,7 +224,7 @@
                         <span class="text-overline text-grey-darken-1">Available Skills (choose {{
                           character.classDetails.skillChoices ||
                           2
-                          }}):</span>
+                        }}):</span>
                         {{ character.classDetails.skills.join(', ') }}
                       </div>
                     </div>
@@ -967,7 +995,7 @@
             <v-card-title class="text-h6">🎯 Choose Class Skills</v-card-title>
             <v-card-subtitle class="text-caption">
               Select {{ character.classDetails?.skillChoices || 2 }} skills from your {{ character.classDetails?.name ||
-              'class'
+                'class'
               }} skill list
             </v-card-subtitle>
             <v-card-text>
@@ -1275,7 +1303,8 @@
           <v-card variant="tonal" color="primary-lighten-5" class="mb-6">
             <v-card-title class="text-h5">{{ character.name || 'Unnamed Character' }}</v-card-title>
             <v-card-subtitle>
-              Level {{ character.level }} {{ character.speciesDetails?.name || 'Unknown Species' }} {{
+              <strong>Player:</strong> {{ character.userName || 'Unknown Player' }}
+              <br>Level {{ character.level }} {{ character.speciesDetails?.name || 'Unknown Species' }} {{
                 character.classDetails?.name || 'Unknown Class' }}
               <br>{{ character.backgroundDetails?.name || 'Unknown Background' }} • {{ character.alignment || 'No Alignment' }}
             </v-card-subtitle>
@@ -1308,6 +1337,116 @@
                 </v-col>
               </v-row>
             </v-card-text>
+
+            <!-- Character Choices Dropdown -->
+            <v-expansion-panels variant="accordion" class="mt-4">
+              <v-expansion-panel>
+                <v-expansion-panel-title>
+                  <div class="d-flex align-center">
+                    <v-icon class="me-2" color="purple">mdi-format-list-checks</v-icon>
+                    <span class="font-weight-bold">Character Choices & Features</span>
+                    <v-spacer />
+                    <v-badge v-if="getSelectedChoicesCount() > 0" :content="getSelectedChoicesCount()" color="purple"
+                      inline />
+                  </div>
+                </v-expansion-panel-title>
+                <v-expansion-panel-text>
+                  <v-row>
+                    <!-- Lineage/Subrace -->
+                    <v-col v-if="character.speciesLineage && character.speciesDetails?.lineages" cols="12" md="6">
+                      <v-card variant="tonal" color="blue-lighten-5" class="mb-3">
+                        <v-card-title class="text-subtitle-1 d-flex align-center pa-3">
+                          <v-icon class="me-2" color="blue" size="small">mdi-dna</v-icon>
+                          Lineage/Subrace
+                        </v-card-title>
+                        <v-card-text class="pt-0">
+                          <v-chip color="blue" variant="elevated" size="small">
+                            {{character.speciesDetails.lineages.find(l => l.id === character.speciesLineage)?.name ||
+                            character.speciesLineage }}
+                          </v-chip>
+                        </v-card-text>
+                      </v-card>
+                    </v-col>
+
+                    <!-- Languages -->
+                    <v-col v-if="getAllLanguages().length > 0" cols="12" md="6">
+                      <v-card variant="tonal" color="purple-lighten-5" class="mb-3">
+                        <v-card-title class="text-subtitle-1 d-flex align-center pa-3">
+                          <v-icon class="me-2" color="purple" size="small">mdi-translate</v-icon>
+                          Languages ({{ getAllLanguages().length }})
+                        </v-card-title>
+                        <v-card-text class="pt-0">
+                          <div class="d-flex flex-wrap gap-1">
+                            <v-chip v-for="lang in getAllLanguages()" :key="lang" color="purple" variant="elevated"
+                              size="small">
+                              {{ lang }}
+                            </v-chip>
+                          </div>
+                        </v-card-text>
+                      </v-card>
+                    </v-col>
+
+                    <!-- Tools -->
+                    <v-col v-if="getAllToolProficiencies.length > 0" cols="12" md="6">
+                      <v-card variant="tonal" color="orange-lighten-5" class="mb-3">
+                        <v-card-title class="text-subtitle-1 d-flex align-center pa-3">
+                          <v-icon class="me-2" color="orange" size="small">mdi-tools</v-icon>
+                          Tool Proficiencies ({{ getAllToolProficiencies.length }})
+                        </v-card-title>
+                        <v-card-text class="pt-0">
+                          <div class="d-flex flex-wrap gap-1">
+                            <v-chip v-for="tool in getAllToolProficiencies" :key="tool" color="orange"
+                              variant="elevated" size="small">
+                              {{ tool }}
+                            </v-chip>
+                          </div>
+                        </v-card-text>
+                      </v-card>
+                    </v-col>
+
+                    <!-- Skills -->
+                    <v-col v-if="getProficientSkills.length > 0" cols="12" md="6">
+                      <v-card variant="tonal" color="green-lighten-5" class="mb-3">
+                        <v-card-title class="text-subtitle-1 d-flex align-center pa-3">
+                          <v-icon class="me-2" color="green" size="small">mdi-brain</v-icon>
+                          Skill Proficiencies ({{ getProficientSkills.length }})
+                        </v-card-title>
+                        <v-card-text class="pt-0">
+                          <div class="d-flex flex-wrap gap-1">
+                            <v-chip v-for="skill in getProficientSkills" :key="skill.name" color="green"
+                              variant="elevated" size="small">
+                              {{ skill.name }}
+                            </v-chip>
+                          </div>
+                        </v-card-text>
+                      </v-card>
+                    </v-col>
+
+                    <!-- Special Features Count -->
+                    <v-col v-if="getSpecialFeaturesCount() > 0" cols="12" md="6">
+                      <v-card variant="tonal" color="amber-lighten-5" class="mb-3">
+                        <v-card-title class="text-subtitle-1 d-flex align-center pa-3">
+                          <v-icon class="me-2" color="amber-darken-2" size="small">mdi-star</v-icon>
+                          Special Features ({{ getSpecialFeaturesCount() }})
+                        </v-card-title>
+                        <v-card-text class="pt-0">
+                          <div class="text-caption text-grey-darken-1">
+                            Species traits, background features, and other special abilities
+                          </div>
+                        </v-card-text>
+                      </v-card>
+                    </v-col>
+                  </v-row>
+
+                  <!-- Empty State -->
+                  <div v-if="getSelectedChoicesCount() === 0" class="text-center text-grey py-4">
+                    <v-icon size="48" class="mb-2">mdi-help-circle-outline</v-icon>
+                    <div class="text-body-2">No character choices made yet</div>
+                    <div class="text-caption">Complete Step 3 to see your character's features and choices here</div>
+                  </div>
+                </v-expansion-panel-text>
+              </v-expansion-panel>
+            </v-expansion-panels>
           </v-card>
 
           <!-- Backstory -->
@@ -1349,8 +1488,8 @@
             <v-col cols="12" sm="8" md="6">
               <v-btn block size="large" color="primary" variant="elevated" prepend-icon="mdi-content-save"
                 @click="$emit('submit-character')"
-                :disabled="!character.name || !character.species || !character.class || !character.background">
-                Save Character to Collection
+                :disabled="!character.name || !character.userName || !character.species || !character.class || !character.background">
+                {{ isEditing ? 'Update Character' : 'Save Character to Collection' }}
               </v-btn>
               <div class="text-center text-caption text-grey mt-2">
                 This will save your character to your personal collection
@@ -1383,6 +1522,10 @@ const props = defineProps({
   currentStep: {
     type: Number,
     required: true
+  },
+  isEditing: {
+    type: Boolean,
+    default: false
   }
 })
 
@@ -2266,6 +2409,10 @@ const getValidationWarnings = () => {
     warnings.push('Character needs a name')
   }
 
+  if (!props.character.userName?.trim()) {
+    warnings.push('Enter your name (player name)')
+  }
+
   if (!props.character.species) {
     warnings.push('Choose a species/race')
   }
@@ -2292,6 +2439,62 @@ const getValidationWarnings = () => {
   }
 
   return warnings
+}
+
+// Helper methods for character choices dropdown
+const getAllLanguages = () => {
+  const languages = []
+
+  // Add known languages from species, background, etc.
+  if (characterData?.getKnownLanguages?.value) {
+    languages.push(...characterData.getKnownLanguages.value)
+  }
+
+  // Add additional selected languages
+  if (props.character.additionalLanguages) {
+    languages.push(...props.character.additionalLanguages.filter(lang => lang))
+  }
+
+  return [...new Set(languages)] // Remove duplicates
+}
+
+const getSpecialFeaturesCount = () => {
+  let count = 0
+
+  // Count species traits
+  if (props.character.speciesDetails?.traits) {
+    count += props.character.speciesDetails.traits.length
+  }
+
+  // Count background feature
+  if (props.character.backgroundDetails?.feature) {
+    count += 1
+  }
+
+  return count
+}
+
+const getSelectedChoicesCount = () => {
+  let count = 0
+
+  // Count lineage selection
+  if (props.character.speciesLineage) {
+    count += 1
+  }
+
+  // Count languages
+  count += getAllLanguages().length
+
+  // Count tools
+  count += getAllToolProficiencies.length
+
+  // Count skills
+  count += getProficientSkills.length
+
+  // Count special features
+  count += getSpecialFeaturesCount()
+
+  return count
 }
 
 // Computed properties for character data
@@ -2890,5 +3093,38 @@ const handleToolSelection = (selectedTools) => {
 
 .species-preview-card.no-subraces {
   height: fit-content !important;
+}
+
+/* Character & Player Information Section Styling */
+.name-field .v-field__input {
+  font-weight: 500 !important;
+  font-size: 1.05rem !important;
+}
+
+.user-name-field .v-field__input {
+  font-weight: 400 !important;
+}
+
+.name-randomizer-btn {
+  margin-left: 4px !important;
+}
+
+/* Compact card styling */
+.v-card[color="primary-lighten-5"] {
+  transition: box-shadow 0.3s ease !important;
+}
+
+.v-card[color="primary-lighten-5"]:hover {
+  box-shadow: 0 4px 8px rgba(var(--v-theme-primary), 0.15) !important;
+}
+
+/* Reduce spacing in the info card */
+.v-card[color="primary-lighten-5"] .v-field {
+  margin-bottom: 0 !important;
+}
+
+.v-card[color="primary-lighten-5"] .v-alert {
+  margin-top: 8px !important;
+  margin-bottom: 0 !important;
 }
 </style>
