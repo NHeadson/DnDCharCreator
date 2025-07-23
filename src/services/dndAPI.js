@@ -358,12 +358,26 @@ export class DnDAPI {
   extractArmorProficiencies(classData) {
     const proficiencies = classData.proficiencies || [];
 
-    return {
-      light: proficiencies.some((p) => p.name === "Light Armor"),
-      medium: proficiencies.some((p) => p.name === "Medium Armor"),
-      heavy: proficiencies.some((p) => p.name === "Heavy Armor"),
+    // Debug logging
+    console.log("Extracting armor proficiencies for class:", classData.name);
+    console.log(
+      "All proficiencies:",
+      proficiencies.map((p) => p.name)
+    );
+
+    // Check for "All armor" proficiency which means light, medium, and heavy
+    const hasAllArmor = proficiencies.some((p) => p.name === "All armor");
+
+    const result = {
+      light: hasAllArmor || proficiencies.some((p) => p.name === "Light Armor"),
+      medium:
+        hasAllArmor || proficiencies.some((p) => p.name === "Medium Armor"),
+      heavy: hasAllArmor || proficiencies.some((p) => p.name === "Heavy Armor"),
       shields: proficiencies.some((p) => p.name === "Shields"),
     };
+
+    console.log("Extracted armor training:", result);
+    return result;
   }
 
   extractStartingEquipment(classData) {

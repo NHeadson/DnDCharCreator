@@ -20,7 +20,11 @@ const fallbackSpeciesData = [
     speed: 30,
     darkvision: 120,
     damageResistance: "Poison",
-    lineages: [],
+    lineages: [
+      { id: "hill_dwarf", name: "Hill Dwarf" },
+      { id: "mountain_dwarf", name: "Mountain Dwarf" },
+      { id: "duergar", name: "Duergar (Gray Dwarf)" },
+    ],
     bonusLanguage: null,
   },
   {
@@ -44,8 +48,18 @@ const fallbackSpeciesData = [
     speed: 30,
     darkvision: null,
     damageResistance: null,
-    lineages: [],
+    lineages: [{ id: "variant_human", name: "Variant Human" }],
     bonusLanguage: null,
+  },
+  {
+    id: "half-elf",
+    name: "Half-Elf",
+    size: "Medium",
+    speed: 30,
+    darkvision: 60,
+    damageResistance: null,
+    lineages: [],
+    bonusLanguage: "choice", // Half-elves get to choose extra languages
   },
 ];
 
@@ -400,8 +414,44 @@ const loadSpeciesData = async () => {
     const apiSpecies = await dndAPI.getRaces();
 
     if (apiSpecies && apiSpecies.length > 0) {
-      // Replace fallback data with API data
-      speciesData.value = apiSpecies;
+      // Merge API data with our enhanced fallback data
+      const mergedSpecies = apiSpecies.map((apiRace) => {
+        // Find corresponding fallback race for enhanced data
+        const fallbackRace = fallbackSpeciesData.find(
+          (fb) =>
+            fb.id === apiRace.id ||
+            fb.name.toLowerCase() === apiRace.name.toLowerCase()
+        );
+
+        // If we have enhanced fallback data, merge it with API data
+        if (fallbackRace) {
+          console.log(`Merging data for ${apiRace.name}:`, {
+            apiId: apiRace.id,
+            fallbackId: fallbackRace.id,
+            apiLineages: apiRace.lineages,
+            fallbackLineages: fallbackRace.lineages,
+          });
+
+          const merged = {
+            ...apiRace,
+            lineages: fallbackRace.lineages, // Use our enhanced lineage data
+            bonusLanguage: fallbackRace.bonusLanguage,
+            // Keep API data for other fields, but fall back to our data if API is missing something
+            darkvision: apiRace.darkvision || fallbackRace.darkvision,
+            damageResistance:
+              apiRace.damageResistance || fallbackRace.damageResistance,
+          };
+
+          console.log(`Final merged dwarf data:`, merged);
+          return merged;
+        }
+
+        console.log(`No fallback data found for: ${apiRace.name}`);
+        return apiRace;
+      });
+
+      speciesData.value = mergedSpecies;
+      console.log("Final species data loaded:", speciesData.value);
     }
     // If API fails, we keep the fallback data that's already loaded
   } catch (error) {
@@ -692,6 +742,8 @@ export function useCharacterData() {
     alignment: null,
     backstory: "",
     additionalLanguages: [],
+    selectedTools: [],
+    selectedClassSkills: [],
     abilityScores: {
       strength: { score: 10, modifier: 0 },
       dexterity: { score: 10, modifier: 0 },
@@ -857,16 +909,27 @@ export function useCharacterData() {
             .getRaceDetails(selectedSpecies.id)
             .then((detailedRace) => {
               if (detailedRace) {
+                // Preserve our enhanced lineages data
+                const enhancedLineages = selectedSpecies.lineages;
+                const enhancedBonusLanguage = selectedSpecies.bonusLanguage;
+
+                // Merge detailed API data with our enhanced data
+                const finalRaceData = {
+                  ...detailedRace,
+                  lineages: enhancedLineages, // Keep our enhanced lineages
+                  bonusLanguage: enhancedBonusLanguage, // Keep our enhanced bonus language
+                };
+
                 const index = speciesData.value.findIndex(
                   (s) => s.id === selectedSpecies.id
                 );
                 if (index !== -1) {
-                  speciesData.value[index] = detailedRace;
+                  speciesData.value[index] = finalRaceData;
                   // Update character if this race is still selected
                   if (character.species === selectedSpecies.id) {
-                    character.speciesDetails = detailedRace;
-                    character.size = detailedRace.size;
-                    character.speed = detailedRace.speed;
+                    character.speciesDetails = finalRaceData;
+                    character.size = finalRaceData.size;
+                    character.speed = finalRaceData.speed;
                   }
                 }
               }
@@ -893,6 +956,9 @@ export function useCharacterData() {
       // Set basic class details immediately
       character.classDetails = selectedClass;
 
+      // Set armor training from fallback data immediately
+      character.armorTraining = { ...selectedClass.armorTraining };
+
       // If we have an index, fetch detailed data asynchronously
       if (selectedClass.index) {
         console.log(
@@ -904,15 +970,30 @@ export function useCharacterData() {
           .then((detailedClass) => {
             console.log("Fetched detailed class data:", detailedClass);
             if (detailedClass) {
+              // Preserve armor training from fallback data if API data doesn't have it
+              const armorTraining = detailedClass.armorTraining ||
+                selectedClass.armorTraining || {
+                  light: false,
+                  medium: false,
+                  heavy: false,
+                  shields: false,
+                };
+
               // Merge the detailed data with the existing basic data
               character.classDetails = {
                 ...character.classDetails,
                 ...detailedClass,
+                armorTraining, // Ensure armor training is preserved
               };
+
+              // Update character armor training
+              character.armorTraining = { ...armorTraining };
+
               console.log(
                 "Updated character.classDetails:",
                 character.classDetails
               );
+              console.log("Updated armor training:", character.armorTraining);
             }
           })
           .catch((error) => {
@@ -922,21 +1003,27 @@ export function useCharacterData() {
       } else {
         console.log("No index found for class, using basic data only");
       }
-
-      character.armorTraining = { ...selectedClass.armorTraining };
       character.equipment = [...(selectedClass.startingEquipment || [])];
       character.toolProficiencies = [
         ...(selectedClass.toolProficiencies || []),
       ];
 
-      // Initialize skill proficiencies
+      // Initialize skill proficiencies - don't auto-assign class skills
       character.skillProficiencies = {};
       for (const skill of skillList) {
         character.skillProficiencies[skill.name] = {
-          proficient: selectedClass.skills?.includes(skill.name) || false,
+          proficient: false, // Changed: Don't auto-assign class skills
           expertise: false,
           bonus: 0,
         };
+      }
+
+      // Initialize selected class skills if not already set
+      if (!character.selectedClassSkills) {
+        character.selectedClassSkills = [];
+      } else {
+        // Reset selected skills when class changes
+        character.selectedClassSkills = [];
       }
 
       // Initialize saving throw proficiencies
@@ -1019,7 +1106,8 @@ export function useCharacterData() {
         }
       }
 
-      // Handle tool proficiencies
+      // Re-apply class skill selections
+      updateClassSkillProficiencies(); // Handle tool proficiencies
       const toolProfs =
         selectedBackground.toolProficiencies ||
         [selectedBackground.toolProf].filter(Boolean);
@@ -1053,6 +1141,19 @@ export function useCharacterData() {
       }
     } else {
       character.backgroundDetails = null;
+    }
+  };
+
+  const updateClassSkillProficiencies = () => {
+    if (!character.selectedClassSkills || !character.skillProficiencies) return;
+
+    // Reset class skill proficiencies first (keep background skills)
+    for (const skill of skillList) {
+      if (character.classDetails?.skills?.includes(skill.name)) {
+        // This is a class skill, check if it's selected
+        character.skillProficiencies[skill.name].proficient =
+          character.selectedClassSkills.includes(skill.name);
+      }
     }
   };
 
@@ -1159,6 +1260,7 @@ export function useCharacterData() {
     updateSpeciesTraits,
     updateClassTraits,
     updateBackgroundTraits,
+    updateClassSkillProficiencies,
     initializeCharacter,
 
     // Static data

@@ -42,10 +42,10 @@
               <div class="ability-scores mt-3">
                 <h4>Ability Scores</h4>
                 <v-row dense>
-                  <v-col v-for="(ability, name) in character.abilityScores" :key="name" cols="4">
+                  <v-col v-for="(ability, name) in character.abilityScores" :key="name" cols="6" sm="4">
                     <v-chip size="small" class="ma-1">
                       {{ name.toUpperCase() }}: {{ ability.score }} ({{ ability.modifier >= 0 ? '+' : '' }}{{
-                      ability.modifier }})
+                        ability.modifier }})
                     </v-chip>
                   </v-col>
                 </v-row>

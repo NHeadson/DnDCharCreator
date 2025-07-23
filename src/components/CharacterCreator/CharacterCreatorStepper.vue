@@ -51,13 +51,15 @@
             <v-col cols="12" lg="7">
               <!-- Species Preview Card -->
               <v-card v-if="character.speciesDetails" variant="tonal" color="blue-grey-lighten-5"
-                class="species-preview-card">
+                class="species-preview-card h-100"
+                :class="{ 'no-subraces': !character.speciesDetails.lineages || character.speciesDetails.lineages.length === 0 }"
+                :style="{ minHeight: speciesCardHeight }">
                 <v-card-title class="d-flex align-center pa-3">
                   <v-icon color="blue-grey-darken-2" class="me-2" size="small">mdi-dna</v-icon>
                   <span class="text-subtitle-1 font-weight-bold">{{ character.speciesDetails.name }}</span>
                 </v-card-title>
                 <v-divider />
-                <v-card-text class="pa-3">
+                <v-card-text class="pa-3" :style="{ maxHeight: speciesContentMaxHeight, overflowY: 'auto' }">
                   <!-- Description -->
                   <div v-if="character.speciesDetails.description" class="mb-3">
                     <p class="text-caption text-grey-darken-1 line-height-relaxed">
@@ -71,19 +73,19 @@
                     <h5 class="text-caption text-blue-grey-darken-2 mb-1 font-weight-bold">Physical Attributes</h5>
                     <div class="ms-2">
                       <v-row dense>
-                        <v-col cols="4">
+                        <v-col cols="6" sm="4">
                           <div class="text-center">
                             <div class="text-overline text-grey-darken-1">Size</div>
                             <div class="text-caption font-weight-bold">{{ character.speciesDetails.size }}</div>
                           </div>
                         </v-col>
-                        <v-col cols="4">
+                        <v-col cols="6" sm="4">
                           <div class="text-center">
                             <div class="text-overline text-grey-darken-1">Speed</div>
                             <div class="text-caption font-weight-bold">{{ character.speciesDetails.speed }} ft</div>
                           </div>
                         </v-col>
-                        <v-col v-if="character.speciesDetails.darkvision" cols="4">
+                        <v-col v-if="character.speciesDetails.darkvision" cols="6" sm="4">
                           <div class="text-center">
                             <div class="text-overline text-grey-darken-1">Darkvision</div>
                             <div class="text-caption font-weight-bold text-purple">{{
@@ -104,6 +106,31 @@
                           v-if="index < character.speciesDetails.traits.length - 1">, </span>
                       </span>
                     </div>
+                  </div>
+
+                  <!-- Subraces/Lineages Preview -->
+                  <div v-if="character.speciesDetails.lineages && character.speciesDetails.lineages.length > 0"
+                    class="mt-3">
+                    <h5 class="text-caption text-blue-grey-darken-2 mb-2 font-weight-bold">
+                      <v-icon size="small" class="me-1">mdi-family-tree</v-icon>
+                      Available Lineages/Subraces
+                    </h5>
+                    <v-tabs v-model="activeSubraceTab" color="primary" density="compact" class="mb-3 subrace-tabs" grow>
+                      <v-tab v-for="(lineage, index) in character.speciesDetails.lineages" :key="lineage.id"
+                        :value="index" size="small" class="text-caption">
+                        {{ lineage.name }}
+                      </v-tab>
+                    </v-tabs>
+                    <v-tabs-window v-model="activeSubraceTab">
+                      <v-tabs-window-item v-for="(lineage, index) in character.speciesDetails.lineages"
+                        :key="lineage.id" :value="index">
+                        <v-card variant="outlined" color="grey-lighten-5" class="pa-3">
+                          <div class="text-caption">
+                            {{ getSubraceDescription(lineage.id, character.speciesDetails.name) }}
+                          </div>
+                        </v-card>
+                      </v-tabs-window-item>
+                    </v-tabs-window>
                   </div>
                 </v-card-text>
               </v-card>
@@ -166,9 +193,10 @@
                       <!-- All Skills -->
                       <div v-if="character.classDetails.skills && character.classDetails.skills.length"
                         class="text-caption mb-1">
-                        <span class="text-overline text-grey-darken-1">Choose {{ character.classDetails.skillChoices ||
+                        <span class="text-overline text-grey-darken-1">Available Skills (choose {{
+                          character.classDetails.skillChoices ||
                           2
-                        }} Skills:</span>
+                          }}):</span>
                         {{ character.classDetails.skills.join(', ') }}
                       </div>
                     </div>
@@ -298,6 +326,41 @@
                       </div>
                     </div>
                   </div>
+
+                  <!-- Choices Available -->
+                  <div v-if="hasBackgroundChoices(character.backgroundDetails)" class="mt-3">
+                    <h5 class="text-caption text-green-darken-2 mb-1 font-weight-bold">
+                      <v-icon size="small" class="me-1">mdi-hand-pointing-right</v-icon>
+                      Choices Available
+                    </h5>
+                    <div class="ms-2">
+                      <!-- Language Choices -->
+                      <div
+                        v-if="character.backgroundDetails.languageOptions && character.backgroundDetails.languageOptions.choose > 0"
+                        class="mb-1">
+                        <v-chip size="small" color="purple" variant="outlined" class="me-1">
+                          {{ character.backgroundDetails.languageOptions.choose }} Language{{
+                            character.backgroundDetails.languageOptions.choose > 1 ? 's' : '' }}
+                        </v-chip>
+                        <span class="text-caption">
+                          {{ character.backgroundDetails.languageOptions.from &&
+                            character.backgroundDetails.languageOptions.from[0] === 'Any'
+                            ? 'from any standard language'
+                            : character.backgroundDetails.languageOptions.from
+                              ? `from: ${character.backgroundDetails.languageOptions.from.join(', ')}`
+                              : '' }}
+                        </span>
+                      </div>
+
+                      <!-- Tool Choices -->
+                      <div v-if="hasToolChoices(character.backgroundDetails)" class="mb-1">
+                        <v-chip size="small" color="orange" variant="outlined" class="me-1">
+                          Tool Choice
+                        </v-chip>
+                        <span class="text-caption">{{ getToolChoiceDescription(character.backgroundDetails) }}</span>
+                      </div>
+                    </div>
+                  </div>
                 </v-card-text>
               </v-card>
               <v-card v-else variant="outlined" color="grey-lighten-4">
@@ -330,10 +393,11 @@
     <template #item.2>
       <v-card flat>
         <!-- Title Row with Inline Cards -->
-        <v-row class="mb-1" align="center" justify="space-between" no-gutters>
+        <v-row class="mb-1" align="start" justify="space-between" no-gutters>
           <!-- Quick Start Options -->
-          <v-col cols="12" lg="3" class="d-flex justify-start">
-            <v-card variant="tonal" color="primary-lighten-5" class="compact-card">
+          <v-col cols="6" md="3" lg="3" xl="3" class="d-flex justify-start mb-3 mb-lg-0 pe-1 pe-lg-0" order="1"
+            order-md="1" order-lg="1">
+            <v-card variant="tonal" color="primary-lighten-5" class="compact-card w-100">
               <v-card-title class="text-subtitle-1 d-flex align-center pa-2">
                 <v-icon class="me-1" size="small">mdi-lightning-bolt</v-icon>
                 Quick Start
@@ -363,17 +427,19 @@
             </v-card>
           </v-col>
 
-          <!-- Centered Title -->
-          <v-col cols="12" lg="6" class="text-center">
-            <h2 class="text-h4 mb-2">⚡ Set Your Abilities</h2>
+          <!-- Centered Title - appears below cards on mobile, in center on desktop -->
+          <v-col cols="12" md="6" lg="6" xl="6" class="text-center mb-3 mb-lg-0 mt-4 mt-md-0" order="3" order-md="2"
+            order-lg="2">
+            <h2 class="text-h4 text-lg-h4 text-md-h5 text-h6 mb-2 mt-6">⚡ Set Your Abilities</h2>
             <p class="text-subtitle-1 text-grey">
               These numbers determine your character's basic capabilities
             </p>
           </v-col>
 
-          <!-- Class Recommendations -->
-          <v-col cols="12" lg="3" class="d-flex justify-end">
-            <v-card v-if="character.classDetails" variant="tonal" color="primary-lighten-5" class="compact-card">
+          <!-- Class Recommendations - moved to second position on mobile -->
+          <v-col cols="6" md="3" lg="3" xl="3" class="d-flex justify-end mb-3 mb-lg-0 ps-1 ps-lg-0" order="2"
+            order-md="3" order-lg="3">
+            <v-card v-if="character.classDetails" variant="tonal" color="primary-lighten-5" class="compact-card w-100">
               <v-card-title class="text-subtitle-1 d-flex align-center pa-2">
                 <v-icon class="me-1" size="small">mdi-target</v-icon>
                 {{ character.classDetails.name }} Tips
@@ -404,7 +470,7 @@
                 </div>
               </v-card-text>
             </v-card>
-            <v-card v-else variant="outlined" color="grey-lighten-4" class="compact-card">
+            <v-card v-else variant="outlined" color="grey-lighten-4" class="compact-card w-100">
               <v-card-text class="text-center text-grey pa-3">
                 <v-icon size="small" class="mb-1">mdi-help-circle-outline</v-icon>
                 <div class="text-caption">Select a class for tips</div>
@@ -415,41 +481,45 @@
 
         <v-card-text>
           <!-- Score Assignment Section -->
-          <v-row v-if="isAssigningScores" class="mb-6">
-            <v-col cols="12">
+          <v-row v-if="isAssigningScores" class="mb-6" justify="center">
+            <v-col cols="12" md="10" lg="8" xl="6">
+              <h3 class="text-h6 d-flex align-center justify-center mb-3">
+                <v-icon class="me-2">mdi-target</v-icon>
+                Assign Your Scores
+              </h3>
               <v-card variant="tonal" color="secondary-lighten-5">
-                <v-card-title class="text-h6 d-flex align-center justify-space-between">
-                  <div class="d-flex align-center">
-                    <v-icon class="me-2">mdi-target</v-icon>
-                    Assign Your Scores
-                  </div>
-                  <v-btn variant="text" color="error" @click="clearAssignments" size="small">
-                    Clear All
-                  </v-btn>
-                </v-card-title>
-                <v-card-text>
+                <v-card-text class="text-center">
                   <div class="mb-3">
-                    <div class="text-body-2 mb-2">Available Scores: Click to select, then click an ability card to
+                    <div class="text-body-2 mb-3">Available Scores: Click to select, then click an ability card to
                       assign it</div>
-                    <v-chip-group v-model="selectedScore" class="mb-3" mandatory>
-                      <v-chip v-for="score in availableScores" :key="`available-${score}`" size="large" color="primary"
-                        variant="outlined" class="score-chip" :value="score">
-                        {{ score }}
-                      </v-chip>
-                    </v-chip-group>
-                    <div v-if="availableScores.length === 0" class="text-success text-center">
+                    <div class="d-flex justify-center">
+                      <v-chip-group v-model="selectedScore" class="mb-3" mandatory>
+                        <v-chip v-for="score in availableScores" :key="`available-${score}`" size="x-large"
+                          color="primary" variant="outlined" class="score-chip ma-1 text-h6 font-weight-bold"
+                          :value="score">
+                          {{ score }}
+                        </v-chip>
+                      </v-chip-group>
+                    </div>
+                    <div v-if="availableScores.length === 0" class="text-success">
                       ✅ All scores assigned! Click on any ability score to reassign it.
                     </div>
-                    <div v-else-if="selectedScore" class="text-info text-center text-caption">
+                    <div v-else-if="selectedScore" class="text-info text-caption">
                       Selected: {{ selectedScore }} - Now click on an ability to assign it
                     </div>
                   </div>
                 </v-card-text>
               </v-card>
-            </v-col>
-          </v-row>
 
-          <!-- Ability Scores Grid -->
+              <!-- Clear All Button positioned between available scores and ability cards - only show when at least one score is assigned -->
+              <div v-if="hasAssignedScores" class="d-flex justify-center mt-4 mb-4">
+                <v-btn variant="outlined" color="error" @click="clearAssignments" size="small"
+                  prepend-icon="mdi-refresh">
+                  Clear All Assignments
+                </v-btn>
+              </div>
+            </v-col>
+          </v-row> <!-- Ability Scores Grid -->
           <v-row class="mb-6">
             <v-col v-for="(statName) in (characterData?.abilityNames || [])" :key="statName" cols="12" sm="6" lg="4">
               <v-card variant="outlined" class="ability-card-enhanced" :class="{
@@ -728,11 +798,74 @@
     <!-- Step 3: Features & Skills -->
     <template #item.3>
       <v-card flat>
-        <v-card-title class="text-h4 text-center mb-4">🎯 Your Character's Abilities</v-card-title>
+        <v-card-title class="text-h4 text-center mb-4">🎯 Features & Choices</v-card-title>
         <v-card-subtitle class="text-center mb-4">
-          These are automatically calculated based on your choices above
+          Make important decisions about your character's abilities and proficiencies
         </v-card-subtitle>
         <v-card-text>
+          <!-- Character Choices Section -->
+          <v-row class="mb-6">
+            <!-- Subrace/Lineage Selection -->
+            <v-col v-if="character.speciesDetails?.lineages && character.speciesDetails.lineages.length > 0" cols="12"
+              md="6">
+              <v-card variant="outlined" color="blue-lighten-5">
+                <v-card-title class="text-h6">🧬 Choose Your Lineage</v-card-title>
+                <v-card-text>
+                  <v-select v-model="character.speciesLineage" :items="character.speciesDetails.lineages"
+                    item-title="name" item-value="id" label="Lineage/Subrace" variant="outlined"
+                    :hint="`Choose your ${character.speciesDetails.name} lineage`" persistent-hint
+                    @update:model-value="handleSubraceSelection" />
+                </v-card-text>
+              </v-card>
+            </v-col>
+
+            <!-- Language Selection -->
+            <v-col v-if="shouldShowLanguageSelection" cols="12" md="6">
+              <v-card variant="outlined" color="purple-lighten-5">
+                <v-card-title class="text-h6">🗣️ Choose Languages</v-card-title>
+                <v-card-text>
+                  <!-- Show known languages -->
+                  <div class="mb-3">
+                    <div class="text-subtitle-2 mb-2">Languages You Already Know:</div>
+                    <v-chip-group>
+                      <v-chip v-for="lang in getKnownLanguages" :key="lang" size="small" color="green"
+                        variant="outlined">
+                        {{ lang }}
+                      </v-chip>
+                    </v-chip-group>
+                  </div>
+
+                  <v-divider class="my-3" />
+
+                  <!-- Language selections -->
+                  <div v-if="getLanguageChoices().length > 0">
+                    <div class="text-subtitle-2 mb-2">Choose Additional Languages:</div>
+                    <v-select v-for="(choice, index) in getLanguageChoices()" :key="`language-${index}`"
+                      v-model="character.additionalLanguages[index]" :items="getAvailableLanguages"
+                      :label="`Language Choice ${index + 1}`" variant="outlined" class="mb-2"
+                      hint="Choose an additional language" persistent-hint
+                      @update:model-value="(value) => handleLanguageSelection([...character.additionalLanguages.slice(0, index), value, ...character.additionalLanguages.slice(index + 1)])" />
+                  </div>
+                </v-card-text>
+              </v-card>
+            </v-col>
+
+            <!-- Tool Selection -->
+            <v-col v-if="shouldShowToolSelection" cols="12" md="6">
+              <v-card variant="outlined" color="orange-lighten-5">
+                <v-card-title class="text-h6">🔧 Choose Tools</v-card-title>
+                <v-card-text>
+                  <div v-if="getToolChoices().length > 0">
+                    <v-select v-for="(choice, index) in getToolChoices()" :key="`tool-${index}`"
+                      v-model="character.selectedTools[index]" :items="choice.options" :label="choice.label"
+                      variant="outlined" class="mb-2" :hint="choice.hint" persistent-hint
+                      @update:model-value="(value) => handleToolSelection([...character.selectedTools.slice(0, index), value, ...character.selectedTools.slice(index + 1)])" />
+                  </div>
+                </v-card-text>
+              </v-card>
+            </v-col>
+          </v-row>
+
           <!-- Core Stats -->
           <v-row class="mb-6">
             <v-col cols="12" md="4">
@@ -792,24 +925,93 @@
               </v-card>
             </v-col>
             <v-col cols="12" md="4">
-              <v-card variant="outlined" color="success">
-                <v-card-title class="text-center">🛡️ Armor Training</v-card-title>
-                <v-card-text>
-                  <v-chip-group>
-                    <v-chip v-if="character.armorTraining?.light" size="small" color="green">Light Armor</v-chip>
-                    <v-chip v-if="character.armorTraining?.medium" size="small" color="orange">Medium Armor</v-chip>
-                    <v-chip v-if="character.armorTraining?.heavy" size="small" color="red">Heavy Armor</v-chip>
-                    <v-chip v-if="character.armorTraining?.shields" size="small" color="blue">Shields</v-chip>
-                  </v-chip-group>
-                  <div v-if="!hasAnyArmorTraining" class="text-grey text-caption">No armor training</div>
+              <v-card variant="outlined" color="success" class="h-100">
+                <v-card-title class="text-center pa-3">🛡️ Armor Training</v-card-title>
+                <v-divider />
+                <v-card-text class="pa-3">
+                  <div
+                    v-if="character.armorTraining?.light || character.armorTraining?.medium || character.armorTraining?.heavy || character.armorTraining?.shields"
+                    class="d-flex flex-wrap justify-center" style="gap: 8px;">
+                    <v-chip v-if="character.armorTraining?.light" size="small" color="green" variant="elevated"
+                      class="ma-1">
+                      <v-icon start size="x-small">mdi-shield-outline</v-icon>
+                      Light Armor
+                    </v-chip>
+                    <v-chip v-if="character.armorTraining?.medium" size="small" color="orange" variant="elevated"
+                      class="ma-1">
+                      <v-icon start size="x-small">mdi-shield</v-icon>
+                      Medium Armor
+                    </v-chip>
+                    <v-chip v-if="character.armorTraining?.heavy" size="small" color="red" variant="elevated"
+                      class="ma-1">
+                      <v-icon start size="x-small">mdi-shield-plus</v-icon>
+                      Heavy Armor
+                    </v-chip>
+                    <v-chip v-if="character.armorTraining?.shields" size="small" color="blue" variant="elevated"
+                      class="ma-1">
+                      <v-icon start size="x-small">mdi-shield-check</v-icon>
+                      Shields
+                    </v-chip>
+                  </div>
+                  <div v-else class="text-center text-grey py-4">
+                    <v-icon size="large" class="mb-2 text-grey-lighten-1">mdi-shield-off</v-icon>
+                    <div class="text-caption">No armor training</div>
+                  </div>
                 </v-card-text>
               </v-card>
             </v-col>
           </v-row>
 
+          <!-- Class Skill Selection -->
+          <v-card v-if="getAvailableClassSkills.length > 0" variant="outlined" class="mb-6" color="blue-lighten-5">
+            <v-card-title class="text-h6">🎯 Choose Class Skills</v-card-title>
+            <v-card-subtitle class="text-caption">
+              Select {{ character.classDetails?.skillChoices || 2 }} skills from your {{ character.classDetails?.name ||
+              'class'
+              }} skill list
+            </v-card-subtitle>
+            <v-card-text>
+              <div class="mb-3">
+                <div class="text-body-2 font-weight-medium mb-2">
+                  Selected: {{ getSelectedClassSkills.length }} / {{ character.classDetails?.skillChoices || 2 }}
+                </div>
+                <v-progress-linear
+                  :model-value="(getSelectedClassSkills.length / (character.classDetails?.skillChoices || 2)) * 100"
+                  color="primary" height="6" rounded />
+              </div>
+
+              <v-row>
+                <v-col v-for="skill in getAvailableClassSkills" :key="skill.name" cols="12" sm="6" md="4">
+                  <v-card variant="outlined" class="skill-selection-card" :class="{
+                    'selected': isSkillSelected(skill.name),
+                    'selectable': canSelectMoreSkills || isSkillSelected(skill.name)
+                  }" @click="handleSkillCardClick(skill.name)"
+                    :style="{ cursor: (canSelectMoreSkills || isSkillSelected(skill.name)) ? 'pointer' : 'not-allowed' }">
+                    <v-card-text class="py-2">
+                      <div class="d-flex align-center">
+                        <v-checkbox :model-value="isSkillSelected(skill.name)"
+                          :disabled="!canSelectMoreSkills && !isSkillSelected(skill.name)" readonly density="compact"
+                          hide-details class="me-2" />
+                        <div class="flex-grow-1">
+                          <div class="font-weight-bold">{{ skill.name }}</div>
+                          <div class="text-caption text-grey">{{ skill.ability }} based</div>
+                          <div class="text-caption">{{ skill.exampleUse.substring(0, 60) }}{{ skill.exampleUse.length >
+                            60 ? '...'
+                            : '' }}</div>
+                        </div>
+                      </div>
+                    </v-card-text>
+                  </v-card>
+                </v-col>
+              </v-row>
+            </v-card-text>
+          </v-card>
+
           <!-- Skills Section -->
           <v-card variant="outlined" class="mb-6">
-            <v-card-title class="text-h6">🎯 Skill Proficiencies</v-card-title>
+            <v-card-title class="text-h6">📋 All Skill Proficiencies</v-card-title>
+            <v-card-subtitle class="text-caption">Skills you are proficient with (from class selection and
+              background)</v-card-subtitle>
             <v-card-text>
               <v-row>
                 <v-col v-for="skill in getProficientSkills" :key="skill.name" cols="12" sm="6" md="4">
@@ -836,15 +1038,24 @@
           </v-card>
 
           <!-- Tool Proficiencies -->
-          <v-card v-if="character.toolProficiencies && character.toolProficiencies.length" variant="outlined"
-            class="mb-6">
+          <v-card variant="outlined" class="mb-6">
             <v-card-title class="text-h6">🔧 Tool Proficiencies</v-card-title>
+            <v-card-subtitle class="text-caption">Tools you are proficient with (from class, background, and
+              choices)</v-card-subtitle>
             <v-card-text>
-              <v-chip-group>
-                <v-chip v-for="tool in character.toolProficiencies" :key="tool" size="small" color="orange">
-                  {{ tool }}
-                </v-chip>
-              </v-chip-group>
+              <div v-if="getAllToolProficiencies.length > 0">
+                <div class="d-flex flex-wrap" style="gap: 8px;">
+                  <v-chip v-for="tool in getAllToolProficiencies" :key="tool" size="small" color="orange"
+                    variant="elevated">
+                    {{ tool }}
+                  </v-chip>
+                </div>
+              </div>
+              <div v-else class="text-center text-grey py-4">
+                <v-icon size="48" class="mb-2">mdi-hammer-wrench</v-icon>
+                <br>No tool proficiencies yet
+                <br><small>Select a class and background to gain tool proficiencies!</small>
+              </div>
             </v-card-text>
           </v-card>
 
@@ -856,9 +1067,41 @@
               <div v-if="character.speciesDetails?.traits" class="mb-4">
                 <h6 class="text-h6 mb-2">{{ character.speciesDetails.name }} Traits:</h6>
                 <v-expansion-panels variant="accordion">
-                  <v-expansion-panel v-for="trait in character.speciesDetails.traits.slice(0, 3)" :key="trait.name">
-                    <v-expansion-panel-title>{{ trait.name }}</v-expansion-panel-title>
-                    <v-expansion-panel-text>{{ trait.description }}</v-expansion-panel-text>
+                  <v-expansion-panel v-for="trait in character.speciesDetails.traits" :key="trait.name">
+                    <v-expansion-panel-title>
+                      <div class="d-flex align-center">
+                        <v-icon class="me-2" size="small" color="blue-darken-2">mdi-star</v-icon>
+                        <span class="font-weight-bold">{{ trait.name }}</span>
+                        <v-spacer />
+                        <v-chip v-if="trait.usage" size="x-small" color="blue" variant="outlined">
+                          {{ trait.usage }}
+                        </v-chip>
+                      </div>
+                    </v-expansion-panel-title>
+                    <v-expansion-panel-text>
+                      <div v-if="trait.description || getTraitDescription(trait.name)" class="trait-description">
+                        <p class="text-body-2 mb-3">{{ trait.description || getTraitDescription(trait.name) }}</p>
+                      </div>
+                      <div v-else class="text-caption text-grey">
+                        No description available for this trait.
+                      </div>
+
+                      <!-- Additional trait details if available -->
+                      <div v-if="trait.damage || trait.range || trait.savingThrow" class="trait-details mt-3">
+                        <v-divider class="mb-2" />
+                        <div class="text-caption">
+                          <div v-if="trait.damage" class="mb-1">
+                            <strong>Damage:</strong> {{ trait.damage }}
+                          </div>
+                          <div v-if="trait.range" class="mb-1">
+                            <strong>Range:</strong> {{ trait.range }}
+                          </div>
+                          <div v-if="trait.savingThrow" class="mb-1">
+                            <strong>Saving Throw:</strong> {{ trait.savingThrow }}
+                          </div>
+                        </div>
+                      </div>
+                    </v-expansion-panel-text>
                   </v-expansion-panel>
                 </v-expansion-panels>
               </div>
@@ -866,10 +1109,24 @@
               <!-- Background Feature -->
               <div v-if="character.backgroundDetails?.feature">
                 <h6 class="text-h6 mb-2">Background Feature:</h6>
-                <v-card variant="tonal" color="green-lighten-5">
-                  <v-card-title class="text-subtitle-1">{{ character.backgroundDetails.feature.name }}</v-card-title>
-                  <v-card-text>{{ character.backgroundDetails.feature.description }}</v-card-text>
-                </v-card>
+                <v-expansion-panels variant="accordion">
+                  <v-expansion-panel>
+                    <v-expansion-panel-title>
+                      <div class="d-flex align-center">
+                        <v-icon class="me-2" size="small" color="green-darken-2">mdi-book-open-page-variant</v-icon>
+                        <span class="font-weight-bold">{{ character.backgroundDetails.feature.name }}</span>
+                      </div>
+                    </v-expansion-panel-title>
+                    <v-expansion-panel-text>
+                      <div v-if="character.backgroundDetails.feature.description" class="feature-description">
+                        <p class="text-body-2">{{ character.backgroundDetails.feature.description }}</p>
+                      </div>
+                      <div v-else class="text-caption text-grey">
+                        No description available for this feature.
+                      </div>
+                    </v-expansion-panel-text>
+                  </v-expansion-panel>
+                </v-expansion-panels>
               </div>
             </v-card-text>
           </v-card>
@@ -1116,7 +1373,7 @@
 </template>
 
 <script setup>
-import { inject, computed, ref } from 'vue'
+import { inject, computed, ref, watch, nextTick } from 'vue'
 
 const props = defineProps({
   character: {
@@ -1129,7 +1386,7 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits(['update:current-step', 'submit-character'])
+const emit = defineEmits(['update:current-step', 'submit-character', 'update:character'])
 
 // Inject character data from parent
 const characterData = inject('characterData')
@@ -1137,10 +1394,14 @@ const characterData = inject('characterData')
 // Reactive state for name generation
 const isGeneratingName = ref(false)
 
+// Active subrace tab tracking
+const activeSubraceTab = ref(0)
+
 // Ability score assignment system
 const availableScores = ref([])
 const isAssigningScores = ref(false)
 const selectedScore = ref(null)
+const isGeneratingScores = ref(false) // Flag to prevent interference during score generation
 
 // Step configuration
 const stepItems = [
@@ -1169,6 +1430,39 @@ const previousStep = () => {
     localCurrentStep.value--
   }
 }
+
+// Computed property for dynamic card height based on content
+const speciesCardHeight = computed(() => {
+  if (!props.character.speciesDetails) {
+    return 'auto'
+  }
+
+  // Check if species has subraces/lineages
+  const hasSubraces = props.character.speciesDetails.lineages &&
+    props.character.speciesDetails.lineages.length > 0
+
+  // Return different heights based on content - more precise heights
+  return hasSubraces ? '400px' : '240px'
+})
+
+// Computed property for dynamic content max-height
+const speciesContentMaxHeight = computed(() => {
+  if (!props.character.speciesDetails) {
+    return 'auto'
+  }
+
+  // Check if species has subraces/lineages
+  const hasSubraces = props.character.speciesDetails.lineages &&
+    props.character.speciesDetails.lineages.length > 0
+
+  // Return different max-heights based on content - more precise heights
+  return hasSubraces ? '350px' : '190px'
+})
+
+// Watch for species changes to reset subrace tab
+watch(() => props.character.species, () => {
+  activeSubraceTab.value = 0
+})
 
 // Random name generation
 const generateRandomName = async () => {
@@ -1293,47 +1587,98 @@ const getModifierColor = (modifier) => {
 
 // Ability Score Enhancement Methods
 const setStandardArray = () => {
-  availableScores.value = [15, 14, 13, 12, 10, 8]
-  isAssigningScores.value = true
+  // Prevent multiple simultaneous generations
+  if (isGeneratingScores.value) return
 
-  // Clear any existing assigned scores
+  // Set generation flag to prevent interference
+  isGeneratingScores.value = true
+
+  // Disable assignment mode completely
+  isAssigningScores.value = false
+  selectedScore.value = null
+
+  // Clear the available scores array completely
+  availableScores.value = []
+
+  // Clear any existing assigned scores without triggering modifiers yet
   const abilityNames = characterData?.abilityNames?.value || ['strength', 'dexterity', 'constitution', 'intelligence', 'wisdom', 'charisma']
   abilityNames.forEach((ability) => {
     if (props.character.abilityScores[ability]) {
       props.character.abilityScores[ability].score = 0
-      characterData?.updateAbilityModifier?.(ability)
     }
   })
+
+  // Use setTimeout to ensure all reactive updates are complete before setting new scores
+  setTimeout(() => {
+    // Now update all modifiers at once
+    abilityNames.forEach((ability) => {
+      characterData?.updateAbilityModifier?.(ability)
+    })
+
+    // Set the standard array (completely fresh array)
+    availableScores.value = [15, 14, 13, 12, 10, 8]
+    isAssigningScores.value = true
+
+    // Clear generation flag
+    isGeneratingScores.value = false
+  }, 10)
 }
 
 const rollAbilityScores = () => {
-  const rolledScores = []
+  // Prevent multiple simultaneous generations
+  if (isGeneratingScores.value) return
 
-  // Roll 6 sets of 4d6, drop lowest for each
-  for (let i = 0; i < 6; i++) {
-    const rolls = Array.from({ length: 4 }, () => Math.floor(Math.random() * 6) + 1)
-    rolls.sort((a, b) => b - a) // Sort descending
-    const score = rolls.slice(0, 3).reduce((sum, roll) => sum + roll, 0) // Take top 3
-    rolledScores.push(score)
-  }
+  // Set generation flag to prevent interference
+  isGeneratingScores.value = true
 
-  // Sort the scores descending for easier assignment
-  rolledScores.sort((a, b) => b - a)
+  // Disable assignment mode completely
+  isAssigningScores.value = false
+  selectedScore.value = null
 
-  availableScores.value = rolledScores
-  isAssigningScores.value = true
+  // Clear the available scores array completely
+  availableScores.value = []
 
-  // Clear any existing assigned scores
+  // Clear any existing assigned scores without triggering modifiers yet
   const abilityNames = characterData?.abilityNames?.value || ['strength', 'dexterity', 'constitution', 'intelligence', 'wisdom', 'charisma']
   abilityNames.forEach((ability) => {
     if (props.character.abilityScores[ability]) {
       props.character.abilityScores[ability].score = 0
-      characterData?.updateAbilityModifier?.(ability)
     }
   })
+
+  // Use setTimeout to ensure all reactive updates are complete before setting new scores
+  setTimeout(() => {
+    // Now update all modifiers at once
+    abilityNames.forEach((ability) => {
+      characterData?.updateAbilityModifier?.(ability)
+    })
+
+    const rolledScores = []
+
+    // Roll 6 sets of 4d6, drop lowest for each
+    for (let i = 0; i < 6; i++) {
+      const rolls = Array.from({ length: 4 }, () => Math.floor(Math.random() * 6) + 1)
+      rolls.sort((a, b) => b - a) // Sort descending
+      const score = rolls.slice(0, 3).reduce((sum, roll) => sum + roll, 0) // Take top 3
+      rolledScores.push(score)
+    }
+
+    // Sort the scores descending for easier assignment
+    rolledScores.sort((a, b) => b - a)
+
+    // Set the rolled scores (completely fresh array)
+    availableScores.value = rolledScores
+    isAssigningScores.value = true
+
+    // Clear generation flag
+    isGeneratingScores.value = false
+  }, 10)
 }
 
 const assignScore = (abilityName, score = null) => {
+  // Don't allow assignment during score generation
+  if (isGeneratingScores.value) return
+
   const scoreToAssign = score || selectedScore.value
   if (!scoreToAssign || !availableScores.value.includes(scoreToAssign)) return
 
@@ -1364,6 +1709,9 @@ const assignScore = (abilityName, score = null) => {
 }
 
 const clearAssignments = () => {
+  // Don't allow clearing during score generation
+  if (isGeneratingScores.value) return
+
   const abilityNames = characterData?.abilityNames?.value || ['strength', 'dexterity', 'constitution', 'intelligence', 'wisdom', 'charisma']
 
   // Collect all currently assigned scores
@@ -1377,12 +1725,17 @@ const clearAssignments = () => {
     }
   })
 
-  // Put all scores back in available scores
-  availableScores.value = [...availableScores.value, ...assignedScores]
-  availableScores.value.sort((a, b) => b - a)
+  // Put all scores back in available scores (merge and sort)
+  const allScores = [...availableScores.value, ...assignedScores]
+  availableScores.value = allScores.sort((a, b) => b - a)
 
   // Clear selected score
   selectedScore.value = null
+
+  // Stay in assignment mode if there are scores to assign
+  if (availableScores.value.length > 0) {
+    isAssigningScores.value = true
+  }
 }
 
 const getAssignmentStatusText = (abilityName) => {
@@ -1458,6 +1811,93 @@ const getProficientSkills = computed(() => {
   )
 })
 
+// Skill selection computed properties and methods
+const getAvailableClassSkills = computed(() => {
+  if (!props.character.classDetails?.skills || !characterData?.skillList) return []
+
+  return characterData.skillList.filter(skill =>
+    props.character.classDetails.skills.includes(skill.name)
+  )
+})
+
+const getSelectedClassSkills = computed(() => {
+  if (!props.character.selectedClassSkills) return []
+  return props.character.selectedClassSkills
+})
+
+const canSelectMoreSkills = computed(() => {
+  const maxSkills = props.character.classDetails?.skillChoices || 2
+  return getSelectedClassSkills.value.length < maxSkills
+})
+
+const isSkillSelected = (skillName) => {
+  return getSelectedClassSkills.value.includes(skillName)
+}
+
+const handleSkillCardClick = (skillName) => {
+  // Only proceed if we can select more skills OR if this skill is already selected (to deselect it)
+  if (canSelectMoreSkills.value || isSkillSelected(skillName)) {
+    toggleSkillSelection(skillName)
+  }
+}
+
+const toggleSkillSelection = (skillName) => {
+  const currentSelections = props.character.selectedClassSkills || []
+  const maxSkills = props.character.classDetails?.skillChoices || 2
+
+  let updatedSelections
+
+  if (currentSelections.includes(skillName)) {
+    // Remove skill
+    updatedSelections = currentSelections.filter(skill => skill !== skillName)
+  } else if (currentSelections.length < maxSkills) {
+    // Add skill
+    updatedSelections = [...currentSelections, skillName]
+  } else {
+    return // Don't proceed if max skills reached
+  }
+
+  // Emit the update - don't mutate props directly
+  emit('update:character', {
+    ...props.character,
+    selectedClassSkills: updatedSelections
+  })
+
+  // Update skill proficiencies directly
+  nextTick(() => {
+    updateSkillProficiencies(updatedSelections)
+  })
+}
+
+const updateSkillProficiencies = (selectedSkills) => {
+  if (!characterData?.skillList) return
+
+  const updatedCharacter = { ...props.character }
+
+  // Initialize skill proficiencies if not present
+  if (!updatedCharacter.skillProficiencies) {
+    updatedCharacter.skillProficiencies = {}
+  }
+
+  // Reset class skill proficiencies first, then apply selected ones
+  for (const skill of characterData.skillList) {
+    if (props.character.classDetails?.skills?.includes(skill.name)) {
+      // This is a class skill, check if it's selected
+      if (!updatedCharacter.skillProficiencies[skill.name]) {
+        updatedCharacter.skillProficiencies[skill.name] = {
+          proficient: false,
+          expertise: false,
+          bonus: 0
+        }
+      }
+      updatedCharacter.skillProficiencies[skill.name].proficient = selectedSkills.includes(skill.name)
+    }
+  }
+
+  // Emit the updated character with skill proficiencies
+  emit('update:character', updatedCharacter)
+}
+
 const getSkillModifier = (skillName) => {
   const skill = characterData?.skillList?.find(s => s.name === skillName)
   if (!skill) return 0
@@ -1469,6 +1909,160 @@ const getSkillModifier = (skillName) => {
   return abilityMod + proficiencyBonus
 }
 
+const getAllToolProficiencies = computed(() => {
+  const allTools = new Set()
+
+  // Add tool proficiencies from character.toolProficiencies array
+  if (props.character.toolProficiencies && Array.isArray(props.character.toolProficiencies)) {
+    props.character.toolProficiencies.forEach(tool => {
+      if (typeof tool === 'string') {
+        allTools.add(tool)
+      } else if (tool && tool.type) {
+        // Handle object format like { type: "Musical Instrument", choices: 3 }
+        allTools.add(tool.type)
+      }
+    })
+  }
+
+  // Add tool proficiencies from background
+  if (props.character.backgroundDetails) {
+    const bg = props.character.backgroundDetails
+    if (bg.toolProficiencies && Array.isArray(bg.toolProficiencies)) {
+      bg.toolProficiencies.forEach(tool => allTools.add(tool))
+    }
+    if (bg.toolProf && !bg.toolProf.includes('(choice)')) {
+      allTools.add(bg.toolProf)
+    }
+  }
+
+  // Add tool proficiencies from class
+  if (props.character.classDetails && props.character.classDetails.toolProficiencies) {
+    const classTools = props.character.classDetails.toolProficiencies
+    if (Array.isArray(classTools)) {
+      classTools.forEach(tool => {
+        if (typeof tool === 'string') {
+          allTools.add(tool)
+        } else if (tool && tool.type) {
+          allTools.add(tool.type)
+        }
+      })
+    }
+  }
+
+  return Array.from(allTools).filter(tool => tool && tool.trim().length > 0)
+})
+
+// Character choice computed properties
+const shouldShowLanguageSelection = computed(() => {
+  return getLanguageChoices().length > 0
+})
+
+const shouldShowToolSelection = computed(() => {
+  return getToolChoices().length > 0
+})
+
+const getKnownLanguages = computed(() => {
+  const knownLanguages = ['Common'] // Everyone knows Common
+
+  // Add species language
+  if (props.character.speciesDetails?.name === 'Dwarf') {
+    knownLanguages.push('Dwarvish')
+  } else if (props.character.speciesDetails?.name === 'Elf') {
+    knownLanguages.push('Elvish')
+  } else if (props.character.speciesDetails?.name === 'Halfling') {
+    knownLanguages.push('Halfling')
+  } else if (props.character.speciesDetails?.name === 'Gnome') {
+    knownLanguages.push('Gnomish')
+  } else if (props.character.speciesDetails?.name === 'Half-Orc') {
+    knownLanguages.push('Orc')
+  } else if (props.character.speciesDetails?.name === 'Dragonborn') {
+    knownLanguages.push('Draconic')
+  }
+
+  // Add additional languages already selected
+  if (props.character.additionalLanguages) {
+    knownLanguages.push(...props.character.additionalLanguages.filter(lang => lang))
+  }
+
+  return [...new Set(knownLanguages)] // Remove duplicates
+})
+
+const getAvailableLanguages = computed(() => {
+  const allLanguages = characterData?.standardLanguages || []
+  const known = getKnownLanguages.value
+  return allLanguages.filter(lang => !known.includes(lang))
+})
+
+const getLanguageChoices = () => {
+  const choices = []
+
+  // Check species for language choices
+  if (props.character.speciesDetails?.bonusLanguage === 'choice') {
+    choices.push({ source: 'species', count: 1 })
+  }
+
+  // Check background for language choices
+  if (props.character.backgroundDetails?.languageOptions) {
+    const langOpts = props.character.backgroundDetails.languageOptions
+    if (langOpts.choose && langOpts.choose > 0) {
+      choices.push({ source: 'background', count: langOpts.choose })
+    }
+  }
+
+  return choices.reduce((total, choice) => total + choice.count, 0) > 0 ?
+    Array.from({ length: choices.reduce((total, choice) => total + choice.count, 0) }, (_, i) => i) : []
+}
+
+const getToolChoices = () => {
+  const choices = []
+
+  // Check background for tool choices
+  if (props.character.backgroundDetails) {
+    const bg = props.character.backgroundDetails
+    if (bg.toolProf && bg.toolProf.includes('(choice)')) {
+      if (bg.toolProf.includes('Artisan')) {
+        choices.push({
+          label: 'Artisan\'s Tools',
+          options: ['Smith\'s Tools', 'Brewer\'s Supplies', 'Mason\'s Tools', 'Carpenter\'s Tools', 'Leatherworker\'s Tools', 'Weaver\'s Tools'],
+          hint: 'Choose one type of artisan\'s tools'
+        })
+      } else if (bg.toolProf.includes('Gaming')) {
+        choices.push({
+          label: 'Gaming Set',
+          options: ['Dice Set', 'Playing Card Set', 'Chess Set', 'Three-Dragon Ante Set'],
+          hint: 'Choose one type of gaming set'
+        })
+      } else if (bg.toolProf.includes('Musical')) {
+        choices.push({
+          label: 'Musical Instrument',
+          options: ['Bagpipes', 'Drum', 'Dulcimer', 'Flute', 'Lute', 'Lyre', 'Horn', 'Pan Flute', 'Shawm', 'Viol'],
+          hint: 'Choose one musical instrument'
+        })
+      }
+    }
+  }
+
+  // Check class for tool choices
+  if (props.character.classDetails?.toolProficiencies) {
+    const classTools = props.character.classDetails.toolProficiencies
+    if (Array.isArray(classTools)) {
+      classTools.forEach(tool => {
+        if (typeof tool === 'object' && tool.type && tool.choices) {
+          if (tool.type === 'Musical Instrument') {
+            choices.push({
+              label: 'Musical Instrument (Class)',
+              options: ['Bagpipes', 'Drum', 'Dulcimer', 'Flute', 'Lute', 'Lyre', 'Horn', 'Pan Flute', 'Shawm', 'Viol'],
+              hint: `Choose ${tool.choices} musical instrument(s)`
+            })
+          }
+        }
+      })
+    }
+  }
+
+  return choices
+}
+
 const hasAnyArmorTraining = computed(() => {
   const training = props.character.armorTraining
   return training?.light || training?.medium || training?.heavy || training?.shields
@@ -1476,6 +2070,185 @@ const hasAnyArmorTraining = computed(() => {
 
 const formatCoins = (totalGP) => {
   return Math.round(totalGP * 100) / 100
+}
+
+const getTraitDescription = (traitName) => {
+  // Fallback descriptions for common D&D racial traits
+  const traitDescriptions = {
+    // Common traits
+    'Darkvision': 'You can see in dim light within 60 feet of you as if it were bright light, and in darkness as if it were dim light. You discern colors in darkness only as shades of gray.',
+    'Keen Senses': 'You have proficiency with the Perception skill.',
+    'Extra Language': 'You can speak, read, and write one extra language of your choice.',
+    'Skill Versatility': 'You gain proficiency in two skills of your choice.',
+
+    // Dragonborn traits
+    'Draconic Ancestry': 'You have draconic ancestry. Choose one type of dragon from the Draconic Ancestry table. Your breath weapon and damage resistance are determined by the dragon type.',
+    'Breath Weapon': 'You can use your action to exhale destructive energy. Your draconic ancestry determines the size, shape, and damage type of the exhalation.',
+    'Damage Resistance': 'You have resistance to the damage type associated with your draconic ancestry.',
+
+    // Dwarf traits
+    'Dwarven Resilience': 'You have advantage on saving throws against poison, and you have resistance against poison damage.',
+    'Dwarven Combat Training': 'You have proficiency with the battleaxe, handaxe, light hammer, and warhammer.',
+    'Tool Proficiency': 'You gain proficiency with the artisan\'s tools of your choice: smith\'s tools, brewer\'s supplies, or mason\'s tools.',
+    'Stonecunning': 'Whenever you make an Intelligence (History) check related to the origin of stonework, you are considered proficient in the History skill and add double your proficiency bonus to the check.',
+    'Dwarven Toughness': 'Your hit point maximum increases by 1, and it increases by 1 every time you gain a level.',
+    'Dwarven Armor Training': 'You have proficiency with light and medium armor.',
+
+    // Elf traits
+    'Fey Ancestry': 'You have advantage on saving throws against being charmed, and magic cannot put you to sleep.',
+    'Trance': 'Elves don\'t need to sleep. Instead, they meditate deeply, remaining semiconscious, for 4 hours a day.',
+    'Elf Weapon Training': 'You have proficiency with longswords, shortbows, longbows, and one other weapon of your choice.',
+    'Cantrip': 'You know one cantrip of your choice from the wizard spell list. Intelligence is your spellcasting ability for it.',
+    'Extra Language (High Elf)': 'You can speak, read, and write one extra language of your choice.',
+    'Mask of the Wild': 'You can attempt to hide even when you are only lightly obscured by foliage, heavy rain, falling snow, mist, and other natural phenomena.',
+    'Fleet of Foot': 'Your base walking speed increases to 35 feet.',
+
+    // Drow traits
+    'Superior Darkvision': 'Your darkvision has a radius of 120 feet.',
+    'Sunlight Sensitivity': 'You have disadvantage on attack rolls and on Wisdom (Perception) checks that rely on sight when you, the target of your attack, or whatever you are trying to perceive is in direct sunlight.',
+    'Drow Magic': 'You know the dancing lights cantrip. When you reach 3rd level, you can cast the faerie fire spell once per day. When you reach 5th level, you can also cast the darkness spell once per day.',
+    'Drow Weapon Training': 'You have proficiency with rapiers, shortswords, and hand crossbows.',
+
+    // Halfling traits
+    'Lucky': 'When you roll a 1 on the d20 for an attack roll, ability check, or saving throw, you can reroll the die and must use the new roll.',
+    'Brave': 'You have advantage on saving throws against being frightened.',
+    'Halfling Nimbleness': 'You can move through the space of any creature that is of a size larger than yours.',
+    'Naturally Stealthy': 'You can attempt to hide even when you are obscured only by a creature that is at least one size larger than you.',
+
+    // Gnome traits
+    'Gnome Cunning': 'You have advantage on all Intelligence, Wisdom, and Charisma saving throws against magic.',
+    'Natural Illusionist': 'You know the minor illusion cantrip. Charisma is your spellcasting ability for it.',
+    'Speak with Small Beasts': 'Through sounds and gestures, you can communicate simple ideas with Small or smaller beasts.',
+    'Tinker': 'You have proficiency with artisan\'s tools (tinker\'s tools). Using those tools, you can spend 1 hour and 10 gp worth of materials to construct a Tiny clockwork device.',
+
+    // Half-Orc traits
+    'Menacing': 'You gain proficiency in the Intimidation skill.',
+    'Relentless Endurance': 'When you are reduced to 0 hit points but not killed outright, you can drop to 1 hit point instead. You can\'t use this feature again until you finish a long rest.',
+    'Savage Attacks': 'When you score a critical hit with a melee weapon attack, you can roll one of the weapon\'s damage dice one additional time and add it to the extra damage of the critical hit.',
+
+    // Tiefling traits
+    'Hellish Resistance': 'You have resistance to fire damage.',
+    'Infernal Legacy': 'You know the thaumaturgy cantrip. When you reach 3rd level, you can cast the hellish rebuke spell as a 2nd-level spell once with this trait and regain the ability to do so when you finish a long rest.',
+    'Fire Resistance': 'You have resistance to fire damage.',
+
+    // Human traits
+    'Versatile': 'You gain proficiency in one skill of your choice.',
+    'Heroic': 'You can add your proficiency bonus to one ability check, attack roll, or saving throw. Once you use this trait, you can\'t use it again until you finish a long rest.',
+
+    // Water-based races
+    'Amphibious': 'You can breathe air and water.',
+    'Swimming Speed': 'You have a swimming speed of 30 feet.',
+    'Call to the Wave': 'You know the shape water cantrip.',
+
+    // General skill proficiencies
+    'Perception': 'You have proficiency in the Perception skill.',
+    'Stealth': 'You have proficiency in the Stealth skill.',
+    'Athletics': 'You have proficiency in the Athletics skill.',
+    'Survival': 'You have proficiency in the Survival skill.',
+    'Intimidation': 'You have proficiency in the Intimidation skill.',
+    'Persuasion': 'You have proficiency in the Persuasion skill.',
+    'Insight': 'You have proficiency in the Insight skill.',
+    'Medicine': 'You have proficiency in the Medicine skill.',
+    'Nature': 'You have proficiency in the Nature skill.',
+    'Animal Handling': 'You have proficiency in the Animal Handling skill.',
+
+    // Tool proficiencies (common ones)
+    'Artisan\'s Tools': 'You gain proficiency with one set of artisan\'s tools of your choice.',
+    'Smith\'s Tools': 'You have proficiency with smith\'s tools.',
+    'Brewer\'s Supplies': 'You have proficiency with brewer\'s supplies.',
+    'Mason\'s Tools': 'You have proficiency with mason\'s tools.',
+    'Tinker\'s Tools': 'You have proficiency with tinker\'s tools.',
+    'Thieves\' Tools': 'You have proficiency with thieves\' tools.',
+    'Musical Instrument': 'You have proficiency with one musical instrument of your choice.',
+
+    // Weapon proficiencies
+    'Martial Weapons': 'You have proficiency with all martial weapons.',
+    'Simple Weapons': 'You have proficiency with all simple weapons.',
+    'Longsword': 'You have proficiency with longswords.',
+    'Shortbow': 'You have proficiency with shortbows.',
+    'Longbow': 'You have proficiency with longbows.',
+    'Battleaxe': 'You have proficiency with battleaxes.',
+    'Handaxe': 'You have proficiency with handaxes.',
+    'Light Hammer': 'You have proficiency with light hammers.',
+    'Warhammer': 'You have proficiency with warhammers.',
+    'Rapier': 'You have proficiency with rapiers.',
+    'Shortsword': 'You have proficiency with shortswords.',
+    'Hand Crossbow': 'You have proficiency with hand crossbows.'
+  }
+
+  return traitDescriptions[traitName] || null
+}
+
+const getSubraceDescription = (subraceId, speciesName) => {
+  const subraceDescriptions = {
+    // Dwarf subraces
+    'hill_dwarf': 'Hill dwarves are especially hardy and wise. They gain +1 Wisdom, +1 hit point per level, and proficiency with Wisdom (Medicine) checks.',
+    'mountain_dwarf': 'Mountain dwarves are strong and resilient. They gain +2 Strength and proficiency with light and medium armor.',
+    'duergar': 'Gray dwarves from the Underdark have psychic resistance and innate spellcasting abilities. They gain +1 Constitution and superior darkvision.',
+
+    // Elf subraces  
+    'high_elf': 'High elves are intelligent and magical. They gain +1 Intelligence, a wizard cantrip, and proficiency with longswords, shortbows, and longbows.',
+    'wood_elf': 'Wood elves are swift and stealthy. They gain +1 Wisdom, proficiency with longswords and shortbows, and increased speed.',
+    'drow': 'Dark elves from the Underdark have superior darkvision and innate spellcasting. They gain +1 Charisma but have sunlight sensitivity.',
+
+    // Human variants
+    'variant_human': 'Variant humans are highly adaptable. They gain +1 to two different ability scores, a bonus skill, and a bonus feat at 1st level.'
+  }
+
+  return subraceDescriptions[subraceId] || `A lineage of ${speciesName} with unique traits and abilities.`
+}
+
+const hasBackgroundChoices = (backgroundDetails) => {
+  if (!backgroundDetails) return false
+
+  // Check for language choices
+  const hasLanguageChoices = backgroundDetails.languageOptions && backgroundDetails.languageOptions.choose > 0
+
+  // Check for tool choices using the improved hasToolChoices function
+  const hasToolOptions = hasToolChoices(backgroundDetails)
+
+  return hasLanguageChoices || hasToolOptions
+}
+
+const hasToolChoices = (backgroundDetails) => {
+  if (!backgroundDetails) return false
+
+  const toolProfs = backgroundDetails.toolProficiencies || backgroundDetails.toolProf
+  if (Array.isArray(toolProfs)) {
+    return toolProfs.some(tool => tool && (tool.includes('choice') || tool.includes('(choice)')))
+  }
+  return toolProfs && (toolProfs.includes('choice') || toolProfs.includes('(choice)'))
+}
+
+const getToolChoiceDescription = (backgroundDetails) => {
+  if (!backgroundDetails) return ''
+
+  const toolProfs = backgroundDetails.toolProficiencies || backgroundDetails.toolProf
+  if (Array.isArray(toolProfs)) {
+    const choiceTools = toolProfs.filter(tool => tool && (tool.includes('choice') || tool.includes('(choice)')))
+    if (choiceTools.length > 0) {
+      // Parse the tool choice descriptions
+      return choiceTools.map(tool => {
+        if (tool.includes('Gaming')) return 'Choose from gaming sets'
+        if (tool.includes('Artisan')) return 'Choose from artisan\'s tools'
+        if (tool.includes('Musical')) return 'Choose from musical instruments'
+        return tool
+      }).join(', ')
+    }
+  }
+
+  if (toolProfs && (toolProfs.includes('choice') || toolProfs.includes('(choice)'))) {
+    if (toolProfs.includes('Gaming')) {
+      return 'Choose from gaming sets'
+    } else if (toolProfs.includes('Artisan')) {
+      return 'Choose from artisan\'s tools'
+    } else if (toolProfs.includes('Musical')) {
+      return 'Choose from musical instruments'
+    }
+    return toolProfs
+  }
+
+  return ''
 }
 
 const getEncumbranceColor = (currentWeight, maxWeight) => {
@@ -1525,6 +2298,33 @@ const getValidationWarnings = () => {
 const totalGP = computed(() => characterData?.totalGP?.value || 0)
 const carryingCapacity = computed(() => characterData?.carryingCapacity?.value || 150)
 const totalWeight = computed(() => characterData?.totalWeight?.value || 0)
+
+// Check if any ability scores have been assigned
+const hasAssignedScores = computed(() => {
+  return Object.values(props.character.abilityScores).some(stat => stat.score > 0)
+})
+
+// Methods for handling selections
+const handleSubraceSelection = (selectedSubrace) => {
+  emit('update:character', {
+    ...props.character,
+    speciesLineage: selectedSubrace
+  })
+}
+
+const handleLanguageSelection = (selectedLanguages) => {
+  emit('update:character', {
+    ...props.character,
+    additionalLanguages: selectedLanguages
+  })
+}
+
+const handleToolSelection = (selectedTools) => {
+  emit('update:character', {
+    ...props.character,
+    selectedTools: selectedTools
+  })
+}
 </script>
 
 <style scoped>
@@ -1553,6 +2353,25 @@ const totalWeight = computed(() => characterData?.totalWeight?.value || 0)
 
 .skill-card:hover {
   transform: translateY(-1px);
+}
+
+.skill-selection-card {
+  transition: all 0.2s;
+  border: 2px solid transparent;
+}
+
+.skill-selection-card.selectable:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.skill-selection-card.selected {
+  border-color: #1976d2;
+  background-color: rgba(25, 118, 210, 0.1);
+}
+
+.skill-selection-card:not(.selectable) {
+  opacity: 0.6;
 }
 
 .equipment-card {
@@ -1967,6 +2786,50 @@ const totalWeight = computed(() => characterData?.totalWeight?.value || 0)
   width: 100% !important;
 }
 
+/* Mobile responsiveness for compact cards */
+@media (max-width: 600px) {
+  .compact-card {
+    max-width: 100% !important;
+    min-height: 120px !important;
+  }
+
+  .compact-card .v-card-title {
+    font-size: 0.9rem !important;
+    padding: 8px 12px !important;
+  }
+
+  .compact-card .v-card-text {
+    padding: 8px 12px !important;
+  }
+
+  .compact-card .v-btn {
+    font-size: 0.7rem !important;
+    padding: 4px 8px !important;
+    min-width: auto !important;
+  }
+
+  .compact-card .text-caption {
+    font-size: 0.65rem !important;
+    line-height: 1.2 !important;
+  }
+}
+
+/* Tablet responsiveness for compact cards */
+@media (min-width: 601px) and (max-width: 960px) {
+  .compact-card {
+    min-height: 140px !important;
+  }
+
+  .compact-card .v-card-title {
+    font-size: 1rem !important;
+    padding: 10px 14px !important;
+  }
+
+  .compact-card .v-card-text {
+    padding: 10px 14px !important;
+  }
+}
+
 .compact-card .v-card-title {
   font-size: 1.1rem !important;
   line-height: 1.4 !important;
@@ -2005,5 +2868,27 @@ const totalWeight = computed(() => characterData?.totalWeight?.value || 0)
   text-transform: uppercase !important;
   font-size: 0.7rem !important;
   letter-spacing: 0.8px !important;
+}
+
+/* Subrace tabs styling */
+.v-tabs.subrace-tabs .v-tab {
+  min-height: 32px !important;
+  padding: 0 12px !important;
+  font-size: 0.75rem !important;
+  text-transform: none !important;
+}
+
+.v-tabs-window-item .v-card {
+  border: 1px solid rgba(var(--v-theme-primary), 0.2) !important;
+  background-color: rgba(var(--v-theme-primary), 0.02) !important;
+}
+
+/* Species card without subraces - reduced bottom padding */
+.species-preview-card.no-subraces .v-card-text {
+  padding-bottom: 12px !important;
+}
+
+.species-preview-card.no-subraces {
+  height: fit-content !important;
 }
 </style>

@@ -4,7 +4,8 @@
     <h2 class="text-center mb-6">Create your Character - Choose wisely...</h2>
 
     <CharacterCreatorStepper :character="character" :current-step="currentStep"
-      @update:current-step="currentStep = $event" @submit-character="handleSubmitCharacter" />
+      @update:current-step="currentStep = $event" @update:character="updateCharacter"
+      @submit-character="handleSubmitCharacter" />
   </v-container>
 </template>
 
@@ -117,6 +118,13 @@ provide('characterData', {
   skillList,
   abilityNames,
 })
+
+// Handle character updates
+const updateCharacter = (updatedCharacter) => {
+  console.log('Updating character:', updatedCharacter)
+  // Merge the updated character properties
+  Object.assign(character, updatedCharacter)
+}
 
 // Handle character submission
 const handleSubmitCharacter = async () => {
