@@ -35,7 +35,7 @@
             You haven't created any characters yet. Start your legendary journey today!
           </p>
           <v-btn color="#822522" size="large" variant="elevated" to="/character-form" prepend-icon="mdi-plus-circle"
-            class="text-white">
+            class="create-character-btn">
             Create Your First Character
           </v-btn>
         </v-card>
@@ -85,7 +85,7 @@
               </div>
             </v-col>
             <v-col cols="12" md="4" class="text-md-end">
-              <v-btn color="#822522" variant="elevated" to="/character-form" prepend-icon="mdi-plus" class="text-white">
+              <v-btn color="#822522" variant="elevated" to="/character-form" prepend-icon="mdi-plus" class="text-white create-character-btn">
                 Create New Character
               </v-btn>
             </v-col>
@@ -760,6 +760,7 @@ onMounted(() => {
 /* Admin login button styles */
 .v-btn[data-admin-login] {
   background: linear-gradient(135deg, #FFA726 0%, #FF9800 100%) !important;
+  color: #000000 !important;
   box-shadow: 0 2px 8px rgba(255, 152, 0, 0.3);
   transition: all 0.3s ease;
   animation: gentle-pulse 3s ease-in-out infinite;
@@ -767,6 +768,7 @@ onMounted(() => {
 
 .v-btn[data-admin-login]:hover {
   background: linear-gradient(135deg, #FFB74D 0%, #FFA726 100%) !important;
+  color: #000000 !important;
   box-shadow: 0 4px 12px rgba(255, 152, 0, 0.4);
   transform: translateY(-1px);
   animation: none;
@@ -779,6 +781,15 @@ onMounted(() => {
   50% {
     box-shadow: 0 4px 16px rgba(255, 152, 0, 0.5);
   }
+}
+
+/* Create Character button styles */
+.create-character-btn {
+  color: #000000 !important;
+}
+
+.create-character-btn:hover {
+  color: #000000 !important;
 }
 
 /* Admin protection styles */
