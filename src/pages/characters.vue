@@ -65,9 +65,23 @@
                   <v-icon size="small">mdi-logout</v-icon>
                 </v-btn>
               </div>
-              <div v-else class="text-caption text-grey">
-                <v-icon size="small" class="me-1">mdi-shield-off-outline</v-icon>
-                Edit/Delete requires admin access
+              <!-- Admin Login Button -->
+              <div v-else class="d-flex flex-column align-center">
+                <v-btn 
+                  color="warning" 
+                  variant="elevated" 
+                  @click="showAdminLogin" 
+                  prepend-icon="mdi-shield-key"
+                  size="small"
+                  class="mb-1"
+                  data-admin-login
+                >
+                  Admin Login
+                </v-btn>
+                <div class="text-caption text-grey">
+                  <v-icon size="small" class="me-1">mdi-shield-off-outline</v-icon>
+                  For editing/deleting characters
+                </div>
               </div>
             </v-col>
             <v-col cols="12" md="4" class="text-md-end">
@@ -85,11 +99,15 @@
             Protected Character Management
           </v-alert-title>
           <div class="mt-2">
-            Editing and deleting characters requires admin authentication to prevent accidental changes. 
+            Editing and deleting characters requires admin authentication to prevent accidental changes.
             Only the Dungeon Master and authorized users have access to these functions.
             <div class="mt-2 text-caption">
+              <v-icon size="small" class="me-1">mdi-key</v-icon>
+              <strong>DMs:</strong> Use the "Admin Login" button above or click any Edit/Delete button to authenticate.
+            </div>
+            <div class="mt-1 text-caption">
               <v-icon size="small" class="me-1">mdi-information-outline</v-icon>
-              If you need to edit or delete a character, please contact your DM for the admin password.
+              <strong>Players:</strong> Contact your DM if you need a character edited or deleted.
             </div>
           </div>
         </v-alert>
@@ -344,15 +362,9 @@
               <v-card-actions class="pa-4 pt-0">
                 <v-row dense>
                   <v-col cols="8">
-                    <v-btn 
-                      variant="elevated" 
-                      :color="isAuthenticated ? 'primary' : 'grey'" 
-                      block 
-                      @click="editCharacter(character)"
-                      size="large"
-                      class="admin-action-btn"
-                      :class="{ 'admin-protected': !isAuthenticated }"
-                    >
+                    <v-btn variant="elevated" :color="isAuthenticated ? 'primary' : 'grey'" block
+                      @click="editCharacter(character)" size="large" class="admin-action-btn"
+                      :class="{ 'admin-protected': !isAuthenticated }">
                       <template #prepend>
                         <v-icon>{{ isAuthenticated ? 'mdi-pencil' : 'mdi-shield-key' }}</v-icon>
                       </template>
@@ -360,16 +372,10 @@
                     </v-btn>
                   </v-col>
                   <v-col cols="4">
-                    <v-btn 
-                      variant="outlined" 
-                      :color="isAuthenticated ? 'error' : 'grey'" 
-                      block 
-                      @click="confirmDelete(character)" 
-                      size="large"
-                      class="admin-action-btn"
+                    <v-btn variant="outlined" :color="isAuthenticated ? 'error' : 'grey'" block
+                      @click="confirmDelete(character)" size="large" class="admin-action-btn"
                       :class="{ 'admin-protected': !isAuthenticated }"
-                      :title="isAuthenticated ? 'Delete Character' : 'Delete (Admin Only)'"
-                    >
+                      :title="isAuthenticated ? 'Delete Character' : 'Delete (Admin Only)'">
                       <v-icon>{{ isAuthenticated ? 'mdi-delete' : 'mdi-shield-key' }}</v-icon>
                     </v-btn>
                   </v-col>
@@ -420,7 +426,7 @@ import AdminAuthDialog from '@/components/AdminAuthDialog.vue'
 
 const router = useRouter()
 const { getCharacters, deleteCharacter: deleteFromFirestore } = useFirestore()
-const { requireAuth, isAuthenticated, extendSession, logout } = useAdminAuth()
+const { requireAuth, isAuthenticated, extendSession, logout, showAuthDialog } = useAdminAuth()
 
 // Reactive data
 const characters = ref([])
@@ -724,7 +730,7 @@ const deleteCharacter = async () => {
       // Remove from local array
       characters.value = characters.value.filter(c => c.id !== selectedCharacter.value.id)
       alert('Character deleted successfully')
-      
+
       // Extend admin session on successful action
       extendSession()
     } else {
@@ -739,6 +745,11 @@ const deleteCharacter = async () => {
   }
 }
 
+// Show admin login dialog
+const showAdminLogin = () => {
+  showAuthDialog.value = true
+}
+
 // Load characters on component mount
 onMounted(() => {
   loadCharacters()
@@ -746,6 +757,30 @@ onMounted(() => {
 </script>
 
 <style scoped>
+/* Admin login button styles */
+.v-btn[data-admin-login] {
+  background: linear-gradient(135deg, #FFA726 0%, #FF9800 100%) !important;
+  box-shadow: 0 2px 8px rgba(255, 152, 0, 0.3);
+  transition: all 0.3s ease;
+  animation: gentle-pulse 3s ease-in-out infinite;
+}
+
+.v-btn[data-admin-login]:hover {
+  background: linear-gradient(135deg, #FFB74D 0%, #FFA726 100%) !important;
+  box-shadow: 0 4px 12px rgba(255, 152, 0, 0.4);
+  transform: translateY(-1px);
+  animation: none;
+}
+
+@keyframes gentle-pulse {
+  0%, 100% {
+    box-shadow: 0 2px 8px rgba(255, 152, 0, 0.3);
+  }
+  50% {
+    box-shadow: 0 4px 16px rgba(255, 152, 0, 0.5);
+  }
+}
+
 /* Admin protection styles */
 .admin-action-btn.admin-protected {
   opacity: 0.7;
