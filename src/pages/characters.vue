@@ -137,11 +137,11 @@
 
         <!-- Character Cards -->
         <v-row>
-          <v-col v-for="character in characters" :key="character.id" cols="12" md="6" lg="4">
+          <v-col v-for="character in characters" :key="character.id" cols="12" sm="12" md="6" lg="6" xl="6">
             <v-card class="character-card h-100" elevation="4" hover>
               <!-- Character Header with Background -->
               <div class="character-header" :style="getCharacterHeaderStyle(character)">
-                <div class="character-overlay pa-4">
+                <div class="character-overlay pa-3">
                   <div class="d-flex align-center mb-2">
                     <v-avatar size="48" color="white" class="me-3 elevation-2">
                       <v-icon size="32" :color="getClassColor(character.classDetails?.name)">
@@ -170,7 +170,7 @@
               </div>
 
               <!-- Character Details -->
-              <v-card-text class="pa-4">
+              <v-card-text class="pa-3">
                 <!-- Basic Info Row -->
                 <div class="character-info mb-3">
                   <v-row dense>
