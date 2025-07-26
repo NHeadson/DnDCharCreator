@@ -1212,345 +1212,278 @@
             </v-card-text>
           </v-card>
 
-          <!-- Starting Equipment Section -->
-          <v-card variant="outlined" class="mb-6 starting-equipment-card">
-            <v-card-title class="text-h6 d-flex align-center justify-space-between pa-3">
-              <div class="d-flex align-center">
-                <v-icon class="me-2" color="green" size="large">mdi-auto-fix</v-icon>
-                <div>
-                  <div class="text-h6">Starting Equipment</div>
-                  <div class="text-caption text-grey">Your character begins with class and background equipment</div>
-                </div>
-              </div>
-              <v-btn v-if="!hasStartingEquipment" variant="elevated" color="green" @click="generateStartingEquipment"
-                class="equipment-action-btn">
-                <v-icon start>mdi-wand-magic</v-icon>
-                Generate Starting Gear
-              </v-btn>
+          <!-- Equipment Overview Section -->
+          <v-card class="mb-6 equipment-management-card">
+            <v-card-title class="text-h6 d-flex align-center pa-3">
+              <v-icon class="me-2" color="teal" size="large">mdi-sword-cross</v-icon>
+              Equipment Overview
             </v-card-title>
             <v-divider />
             <v-card-text class="pa-3">
-              <div v-if="hasStartingEquipment">
-                <v-alert type="success" variant="tonal" class="mb-3" density="compact">
-                  <v-alert-title class="d-flex align-center">
-                    <v-icon class="me-2">mdi-check-circle</v-icon>
-                    Starting Equipment Ready!
-                  </v-alert-title>
-                  Your {{ character.classDetails?.name }} has been equipped with standard class gear, plus equipment
-                  from your {{ character.backgroundDetails?.name }} background.
-                </v-alert>
-                <div class="d-flex gap-2 flex-wrap">
-                  <v-btn variant="outlined" color="warning" @click="clearStartingEquipment" prepend-icon="mdi-refresh"
-                    size="small">
-                    Reset Equipment
-                  </v-btn>
-                  <v-btn variant="outlined" color="info" disabled size="small">
-                    <v-icon start>mdi-information</v-icon>
-                    Equipment is Fixed at Character Creation
-                  </v-btn>
-                </div>
-              </div>
-              <div v-else class="text-center py-4">
-                <v-icon size="48" class="mb-3 text-grey-lighten-1">mdi-package-variant-closed</v-icon>
-                <div class="text-h6 mb-2">No Starting Equipment Generated</div>
-                <div class="text-body-2 text-grey mb-3">
-                  In D&D, your {{ character.classDetails?.name || 'class' }} starts with specific weapons, armor, and
-                  gear based on their training and {{ character.backgroundDetails?.name || 'background' }} experience.
-                </div>
-                <v-alert type="info" variant="tonal" density="compact">
-                  <v-alert-title>How Starting Equipment Works</v-alert-title>
-                  <ul class="text-left mt-2 text-caption">
-                    <li>Each class gets specific weapons, armor, and tools they're trained with</li>
-                    <li>Your background provides additional gear and equipment packs</li>
-                    <li>Starting gold is determined by your background and class</li>
-                    <li>You cannot freely add equipment during character creation</li>
-                  </ul>
-                </v-alert>
-              </div>
+
+              <!-- Weapons & Armor Row -->
+              <v-row class="mb-4">
+                <!-- Weapons -->
+                <v-col cols="12" lg="6">
+                  <v-card class="equipment-category-card weapons-card">
+                    <v-card-title class="equipment-category-header-compact">
+                      <div class="d-flex align-center justify-space-between w-100">
+                        <div class="d-flex align-center">
+                          <v-icon class="me-2" color="red" size="default">mdi-sword</v-icon>
+                          <div>
+                            <div class="text-subtitle-1 font-weight-bold">Starting Weapons</div>
+                            <div class="text-caption">{{ getEquipmentByCategory('weapon').length }} from class &
+                              background</div>
+                          </div>
+                        </div>
+                        <v-chip v-if="getEquipmentByCategory('weapon').length > 0" size="small" color="green"
+                          variant="elevated">
+                          <v-icon start size="x-small">mdi-check</v-icon>
+                          Equipped
+                        </v-chip>
+                      </div>
+                    </v-card-title>
+                    <v-divider />
+                    <v-card-text class="pa-0">
+                      <div v-if="getEquipmentByCategory('weapon').length > 0" class="equipment-list">
+                        <v-list density="compact" class="bg-transparent">
+                          <v-list-item v-for="(weapon, index) in getEquipmentByCategory('weapon')"
+                            :key="`weapon-${index}`" class="equipment-item-enhanced mb-3">
+                            <template #prepend>
+                              <v-checkbox v-model="weapon.equipped" density="compact" hide-details
+                                @change="updateEquipmentStats" color="red" class="me-3" />
+                            </template>
+
+                            <div class="equipment-item-content">
+                              <div class="equipment-item-title">
+                                <span class="text-body-1 font-weight-bold text-white">{{ weapon.name }}</span>
+                                <v-chip v-if="weapon.equipped" size="x-small" color="green" variant="elevated"
+                                  class="ms-2">
+                                  <v-icon start size="x-small">mdi-check</v-icon>
+                                  Equipped
+                                </v-chip>
+                              </div>
+
+                              <div class="equipment-item-details mt-2">
+                                <div class="d-flex flex-wrap gap-2">
+                                  <v-chip size="small" color="red" variant="outlined" v-if="weapon.damage"
+                                    class="equipment-detail-chip">
+                                    <v-icon start size="x-small">mdi-sword</v-icon>
+                                    {{ weapon.damage }} {{ weapon.damageType }}
+                                  </v-chip>
+                                  <v-chip size="small" color="blue" variant="outlined"
+                                    v-if="weapon.properties && weapon.properties.length" class="equipment-detail-chip">
+                                    <v-icon start size="x-small">mdi-information</v-icon>
+                                    {{ weapon.properties.join(', ') }}
+                                  </v-chip>
+                                  <v-chip size="small" color="green" variant="outlined" v-if="weapon.attackBonus"
+                                    class="equipment-detail-chip">
+                                    <v-icon start size="x-small">mdi-target</v-icon>
+                                    +{{ weapon.attackBonus }} to hit
+                                  </v-chip>
+                                </div>
+                              </div>
+                            </div>
+                          </v-list-item>
+                        </v-list>
+                      </div>
+                      <div v-else class="equipment-empty-state-compact">
+                        <v-icon size="32" class="mb-2 text-grey-lighten-2">mdi-sword-cross</v-icon>
+                        <div class="text-caption text-grey">No starting weapons</div>
+                        <div class="text-caption text-grey">Generate starting equipment to get class weapons</div>
+                      </div>
+                    </v-card-text>
+                  </v-card>
+                </v-col>
+
+                <!-- Armor -->
+                <v-col cols="12" lg="6">
+                  <v-card class="equipment-category-card armor-card">
+                    <v-card-title class="equipment-category-header-compact">
+                      <div class="d-flex align-center justify-space-between w-100">
+                        <div class="d-flex align-center">
+                          <v-icon class="me-2" color="blue" size="default">mdi-shield</v-icon>
+                          <div>
+                            <div class="text-subtitle-1 font-weight-bold">Starting Armor</div>
+                            <div class="text-caption">{{ getEquipmentByCategory('armor').length }} from class &
+                              background
+                            </div>
+                          </div>
+                        </div>
+                        <v-chip v-if="getEquipmentByCategory('armor').length > 0" size="small" color="green"
+                          variant="elevated">
+                          <v-icon start size="x-small">mdi-check</v-icon>
+                          Equipped
+                        </v-chip>
+                      </div>
+                    </v-card-title>
+                    <v-divider />
+                    <v-card-text class="pa-0">
+                      <div v-if="getEquipmentByCategory('armor').length > 0" class="equipment-list">
+                        <v-list density="compact" class="bg-transparent">
+                          <v-list-item v-for="(armor, index) in getEquipmentByCategory('armor')" :key="`armor-${index}`"
+                            class="equipment-item-enhanced mb-3">
+                            <template #prepend>
+                              <v-checkbox v-model="armor.equipped" density="compact" hide-details
+                                @change="updateEquipmentStats" color="blue" class="me-3" />
+                            </template>
+
+                            <div class="equipment-item-content">
+                              <div class="equipment-item-title">
+                                <span class="text-body-1 font-weight-bold text-white">{{ armor.name }}</span>
+                                <v-chip v-if="armor.equipped" size="x-small" color="green" variant="elevated"
+                                  class="ms-2">
+                                  <v-icon start size="x-small">mdi-check</v-icon>
+                                  Equipped
+                                </v-chip>
+                              </div>
+
+                              <div class="equipment-item-details mt-2">
+                                <div class="d-flex flex-wrap gap-2">
+                                  <v-chip size="small" color="blue" variant="outlined" v-if="armor.armorClass"
+                                    class="equipment-detail-chip">
+                                    <v-icon start size="x-small">mdi-shield</v-icon>
+                                    AC {{ armor.armorClass }}{{ armor.dexBonus ? ' + Dex' : '' }}
+                                  </v-chip>
+                                  <v-chip size="small" color="orange" variant="outlined" v-if="armor.armorType"
+                                    class="equipment-detail-chip">
+                                    <v-icon start size="x-small">mdi-armor</v-icon>
+                                    {{ armor.armorType }}
+                                  </v-chip>
+                                  <v-chip size="small" color="grey" variant="outlined" v-if="armor.weight"
+                                    class="equipment-detail-chip">
+                                    <v-icon start size="x-small">mdi-weight</v-icon>
+                                    {{ armor.weight }} lbs
+                                  </v-chip>
+                                </div>
+                              </div>
+                            </div>
+                          </v-list-item>
+                        </v-list>
+                      </div>
+                      <div v-else class="equipment-empty-state-compact">
+                        <v-icon size="32" class="mb-2 text-grey-lighten-2">mdi-shield-off</v-icon>
+                        <div class="text-caption text-grey">No starting armor</div>
+                        <div class="text-caption text-grey">Generate starting equipment to get class armor</div>
+                      </div>
+                    </v-card-text>
+                  </v-card>
+                </v-col>
+              </v-row>
+
+              <!-- Other Equipment Categories -->
+              <v-row class="mb-4">
+                <!-- Tools -->
+                <v-col cols="12" md="4">
+                  <v-card class="equipment-category-card tools-card h-100">
+                    <v-card-title class="equipment-category-header-compact">
+                      <div class="d-flex align-center justify-space-between w-100">
+                        <div class="d-flex align-center">
+                          <v-icon class="me-2" color="orange">mdi-tools</v-icon>
+                          <div>
+                            <div class="text-subtitle-1 font-weight-bold">Starting Tools</div>
+                            <div class="text-caption">{{ getEquipmentByCategory('tool').length }} from background</div>
+                          </div>
+                        </div>
+                      </div>
+                    </v-card-title>
+                    <v-divider />
+                    <v-card-text class="pa-3">
+                      <div v-if="getEquipmentByCategory('tool').length > 0">
+                        <div class="d-flex flex-wrap">
+                          <v-chip v-for="(tool, index) in getEquipmentByCategory('tool')" :key="`tool-${index}`"
+                            size="default" color="orange" variant="outlined" class="equipment-chip-enhanced ma-1">
+                            <v-icon start size="small">mdi-tools</v-icon>
+                            <span class="font-weight-medium">{{ tool.name }}</span>
+                          </v-chip>
+                        </div>
+                      </div>
+                      <div v-else class="equipment-empty-state-compact">
+                        <v-icon size="32" class="mb-2 text-grey-lighten-2">mdi-hammer-wrench</v-icon>
+                        <div class="text-caption text-grey">No starting tools</div>
+                      </div>
+                    </v-card-text>
+                  </v-card>
+                </v-col>
+
+                <!-- Adventuring Gear -->
+                <v-col cols="12" md="4">
+                  <v-card class="equipment-category-card gear-card h-100">
+                    <v-card-title class="equipment-category-header-compact">
+                      <div class="d-flex align-center justify-space-between w-100">
+                        <div class="d-flex align-center">
+                          <v-icon class="me-2" color="green">mdi-bag-personal</v-icon>
+                          <div>
+                            <div class="text-subtitle-1 font-weight-bold">Starting Gear</div>
+                            <div class="text-caption">{{ getEquipmentByCategory('gear').length }} from class &
+                              background
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </v-card-title>
+                    <v-divider />
+                    <v-card-text class="pa-3">
+                      <div v-if="getEquipmentByCategory('gear').length > 0">
+                        <div class="d-flex flex-wrap">
+                          <v-chip v-for="(item, index) in getEquipmentByCategory('gear')" :key="`gear-${index}`"
+                            size="default" color="green" variant="outlined" class="equipment-chip-enhanced ma-1">
+                            <v-icon start size="small">mdi-bag-personal</v-icon>
+                            <span class="font-weight-medium">{{ item.name }}{{ item.quantity > 1 ? ` (${item.quantity})`
+                              :
+                              ''
+                              }}</span>
+                          </v-chip>
+                        </div>
+                      </div>
+                      <div v-else class="equipment-empty-state-compact">
+                        <v-icon size="32" class="mb-2 text-grey-lighten-2">mdi-bag-personal-outline</v-icon>
+                        <div class="text-caption text-grey">No starting gear</div>
+                      </div>
+                    </v-card-text>
+                  </v-card>
+                </v-col>
+
+                <!-- Consumables -->
+                <v-col cols="12" md="4">
+                  <v-card class="equipment-category-card consumables-card h-100">
+                    <v-card-title class="equipment-category-header-compact">
+                      <div class="d-flex align-center justify-space-between w-100">
+                        <div class="d-flex align-center">
+                          <v-icon class="me-2" color="purple">mdi-bottle-tonic</v-icon>
+                          <div>
+                            <div class="text-subtitle-1 font-weight-bold">Starting Supplies</div>
+                            <div class="text-caption">{{ getEquipmentByCategory('consumable').length }} basic supplies
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </v-card-title>
+                    <v-divider />
+                    <v-card-text class="pa-3">
+                      <div v-if="getEquipmentByCategory('consumable').length > 0">
+                        <div class="d-flex flex-wrap">
+                          <v-chip v-for="(item, index) in getEquipmentByCategory('consumable')"
+                            :key="`consumable-${index}`" size="default" color="purple" variant="outlined"
+                            class="equipment-chip-enhanced ma-1">
+                            <v-icon start size="small">mdi-bottle-tonic</v-icon>
+                            <span class="font-weight-medium">{{ item.name }}{{ item.quantity > 1 ? ` (${item.quantity})`
+                              :
+                              ''
+                              }}</span>
+                          </v-chip>
+                        </div>
+                      </div>
+                      <div v-else class="equipment-empty-state-compact">
+                        <v-icon size="32" class="mb-2 text-grey-lighten-2">mdi-bottle-tonic-outline</v-icon>
+                        <div class="text-caption text-grey">No starting supplies</div>
+                      </div>
+                    </v-card-text>
+                  </v-card>
+                </v-col>
+              </v-row>
             </v-card-text>
           </v-card>
-
-          <!-- Equipment Management Section -->
-          <div class="mb-6">
-            <div class="text-h6 mb-4 d-flex align-center">
-              <v-icon class="me-2" color="primary">mdi-sword-cross</v-icon>
-              Equipment Management
-            </div>
-
-            <!-- Weapons & Armor Row -->
-            <v-row class="mb-4">
-              <!-- Weapons -->
-              <v-col cols="12" lg="6">
-                <v-card variant="outlined" color="red-lighten-5" class="equipment-category-card">
-                  <v-card-title class="equipment-category-header-compact">
-                    <div class="d-flex align-center justify-space-between w-100">
-                      <div class="d-flex align-center">
-                        <v-icon class="me-2" color="red" size="default">mdi-sword</v-icon>
-                        <div>
-                          <div class="text-subtitle-1 font-weight-bold">Starting Weapons</div>
-                          <div class="text-caption">{{ getEquipmentByCategory('weapon').length }} from class &
-                            background</div>
-                        </div>
-                      </div>
-                      <v-chip v-if="getEquipmentByCategory('weapon').length > 0" size="small" color="green"
-                        variant="elevated">
-                        <v-icon start size="x-small">mdi-check</v-icon>
-                        Equipped
-                      </v-chip>
-                    </div>
-                  </v-card-title>
-                  <v-divider />
-                  <v-card-text class="pa-0">
-                    <div v-if="getEquipmentByCategory('weapon').length > 0" class="equipment-list">
-                      <v-list density="compact" class="bg-transparent">
-                        <v-list-item v-for="(weapon, index) in getEquipmentByCategory('weapon')"
-                          :key="`weapon-${index}`" class="equipment-item-enhanced">
-                          <template #prepend>
-                            <v-checkbox v-model="weapon.equipped" density="compact" hide-details
-                              @change="updateEquipmentStats" color="red" class="me-3" />
-                          </template>
-
-                          <div class="equipment-item-content">
-                            <div class="equipment-item-title">
-                              <span class="text-body-1 font-weight-bold text-white">{{ weapon.name }}</span>
-                              <v-chip v-if="weapon.equipped" size="x-small" color="green" variant="elevated"
-                                class="ms-2">
-                                <v-icon start size="x-small">mdi-check</v-icon>
-                                Equipped
-                              </v-chip>
-                            </div>
-
-                            <div class="equipment-item-details mt-2">
-                              <div class="d-flex flex-wrap gap-2">
-                                <v-chip size="small" color="red" variant="outlined" v-if="weapon.damage"
-                                  class="equipment-detail-chip">
-                                  <v-icon start size="x-small">mdi-sword</v-icon>
-                                  {{ weapon.damage }} {{ weapon.damageType }}
-                                </v-chip>
-                                <v-chip size="small" color="blue" variant="outlined"
-                                  v-if="weapon.properties && weapon.properties.length" class="equipment-detail-chip">
-                                  <v-icon start size="x-small">mdi-information</v-icon>
-                                  {{ weapon.properties.join(', ') }}
-                                </v-chip>
-                                <v-chip size="small" color="green" variant="outlined" v-if="weapon.attackBonus"
-                                  class="equipment-detail-chip">
-                                  <v-icon start size="x-small">mdi-target</v-icon>
-                                  +{{ weapon.attackBonus }} to hit
-                                </v-chip>
-                              </div>
-                            </div>
-                          </div>
-
-                          <template #append>
-                            <v-btn variant="text" size="small" color="error" @click="removeEquipment('weapon', index)"
-                              class="equipment-delete-btn ms-2">
-                              <v-icon size="small">mdi-delete</v-icon>
-                            </v-btn>
-                          </template>
-                        </v-list-item>
-                      </v-list>
-                    </div>
-                    <div v-else class="equipment-empty-state-compact">
-                      <v-icon size="32" class="mb-2 text-grey-lighten-2">mdi-sword-cross</v-icon>
-                      <div class="text-caption text-grey">No starting weapons</div>
-                      <div class="text-caption text-grey">Generate starting equipment to get class weapons</div>
-                    </div>
-                  </v-card-text>
-                </v-card>
-              </v-col>
-
-              <!-- Armor -->
-              <v-col cols="12" lg="6">
-                <v-card variant="outlined" color="blue-lighten-5" class="equipment-category-card">
-                  <v-card-title class="equipment-category-header-compact">
-                    <div class="d-flex align-center justify-space-between w-100">
-                      <div class="d-flex align-center">
-                        <v-icon class="me-2" color="blue" size="default">mdi-shield</v-icon>
-                        <div>
-                          <div class="text-subtitle-1 font-weight-bold">Starting Armor</div>
-                          <div class="text-caption">{{ getEquipmentByCategory('armor').length }} from class & background
-                          </div>
-                        </div>
-                      </div>
-                      <v-chip v-if="getEquipmentByCategory('armor').length > 0" size="small" color="green"
-                        variant="elevated">
-                        <v-icon start size="x-small">mdi-check</v-icon>
-                        Equipped
-                      </v-chip>
-                    </div>
-                  </v-card-title>
-                  <v-divider />
-                  <v-card-text class="pa-0">
-                    <div v-if="getEquipmentByCategory('armor').length > 0" class="equipment-list">
-                      <v-list density="compact" class="bg-transparent">
-                        <v-list-item v-for="(armor, index) in getEquipmentByCategory('armor')" :key="`armor-${index}`"
-                          class="equipment-item-enhanced">
-                          <template #prepend>
-                            <v-checkbox v-model="armor.equipped" density="compact" hide-details
-                              @change="updateEquipmentStats" color="blue" class="me-3" />
-                          </template>
-
-                          <div class="equipment-item-content">
-                            <div class="equipment-item-title">
-                              <span class="text-body-1 font-weight-bold text-white">{{ armor.name }}</span>
-                              <v-chip v-if="armor.equipped" size="x-small" color="green" variant="elevated"
-                                class="ms-2">
-                                <v-icon start size="x-small">mdi-check</v-icon>
-                                Equipped
-                              </v-chip>
-                            </div>
-
-                            <div class="equipment-item-details mt-2">
-                              <div class="d-flex flex-wrap gap-2">
-                                <v-chip size="small" color="blue" variant="outlined" v-if="armor.armorClass"
-                                  class="equipment-detail-chip">
-                                  <v-icon start size="x-small">mdi-shield</v-icon>
-                                  AC {{ armor.armorClass }}{{ armor.dexBonus ? ' + Dex' : '' }}
-                                </v-chip>
-                                <v-chip size="small" color="orange" variant="outlined" v-if="armor.armorType"
-                                  class="equipment-detail-chip">
-                                  <v-icon start size="x-small">mdi-armor</v-icon>
-                                  {{ armor.armorType }}
-                                </v-chip>
-                                <v-chip size="small" color="grey" variant="outlined" v-if="armor.weight"
-                                  class="equipment-detail-chip">
-                                  <v-icon start size="x-small">mdi-weight</v-icon>
-                                  {{ armor.weight }} lbs
-                                </v-chip>
-                              </div>
-                            </div>
-                          </div>
-
-                          <template #append>
-                            <v-btn variant="text" size="small" color="error" @click="removeEquipment('armor', index)"
-                              class="equipment-delete-btn ms-2">
-                              <v-icon size="small">mdi-delete</v-icon>
-                            </v-btn>
-                          </template>
-                        </v-list-item>
-                      </v-list>
-                    </div>
-                    <div v-else class="equipment-empty-state-compact">
-                      <v-icon size="32" class="mb-2 text-grey-lighten-2">mdi-shield-off</v-icon>
-                      <div class="text-caption text-grey">No starting armor</div>
-                      <div class="text-caption text-grey">Generate starting equipment to get class armor</div>
-                    </div>
-                  </v-card-text>
-                </v-card>
-              </v-col>
-            </v-row>
-
-            <!-- Other Equipment Categories -->
-            <v-row class="mb-4">
-              <!-- Tools -->
-              <v-col cols="12" md="4">
-                <v-card variant="outlined" color="orange-lighten-5" class="equipment-category-card h-100">
-                  <v-card-title class="equipment-category-header-compact">
-                    <div class="d-flex align-center justify-space-between w-100">
-                      <div class="d-flex align-center">
-                        <v-icon class="me-2" color="orange">mdi-tools</v-icon>
-                        <div>
-                          <div class="text-subtitle-1 font-weight-bold">Starting Tools</div>
-                          <div class="text-caption">{{ getEquipmentByCategory('tool').length }} from background</div>
-                        </div>
-                      </div>
-                    </div>
-                  </v-card-title>
-                  <v-divider />
-                  <v-card-text class="pa-3">
-                    <div v-if="getEquipmentByCategory('tool').length > 0">
-                      <div class="d-flex flex-wrap gap-2">
-                        <v-chip v-for="(tool, index) in getEquipmentByCategory('tool')" :key="`tool-${index}`"
-                          size="default" color="orange" variant="outlined" closable
-                          @click:close="removeEquipment('tool', index)" class="equipment-chip-enhanced">
-                          <v-icon start size="small">mdi-tools</v-icon>
-                          <span class="font-weight-medium">{{ tool.name }}</span>
-                        </v-chip>
-                      </div>
-                    </div>
-                    <div v-else class="equipment-empty-state-compact">
-                      <v-icon size="32" class="mb-2 text-grey-lighten-2">mdi-hammer-wrench</v-icon>
-                      <div class="text-caption text-grey">No starting tools</div>
-                    </div>
-                  </v-card-text>
-                </v-card>
-              </v-col>
-
-              <!-- Adventuring Gear -->
-              <v-col cols="12" md="4">
-                <v-card variant="outlined" color="green-lighten-5" class="equipment-category-card h-100">
-                  <v-card-title class="equipment-category-header-compact">
-                    <div class="d-flex align-center justify-space-between w-100">
-                      <div class="d-flex align-center">
-                        <v-icon class="me-2" color="green">mdi-bag-personal</v-icon>
-                        <div>
-                          <div class="text-subtitle-1 font-weight-bold">Starting Gear</div>
-                          <div class="text-caption">{{ getEquipmentByCategory('gear').length }} from class & background
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </v-card-title>
-                  <v-divider />
-                  <v-card-text class="pa-3">
-                    <div v-if="getEquipmentByCategory('gear').length > 0">
-                      <div class="d-flex flex-wrap gap-2">
-                        <v-chip v-for="(item, index) in getEquipmentByCategory('gear')" :key="`gear-${index}`"
-                          size="default" color="green" variant="outlined" closable
-                          @click:close="removeEquipment('gear', index)" class="equipment-chip-enhanced">
-                          <v-icon start size="small">mdi-bag-personal</v-icon>
-                          <span class="font-weight-medium">{{ item.name }}{{ item.quantity > 1 ? ` (${item.quantity})` :
-                            ''
-                            }}</span>
-                        </v-chip>
-                      </div>
-                    </div>
-                    <div v-else class="equipment-empty-state-compact">
-                      <v-icon size="32" class="mb-2 text-grey-lighten-2">mdi-bag-personal-outline</v-icon>
-                      <div class="text-caption text-grey">No starting gear</div>
-                    </div>
-                  </v-card-text>
-                </v-card>
-              </v-col>
-
-              <!-- Consumables -->
-              <v-col cols="12" md="4">
-                <v-card variant="outlined" color="purple-lighten-5" class="equipment-category-card h-100">
-                  <v-card-title class="equipment-category-header-compact">
-                    <div class="d-flex align-center justify-space-between w-100">
-                      <div class="d-flex align-center">
-                        <v-icon class="me-2" color="purple">mdi-bottle-tonic</v-icon>
-                        <div>
-                          <div class="text-subtitle-1 font-weight-bold">Starting Supplies</div>
-                          <div class="text-caption">{{ getEquipmentByCategory('consumable').length }} basic supplies
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </v-card-title>
-                  <v-divider />
-                  <v-card-text class="pa-3">
-                    <div v-if="getEquipmentByCategory('consumable').length > 0">
-                      <div class="d-flex flex-wrap gap-2">
-                        <v-chip v-for="(item, index) in getEquipmentByCategory('consumable')"
-                          :key="`consumable-${index}`" size="default" color="purple" variant="outlined" closable
-                          @click:close="removeEquipment('consumable', index)" class="equipment-chip-enhanced">
-                          <v-icon start size="small">mdi-bottle-tonic</v-icon>
-                          <span class="font-weight-medium">{{ item.name }}{{ item.quantity > 1 ? ` (${item.quantity})` :
-                            ''
-                            }}</span>
-                        </v-chip>
-                      </div>
-                    </div>
-                    <div v-else class="equipment-empty-state-compact">
-                      <v-icon size="32" class="mb-2 text-grey-lighten-2">mdi-bottle-tonic-outline</v-icon>
-                      <div class="text-caption text-grey">No starting supplies</div>
-                    </div>
-                  </v-card-text>
-                </v-card>
-              </v-col>
-            </v-row>
-          </div>
 
           <!-- Wealth & Carrying Capacity -->
           <div class="mb-4">
@@ -1561,9 +1494,9 @@
 
             <v-row>
               <v-col cols="12" md="6">
-                <v-card variant="outlined" class="wealth-card">
-                  <v-card-title class="d-flex align-center pa-3">
-                    <v-icon class="me-2" color="yellow-darken-2" size="default">mdi-coins</v-icon>
+                <v-card variant="tonal" color="yellow-lighten-5" class="wealth-card">
+                  <v-card-title class="text-h6 d-flex align-center pa-3">
+                    <v-icon class="me-2" color="yellow-darken-2" size="large">mdi-coins</v-icon>
                     <div>
                       <div class="text-subtitle-1 font-weight-bold">Coin Purse</div>
                       <div class="text-caption text-grey">Manage your character's wealth</div>
@@ -1601,9 +1534,9 @@
               </v-col>
 
               <v-col cols="12" md="6">
-                <v-card variant="outlined" class="encumbrance-card">
-                  <v-card-title class="d-flex align-center pa-3">
-                    <v-icon class="me-2" color="blue-grey" size="default">mdi-weight-lifter</v-icon>
+                <v-card variant="tonal" color="blue-grey-lighten-5" class="encumbrance-card">
+                  <v-card-title class="text-h6 d-flex align-center pa-3">
+                    <v-icon class="me-2" color="blue-grey" size="large">mdi-weight-lifter</v-icon>
                     <div>
                       <div class="text-subtitle-1 font-weight-bold">Carrying Capacity</div>
                       <div class="text-caption text-grey">Track your equipment weight</div>
@@ -1649,206 +1582,417 @@
     <!-- Step 5: Final Details & Review -->
     <template #item.5>
       <v-card flat>
-        <v-card-title class="text-h4 text-center mb-4">📋 Review & Finalize</v-card-title>
-        <v-card-subtitle class="text-center mb-4">
-          Review your character and add any final details
+        <v-card-title class="text-h4 text-center mb-6 text-primary">
+          <v-icon size="32" class="me-3">mdi-clipboard-check</v-icon>
+          Review & Finalize
+        </v-card-title>
+        <v-card-subtitle class="text-center mb-8 text-h6">
+          Your character sheet is almost complete! Review the details and add finishing touches.
         </v-card-subtitle>
         <v-card-text>
-          <!-- Character Summary -->
-          <v-card variant="tonal" color="primary-lighten-5" class="mb-6">
-            <v-card-title class="text-h5">{{ character.name || 'Unnamed Character' }}</v-card-title>
-            <v-card-subtitle>
-              <strong>Player:</strong> {{ character.userName || 'Unknown Player' }}
-              <br>Level {{ character.level }} {{ character.speciesDetails?.name || 'Unknown Species' }} {{
-                character.classDetails?.name || 'Unknown Class' }}
-              <br>{{ character.backgroundDetails?.name || 'Unknown Background' }} • {{ character.alignment || 'No Alignment' }}
-            </v-card-subtitle>
-            <v-card-text>
-              <v-row>
-                <v-col cols="12" md="6">
-                  <h6 class="text-h6 mb-2">Ability Scores:</h6>
-                  <v-chip-group>
-                    <v-chip v-for="(stat, name) in character.abilityScores" :key="name" size="small"
-                      :color="getModifierColor(stat.modifier)">
-                      {{ name.toUpperCase() }}: {{ stat.score }} ({{ stat.modifier >= 0 ? '+' : '' }}{{ stat.modifier
-                      }})
-                    </v-chip>
-                  </v-chip-group>
+          <!-- Character Header Card -->
+          <v-card class="character-summary-card mb-8" elevation="8">
+            <v-card-title class="character-header">
+              <div class="character-name-section">
+                <div class="character-title-group">
+                  <h1 class="character-name">{{ character.name || 'Unnamed Character' }}</h1>
+                  <div class="character-subtitle">
+                    <v-icon size="small" class="me-1">mdi-account</v-icon>
+                    {{ character.userName || 'Unknown Player' }}
+                  </div>
+                </div>
+                <div class="character-basic-info">
+                  <v-chip color="rgba(255,255,255,0.9)" variant="elevated" class="info-chip level-chip">
+                    <v-icon start size="small">mdi-trending-up</v-icon>
+                    Level {{ character.level }}
+                  </v-chip>
+                  <v-chip v-if="character.alignment" color="rgba(255,255,255,0.9)" variant="elevated"
+                    class="info-chip alignment-chip">
+                    <v-icon start size="small">mdi-compass</v-icon>
+                    {{ character.alignment }}
+                  </v-chip>
+                </div>
+              </div>
+              <div class="character-portrait-section">
+                <v-avatar size="96" class="character-avatar" color="rgba(255,255,255,0.1)">
+                  <v-icon size="48" color="rgba(255,255,255,0.8)">mdi-account-circle</v-icon>
+                </v-avatar>
+                <v-btn size="small" variant="text" color="rgba(255,255,255,0.7)" class="mt-2 upload-portrait-btn"
+                  prepend-icon="mdi-camera">
+                  Add Portrait
+                </v-btn>
+              </div>
+            </v-card-title>
+
+            <!-- Character Identity Banner -->
+            <div class="character-identity-banner">
+              <div class="identity-banner-item species-banner">
+                <div class="identity-icon-wrapper">
+                  <v-icon color="deep-purple-lighten-1" size="20">mdi-dna</v-icon>
+                </div>
+                <div class="identity-content">
+                  <div class="identity-label">Species</div>
+                  <div class="identity-value">
+                    {{ character.speciesDetails?.name || 'Unknown' }}
+                    <span v-if="character.speciesLineage && character.speciesDetails?.lineages"
+                      class="identity-subtext">
+                      ({{character.speciesDetails.lineages.find(l => l.id === character.speciesLineage)?.name}})
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <v-divider vertical class="identity-divider"></v-divider>
+
+              <div class="identity-banner-item class-banner">
+                <div class="identity-icon-wrapper">
+                  <v-icon color="indigo-lighten-1" size="20">mdi-sword-cross</v-icon>
+                </div>
+                <div class="identity-content">
+                  <div class="identity-label">Class</div>
+                  <div class="identity-value">
+                    {{ character.classDetails?.name || 'Unknown' }}
+                    <span v-if="character.classDetails?.primaryAbility" class="identity-subtext">
+                      ({{ character.classDetails.primaryAbility }})
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <v-divider vertical class="identity-divider"></v-divider>
+
+              <div class="identity-banner-item background-banner">
+                <div class="identity-icon-wrapper">
+                  <v-icon color="teal-lighten-1" size="20">mdi-book-open-variant</v-icon>
+                </div>
+                <div class="identity-content">
+                  <div class="identity-label">Background</div>
+                  <div class="identity-value">
+                    {{ character.backgroundDetails?.name || 'Unknown' }}
+                    <span v-if="character.backgroundDetails?.feat" class="identity-subtext">
+                      ({{ character.backgroundDetails.feat }})
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Character Vitals Row -->
+            <v-card-text class="character-vitals-section">
+              <!-- Quick Stats Header -->
+              <div class="vitals-header mb-4">
+                <h6 class="vitals-title">
+                  <v-icon class="me-2" color="primary">mdi-heart-pulse</v-icon>
+                  Combat Vitals
+                </h6>
+                <div class="vitals-subtitle">Essential stats for gameplay</div>
+              </div>
+
+              <v-row class="vitals-row">
+                <v-col cols="6" sm="3" class="vital-col">
+                  <div class="vital-item">
+                    <div class="vital-icon">
+                      <v-icon color="red-lighten-1" size="24">mdi-heart</v-icon>
+                    </div>
+                    <div class="vital-content">
+                      <div class="vital-label">Hit Points</div>
+                      <div class="vital-value">{{ character.classDetails?.hpDie || 'D8' }}</div>
+                    </div>
+                  </div>
                 </v-col>
-                <v-col cols="12" md="6">
-                  <h6 class="text-h6 mb-2">Key Stats:</h6>
-                  <v-list density="compact">
-                    <v-list-item>
-                      <v-list-item-title>Proficiency Bonus: +{{ character.proficiencyBonus }}</v-list-item-title>
-                    </v-list-item>
-                    <v-list-item>
-                      <v-list-item-title>Initiative: {{ character.initiative >= 0 ? '+' : '' }}{{ character.initiative
-                      }}</v-list-item-title>
-                    </v-list-item>
-                    <v-list-item>
-                      <v-list-item-title>Passive Perception: {{ character.passivePerception }}</v-list-item-title>
-                    </v-list-item>
-                  </v-list>
+
+                <v-col cols="6" sm="3" class="vital-col">
+                  <div class="vital-item">
+                    <div class="vital-icon">
+                      <v-icon color="blue-lighten-1" size="24">mdi-shield</v-icon>
+                    </div>
+                    <div class="vital-content">
+                      <div class="vital-label">Armor Class</div>
+                      <div class="vital-value">10 + {{ character.abilityScores.dexterity.modifier >= 0 ? '+' : '' }}{{
+                        character.abilityScores.dexterity.modifier }}</div>
+                    </div>
+                  </div>
+                </v-col>
+
+                <v-col cols="6" sm="3" class="vital-col">
+                  <div class="vital-item">
+                    <div class="vital-icon">
+                      <v-icon color="orange-lighten-1" size="24">mdi-run</v-icon>
+                    </div>
+                    <div class="vital-content">
+                      <div class="vital-label">Speed</div>
+                      <div class="vital-value">{{ character.speed || 30 }} ft</div>
+                    </div>
+                  </div>
+                </v-col>
+
+                <v-col cols="6" sm="3" class="vital-col">
+                  <div class="vital-item">
+                    <div class="vital-icon">
+                      <v-icon color="green-lighten-1" size="24">mdi-plus</v-icon>
+                    </div>
+                    <div class="vital-content">
+                      <div class="vital-label">Proficiency</div>
+                      <div class="vital-value">+{{ character.proficiencyBonus }}</div>
+                    </div>
+                  </div>
                 </v-col>
               </v-row>
+
+              <v-divider class="my-4"></v-divider>
+
+              <!-- Ability Scores Section -->
+              <div class="ability-scores-section">
+                <h6 class="ability-scores-title">
+                  <v-icon class="me-2" color="primary">mdi-dice-6</v-icon>
+                  Ability Scores
+                </h6>
+                <div class="ability-scores-grid">
+                  <div v-for="(stat, name) in character.abilityScores" :key="name" class="ability-score-item">
+                    <div class="ability-name">{{ name.substring(0, 3).toUpperCase() }}</div>
+                    <div class="ability-score">{{ stat.score }}</div>
+                    <div class="ability-modifier" :class="getModifierClass(stat.modifier)">
+                      {{ stat.modifier >= 0 ? '+' : '' }}{{ stat.modifier }}
+                    </div>
+                  </div>
+                </div>
+              </div>
             </v-card-text>
 
-            <!-- Character Choices Dropdown -->
-            <v-expansion-panels variant="accordion" class="mt-4">
-              <v-expansion-panel>
-                <v-expansion-panel-title>
-                  <div class="d-flex align-center">
-                    <v-icon class="me-2" color="purple">mdi-format-list-checks</v-icon>
-                    <span class="font-weight-bold">Character Choices & Features</span>
-                    <v-spacer />
-                    <v-badge v-if="getSelectedChoicesCount() > 0" :content="getSelectedChoicesCount()" color="purple"
-                      inline />
-                  </div>
-                </v-expansion-panel-title>
-                <v-expansion-panel-text>
-                  <v-row>
+          </v-card>
+
+          <!-- Character Features & Abilities -->
+          <v-row class="mb-8">
+            <!-- Features Summary Card -->
+            <v-col cols="12" lg="8">
+              <v-card class="features-card h-100" elevation="3">
+                <v-card-title class="features-header">
+                  <v-icon class="me-2" color="purple">mdi-star-four-points</v-icon>
+                  Character Features & Abilities
+                  <v-spacer />
+                  <v-badge v-if="getSelectedChoicesCount() > 0" :content="getSelectedChoicesCount()" color="purple" />
+                </v-card-title>
+
+                <v-card-text>
+                  <v-row v-if="getSelectedChoicesCount() > 0">
                     <!-- Lineage/Subrace -->
                     <v-col v-if="character.speciesLineage && character.speciesDetails?.lineages" cols="12" md="6">
-                      <v-card variant="tonal" color="blue-lighten-5" class="mb-3">
-                        <v-card-title class="text-subtitle-1 d-flex align-center pa-3">
-                          <v-icon class="me-2" color="blue" size="small">mdi-dna</v-icon>
-                          Lineage/Subrace
-                        </v-card-title>
-                        <v-card-text class="pt-0">
-                          <v-chip color="blue" variant="elevated" size="small">
-                            {{character.speciesDetails.lineages.find(l => l.id === character.speciesLineage)?.name ||
-                              character.speciesLineage}}
-                          </v-chip>
-                        </v-card-text>
-                      </v-card>
+                      <div class="feature-category">
+                        <div class="feature-category-header">
+                          <v-icon color="blue" size="small" class="me-2">mdi-dna</v-icon>
+                          <span class="feature-category-title">Lineage</span>
+                        </div>
+                        <v-chip color="blue" variant="elevated" size="small" class="mt-2">
+                          {{character.speciesDetails.lineages.find(l => l.id === character.speciesLineage)?.name ||
+                            character.speciesLineage}}
+                        </v-chip>
+                      </div>
                     </v-col>
 
                     <!-- Languages -->
                     <v-col v-if="getAllLanguages().length > 0" cols="12" md="6">
-                      <v-card variant="tonal" color="purple-lighten-5" class="mb-3">
-                        <v-card-title class="text-subtitle-1 d-flex align-center pa-3">
-                          <v-icon class="me-2" color="purple" size="small">mdi-translate</v-icon>
-                          Languages ({{ getAllLanguages().length }})
-                        </v-card-title>
-                        <v-card-text class="pt-0">
-                          <div class="d-flex flex-wrap gap-1">
-                            <v-chip v-for="lang in getAllLanguages()" :key="lang" color="purple" variant="elevated"
-                              size="small">
-                              {{ lang }}
-                            </v-chip>
-                          </div>
-                        </v-card-text>
-                      </v-card>
+                      <div class="feature-category">
+                        <div class="feature-category-header">
+                          <v-icon color="purple" size="small" class="me-2">mdi-translate</v-icon>
+                          <span class="feature-category-title">Languages ({{ getAllLanguages().length }})</span>
+                        </div>
+                        <div class="feature-chips mt-2">
+                          <v-chip v-for="lang in getAllLanguages()" :key="lang" color="purple" variant="elevated"
+                            size="small" class="me-1 mb-1">
+                            {{ lang }}
+                          </v-chip>
+                        </div>
+                      </div>
                     </v-col>
 
                     <!-- Tools -->
                     <v-col v-if="getAllToolProficiencies.length > 0" cols="12" md="6">
-                      <v-card variant="tonal" color="orange-lighten-5" class="mb-3">
-                        <v-card-title class="text-subtitle-1 d-flex align-center pa-3">
-                          <v-icon class="me-2" color="orange" size="small">mdi-tools</v-icon>
-                          Tool Proficiencies ({{ getAllToolProficiencies.length }})
-                        </v-card-title>
-                        <v-card-text class="pt-0">
-                          <div class="d-flex flex-wrap gap-1">
-                            <v-chip v-for="tool in getAllToolProficiencies" :key="tool" color="orange"
-                              variant="elevated" size="small">
-                              {{ tool }}
-                            </v-chip>
-                          </div>
-                        </v-card-text>
-                      </v-card>
+                      <div class="feature-category">
+                        <div class="feature-category-header">
+                          <v-icon color="orange" size="small" class="me-2">mdi-tools</v-icon>
+                          <span class="feature-category-title">Tool Proficiencies ({{ getAllToolProficiencies.length
+                            }})</span>
+                        </div>
+                        <div class="feature-chips mt-2">
+                          <v-chip v-for="tool in getAllToolProficiencies" :key="tool" color="orange" variant="elevated"
+                            size="small" class="me-1 mb-1">
+                            {{ tool }}
+                          </v-chip>
+                        </div>
+                      </div>
                     </v-col>
 
                     <!-- Skills -->
                     <v-col v-if="getProficientSkills.length > 0" cols="12" md="6">
-                      <v-card variant="tonal" color="green-lighten-5" class="mb-3">
-                        <v-card-title class="text-subtitle-1 d-flex align-center pa-3">
-                          <v-icon class="me-2" color="green" size="small">mdi-brain</v-icon>
-                          Skill Proficiencies ({{ getProficientSkills.length }})
-                        </v-card-title>
-                        <v-card-text class="pt-0">
-                          <div class="d-flex flex-wrap gap-1">
-                            <v-chip v-for="skill in getProficientSkills" :key="skill.name" color="green"
-                              variant="elevated" size="small">
-                              {{ skill.name }}
-                            </v-chip>
-                          </div>
-                        </v-card-text>
-                      </v-card>
+                      <div class="feature-category">
+                        <div class="feature-category-header">
+                          <v-icon color="green" size="small" class="me-2">mdi-brain</v-icon>
+                          <span class="feature-category-title">Skill Proficiencies ({{ getProficientSkills.length
+                            }})</span>
+                        </div>
+                        <div class="feature-chips mt-2">
+                          <v-chip v-for="skill in getProficientSkills" :key="skill.name" color="green"
+                            variant="elevated" size="small" class="me-1 mb-1">
+                            {{ skill.name }}
+                          </v-chip>
+                        </div>
+                      </div>
                     </v-col>
 
-                    <!-- Special Features Count -->
-                    <v-col v-if="getSpecialFeaturesCount() > 0" cols="12" md="6">
-                      <v-card variant="tonal" color="amber-lighten-5" class="mb-3">
-                        <v-card-title class="text-subtitle-1 d-flex align-center pa-3">
-                          <v-icon class="me-2" color="amber-darken-2" size="small">mdi-star</v-icon>
-                          Special Features ({{ getSpecialFeaturesCount() }})
-                        </v-card-title>
-                        <v-card-text class="pt-0">
-                          <div class="text-caption text-grey-darken-1">
-                            Species traits, background features, and other special abilities
-                          </div>
-                        </v-card-text>
-                      </v-card>
+                    <!-- Special Features -->
+                    <v-col v-if="getSpecialFeaturesCount() > 0" cols="12">
+                      <div class="feature-category">
+                        <div class="feature-category-header">
+                          <v-icon color="amber-darken-2" size="small" class="me-2">mdi-star</v-icon>
+                          <span class="feature-category-title">Special Features ({{ getSpecialFeaturesCount() }})</span>
+                        </div>
+                        <div class="feature-description mt-2">
+                          Species traits, background features, and other special abilities
+                        </div>
+                      </div>
                     </v-col>
                   </v-row>
 
                   <!-- Empty State -->
-                  <div v-if="getSelectedChoicesCount() === 0" class="text-center text-grey py-4">
-                    <v-icon size="48" class="mb-2">mdi-help-circle-outline</v-icon>
-                    <div class="text-body-2">No character choices made yet</div>
-                    <div class="text-caption">Complete Step 3 to see your character's features and choices here</div>
+                  <div v-else class="features-empty-state">
+                    <v-icon size="48" color="grey-lighten-1" class="mb-3">mdi-help-circle-outline</v-icon>
+                    <div class="text-h6 text-grey-darken-1 mb-2">No Features Selected</div>
+                    <div class="text-body-2 text-grey">Complete previous steps to see your character's features and
+                      abilities here</div>
                   </div>
-                </v-expansion-panel-text>
-              </v-expansion-panel>
-            </v-expansion-panels>
-          </v-card>
+                </v-card-text>
+              </v-card>
+            </v-col>
 
-          <!-- Backstory -->
-          <v-card variant="outlined" class="mb-6">
-            <v-card-title class="text-h6">📖 Character Backstory</v-card-title>
-            <v-card-text>
-              <v-textarea v-model="character.backstory" label="Tell your character's story..." variant="outlined"
-                auto-grow rows="3"
-                placeholder="Where did your character come from? What drives them? What are their goals and fears?"
-                hint="This helps bring your character to life during roleplay!" persistent-hint />
-            </v-card-text>
-          </v-card>
+            <!-- Quick Stats Sidebar -->
+            <v-col cols="12" lg="4">
+              <v-card class="quick-stats-card h-100" elevation="3">
+                <v-card-title class="quick-stats-header">
+                  <v-icon class="me-2" color="teal">mdi-chart-line</v-icon>
+                  Character Overview
+                </v-card-title>
+                <v-card-text>
+                  <div class="quick-stat-item">
+                    <div class="quick-stat-label">Alignment</div>
+                    <div class="quick-stat-value">{{ character.alignment || 'Not Set' }}</div>
+                  </div>
+                  <v-divider class="my-3"></v-divider>
 
-          <!-- Notes -->
-          <v-card variant="outlined" class="mb-6">
-            <v-card-title class="text-h6">📝 Additional Notes</v-card-title>
-            <v-card-text>
-              <v-textarea v-model="character.notes" label="Any additional notes..." variant="outlined" auto-grow
-                rows="2" placeholder="House rules, special considerations, reminders, etc." />
-            </v-card-text>
-          </v-card>
+                  <div class="quick-stat-item">
+                    <div class="quick-stat-label">Starting Wealth</div>
+                    <div class="quick-stat-value">{{ totalGP }} GP</div>
+                  </div>
+                  <v-divider class="my-3"></v-divider>
 
-          <!-- Validation Warnings -->
-          <v-alert v-if="getValidationWarnings().length" type="warning" variant="tonal" class="mb-6">
-            <v-alert-title>⚠️ Character Needs Attention</v-alert-title>
-            <ul>
-              <li v-for="warning in getValidationWarnings()" :key="warning">{{ warning }}</li>
-            </ul>
-          </v-alert>
+                  <div class="quick-stat-item">
+                    <div class="quick-stat-label">Carrying Capacity</div>
+                    <div class="quick-stat-value">{{ carryingCapacity }} lbs</div>
+                  </div>
+                  <v-divider class="my-3"></v-divider>
 
-          <!-- Success Message -->
-          <v-alert v-else type="success" variant="tonal" class="mb-6">
-            <v-alert-title>✅ Character Ready</v-alert-title>
-            Your character looks complete and ready for adventure!
-          </v-alert>
+                  <div class="quick-stat-item">
+                    <div class="quick-stat-label">Equipment Items</div>
+                    <div class="quick-stat-value">{{ character.equipment?.length || 0 }}</div>
+                  </div>
+                </v-card-text>
+              </v-card>
+            </v-col>
+          </v-row>
 
-          <!-- Submit Button -->
+          <!-- Character Story & Notes -->
+          <v-row class="mb-8">
+            <!-- Backstory -->
+            <v-col cols="12" lg="8">
+              <v-card class="backstory-card h-100" elevation="3">
+                <v-card-title class="backstory-header">
+                  <v-icon class="me-2" color="deep-purple">mdi-book-open-page-variant</v-icon>
+                  Character Backstory
+                </v-card-title>
+                <v-card-text>
+                  <v-textarea v-model="character.backstory" label="Tell your character's story..." variant="outlined"
+                    auto-grow rows="4"
+                    placeholder="Where did your character come from? What drives them? What are their goals, dreams, and fears? What significant events shaped who they are today?"
+                    hint="This backstory helps bring your character to life during roleplay and gives your DM hooks for the campaign!"
+                    persistent-hint class="backstory-textarea" />
+                </v-card-text>
+              </v-card>
+            </v-col>
+
+            <!-- Notes -->
+            <v-col cols="12" lg="4">
+              <v-card class="notes-card h-100" elevation="3">
+                <v-card-title class="notes-header">
+                  <v-icon class="me-2" color="amber">mdi-note-text</v-icon>
+                  Additional Notes
+                </v-card-title>
+                <v-card-text>
+                  <v-textarea v-model="character.notes" label="Quick notes..." variant="outlined" auto-grow rows="4"
+                    placeholder="House rules, special considerations, reminders, quirks, etc." class="notes-textarea" />
+                </v-card-text>
+              </v-card>
+            </v-col>
+          </v-row>
+
+          <!-- Validation & Completion Status -->
+          <v-row class="mb-8">
+            <v-col cols="12">
+              <v-card class="validation-card" elevation="3">
+                <v-card-text>
+                  <!-- Validation Warnings -->
+                  <v-alert v-if="getValidationWarnings().length" type="warning" variant="tonal"
+                    class="validation-alert">
+                    <template #prepend>
+                      <v-icon>mdi-alert-circle</v-icon>
+                    </template>
+                    <v-alert-title class="text-h6">Character Needs Attention</v-alert-title>
+                    <div class="mt-3">
+                      <div v-for="warning in getValidationWarnings()" :key="warning" class="warning-item">
+                        <v-icon size="small" class="me-2">mdi-chevron-right</v-icon>
+                        {{ warning }}
+                      </div>
+                    </div>
+                  </v-alert>
+
+                  <!-- Success Message -->
+                  <v-alert v-else type="success" variant="tonal" class="validation-alert">
+                    <template #prepend>
+                      <v-icon>mdi-check-circle</v-icon>
+                    </template>
+                    <v-alert-title class="text-h6">Character Ready for Adventure!</v-alert-title>
+                    <div class="mt-2">Your character looks complete and ready to join the campaign. All required
+                      information has been
+                      filled out.</div>
+                  </v-alert>
+                </v-card-text>
+              </v-card>
+            </v-col>
+          </v-row>
+
+          <!-- Final Action Section -->
           <v-row justify="center">
-            <v-col cols="12" sm="8" md="6">
-              <v-btn block size="large" color="primary" variant="elevated" prepend-icon="mdi-content-save"
-                @click="$emit('submit-character')"
-                :disabled="!character.name || !character.userName || !character.species || !character.class || !character.background">
-                {{ isEditing ? 'Update Character' : 'Save Character to Collection' }}
-              </v-btn>
-              <div class="text-center text-caption text-grey mt-2">
-                This will save your character to your personal collection
-              </div>
+            <v-col cols="12" md="8" lg="6">
+              <v-card class="final-action-card" elevation="4">
+                <v-card-text class="text-center pa-6">
+                  <div class="final-action-content">
+                    <v-avatar size="64" color="primary" class="mb-4">
+                      <v-icon size="32">mdi-content-save</v-icon>
+                    </v-avatar>
+                    <h3 class="text-h5 mb-3">{{ isEditing ? 'Update Your Character' : 'Save to Collection' }}</h3>
+                    <p class="text-body-1 text-grey-darken-1 mb-4">
+                      {{ isEditing ? 'Apply your changes and update this character in your collection.' : 'Add this character to your personal collection where you can access it anytime.' }}
+                    </p>
+                    <v-btn size="x-large" color="primary" variant="elevated" prepend-icon="mdi-content-save"
+                      @click="$emit('submit-character')"
+                      :disabled="!character.name || !character.userName || !character.species || !character.class || !character.background"
+                      class="save-character-btn">
+                      {{ isEditing ? 'Update Character' : 'Save Character' }}
+                    </v-btn>
+                    <div class="text-caption text-grey mt-3">
+                      {{ isEditing ? 'Your changes will be saved immediately' : 'Your character will be safely stored in your collection' }}
+                    </div>
+                  </div>
+                </v-card-text>
+              </v-card>
             </v-col>
           </v-row>
         </v-card-text>
@@ -1859,7 +2003,7 @@
     <template #actions>
       <v-row justify="end">
         <v-btn v-if="localCurrentStep > 1" class="me-10 mb-10" variant="elevated" @click="previousStep">Back</v-btn>
-        <v-btn v-if="localCurrentStep < 5" class="me-10 mb-10" variant="elevated" color="#822522"
+        <v-btn v-if="localCurrentStep < 5" class="me-10 mb-10" variant="elevated" color="primary"
           @click="nextStep">Next</v-btn>
       </v-row>
     </template>
@@ -1960,6 +2104,28 @@ const speciesContentMaxHeight = computed(() => {
 // Watch for species changes to reset subrace tab
 watch(() => props.character.species, () => {
   activeSubraceTab.value = 0
+})
+
+// Watch for class changes to auto-generate equipment and money
+watch(() => props.character.class, (newClass) => {
+  if (newClass && props.character.background) {
+    // Both class and background are set, auto-generate equipment and money
+    setTimeout(() => {
+      generateStartingEquipment()
+      characterData.calculateStartingMoney()
+    }, 100) // Small delay to ensure trait updates are complete
+  }
+})
+
+// Watch for background changes to auto-generate equipment and money
+watch(() => props.character.background, (newBackground) => {
+  if (newBackground && props.character.class) {
+    // Both class and background are set, auto-generate equipment and money
+    setTimeout(() => {
+      generateStartingEquipment()
+      characterData.calculateStartingMoney()
+    }, 100) // Small delay to ensure trait updates are complete
+  }
 })
 
 // Random name generation
@@ -2081,6 +2247,12 @@ const getModifierColor = (modifier) => {
   if (modifier >= 0) return 'grey'
   if (modifier >= -1) return 'orange'
   return 'red'
+}
+
+const getModifierClass = (modifier) => {
+  if (modifier > 0) return 'positive'
+  if (modifier < 0) return 'negative'
+  return 'neutral'
 }
 
 // Ability Score Enhancement Methods
@@ -3746,6 +3918,23 @@ const getPrimaryWeaponDamageType = () => {
   box-shadow: 0 8px 32px rgba(var(--v-theme-primary), 0.15);
 }
 
+.equipment-management-card {
+  border: 2px solid rgba(0, 150, 136, 0.5) !important;
+  box-shadow: 0 8px 32px rgba(0, 150, 136, 0.25), 0 0 20px rgba(0, 150, 136, 0.1) !important;
+}
+
+.wealth-card {
+  border: 2px solid rgba(255, 193, 7, 0.3) !important;
+  background: linear-gradient(135deg, rgba(255, 248, 225, 0.8), rgba(255, 243, 224, 0.6));
+  box-shadow: 0 8px 32px rgba(255, 193, 7, 0.15);
+}
+
+.encumbrance-card {
+  border: 2px solid rgba(96, 125, 139, 0.3) !important;
+  background: linear-gradient(135deg, rgba(236, 239, 241, 0.8), rgba(207, 216, 220, 0.6));
+  box-shadow: 0 8px 32px rgba(96, 125, 139, 0.15);
+}
+
 .combat-stat-item {
   padding: 16px;
   transition: all 0.3s ease;
@@ -3790,7 +3979,6 @@ const getPrimaryWeaponDamageType = () => {
 
 .equipment-category-card {
   height: 100%;
-  border: 2px solid rgba(255, 255, 255, 0.8) !important;
   border-radius: 12px !important;
   transition: all 0.3s ease;
   position: relative;
@@ -3800,40 +3988,39 @@ const getPrimaryWeaponDamageType = () => {
 .equipment-category-card:hover {
   transform: translateY(-2px);
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
-  border-color: rgba(255, 255, 255, 1) !important;
 }
 
-.equipment-category-card[color*="red"] {
-  border-color: rgba(255, 255, 255, 0.8) !important;
-  background: linear-gradient(135deg, rgba(244, 67, 54, 0.1), rgba(21, 21, 21, 0.9)) !important;
+.weapons-card {
+  border: 1px solid rgba(244, 67, 54, 0.3) !important;
+  background: rgba(244, 67, 54, 0.05) !important;
 }
 
-.equipment-category-card[color*="blue"] {
-  border-color: rgba(255, 255, 255, 0.8) !important;
-  background: linear-gradient(135deg, rgba(33, 150, 243, 0.1), rgba(21, 21, 21, 0.9)) !important;
+.armor-card {
+  border: 1px solid rgba(33, 150, 243, 0.3) !important;
+  background: rgba(33, 150, 243, 0.05) !important;
 }
 
-.equipment-category-card[color*="orange"] {
-  border-color: rgba(255, 255, 255, 0.8) !important;
-  background: linear-gradient(135deg, rgba(255, 152, 0, 0.1), rgba(21, 21, 21, 0.9)) !important;
+.tools-card {
+  border: 1px solid rgba(255, 152, 0, 0.3) !important;
+  background: rgba(255, 152, 0, 0.05) !important;
 }
 
-.equipment-category-card[color*="green"] {
-  border-color: rgba(255, 255, 255, 0.8) !important;
-  background: linear-gradient(135deg, rgba(76, 175, 80, 0.1), rgba(21, 21, 21, 0.9)) !important;
+.gear-card {
+  border: 1px solid rgba(76, 175, 80, 0.3) !important;
+  background: rgba(76, 175, 80, 0.05) !important;
 }
 
-.equipment-category-card[color*="purple"] {
-  border-color: rgba(255, 255, 255, 0.8) !important;
-  background: linear-gradient(135deg, rgba(156, 39, 176, 0.1), rgba(21, 21, 21, 0.9)) !important;
+.consumables-card {
+  border: 1px solid rgba(156, 39, 176, 0.3) !important;
+  background: rgba(156, 39, 176, 0.05) !important;
 }
 
 .equipment-category-header {
   padding: 20px 24px !important;
   background: rgba(30, 30, 30, 0.95) !important;
   backdrop-filter: blur(10px);
-  border-radius: 10px 10px 0 0 !important;
-  margin: -2px -2px 0 -2px;
+  border-radius: 11px 11px 0 0 !important;
+  margin: -1px -1px 0 -1px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
 }
 
@@ -3841,8 +4028,8 @@ const getPrimaryWeaponDamageType = () => {
   padding: 16px 20px !important;
   background: rgba(30, 30, 30, 0.95) !important;
   backdrop-filter: blur(10px);
-  border-radius: 10px 10px 0 0 !important;
-  margin: -2px -2px 0 -2px;
+  border-radius: 11px 11px 0 0 !important;
+  margin: -1px -1px 0 -1px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
 }
 
@@ -4029,5 +4216,586 @@ const getPrimaryWeaponDamageType = () => {
 .unequipped-item {
   background: rgba(158, 158, 158, 0.1);
   border-left: 3px solid #9e9e9e;
+}
+
+/* Page 5 Review Styles */
+.character-summary-card {
+  background: linear-gradient(135deg, rgba(var(--v-theme-primary), 0.1), rgba(var(--v-theme-secondary), 0.05));
+  border: 2px solid rgba(var(--v-theme-primary), 0.2);
+  border-radius: 20px !important;
+  overflow: hidden;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12) !important;
+}
+
+.character-header {
+  background: linear-gradient(135deg, rgba(var(--v-theme-primary), 0.9), rgba(var(--v-theme-primary-darken-1), 1));
+  color: white !important;
+  padding: 32px !important;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  position: relative;
+  overflow: hidden;
+}
+
+.character-header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="25" cy="25" r="2" fill="rgba(255,255,255,0.1)"/><circle cx="75" cy="75" r="1.5" fill="rgba(255,255,255,0.1)"/><circle cx="85" cy="25" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="15" cy="85" r="1" fill="rgba(255,255,255,0.1)"/></svg>');
+  pointer-events: none;
+}
+
+.character-name-section {
+  flex: 1;
+  z-index: 1;
+  position: relative;
+}
+
+.character-title-group {
+  margin-bottom: 16px;
+}
+
+.character-name {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: white;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  letter-spacing: -0.5px;
+}
+
+.character-subtitle {
+  font-size: 1.1rem;
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+}
+
+.character-basic-info {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.info-chip {
+  background: rgba(255, 255, 255, 0.15) !important;
+  backdrop-filter: blur(10px);
+  color: white !important;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.info-chip:hover {
+  background: rgba(255, 255, 255, 0.25) !important;
+  transform: translateY(-1px);
+}
+
+.character-portrait-section {
+  flex-shrink: 0;
+  text-align: center;
+  z-index: 1;
+  position: relative;
+}
+
+.character-avatar {
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+}
+
+.character-avatar:hover {
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: scale(1.02);
+}
+
+.upload-portrait-btn {
+  font-size: 0.75rem;
+  text-transform: none;
+  opacity: 0.8;
+  transition: all 0.3s ease;
+}
+
+.upload-portrait-btn:hover {
+  opacity: 1;
+  transform: translateY(-1px);
+}
+
+.character-identity-banner {
+  background: linear-gradient(90deg, rgba(var(--v-theme-surface), 0.95), rgba(var(--v-theme-surface-variant), 0.9));
+  display: flex;
+  padding: 24px 32px;
+  border-bottom: 1px solid rgba(var(--v-theme-outline), 0.2);
+}
+
+.identity-banner-item {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-width: 0;
+}
+
+.identity-icon-wrapper {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: rgba(var(--v-theme-surface-variant), 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.identity-content {
+  min-width: 0;
+  flex: 1;
+}
+
+.identity-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: rgba(var(--v-theme-on-surface), 0.6);
+  letter-spacing: 0.5px;
+  margin-bottom: 2px;
+}
+
+.identity-value {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--v-theme-on-surface);
+  line-height: 1.2;
+}
+
+.identity-subtext {
+  font-size: 0.875rem;
+  font-weight: 400;
+  color: rgba(var(--v-theme-on-surface), 0.7);
+  display: block;
+  margin-top: 2px;
+}
+
+.identity-divider {
+  margin: 0 24px;
+  opacity: 0.3;
+}
+
+.character-vitals-section {
+  padding: 32px !important;
+  background: rgba(var(--v-theme-surface), 0.5);
+  border-top: 1px solid rgba(var(--v-theme-outline), 0.2);
+}
+
+.vitals-header {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.vitals-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--v-theme-on-surface);
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.vitals-subtitle {
+  font-size: 0.875rem;
+  color: rgba(var(--v-theme-on-surface), 0.6);
+  font-style: italic;
+}
+
+.vitals-row {
+  margin-bottom: 24px;
+}
+
+.vital-col {
+  padding: 8px 12px;
+}
+
+.vital-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 20px 16px;
+  background: linear-gradient(135deg, rgba(var(--v-theme-surface), 0.9), rgba(var(--v-theme-surface-variant), 0.5));
+  border-radius: 16px;
+  border: 2px solid rgba(var(--v-theme-outline), 0.2);
+  transition: all 0.3s ease;
+  min-height: 80px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.vital-item:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  border-color: rgba(var(--v-theme-primary), 0.4);
+  background: linear-gradient(135deg, rgba(var(--v-theme-primary), 0.05), rgba(var(--v-theme-surface), 0.9));
+}
+
+.vital-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(var(--v-theme-surface-variant), 0.8), rgba(var(--v-theme-surface-variant), 0.4));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.vital-content {
+  min-width: 0;
+  flex: 1;
+}
+
+.vital-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: rgba(var(--v-theme-on-surface), 0.6);
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+}
+
+.vital-value {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--v-theme-on-surface);
+  line-height: 1;
+}
+
+.ability-scores-section {
+  margin-top: 8px;
+}
+
+.ability-scores-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--v-theme-on-surface);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+}
+
+.ability-scores-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  gap: 16px;
+  margin-top: 8px;
+}
+
+.ability-score-item {
+  text-align: center;
+  padding: 20px 16px;
+  background: linear-gradient(135deg, rgba(var(--v-theme-surface), 0.8), rgba(var(--v-theme-surface-variant), 0.4));
+  border-radius: 16px;
+  border: 2px solid rgba(var(--v-theme-outline), 0.2);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.ability-score-item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, rgba(var(--v-theme-primary), 0.6), rgba(var(--v-theme-secondary), 0.6));
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
+}
+
+.ability-score-item:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  border-color: rgba(var(--v-theme-primary), 0.4);
+}
+
+.ability-score-item:hover::before {
+  transform: scaleX(1);
+}
+
+.ability-name {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: rgba(var(--v-theme-on-surface), 0.7);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+}
+
+.ability-score {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: var(--v-theme-on-surface);
+  margin-bottom: 4px;
+  line-height: 1;
+}
+
+.ability-modifier {
+  font-size: 0.875rem;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: 12px;
+  display: inline-block;
+  min-width: 40px;
+}
+
+.ability-modifier.positive {
+  background: linear-gradient(135deg, rgba(var(--v-theme-success), 0.8), rgba(var(--v-theme-success-lighten-1), 0.6));
+  color: white;
+  box-shadow: 0 2px 8px rgba(var(--v-theme-success), 0.3);
+}
+
+.ability-modifier.negative {
+  background: linear-gradient(135deg, rgba(var(--v-theme-error), 0.8), rgba(var(--v-theme-error-lighten-1), 0.6));
+  color: white;
+  box-shadow: 0 2px 8px rgba(var(--v-theme-error), 0.3);
+}
+
+.ability-modifier.neutral {
+  background: linear-gradient(135deg, rgba(var(--v-theme-surface-variant), 0.8), rgba(var(--v-theme-outline), 0.4));
+  color: var(--v-theme-on-surface-variant);
+}
+
+/* Responsive Design for Character Header */
+@media (max-width: 960px) {
+  .character-header {
+    flex-direction: column;
+    text-align: center;
+    padding: 24px !important;
+  }
+
+  .character-portrait-section {
+    margin-top: 20px;
+    order: -1;
+  }
+
+  .character-name {
+    font-size: 2.25rem;
+  }
+
+  .character-identity-banner {
+    flex-direction: column;
+    gap: 20px;
+    padding: 20px;
+  }
+
+  .identity-divider {
+    display: none;
+  }
+
+  .identity-banner-item {
+    justify-content: center;
+    text-align: center;
+  }
+}
+
+@media (max-width: 600px) {
+  .character-header {
+    padding: 20px !important;
+  }
+
+  .character-name {
+    font-size: 1.875rem;
+  }
+
+  .character-vitals-section {
+    padding: 20px !important;
+  }
+
+  .ability-scores-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+
+  .vital-item {
+    padding: 12px;
+    gap: 8px;
+  }
+
+  .vital-icon {
+    width: 32px;
+    height: 32px;
+  }
+
+  .vital-value {
+    font-size: 1rem;
+  }
+}
+
+.features-card {
+  border-radius: 16px !important;
+  border: 2px solid rgba(var(--v-theme-purple), 0.2);
+}
+
+.features-header {
+  background: linear-gradient(135deg, rgba(var(--v-theme-purple), 0.1), rgba(var(--v-theme-purple), 0.05));
+  border-bottom: 1px solid rgba(var(--v-theme-purple), 0.2);
+  color: var(--v-theme-purple) !important;
+  padding: 20px 24px !important;
+}
+
+.feature-category {
+  padding: 16px;
+  background: rgba(var(--v-theme-surface), 0.3);
+  border-radius: 12px;
+  border: 1px solid rgba(var(--v-theme-outline), 0.2);
+  margin-bottom: 12px;
+}
+
+.feature-category-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.feature-category-title {
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+
+.feature-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.feature-description {
+  color: rgba(var(--v-theme-on-surface), 0.7);
+  font-size: 0.875rem;
+  font-style: italic;
+}
+
+.features-empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: rgba(var(--v-theme-on-surface), 0.6);
+}
+
+.quick-stats-card {
+  border-radius: 16px !important;
+  border: 2px solid rgba(var(--v-theme-teal), 0.2);
+}
+
+.quick-stats-header {
+  background: linear-gradient(135deg, rgba(var(--v-theme-teal), 0.1), rgba(var(--v-theme-teal), 0.05));
+  border-bottom: 1px solid rgba(var(--v-theme-teal), 0.2);
+  color: var(--v-theme-teal) !important;
+  padding: 20px 24px !important;
+}
+
+.quick-stat-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+}
+
+.quick-stat-label {
+  font-size: 0.875rem;
+  color: rgba(var(--v-theme-on-surface), 0.7);
+  font-weight: 500;
+}
+
+.quick-stat-value {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--v-theme-on-surface);
+}
+
+.backstory-card {
+  border-radius: 16px !important;
+  border: 2px solid rgba(var(--v-theme-deep-purple), 0.2);
+}
+
+.backstory-header {
+  background: linear-gradient(135deg, rgba(var(--v-theme-deep-purple), 0.1), rgba(var(--v-theme-deep-purple), 0.05));
+  border-bottom: 1px solid rgba(var(--v-theme-deep-purple), 0.2);
+  color: var(--v-theme-deep-purple) !important;
+  padding: 20px 24px !important;
+}
+
+.notes-card {
+  border-radius: 16px !important;
+  border: 2px solid rgba(var(--v-theme-amber), 0.2);
+}
+
+.notes-header {
+  background: linear-gradient(135deg, rgba(var(--v-theme-amber), 0.1), rgba(var(--v-theme-amber), 0.05));
+  border-bottom: 1px solid rgba(var(--v-theme-amber), 0.2);
+  color: var(--v-theme-amber-darken-2) !important;
+  padding: 20px 24px !important;
+}
+
+.validation-card {
+  border-radius: 16px !important;
+}
+
+.validation-alert {
+  border-radius: 12px !important;
+  margin: 0 !important;
+}
+
+.warning-item {
+  display: flex;
+  align-items: center;
+  margin: 4px 0;
+}
+
+.final-action-card {
+  border-radius: 20px !important;
+  background: linear-gradient(135deg, rgba(var(--v-theme-primary), 0.05), rgba(var(--v-theme-surface), 1));
+  border: 2px solid rgba(var(--v-theme-primary), 0.2);
+}
+
+.final-action-content {
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.save-character-btn {
+  border-radius: 12px !important;
+  text-transform: none;
+  font-weight: 600;
+  padding: 0 32px !important;
+  min-width: 200px;
+}
+
+@media (max-width: 960px) {
+  .character-header {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .character-portrait-placeholder {
+    margin-top: 16px;
+  }
+
+  .ability-scores-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .ability-scores-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .character-basic-info {
+    justify-content: center;
+  }
 }
 </style>

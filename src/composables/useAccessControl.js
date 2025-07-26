@@ -15,6 +15,7 @@ const showAccessDialog = ref(false);
 const accessPasswordInput = ref("");
 const accessError = ref("");
 const pendingAccessAction = ref(null);
+const accessType = ref(null); // 'admin' or 'user'
 
 // Session timeout (2 hours for general access)
 const ACCESS_SESSION_TIMEOUT = 2 * 60 * 60 * 1000;
@@ -68,6 +69,14 @@ const clearAccessStorage = () => {
   }
 };
 
+let singletonInstance;
+export function useAccessControlSingleton() {
+  if (!singletonInstance) {
+    singletonInstance = useAccessControl();
+  }
+  return singletonInstance;
+}
+
 export function useAccessControl() {
   // Check if current access session is still valid
   const isAccessValid = computed(() => {
@@ -96,6 +105,7 @@ export function useAccessControl() {
       accessError.value = "";
       showAccessDialog.value = false;
       accessPasswordInput.value = "";
+      accessType.value = password === ADMIN_PASSWORD ? "admin" : "user";
 
       // Save to sessionStorage
       saveAccessState();
@@ -122,6 +132,7 @@ export function useAccessControl() {
     accessPasswordInput.value = "";
     accessError.value = "";
     pendingAccessAction.value = null;
+    accessType.value = null;
 
     // Clear from sessionStorage
     clearAccessStorage();
@@ -202,6 +213,7 @@ export function useAccessControl() {
     accessPasswordInput,
     accessError,
     getRemainingAccessTime,
+    accessType: computed(() => accessType.value),
 
     // Methods
     authenticateAccess,

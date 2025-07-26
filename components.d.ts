@@ -15,8 +15,8 @@ declare module 'vue' {
     CharacterCreatorMain: typeof import('./src/components/CharacterCreator/CharacterCreatorMain.vue')['default']
     CharacterCreatorStepper: typeof import('./src/components/CharacterCreator/CharacterCreatorStepper.vue')['default']
     CharacterCreatorStepperDebug: typeof import('./src/components/CharacterCreator/CharacterCreatorStepperDebug.vue')['default']
-    CharacterCreatorStepperSimple: typeof import('./src/components/CharacterCreator/CharacterCreatorStepperSimple.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    ThemeSwitcher: typeof import('./src/components/ThemeSwitcher.vue')['default']
   }
 }

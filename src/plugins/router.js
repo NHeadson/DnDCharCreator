@@ -11,6 +11,7 @@ import { createRouter, createWebHistory } from "vue-router";
 import CharacterForm from "@/pages/character-form.vue";
 import Characters from "@/pages/characters.vue";
 import Index from "@/pages/index.vue";
+import ThemeDemo from "@/pages/theme-demo.vue";
 
 const routes = [
   {
@@ -27,6 +28,11 @@ const routes = [
     path: "/characters",
     name: "Characters",
     component: Characters,
+  },
+  {
+    path: "/theme-demo",
+    name: "ThemeDemo",
+    component: ThemeDemo,
   },
 ];
 

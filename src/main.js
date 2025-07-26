@@ -3,6 +3,7 @@ import router from "@/plugins/router.js";
 import vuetify from "@/plugins/vuetify.js";
 import App from "./App.vue";
 import "unfonts.css";
+import "@/styles/theme.css";
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 import { getAuth } from "firebase/auth";

@@ -85,6 +85,7 @@ const fallbackClassData = [
       { name: "Greataxe", cost: 30, weight: 7 },
       { name: "Handaxes", cost: 5, weight: 2, quantity: 4 },
     ],
+    startingMoney: { rolls: "2d4", multiplier: 10, average: 50 }, // 2d4 × 10 gp
     weaponMasteryChoices: 2,
     expertiseSkills: [],
   },
@@ -116,6 +117,7 @@ const fallbackClassData = [
     ],
     armorTraining: { light: true, medium: false, heavy: false, shields: false },
     startingEquipment: [],
+    startingMoney: { rolls: "3d4", multiplier: 10, average: 75 }, // 3d4 × 10 gp
     toolProficiencies: [{ type: "Musical Instrument", choices: 3 }],
     expertiseSkills: ["Performance", "Persuasion"],
   },
@@ -139,6 +141,7 @@ const fallbackClassData = [
     ],
     armorTraining: { light: true, medium: true, heavy: true, shields: true },
     startingEquipment: [],
+    startingMoney: { rolls: "5d4", multiplier: 10, average: 125 }, // 5d4 × 10 gp
     weaponMasteryChoices: 3,
     expertiseSkills: [],
   },
@@ -163,6 +166,7 @@ const fallbackClassData = [
     ],
     armorTraining: { light: true, medium: false, heavy: false, shields: false },
     startingEquipment: [],
+    startingMoney: { rolls: "4d4", multiplier: 10, average: 100 }, // 4d4 × 10 gp
     toolProficiencies: ["Thieves' Tools"],
     expertiseSkills: ["Sleight of Hand", "Stealth"],
   },
@@ -194,6 +198,7 @@ const fallbackBackgroundData = [
       { name: "Prayer Book", quantity: 1 },
       { name: "Incense", quantity: 5 },
     ],
+    startingMoney: { gp: 15 }, // Additional gold
     feature: {
       name: "Shelter of the Faithful",
       description:
@@ -220,6 +225,7 @@ const fallbackBackgroundData = [
       { name: "Dark Common Clothes", quantity: 1 },
       { name: "Belt Pouch", quantity: 1 },
     ],
+    startingMoney: { gp: 15 }, // Additional gold
     feature: {
       name: "Criminal Contact",
       description: "You have a reliable contact in the criminal underworld.",
@@ -244,6 +250,7 @@ const fallbackBackgroundData = [
       { name: "Small Knife", quantity: 1 },
       { name: "Common Clothes", quantity: 1 },
     ],
+    startingMoney: { gp: 10 }, // Additional gold
     feature: {
       name: "Researcher",
       description: "You know where to find information and who to ask.",
@@ -1009,6 +1016,9 @@ export function useCharacterData() {
         ...(selectedClass.toolProficiencies || []),
       ];
 
+      // Calculate starting money when class changes
+      calculateStartingMoney();
+
       // Initialize skill proficiencies - don't auto-assign class skills
       character.skillProficiencies = {};
       for (const skill of skillList) {
@@ -1140,6 +1150,9 @@ export function useCharacterData() {
           }
         }
       }
+
+      // Calculate starting money when background changes
+      calculateStartingMoney();
     } else {
       character.backgroundDetails = null;
     }
@@ -1189,6 +1202,39 @@ export function useCharacterData() {
         bonus: 0,
       };
     }
+  };
+
+  // Starting money calculation
+  // Starting money calculation
+  const calculateStartingMoney = () => {
+    const selectedClass = classData.value.find((c) => c.id === character.class);
+    const selectedBackground = backgroundData.value.find(
+      (b) => b.id === character.background
+    );
+
+    let totalGold = 0;
+
+    // Add class starting money
+    if (selectedClass?.startingMoney) {
+      if (selectedClass.startingMoney.rolls) {
+        // Roll dice for starting money (use average for simplicity)
+        totalGold += selectedClass.startingMoney.average || 0;
+      }
+    }
+
+    // Add background starting money
+    if (selectedBackground?.startingMoney?.gp) {
+      totalGold += selectedBackground.startingMoney.gp;
+    }
+
+    // Set the character's starting gold
+    character.coins.gp = totalGold;
+    character.coins.cp = 0;
+    character.coins.sp = 0;
+    character.coins.ep = 0;
+    character.coins.pp = 0;
+
+    console.log(`Starting money calculated: ${totalGold} GP`);
   };
 
   // Watchers
@@ -1263,6 +1309,7 @@ export function useCharacterData() {
     updateBackgroundTraits,
     updateClassSkillProficiencies,
     initializeCharacter,
+    calculateStartingMoney,
 
     // Static data
     standardLanguages,

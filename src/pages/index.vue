@@ -12,7 +12,7 @@
               <v-container style="font-size: large;" width="85%">
                 ** Please make sure you are finished creating your player before submitting your form **
               </v-container>
-              <v-btn v-if="hasAccess" color="#822522" size="large" to="/character-form" class="mt-4">
+              <v-btn v-if="hasAccess" color="primary" size="large" to="/character-form" class="mt-4">
                 Create Character
               </v-btn>
               <v-btn v-else color="grey" size="large" variant="outlined" @click="requireAccessForCreation" class="mt-4">

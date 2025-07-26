@@ -1,18 +1,18 @@
 <template>
-  <div class="character-form-page">
+  <div class="character-form-page character-creator theme-aware">
     <!-- Show character creator if user has access -->
     <CharacterCreatorMain v-if="hasAccess" />
 
     <!-- Show access required message if no access -->
     <v-container v-else class="d-flex flex-column align-center justify-center" style="min-height: 80vh;">
-      <v-card class="pa-8 text-center" max-width="600">
+      <v-card class="pa-8 text-center themed-card" max-width="600">
         <v-icon size="64" color="orange" class="mb-4">mdi-lock</v-icon>
-        <h2 class="mb-4">Access Required</h2>
-        <p class="mb-6 text-h6">
+        <h2 class="mb-4 theme-text-primary">Access Required</h2>
+        <p class="mb-6 text-h6 theme-text-secondary">
           This is a private D&D group's character creation tool.
           You need an access code to create characters.
         </p>
-        <v-btn color="#822522" size="large" @click="requireAccessForCreation" class="mb-4">
+        <v-btn color="primary" size="large" @click="requireAccessForCreation" class="mb-4 create-character-btn">
           Enter Access Code
         </v-btn>
         <div class="mt-4">

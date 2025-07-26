@@ -1,5 +1,5 @@
 <template>
-  <div class="characters-page">
+  <div class="characters-page theme-background theme-aware">
     <v-container class="pa-4">
       <!-- Header Section -->
       <div class="page-header text-center mb-4">
@@ -79,13 +79,17 @@
 
             <!-- Admin Status -->
             <v-col cols="12" md="3" class="text-center">
-              <div v-if="isAuthenticated" class="d-flex align-center justify-center">
-                <v-chip color="success" variant="elevated" prepend-icon="mdi-shield-check" size="small" class="me-2">
-                  Admin Active
-                </v-chip>
-                <v-btn variant="text" size="small" color="grey" @click="logout" title="Logout from admin">
-                  <v-icon size="small">mdi-logout</v-icon>
-                </v-btn>
+              <div v-if="isAuthenticated" class="d-flex flex-column align-center">
+                <div class="d-flex align-center justify-center mb-2">
+                  <v-chip color="success" variant="elevated" prepend-icon="mdi-shield-check" size="small" class="me-2">
+                    Admin Active
+                  </v-chip>
+                  <v-btn variant="text" size="small" color="grey" @click="logout" title="Logout from admin">
+                    <v-icon size="small">mdi-logout</v-icon>
+                  </v-btn>
+                </div>
+                <!-- Theme Switcher - Admin Only -->
+                <ThemeSwitcher />
               </div>
               <!-- Admin Login Button -->
               <div v-else-if="hasAccess" class="d-flex flex-column align-center">
@@ -103,7 +107,7 @@
             </v-col>
 
             <v-col cols="12" md="3" class="text-md-end">
-              <v-btn v-if="hasAccess" color="#822522" variant="elevated" @click="requireAccessForCreation"
+              <v-btn v-if="hasAccess" color="primary" variant="elevated" @click="requireAccessForCreation"
                 prepend-icon="mdi-plus" class="text-white create-character-btn">
                 Create New Character
               </v-btn>
@@ -137,7 +141,7 @@
 
         <!-- Character Cards -->
         <v-row>
-          <v-col v-for="character in characters" :key="character.id" cols="12" sm="12" md="6" lg="6" xl="6">
+          <v-col v-for="character in characters" :key="character.id" cols="12" sm="6" md="4" lg="4" xl="4">
             <v-card class="character-card h-100" elevation="4" hover>
               <!-- Character Header with Background -->
               <div class="character-header" :style="getCharacterHeaderStyle(character)">
@@ -447,6 +451,7 @@ import { useFirestore } from '@/composables/useFirestore'
 import { useAdminAuth } from '@/composables/useAdminAuth'
 import { useAccessControl } from '@/composables/useAccessControl'
 import AdminAuthDialog from '@/components/AdminAuthDialog.vue'
+import ThemeSwitcher from '@/components/ThemeSwitcher.vue'
 
 const router = useRouter()
 const { getCharacters, deleteCharacter: deleteFromFirestore } = useFirestore()

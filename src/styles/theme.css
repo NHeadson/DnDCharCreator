@@ -1,0 +1,342 @@
+/* Global Theme Variables and Styles */
+
+/* Default CSS Custom Properties - these will be updated by the theme system */
+:root {
+  /* Default theme colors (D&D Dark) */
+  --theme-primary: #822522;
+  --theme-primary-lighten-1: #9a3e3a;
+  --theme-primary-lighten-2: #b25651;
+  --theme-primary-lighten-3: #ca6f69;
+  --theme-primary-lighten-4: #e28780;
+  --theme-primary-lighten-5: #fa9f98;
+  --theme-primary-darken-1: #6a1e1c;
+  --theme-primary-darken-2: #521715;
+  --theme-primary-darken-3: #3a100f;
+  --theme-primary-darken-4: #220908;
+
+  --theme-secondary: #2c1810;
+  --theme-secondary-lighten-1: #453528;
+  --theme-secondary-lighten-2: #5e5240;
+  --theme-secondary-lighten-3: #776f58;
+  --theme-secondary-lighten-4: #908c70;
+  --theme-secondary-lighten-5: #a9a988;
+  --theme-secondary-darken-1: #23140d;
+  --theme-secondary-darken-2: #1a0f09;
+  --theme-secondary-darken-3: #110a06;
+  --theme-secondary-darken-4: #080503;
+
+  --theme-accent: #d4af37;
+  --theme-accent-lighten-1: #dbb851;
+  --theme-accent-lighten-2: #e2c16b;
+  --theme-accent-lighten-3: #e9ca85;
+  --theme-accent-lighten-4: #f0d39f;
+  --theme-accent-lighten-5: #f7dcb9;
+  --theme-accent-darken-1: #b8992e;
+  --theme-accent-darken-2: #9c8325;
+  --theme-accent-darken-3: #806d1c;
+  --theme-accent-darken-4: #645713;
+
+  --theme-background: #1a1a1a; /* Dark background */
+  --theme-surface: #2c1810; /* Dark surface */
+
+  /* Text colors for dark theme */
+  --theme-text-primary: #ffffff; /* White text */
+  --theme-text-secondary: #b0b0b0; /* Light gray text */
+  --theme-text-disabled: #707070; /* Disabled text */
+
+  /* Border and divider colors for dark theme */
+  --theme-border: #404040; /* Dark borders */
+  --theme-divider: #303030; /* Dark dividers */
+
+  /* Transition durations */
+  --theme-transition-fast: 0.15s;
+  --theme-transition-normal: 0.3s;
+  --theme-transition-slow: 0.5s;
+}
+
+/* Global theme-aware styles */
+.theme-aware {
+  transition: background-color var(--theme-transition-normal) ease,
+    color var(--theme-transition-normal) ease,
+    border-color var(--theme-transition-normal) ease;
+}
+
+/* Custom theme utility classes */
+.theme-primary {
+  color: var(--theme-primary) !important;
+}
+
+.theme-primary-bg {
+  background-color: var(--theme-primary) !important;
+}
+
+.theme-secondary {
+  color: var(--theme-secondary) !important;
+}
+
+.theme-secondary-bg {
+  background-color: var(--theme-secondary) !important;
+}
+
+.theme-accent {
+  color: var(--theme-accent) !important;
+}
+
+.theme-accent-bg {
+  background-color: var(--theme-accent) !important;
+}
+
+.theme-surface {
+  background-color: var(--theme-surface) !important;
+}
+
+.theme-background {
+  background-color: var(--theme-background) !important;
+}
+
+.theme-text-primary {
+  color: var(--theme-text-primary) !important;
+}
+
+.theme-text-secondary {
+  color: var(--theme-text-secondary) !important;
+}
+
+.theme-border {
+  border-color: var(--theme-border) !important;
+}
+
+/* Enhanced character cards with theme support */
+.character-card {
+  transition: transform var(--theme-transition-fast) ease,
+    box-shadow var(--theme-transition-fast) ease,
+    background-color var(--theme-transition-normal) ease !important;
+}
+
+.character-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(var(--v-theme-primary), 0.15) !important;
+}
+
+/* Character header gradients with theme support */
+.character-header {
+  background: linear-gradient(
+    135deg,
+    var(--theme-primary) 0%,
+    var(--theme-primary-darken-2) 50%,
+    var(--theme-secondary) 100%
+  ) !important;
+  transition: background var(--theme-transition-normal) ease;
+}
+
+/* Page headers with theme support */
+.page-header {
+  position: relative;
+  overflow: hidden;
+}
+
+.page-header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(var(--v-theme-primary), 0.05) 0%,
+    rgba(var(--v-theme-secondary), 0.03) 100%
+  );
+  z-index: -1;
+  transition: background var(--theme-transition-normal) ease;
+}
+
+/* Enhanced buttons with theme support */
+.create-character-btn {
+  background: linear-gradient(
+    45deg,
+    var(--theme-primary) 0%,
+    var(--theme-primary-lighten-1) 100%
+  ) !important;
+  transition: background var(--theme-transition-fast) ease,
+    transform var(--theme-transition-fast) ease;
+}
+
+.create-character-btn:hover {
+  background: linear-gradient(
+    45deg,
+    var(--theme-primary-darken-1) 0%,
+    var(--theme-primary) 100%
+  ) !important;
+  transform: translateY(-1px);
+}
+
+/* Theme-aware cards */
+.themed-card {
+  background-color: var(--theme-surface) !important;
+  border: 1px solid var(--theme-border);
+  transition: background-color var(--theme-transition-normal) ease,
+    border-color var(--theme-transition-normal) ease;
+}
+
+.themed-card:hover {
+  border-color: var(--theme-primary-lighten-3);
+}
+
+/* Admin controls styling */
+.admin-action-btn {
+  transition: all var(--theme-transition-fast) ease;
+}
+
+.admin-protected {
+  opacity: 0.7;
+}
+
+.admin-protected:hover {
+  opacity: 1;
+}
+
+/* Ability score cards with theme support */
+.ability-score-card {
+  background: linear-gradient(
+    135deg,
+    var(--theme-surface) 0%,
+    var(--theme-primary-lighten-5) 100%
+  ) !important;
+  border: 1px solid var(--theme-border);
+  transition: background var(--theme-transition-normal) ease,
+    transform var(--theme-transition-fast) ease,
+    border-color var(--theme-transition-normal) ease;
+}
+
+.ability-score-card:hover {
+  transform: scale(1.02);
+  border-color: var(--theme-primary-lighten-2);
+}
+
+/* Character creation stepper enhancement */
+.character-creator {
+  background: linear-gradient(
+    to bottom,
+    var(--theme-background) 0%,
+    var(--theme-surface) 100%
+  ) !important;
+  min-height: 100vh;
+  transition: background var(--theme-transition-normal) ease;
+}
+
+/* Equipment cards with theme support */
+.equipment-card {
+  background-color: var(--theme-surface) !important;
+  border: 1px solid var(--theme-border);
+  transition: background-color var(--theme-transition-normal) ease,
+    border-color var(--theme-transition-normal) ease,
+    box-shadow var(--theme-transition-fast) ease;
+}
+
+.equipment-card:hover {
+  box-shadow: 0 4px 12px rgba(var(--v-theme-primary), 0.1);
+  border-color: var(--theme-primary-lighten-3);
+}
+
+/* Vitals section enhancement */
+.vitals-section {
+  background: linear-gradient(
+    135deg,
+    var(--theme-surface) 0%,
+    var(--theme-accent-lighten-5) 100%
+  ) !important;
+  border: 2px solid var(--theme-accent-lighten-3);
+  transition: background var(--theme-transition-normal) ease,
+    border-color var(--theme-transition-normal) ease;
+}
+
+/* Identity banner styling */
+.character-identity-banner {
+  background: linear-gradient(
+    90deg,
+    var(--theme-accent-lighten-4) 0%,
+    var(--theme-accent-lighten-2) 50%,
+    var(--theme-accent) 100%
+  ) !important;
+  color: var(--theme-secondary-darken-3) !important;
+  transition: background var(--theme-transition-normal) ease;
+}
+
+/* Smooth transitions for all themed elements */
+* {
+  transition-property: background-color, color, border-color, box-shadow,
+    transform;
+  transition-duration: var(--theme-transition-normal);
+  transition-timing-function: ease;
+}
+
+/* Dark theme specific overrides */
+.v-theme--dark {
+  .character-header {
+    background: linear-gradient(
+      135deg,
+      var(--theme-primary) 0%,
+      var(--theme-primary-lighten-1) 50%,
+      var(--theme-accent-darken-2) 100%
+    ) !important;
+  }
+
+  .themed-card {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  }
+
+  .page-header::before {
+    background: linear-gradient(
+      135deg,
+      rgba(var(--v-theme-primary), 0.1) 0%,
+      rgba(var(--v-theme-accent), 0.05) 100%
+    );
+  }
+}
+
+/* Light theme specific overrides */
+.v-theme--light {
+  .character-header {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  }
+
+  .themed-card {
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+  }
+}
+
+/* Responsive theme adjustments */
+@media (max-width: 768px) {
+  .character-card:hover {
+    transform: none; /* Disable hover effects on mobile */
+  }
+
+  .ability-score-card:hover {
+    transform: none;
+  }
+}
+
+/* Theme loading state */
+.theme-loading {
+  opacity: 0.6;
+  pointer-events: none;
+  transition: opacity var(--theme-transition-fast) ease;
+}
+
+/* Animation for theme changes */
+@keyframes themeChange {
+  0% {
+    opacity: 0.8;
+  }
+  50% {
+    opacity: 0.6;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.theme-transition {
+  animation: themeChange 0.5s ease;
+}

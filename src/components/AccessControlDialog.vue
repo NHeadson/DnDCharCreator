@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="showAccessDialog" max-width="500" persistent>
+  <v-dialog v-model="showAccessDialog" max-width="500">
     <v-card class="access-control-card">
       <v-card-title class="d-flex align-center justify-center pa-6 bg-gradient">
         <v-icon color="primary" size="large" class="me-3">mdi-shield-account</v-icon>
@@ -61,15 +61,22 @@
 </template>
 
 <script setup>
-import { useAccessControl } from '@/composables/useAccessControl'
+import { watch } from 'vue'
+import { useAccessControlSingleton } from '@/composables/useAccessControl'
 
-const {
-  showAccessDialog,
-  accessPasswordInput,
-  accessError,
-  handleAccessSubmit,
-  closeAccessDialog
-} = useAccessControl()
+const accessControl = useAccessControlSingleton()
+const showAccessDialog = accessControl.showAccessDialog
+const accessPasswordInput = accessControl.accessPasswordInput
+const accessError = accessControl.accessError
+const handleAccessSubmit = accessControl.handleAccessSubmit
+const closeAccessDialog = accessControl.closeAccessDialog
+const hasAccess = accessControl.hasAccess
+
+watch(() => hasAccess.value, (val) => {
+  if (val) {
+    closeAccessDialog()
+  }
+}, { immediate: true })
 
 // Handle form submission to trigger browser password save
 const handleFormSubmit = (event) => {
@@ -97,6 +104,8 @@ const handleFormSubmit = (event) => {
     setTimeout(() => {
       document.body.removeChild(iframe)
     }, 1000)
+    // Explicitly close the dialog after successful access
+    closeAccessDialog()
   } else {
     event.preventDefault()
   }
