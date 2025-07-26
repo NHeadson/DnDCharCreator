@@ -119,26 +119,6 @@
           </v-row>
         </v-card>
 
-        <!-- Admin Information Alert -->
-        <v-alert v-if="!isAuthenticated" type="info" variant="tonal" class="mb-6" border="start">
-          <v-alert-title class="d-flex align-center">
-            <v-icon class="me-2">mdi-shield-key</v-icon>
-            Protected Character Management
-          </v-alert-title>
-          <div class="mt-2">
-            Editing and deleting characters requires admin authentication to prevent accidental changes.
-            Only the Dungeon Master and authorized users have access to these functions.
-            <div class="mt-2 text-caption">
-              <v-icon size="small" class="me-1">mdi-key</v-icon>
-              <strong>DMs:</strong> Use the "Admin Login" button above or click any Edit/Delete button to authenticate.
-            </div>
-            <div class="mt-1 text-caption">
-              <v-icon size="small" class="me-1">mdi-information-outline</v-icon>
-              <strong>Players:</strong> Contact your DM if you need a character edited or deleted.
-            </div>
-          </div>
-        </v-alert>
-
         <!-- Character Cards -->
         <v-row>
           <v-col v-for="character in characters" :key="character.id" cols="12" sm="6" md="4" lg="4" xl="4">

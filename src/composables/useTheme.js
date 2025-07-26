@@ -290,6 +290,29 @@ export function useTheme() {
     loadSavedTheme();
   });
 
+  // Delete a custom theme
+  const deleteCustomTheme = (themeKey) => {
+    if (!themeKey.startsWith('custom_')) {
+      console.warn('Can only delete custom themes');
+      return false;
+    }
+
+    if (currentTheme.value === themeKey) {
+      // If the theme being deleted is currently active, switch to default
+      setTheme('default');
+    }
+
+    // Remove from themePresets
+    delete themePresets[themeKey];
+
+    // Update localStorage
+    const customThemes = JSON.parse(localStorage.getItem('dnd-app-custom-themes') || '{}');
+    delete customThemes[themeKey];
+    localStorage.setItem('dnd-app-custom-themes', JSON.stringify(customThemes));
+
+    return true;
+  };
+
   return {
     // State
     currentTheme: computed(() => currentTheme.value),
@@ -297,6 +320,7 @@ export function useTheme() {
     isLoading: computed(() => isLoading.value),
     availableThemes,
     cssVariables,
+    deleteCustomTheme,
 
     // Methods
     setTheme,

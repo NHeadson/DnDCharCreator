@@ -7,6 +7,7 @@ const ACCESS_PASSWORD = import.meta.env.VITE_ACCESS_PASSWORD;
 // Session storage keys
 const ACCESS_STATE_KEY = "dnd_access_state";
 const ACCESS_EXPIRES_KEY = "dnd_access_expires";
+const ACCESS_TYPE_KEY = "dnd_access_type";
 
 // Reactive state for access control
 const hasAccess = ref(false);
@@ -25,12 +26,14 @@ const loadAccessState = () => {
   try {
     const savedAccess = sessionStorage.getItem(ACCESS_STATE_KEY);
     const savedExpires = sessionStorage.getItem(ACCESS_EXPIRES_KEY);
+    const savedType = sessionStorage.getItem(ACCESS_TYPE_KEY);
 
     if (savedAccess === "true" && savedExpires) {
       const expiresTime = parseInt(savedExpires);
       if (Date.now() < expiresTime) {
         hasAccess.value = true;
         accessExpiresAt.value = expiresTime;
+        accessType.value = savedType || null;
         return true;
       } else {
         // Session expired, clear storage
@@ -54,6 +57,11 @@ const saveAccessState = () => {
         accessExpiresAt.value.toString()
       );
     }
+    if (accessType.value) {
+      sessionStorage.setItem(ACCESS_TYPE_KEY, accessType.value);
+    } else {
+      sessionStorage.removeItem(ACCESS_TYPE_KEY);
+    }
   } catch (error) {
     console.warn("Failed to save access state to sessionStorage:", error);
   }
@@ -64,6 +72,7 @@ const clearAccessStorage = () => {
   try {
     sessionStorage.removeItem(ACCESS_STATE_KEY);
     sessionStorage.removeItem(ACCESS_EXPIRES_KEY);
+    sessionStorage.removeItem(ACCESS_TYPE_KEY);
   } catch (error) {
     console.warn("Failed to clear access state from sessionStorage:", error);
   }
@@ -214,6 +223,7 @@ export function useAccessControl() {
     accessError,
     getRemainingAccessTime,
     accessType: computed(() => accessType.value),
+    isAdmin: computed(() => accessType.value === 'admin'),
 
     // Methods
     authenticateAccess,

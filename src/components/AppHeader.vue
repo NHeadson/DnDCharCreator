@@ -29,13 +29,6 @@
         <v-icon icon="mdi-account-group" class="me-2"></v-icon>
         My Characters
       </v-btn>
-
-      <!-- Theme Demo button for admin only -->
-      <v-btn v-if="hasAccess && isAdmin" variant="flat" class="theme-secondary-bg nav-btn me-3" to="/theme-demo"
-        rounded="lg">
-        <v-icon icon="mdi-palette" class="me-2"></v-icon>
-        Theme Demo
-      </v-btn>
     </div>
   </v-app-bar>
 </template>
@@ -47,9 +40,8 @@ import { computed } from 'vue'
 
 const router = useRouter()
 const accessControl = useAccessControlSingleton()
-const hasAccess = accessControl.hasAccess
+const hasAccess = computed(() => accessControl.hasAccess)
 const requireAccess = accessControl.requireAccess
-const isAdmin = computed(() => accessControl.accessType?.value === 'admin')
 
 const requireAccessForCreation = () => {
   requireAccess(() => {

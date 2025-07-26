@@ -47,6 +47,16 @@
 
             <v-list-item-title class="font-weight-medium">
               {{ theme.name }}
+              <v-btn
+                v-if="theme.value.startsWith('custom_')"
+                icon="mdi-delete"
+                variant="text"
+                color="error"
+                size="small"
+                class="ms-2"
+                @click.stop="deleteTheme(theme.value)"
+                :title="'Delete ' + theme.name"
+              />
             </v-list-item-title>
 
             <v-list-item-subtitle v-if="theme.value === 'default'" class="text-caption">
@@ -104,7 +114,15 @@ const {
   availableThemes,
   setTheme,
   resetTheme,
+  deleteCustomTheme,
 } = useTheme();
+
+// Handle theme deletion
+const deleteTheme = (themeKey) => {
+  if (confirm(`Are you sure you want to delete this custom theme?`)) {
+    deleteCustomTheme(themeKey);
+  }
+};
 
 // Current theme configuration for display
 const currentThemeConfig = computed(() => {

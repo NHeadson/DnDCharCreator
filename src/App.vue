@@ -2,7 +2,7 @@
 import AppFooter from '@/components/AppFooter.vue';
 import AppHeader from '@/components/AppHeader.vue';
 import AccessControlDialog from '@/components/AccessControlDialog.vue';
-import { useAccessControl } from '@/composables/useAccessControl';
+import { useAccessControlSingleton } from '@/composables/useAccessControl';
 import { useTheme } from '@/composables/useTheme';
 
 export default {
@@ -12,11 +12,11 @@ export default {
     AccessControlDialog,
   },
   setup() {
-    const { initializeAccess } = useAccessControl();
+    const accessControl = useAccessControlSingleton();
     const { loadSavedTheme } = useTheme();
 
     // Initialize access state from sessionStorage on app start
-    initializeAccess();
+    accessControl.initializeAccess();
 
     // Initialize theme from localStorage on app start
     loadSavedTheme();
