@@ -1,23 +1,34 @@
 <template>
   <v-menu offset-y>
-    <template v-slot:activator="{ props }">
-      <v-btn v-bind="props" :color="currentTheme === 'default' ? 'primary' : 'theme-primary'" variant="elevated"
-        prepend-icon="mdi-palette" :loading="isLoading" class="theme-switcher-btn">
+    <template #activator="{ props }">
+      <v-btn
+        v-bind="props"
+        class="theme-switcher-btn"
+        :color="currentTheme === 'default' ? 'primary' : 'theme-primary'"
+        :loading="isLoading"
+        prepend-icon="mdi-palette"
+        variant="elevated"
+      >
         <span class="d-none d-sm-inline">{{ currentThemeConfig.name }}</span>
         <span class="d-sm-none">Theme</span>
-        <template v-slot:append>
+        <template #append>
           <v-icon>mdi-chevron-down</v-icon>
         </template>
       </v-btn>
     </template>
 
-    <v-card class="theme-menu" min-width="320" max-width="400">
+    <v-card class="theme-menu" max-width="400" min-width="320">
       <v-card-title class="d-flex align-center pa-3">
-        <v-icon color="primary" class="me-2">mdi-palette</v-icon>
+        <v-icon class="me-2" color="primary">mdi-palette</v-icon>
         <span class="text-h6 font-weight-bold">App Theme</span>
         <v-spacer />
-        <v-btn variant="text" size="small" @click="resetTheme" :disabled="currentTheme === 'default'"
-          title="Reset to Default">
+        <v-btn
+          :disabled="currentTheme === 'default'"
+          size="small"
+          title="Reset to Default"
+          variant="text"
+          @click="resetTheme"
+        >
           <v-icon size="small">mdi-refresh</v-icon>
         </v-btn>
       </v-card-title>
@@ -26,21 +37,40 @@
 
       <v-card-text class="pa-0">
         <v-list density="comfortable">
-          <v-list-item v-for="theme in availableThemes" :key="theme.value" @click="setTheme(theme.value)"
-            :active="currentTheme === theme.value" :disabled="isLoading" class="theme-option">
-            <template v-slot:prepend>
+          <v-list-item
+            v-for="theme in availableThemes"
+            :key="theme.value"
+            :active="currentTheme === theme.value"
+            class="theme-option"
+            :disabled="isLoading"
+            @click="setTheme(theme.value)"
+          >
+            <template #prepend>
               <div class="theme-preview me-3">
                 <div class="preview-colors d-flex">
-                  <div class="color-dot" :style="{ backgroundColor: theme.preview.primary }"
-                    :title="`Primary: ${theme.preview.primary}`" />
-                  <div class="color-dot" :style="{ backgroundColor: theme.preview.secondary }"
-                    :title="`Secondary: ${theme.preview.secondary}`" />
-                  <div class="color-dot" :style="{ backgroundColor: theme.preview.accent }"
-                    :title="`Accent: ${theme.preview.accent}`" />
-                  <div class="color-dot background-dot" :style="{
-                    backgroundColor: theme.preview.background,
-                    border: theme.preview.background === '#FFFFFF' || theme.preview.background.includes('F') ? '1px solid #E0E0E0' : 'none'
-                  }" :title="`Background: ${theme.preview.background}`" />
+                  <div
+                    class="color-dot"
+                    :style="{ backgroundColor: theme.preview.primary }"
+                    :title="`Primary: ${theme.preview.primary}`"
+                  />
+                  <div
+                    class="color-dot"
+                    :style="{ backgroundColor: theme.preview.secondary }"
+                    :title="`Secondary: ${theme.preview.secondary}`"
+                  />
+                  <div
+                    class="color-dot"
+                    :style="{ backgroundColor: theme.preview.accent }"
+                    :title="`Accent: ${theme.preview.accent}`"
+                  />
+                  <div
+                    class="color-dot background-dot"
+                    :style="{
+                      backgroundColor: theme.preview.background,
+                      border: theme.preview.background === '#FFFFFF' || theme.preview.background.includes('F') ? '1px solid #E0E0E0' : 'none'
+                    }"
+                    :title="`Background: ${theme.preview.background}`"
+                  />
                 </div>
               </div>
             </template>
@@ -49,13 +79,13 @@
               {{ theme.name }}
               <v-btn
                 v-if="theme.value.startsWith('custom_')"
-                icon="mdi-delete"
-                variant="text"
-                color="error"
-                size="small"
                 class="ms-2"
-                @click.stop="deleteTheme(theme.value)"
+                color="error"
+                icon="mdi-delete"
+                size="small"
                 :title="'Delete ' + theme.name"
+                variant="text"
+                @click.stop="deleteTheme(theme.value)"
               />
             </v-list-item-title>
 
@@ -72,7 +102,7 @@
               Clean light theme
             </v-list-item-subtitle>
 
-            <template v-slot:append v-if="currentTheme === theme.value">
+            <template v-if="currentTheme === theme.value" #append>
               <v-icon color="success" size="small">mdi-check-circle</v-icon>
             </template>
           </v-list-item>
@@ -84,14 +114,14 @@
       <v-card-actions class="pa-3">
         <div class="d-flex flex-column w-100">
           <div class="d-flex align-center mb-2">
-            <v-icon color="info" size="small" class="me-2">mdi-information-outline</v-icon>
+            <v-icon class="me-2" color="info" size="small">mdi-information-outline</v-icon>
             <span class="text-caption text-info">
               Theme changes apply instantly across the entire app
             </span>
           </div>
 
           <div class="d-flex align-center">
-            <v-icon color="success" size="small" class="me-2">mdi-content-save</v-icon>
+            <v-icon class="me-2" color="success" size="small">mdi-content-save</v-icon>
             <span class="text-caption text-success">
               Your selection is automatically saved
             </span>
@@ -103,32 +133,32 @@
 </template>
 
 <script setup>
-import { computed } from 'vue';
-import { useTheme } from '@/composables/useTheme.js';
+  import { computed } from 'vue'
+  import { useTheme } from '@/composables/useTheme.js'
 
-// Use the theme composable
-const {
-  currentTheme,
-  themeConfig,
-  isLoading,
-  availableThemes,
-  setTheme,
-  resetTheme,
-  deleteCustomTheme,
-} = useTheme();
+  // Use the theme composable
+  const {
+    currentTheme,
+    themeConfig,
+    isLoading,
+    availableThemes,
+    setTheme,
+    resetTheme,
+    deleteCustomTheme,
+  } = useTheme()
 
-// Handle theme deletion
-const deleteTheme = (themeKey) => {
-  if (confirm(`Are you sure you want to delete this custom theme?`)) {
-    deleteCustomTheme(themeKey);
+  // Handle theme deletion
+  const deleteTheme = themeKey => {
+    if (confirm(`Are you sure you want to delete this custom theme?`)) {
+      deleteCustomTheme(themeKey)
+    }
   }
-};
 
-// Current theme configuration for display
-const currentThemeConfig = computed(() => {
-  const current = availableThemes.value.find(t => t.value === currentTheme.value);
-  return current || { name: 'Unknown' };
-});
+  // Current theme configuration for display
+  const currentThemeConfig = computed(() => {
+    const current = availableThemes.value.find(t => t.value === currentTheme.value)
+    return current || { name: 'Unknown' }
+  })
 </script>
 
 <style scoped>

@@ -1,4 +1,4 @@
-import { reactive, ref, computed, watch, onMounted } from "vue";
+import { computed, onMounted, reactive, ref, watch } from "vue";
 import { dndAPI } from "@/services/dndAPI.js";
 
 // Fallback species data in case API fails
@@ -8,10 +8,10 @@ const fallbackSpeciesData = [
     name: "Dragonborn",
     size: "Medium",
     speed: 30,
-    darkvision: 60,
+    darkvision: null,
     damageResistance: "Acid, Cold, Fire, Lightning, or Poison (chosen)",
     lineages: [],
-    bonusLanguage: null,
+    bonusLanguage: "Draconic",
   },
   {
     id: "dwarf",
@@ -40,6 +40,52 @@ const fallbackSpeciesData = [
       { id: "wood_elf", name: "Wood Elf" },
     ],
     bonusLanguage: null,
+  },
+  {
+    id: "gnome",
+    name: "Gnome",
+    size: "Small",
+    speed: 25,
+    darkvision: 60,
+    damageResistance: null,
+    lineages: [
+      { id: "forest_gnome", name: "Forest Gnome" },
+      { id: "rock_gnome", name: "Rock Gnome" },
+    ],
+    bonusLanguage: "Gnomish",
+  },
+  {
+    id: "half-orc",
+    name: "Half-Orc",
+    size: "Medium",
+    speed: 30,
+    darkvision: 60,
+    damageResistance: null,
+    lineages: [],
+    bonusLanguage: "Orc",
+  },
+  {
+    id: "halfling",
+    name: "Halfling",
+    size: "Small",
+    speed: 25,
+    darkvision: null,
+    damageResistance: null,
+    lineages: [
+      { id: "lightfoot", name: "Lightfoot Halfling" },
+      { id: "stout", name: "Stout Halfling" },
+    ],
+    bonusLanguage: "Halfling",
+  },
+  {
+    id: "tiefling",
+    name: "Tiefling",
+    size: "Medium",
+    speed: 30,
+    darkvision: 60,
+    damageResistance: "Fire",
+    lineages: [],
+    bonusLanguage: "Infernal",
   },
   {
     id: "human",
@@ -181,6 +227,40 @@ const speciesError = ref(null);
 const classData = ref([...fallbackClassData]);
 const isLoadingClasses = ref(false);
 const classError = ref(null);
+
+// Load data from API
+const loadData = async () => {
+  try {
+    // Load species data
+    isLoadingSpecies.value = true;
+    const races = await dndAPI.getRaces();
+    if (races && races.length > 0) {
+      speciesData.value = races;
+    }
+    isLoadingSpecies.value = false;
+  } catch (error) {
+    console.error("Error loading species data:", error);
+    speciesError.value = error;
+    isLoadingSpecies.value = false;
+  }
+
+  try {
+    // Load class data
+    isLoadingClasses.value = true;
+    const classes = await dndAPI.getClasses();
+    if (classes && classes.length > 0) {
+      classData.value = classes;
+    }
+    isLoadingClasses.value = false;
+  } catch (error) {
+    console.error("Error loading class data:", error);
+    classError.value = error;
+    isLoadingClasses.value = false;
+  }
+};
+
+// Load initial data
+// (Remove this duplicate export function useCharacterData block)
 
 // Dynamic background data loaded from API - start with fallback data
 const fallbackBackgroundData = [
@@ -734,6 +814,20 @@ const proficiencyBonusLevels = {
 };
 
 export function useCharacterData() {
+  // Load initial data
+  onMounted(async () => {
+    try {
+      await Promise.all([
+        loadSpeciesData(),
+        loadClassData(),
+        loadBackgroundData(),
+        loadEquipmentData(),
+      ]);
+    } catch (error) {
+      console.error("Error loading initial data:", error);
+    }
+  });
+
   // Character state
   const character = reactive({
     name: "",
@@ -912,40 +1006,38 @@ export function useCharacterData() {
       // If we have basic data, fetch detailed info in the background
       if (selectedSpecies.isBasicData) {
         // Non-blocking async call to fetch details
-        import("@/services/dndAPI.js").then(({ dndRacesAPI }) => {
-          dndRacesAPI
-            .getRaceDetails(selectedSpecies.id)
-            .then((detailedRace) => {
-              if (detailedRace) {
-                // Preserve our enhanced lineages data
-                const enhancedLineages = selectedSpecies.lineages;
-                const enhancedBonusLanguage = selectedSpecies.bonusLanguage;
+        dndAPI
+          .getRaceDetails(selectedSpecies.id)
+          .then((detailedRace) => {
+            if (detailedRace) {
+              // Preserve our enhanced lineages data
+              const enhancedLineages = selectedSpecies.lineages;
+              const enhancedBonusLanguage = selectedSpecies.bonusLanguage;
 
-                // Merge detailed API data with our enhanced data
-                const finalRaceData = {
-                  ...detailedRace,
-                  lineages: enhancedLineages, // Keep our enhanced lineages
-                  bonusLanguage: enhancedBonusLanguage, // Keep our enhanced bonus language
-                };
+              // Merge detailed API data with our enhanced data
+              const finalRaceData = {
+                ...detailedRace,
+                lineages: enhancedLineages, // Keep our enhanced lineages
+                bonusLanguage: enhancedBonusLanguage, // Keep our enhanced bonus language
+              };
 
-                const index = speciesData.value.findIndex(
-                  (s) => s.id === selectedSpecies.id
-                );
-                if (index !== -1) {
-                  speciesData.value[index] = finalRaceData;
-                  // Update character if this race is still selected
-                  if (character.species === selectedSpecies.id) {
-                    character.speciesDetails = finalRaceData;
-                    character.size = finalRaceData.size;
-                    character.speed = finalRaceData.speed;
-                  }
+              const index = speciesData.value.findIndex(
+                (s) => s.id === selectedSpecies.id
+              );
+              if (index !== -1) {
+                speciesData.value[index] = finalRaceData;
+                // Update character if this race is still selected
+                if (character.species === selectedSpecies.id) {
+                  character.speciesDetails = finalRaceData;
+                  character.size = finalRaceData.size;
+                  character.speed = finalRaceData.speed;
                 }
               }
-            })
-            .catch((error) => {
-              console.error("Failed to fetch detailed race info:", error);
-            });
-        });
+            }
+          })
+          .catch((error) => {
+            console.error("Failed to fetch detailed race info:", error);
+          });
       }
     } else {
       character.speciesDetails = null;
@@ -1030,10 +1122,10 @@ export function useCharacterData() {
       }
 
       // Initialize selected class skills if not already set
-      if (!character.selectedClassSkills) {
+      if (character.selectedClassSkills) {
+        // Reset selected skills when class changes
         character.selectedClassSkills = [];
       } else {
-        // Reset selected skills when class changes
         character.selectedClassSkills = [];
       }
 
@@ -1123,10 +1215,12 @@ export function useCharacterData() {
         selectedBackground.toolProficiencies ||
         [selectedBackground.toolProf].filter(Boolean);
       for (const toolProf of toolProfs) {
-        if (toolProf && !toolProf.includes("(choice)")) {
-          if (!character.toolProficiencies.includes(toolProf)) {
-            character.toolProficiencies.push(toolProf);
-          }
+        if (
+          toolProf &&
+          !toolProf.includes("(choice)") &&
+          !character.toolProficiencies.includes(toolProf)
+        ) {
+          character.toolProficiencies.push(toolProf);
         }
       }
 
@@ -1159,7 +1253,9 @@ export function useCharacterData() {
   };
 
   const updateClassSkillProficiencies = () => {
-    if (!character.selectedClassSkills || !character.skillProficiencies) return;
+    if (!character.selectedClassSkills || !character.skillProficiencies) {
+      return;
+    }
 
     // Reset class skill proficiencies first (keep background skills)
     for (const skill of skillList) {
@@ -1215,11 +1311,9 @@ export function useCharacterData() {
     let totalGold = 0;
 
     // Add class starting money
-    if (selectedClass?.startingMoney) {
-      if (selectedClass.startingMoney.rolls) {
-        // Roll dice for starting money (use average for simplicity)
-        totalGold += selectedClass.startingMoney.average || 0;
-      }
+    if (selectedClass?.startingMoney && selectedClass.startingMoney.rolls) {
+      // Roll dice for starting money (use average for simplicity)
+      totalGold += selectedClass.startingMoney.average || 0;
     }
 
     // Add background starting money

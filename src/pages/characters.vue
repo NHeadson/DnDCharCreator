@@ -10,36 +10,56 @@
 
       <!-- Loading State -->
       <div v-if="loading" class="text-center pa-8">
-        <v-progress-circular size="64" width="6" color="primary" indeterminate class="mb-4" />
+        <v-progress-circular
+          class="mb-4"
+          color="primary"
+          indeterminate
+          size="64"
+          width="6"
+        />
         <h3 class="text-h5 text-grey-darken-1">Loading your characters...</h3>
       </div>
 
       <!-- Error State -->
       <div v-else-if="error" class="text-center pa-8">
-        <v-icon size="64" color="error" class="mb-4">mdi-alert-circle</v-icon>
-        <v-alert type="error" variant="tonal" class="mb-4 mx-auto" style="max-width: 600px;">
+        <v-icon class="mb-4" color="error" size="64">mdi-alert-circle</v-icon>
+        <v-alert class="mb-4 mx-auto" style="max-width: 600px;" type="error" variant="tonal">
           <v-alert-title>Something went wrong</v-alert-title>
           {{ error }}
         </v-alert>
-        <v-btn color="primary" variant="elevated" @click="loadCharacters" prepend-icon="mdi-refresh">
+        <v-btn color="primary" prepend-icon="mdi-refresh" variant="elevated" @click="loadCharacters">
           Try Again
         </v-btn>
       </div>
 
       <!-- Empty State -->
       <div v-else-if="characters.length === 0" class="empty-state text-center pa-8">
-        <v-card class="mx-auto pa-8" style="max-width: 600px;" variant="tonal" color="primary-lighten-5">
-          <v-icon size="80" color="primary-lighten-1" class="mb-4">mdi-sword-cross</v-icon>
+        <v-card class="mx-auto pa-8" color="primary-lighten-5" style="max-width: 600px;" variant="tonal">
+          <v-icon class="mb-4" color="primary-lighten-1" size="80">mdi-sword-cross</v-icon>
           <h2 class="text-h4 font-weight-bold text-primary mb-3">Your Adventure Awaits</h2>
           <p class="text-h6 text-grey-darken-1 mb-6">
             You haven't created any characters yet. Start your legendary journey today!
           </p>
-          <v-btn v-if="hasAccess" color="#822522" size="large" variant="elevated" @click="requireAccessForCreation"
-            prepend-icon="mdi-plus-circle" class="create-character-btn">
+          <v-btn
+            v-if="hasAccess"
+            class="create-character-btn"
+            color="#822522"
+            prepend-icon="mdi-plus-circle"
+            size="large"
+            variant="elevated"
+            @click="requireAccessForCreation"
+          >
             Create Your First Character
           </v-btn>
-          <v-btn v-else color="grey" size="large" variant="outlined" @click="requireAccessForCreation"
-            prepend-icon="mdi-lock" class="create-character-btn">
+          <v-btn
+            v-else
+            class="create-character-btn"
+            color="grey"
+            prepend-icon="mdi-lock"
+            size="large"
+            variant="outlined"
+            @click="requireAccessForCreation"
+          >
             Get Access to Create Characters
           </v-btn>
         </v-card>
@@ -48,11 +68,11 @@
       <!-- Characters Grid -->
       <div v-else>
         <!-- Quick Actions Bar -->
-        <v-card variant="outlined" class="mb-6 pa-4">
+        <v-card class="mb-6 pa-4" variant="outlined">
           <v-row align="center">
             <v-col cols="12" md="3">
               <div class="d-flex align-center">
-                <v-icon color="primary" class="me-2">mdi-information</v-icon>
+                <v-icon class="me-2" color="primary">mdi-information</v-icon>
                 <span class="text-subtitle-1">
                   <strong>{{ characters.length }}</strong> character{{ characters.length !== 1 ? 's' : '' }} in your
                   collection
@@ -61,9 +81,15 @@
             </v-col>
 
             <!-- Access Status -->
-            <v-col cols="12" md="3" class="text-center">
+            <v-col class="text-center" cols="12" md="3">
               <div v-if="hasAccess" class="d-flex flex-column align-center">
-                <v-chip color="primary" variant="elevated" prepend-icon="mdi-account-check" size="small" class="mb-1">
+                <v-chip
+                  class="mb-1"
+                  color="primary"
+                  prepend-icon="mdi-account-check"
+                  size="small"
+                  variant="elevated"
+                >
                   Group Access Active
                 </v-chip>
                 <div class="text-caption text-grey">
@@ -71,20 +97,32 @@
                 </div>
               </div>
               <div v-else class="text-center">
-                <v-chip color="grey" variant="outlined" prepend-icon="mdi-lock" size="small">
+                <v-chip color="grey" prepend-icon="mdi-lock" size="small" variant="outlined">
                   Access Required
                 </v-chip>
               </div>
             </v-col>
 
             <!-- Admin Status -->
-            <v-col cols="12" md="3" class="text-center">
+            <v-col class="text-center" cols="12" md="3">
               <div v-if="isAuthenticated" class="d-flex flex-column align-center">
                 <div class="d-flex align-center justify-center mb-2">
-                  <v-chip color="success" variant="elevated" prepend-icon="mdi-shield-check" size="small" class="me-2">
+                  <v-chip
+                    class="me-2"
+                    color="success"
+                    prepend-icon="mdi-shield-check"
+                    size="small"
+                    variant="elevated"
+                  >
                     Admin Active
                   </v-chip>
-                  <v-btn variant="text" size="small" color="grey" @click="logout" title="Logout from admin">
+                  <v-btn
+                    color="grey"
+                    size="small"
+                    title="Logout from admin"
+                    variant="text"
+                    @click="logout"
+                  >
                     <v-icon size="small">mdi-logout</v-icon>
                   </v-btn>
                 </div>
@@ -93,8 +131,15 @@
               </div>
               <!-- Admin Login Button -->
               <div v-else-if="hasAccess" class="d-flex flex-column align-center">
-                <v-btn color="warning" variant="elevated" @click="showAdminLogin" prepend-icon="mdi-shield-key"
-                  size="small" class="mb-1" data-admin-login>
+                <v-btn
+                  class="mb-1"
+                  color="warning"
+                  data-admin-login
+                  prepend-icon="mdi-shield-key"
+                  size="small"
+                  variant="elevated"
+                  @click="showAdminLogin"
+                >
                   Admin Login
                 </v-btn>
                 <div class="text-caption text-grey">
@@ -106,13 +151,25 @@
               </div>
             </v-col>
 
-            <v-col cols="12" md="3" class="text-md-end">
-              <v-btn v-if="hasAccess" color="primary" variant="elevated" @click="requireAccessForCreation"
-                prepend-icon="mdi-plus" class="text-white create-character-btn">
+            <v-col class="text-md-end" cols="12" md="3">
+              <v-btn
+                v-if="hasAccess"
+                class="text-white create-character-btn"
+                color="primary"
+                prepend-icon="mdi-plus"
+                variant="elevated"
+                @click="requireAccessForCreation"
+              >
                 Create New Character
               </v-btn>
-              <v-btn v-else color="grey" variant="outlined" @click="requireAccessForCreation" prepend-icon="mdi-lock"
-                class="create-character-btn">
+              <v-btn
+                v-else
+                class="create-character-btn"
+                color="grey"
+                prepend-icon="mdi-lock"
+                variant="outlined"
+                @click="requireAccessForCreation"
+              >
                 Create Character (Access Required)
               </v-btn>
             </v-col>
@@ -121,14 +178,22 @@
 
         <!-- Character Cards -->
         <v-row>
-          <v-col v-for="character in characters" :key="character.id" cols="12" sm="6" md="4" lg="4" xl="4">
+          <v-col
+            v-for="character in characters"
+            :key="character.id"
+            cols="12"
+            lg="4"
+            md="4"
+            sm="6"
+            xl="4"
+          >
             <v-card class="character-card h-100" elevation="4" hover>
               <!-- Character Header with Background -->
               <div class="character-header" :style="getCharacterHeaderStyle(character)">
                 <div class="character-overlay pa-3">
                   <div class="d-flex align-center mb-2">
-                    <v-avatar size="48" color="white" class="me-3 elevation-2">
-                      <v-icon size="32" :color="getClassColor(character.classDetails?.name)">
+                    <v-avatar class="me-3 elevation-2" color="white" size="48">
+                      <v-icon :color="getClassColor(character.classDetails?.name)" size="32">
                         {{ getClassIcon(character.classDetails?.name) }}
                       </v-icon>
                     </v-avatar>
@@ -143,10 +208,10 @@
                   </div>
 
                   <div class="character-subtitle">
-                    <v-chip color="rgba(255,255,255,0.9)" size="small" class="me-2" dark>
+                    <v-chip class="me-2" color="rgba(255,255,255,0.9)" dark size="small">
                       Level {{ character.level || 1 }}
                     </v-chip>
-                    <v-chip color="rgba(255,255,255,0.8)" size="small" variant="outlined" dark>
+                    <v-chip color="rgba(255,255,255,0.8)" dark size="small" variant="outlined">
                       {{ character.classDetails?.name || 'Unknown Class' }}
                     </v-chip>
                   </div>
@@ -159,9 +224,9 @@
                 <div class="character-info mb-3">
                   <v-row dense>
                     <v-col cols="6">
-                      <v-card variant="tonal" color="blue-lighten-5" class="pa-2 mb-2">
+                      <v-card class="pa-2 mb-2" color="blue-lighten-5" variant="tonal">
                         <div class="d-flex align-center">
-                          <v-icon color="blue-darken-2" size="small" class="me-2">mdi-dna</v-icon>
+                          <v-icon class="me-2" color="blue-darken-2" size="small">mdi-dna</v-icon>
                           <div>
                             <div class="text-caption text-blue-darken-2 font-weight-bold">Species</div>
                             <div class="text-body-2 font-weight-medium">
@@ -173,9 +238,9 @@
                           </div>
                         </div>
                       </v-card>
-                      <v-card variant="tonal" color="green-lighten-5" class="pa-2">
+                      <v-card class="pa-2" color="green-lighten-5" variant="tonal">
                         <div class="d-flex align-center">
-                          <v-icon color="green-darken-2" size="small" class="me-2">mdi-book-open-page-variant</v-icon>
+                          <v-icon class="me-2" color="green-darken-2" size="small">mdi-book-open-page-variant</v-icon>
                           <div>
                             <div class="text-caption text-green-darken-2 font-weight-bold">Background</div>
                             <div class="text-body-2 font-weight-medium">{{ character.backgroundDetails?.name ||
@@ -185,18 +250,18 @@
                       </v-card>
                     </v-col>
                     <v-col cols="6">
-                      <v-card variant="tonal" color="purple-lighten-5" class="pa-2 mb-2">
+                      <v-card class="pa-2 mb-2" color="purple-lighten-5" variant="tonal">
                         <div class="d-flex align-center">
-                          <v-icon color="purple-darken-2" size="small" class="me-2">mdi-compass</v-icon>
+                          <v-icon class="me-2" color="purple-darken-2" size="small">mdi-compass</v-icon>
                           <div>
                             <div class="text-caption text-purple-darken-2 font-weight-bold">Alignment</div>
                             <div class="text-body-2 font-weight-medium">{{ character.alignment || 'Neutral' }}</div>
                           </div>
                         </div>
                       </v-card>
-                      <v-card variant="tonal" color="orange-lighten-5" class="pa-2">
+                      <v-card class="pa-2" color="orange-lighten-5" variant="tonal">
                         <div class="d-flex align-center">
-                          <v-icon color="orange-darken-2" size="small" class="me-2">mdi-star-outline</v-icon>
+                          <v-icon class="me-2" color="orange-darken-2" size="small">mdi-star-outline</v-icon>
                           <div>
                             <div class="text-caption text-orange-darken-2 font-weight-bold">Proficiency</div>
                             <div class="text-body-2 font-weight-medium">+{{ Math.ceil(character.level / 4) + 1 }}</div>
@@ -211,8 +276,8 @@
                 <div class="core-stats mb-3">
                   <v-row dense>
                     <v-col cols="3">
-                      <v-card variant="tonal" color="red-lighten-4" class="pa-2 text-center">
-                        <v-icon color="red-darken-2" size="small" class="mb-1">mdi-heart</v-icon>
+                      <v-card class="pa-2 text-center" color="red-lighten-4" variant="tonal">
+                        <v-icon class="mb-1" color="red-darken-2" size="small">mdi-heart</v-icon>
                         <div class="text-caption font-weight-bold">HP</div>
                         <div class="text-h6 font-weight-bold">
                           {{ (character.level * 8) + (character.abilityScores?.constitution?.modifier || 0) }}
@@ -220,8 +285,8 @@
                       </v-card>
                     </v-col>
                     <v-col cols="3">
-                      <v-card variant="tonal" color="blue-lighten-4" class="pa-2 text-center">
-                        <v-icon color="blue-darken-2" size="small" class="mb-1">mdi-shield</v-icon>
+                      <v-card class="pa-2 text-center" color="blue-lighten-4" variant="tonal">
+                        <v-icon class="mb-1" color="blue-darken-2" size="small">mdi-shield</v-icon>
                         <div class="text-caption font-weight-bold">AC</div>
                         <div class="text-h6 font-weight-bold">
                           {{ 10 + (character.abilityScores?.dexterity?.modifier || 0) }}
@@ -229,8 +294,8 @@
                       </v-card>
                     </v-col>
                     <v-col cols="3">
-                      <v-card variant="tonal" color="green-lighten-4" class="pa-2 text-center">
-                        <v-icon color="green-darken-2" size="small" class="mb-1">mdi-run-fast</v-icon>
+                      <v-card class="pa-2 text-center" color="green-lighten-4" variant="tonal">
+                        <v-icon class="mb-1" color="green-darken-2" size="small">mdi-run-fast</v-icon>
                         <div class="text-caption font-weight-bold">Speed</div>
                         <div class="text-h6 font-weight-bold">
                           {{ character.speciesDetails?.speed || 30 }}
@@ -238,8 +303,8 @@
                       </v-card>
                     </v-col>
                     <v-col cols="3">
-                      <v-card variant="tonal" color="purple-lighten-4" class="pa-2 text-center">
-                        <v-icon color="purple-darken-2" size="small" class="mb-1">mdi-sword-cross</v-icon>
+                      <v-card class="pa-2 text-center" color="purple-lighten-4" variant="tonal">
+                        <v-icon class="mb-1" color="purple-darken-2" size="small">mdi-sword-cross</v-icon>
                         <div class="text-caption font-weight-bold">Init</div>
                         <div class="text-h6 font-weight-bold">
                           {{ (character.abilityScores?.dexterity?.modifier || 0) >= 0 ? '+' : '' }}{{
@@ -253,12 +318,12 @@
                 <!-- Primary Ability Scores (Top 3) -->
                 <div class="primary-abilities mb-3">
                   <h4 class="text-subtitle-2 font-weight-bold mb-2 d-flex align-center">
-                    <v-icon color="primary" size="small" class="me-2">mdi-chart-box</v-icon>
+                    <v-icon class="me-2" color="primary" size="small">mdi-chart-box</v-icon>
                     Key Abilities
                   </h4>
                   <v-row dense>
                     <v-col v-for="(ability, name) in getTopAbilities(character.abilityScores)" :key="name" cols="4">
-                      <v-card variant="outlined" class="pa-2 text-center">
+                      <v-card class="pa-2 text-center" variant="outlined">
                         <div class="text-caption font-weight-bold text-primary">{{ name.toUpperCase() }}</div>
                         <div class="text-h6 font-weight-bold">{{ ability.score }}</div>
                         <div class="text-caption" :class="ability.modifier >= 0 ? 'text-success' : 'text-error'">
@@ -270,18 +335,27 @@
                 </div>
 
                 <!-- Notable Features -->
-                <div class="notable-features mb-3" v-if="getNotableFeatures(character).length > 0">
+                <div v-if="getNotableFeatures(character).length > 0" class="notable-features mb-3">
                   <h4 class="text-subtitle-2 font-weight-bold mb-2 d-flex align-center">
-                    <v-icon color="amber-darken-2" size="small" class="me-2">mdi-star-circle</v-icon>
+                    <v-icon class="me-2" color="amber-darken-2" size="small">mdi-star-circle</v-icon>
                     Notable Features
                   </h4>
                   <div class="d-flex flex-wrap" style="gap: 4px;">
-                    <v-chip v-for="feature in getNotableFeatures(character).slice(0, 3)" :key="feature" size="x-small"
-                      color="amber-lighten-4" variant="tonal">
+                    <v-chip
+                      v-for="feature in getNotableFeatures(character).slice(0, 3)"
+                      :key="feature"
+                      color="amber-lighten-4"
+                      size="x-small"
+                      variant="tonal"
+                    >
                       {{ feature }}
                     </v-chip>
-                    <v-chip v-if="getNotableFeatures(character).length > 3" size="x-small" color="grey-lighten-2"
-                      variant="tonal">
+                    <v-chip
+                      v-if="getNotableFeatures(character).length > 3"
+                      color="grey-lighten-2"
+                      size="x-small"
+                      variant="tonal"
+                    >
                       +{{ getNotableFeatures(character).length - 3 }} more
                     </v-chip>
                   </div>
@@ -289,23 +363,26 @@
 
                 <!-- Character Choices & Features Dropdown -->
                 <div v-if="getCharacterChoicesCount(character) > 0" class="character-choices mb-3">
-                  <v-expansion-panels variant="accordion" class="character-choices-panels">
+                  <v-expansion-panels class="character-choices-panels" variant="accordion">
                     <v-expansion-panel>
                       <v-expansion-panel-title class="pa-2">
                         <div class="d-flex align-center w-100">
-                          <v-icon color="purple-darken-2" size="small" class="me-2">mdi-format-list-checks</v-icon>
+                          <v-icon class="me-2" color="purple-darken-2" size="small">mdi-format-list-checks</v-icon>
                           <span class="text-caption font-weight-bold">Character Choices</span>
                           <v-spacer />
-                          <v-badge :content="getCharacterChoicesCount(character)" color="purple" inline />
+                          <v-badge color="purple" :content="getCharacterChoicesCount(character)" inline />
                         </div>
                       </v-expansion-panel-title>
                       <v-expansion-panel-text class="pa-2">
                         <v-row dense>
                           <!-- Lineage/Subrace -->
-                          <v-col v-if="character.speciesLineage && character.speciesDetails?.lineages" cols="12"
-                            class="mb-1">
+                          <v-col
+                            v-if="character.speciesLineage && character.speciesDetails?.lineages"
+                            class="mb-1"
+                            cols="12"
+                          >
                             <div class="d-flex align-center">
-                              <v-icon color="blue-darken-2" size="x-small" class="me-2">mdi-dna</v-icon>
+                              <v-icon class="me-2" color="blue-darken-2" size="x-small">mdi-dna</v-icon>
                               <span class="text-caption font-weight-bold text-blue-darken-2 me-2">Lineage:</span>
                               <v-chip color="blue-lighten-4" size="x-small" variant="tonal">
                                 {{ getLineageName(character) }}
@@ -314,13 +391,18 @@
                           </v-col>
 
                           <!-- Languages -->
-                          <v-col v-if="getCharacterLanguages(character).length > 0" cols="12" class="mb-1">
+                          <v-col v-if="getCharacterLanguages(character).length > 0" class="mb-1" cols="12">
                             <div class="d-flex align-center flex-wrap">
-                              <v-icon color="purple-darken-2" size="x-small" class="me-2">mdi-translate</v-icon>
+                              <v-icon class="me-2" color="purple-darken-2" size="x-small">mdi-translate</v-icon>
                               <span class="text-caption font-weight-bold text-purple-darken-2 me-2">Languages:</span>
                               <div class="d-flex flex-wrap" style="gap: 2px;">
-                                <v-chip v-for="lang in getCharacterLanguages(character)" :key="lang"
-                                  color="purple-lighten-4" size="x-small" variant="tonal">
+                                <v-chip
+                                  v-for="lang in getCharacterLanguages(character)"
+                                  :key="lang"
+                                  color="purple-lighten-4"
+                                  size="x-small"
+                                  variant="tonal"
+                                >
                                   {{ lang }}
                                 </v-chip>
                               </div>
@@ -328,13 +410,18 @@
                           </v-col>
 
                           <!-- Tools -->
-                          <v-col v-if="getCharacterTools(character).length > 0" cols="12" class="mb-1">
+                          <v-col v-if="getCharacterTools(character).length > 0" class="mb-1" cols="12">
                             <div class="d-flex align-center flex-wrap">
-                              <v-icon color="orange-darken-2" size="x-small" class="me-2">mdi-tools</v-icon>
+                              <v-icon class="me-2" color="orange-darken-2" size="x-small">mdi-tools</v-icon>
                               <span class="text-caption font-weight-bold text-orange-darken-2 me-2">Tools:</span>
                               <div class="d-flex flex-wrap" style="gap: 2px;">
-                                <v-chip v-for="tool in getCharacterTools(character)" :key="tool"
-                                  color="orange-lighten-4" size="x-small" variant="tonal">
+                                <v-chip
+                                  v-for="tool in getCharacterTools(character)"
+                                  :key="tool"
+                                  color="orange-lighten-4"
+                                  size="x-small"
+                                  variant="tonal"
+                                >
                                   {{ tool }}
                                 </v-chip>
                               </div>
@@ -344,15 +431,24 @@
                           <!-- Skills -->
                           <v-col v-if="getCharacterSkills(character).length > 0" cols="12">
                             <div class="d-flex align-center flex-wrap">
-                              <v-icon color="green-darken-2" size="x-small" class="me-2">mdi-brain</v-icon>
+                              <v-icon class="me-2" color="green-darken-2" size="x-small">mdi-brain</v-icon>
                               <span class="text-caption font-weight-bold text-green-darken-2 me-2">Skills:</span>
                               <div class="d-flex flex-wrap" style="gap: 2px;">
-                                <v-chip v-for="skill in getCharacterSkills(character).slice(0, 4)" :key="skill"
-                                  color="green-lighten-4" size="x-small" variant="tonal">
+                                <v-chip
+                                  v-for="skill in getCharacterSkills(character).slice(0, 4)"
+                                  :key="skill"
+                                  color="green-lighten-4"
+                                  size="x-small"
+                                  variant="tonal"
+                                >
                                   {{ skill }}
                                 </v-chip>
-                                <v-chip v-if="getCharacterSkills(character).length > 4" color="grey-lighten-2"
-                                  size="x-small" variant="tonal">
+                                <v-chip
+                                  v-if="getCharacterSkills(character).length > 4"
+                                  color="grey-lighten-2"
+                                  size="x-small"
+                                  variant="tonal"
+                                >
                                   +{{ getCharacterSkills(character).length - 4 }}
                                 </v-chip>
                               </div>
@@ -369,9 +465,15 @@
               <v-card-actions class="pa-4 pt-0">
                 <v-row dense>
                   <v-col cols="8">
-                    <v-btn variant="elevated" :color="isAuthenticated ? 'primary' : 'grey'" block
-                      @click="editCharacter(character)" size="large" class="admin-action-btn"
-                      :class="{ 'admin-protected': !isAuthenticated }">
+                    <v-btn
+                      block
+                      class="admin-action-btn"
+                      :class="{ 'admin-protected': !isAuthenticated }"
+                      :color="isAuthenticated ? 'primary' : 'grey'"
+                      size="large"
+                      variant="elevated"
+                      @click="editCharacter(character)"
+                    >
                       <template #prepend>
                         <v-icon>{{ isAuthenticated ? 'mdi-pencil' : 'mdi-shield-key' }}</v-icon>
                       </template>
@@ -379,10 +481,16 @@
                     </v-btn>
                   </v-col>
                   <v-col cols="4">
-                    <v-btn variant="outlined" :color="isAuthenticated ? 'error' : 'grey'" block
-                      @click="confirmDelete(character)" size="large" class="admin-action-btn"
+                    <v-btn
+                      block
+                      class="admin-action-btn"
                       :class="{ 'admin-protected': !isAuthenticated }"
-                      :title="isAuthenticated ? 'Delete Character' : 'Delete (Admin Only)'">
+                      :color="isAuthenticated ? 'error' : 'grey'"
+                      size="large"
+                      :title="isAuthenticated ? 'Delete Character' : 'Delete (Admin Only)'"
+                      variant="outlined"
+                      @click="confirmDelete(character)"
+                    >
                       <v-icon>{{ isAuthenticated ? 'mdi-delete' : 'mdi-shield-key' }}</v-icon>
                     </v-btn>
                   </v-col>
@@ -398,21 +506,21 @@
     <v-dialog v-model="deleteDialog" max-width="480">
       <v-card>
         <v-card-title class="d-flex align-center text-h5">
-          <v-icon color="error" class="me-2">mdi-alert-circle</v-icon>
+          <v-icon class="me-2" color="error">mdi-alert-circle</v-icon>
           Delete Character
         </v-card-title>
         <v-card-text class="text-body-1">
           <p class="mb-3">
             Are you sure you want to delete <strong>"{{ selectedCharacter?.name }}"</strong>?
           </p>
-          <v-alert type="warning" variant="tonal" class="mb-0">
+          <v-alert class="mb-0" type="warning" variant="tonal">
             This action cannot be undone. All character data will be permanently lost.
           </v-alert>
         </v-card-text>
         <v-card-actions class="pa-4">
           <v-spacer />
           <v-btn variant="outlined" @click="deleteDialog = false">Cancel</v-btn>
-          <v-btn color="error" variant="elevated" @click="deleteCharacter" prepend-icon="mdi-delete">
+          <v-btn color="error" prepend-icon="mdi-delete" variant="elevated" @click="deleteCharacter">
             Delete Forever
           </v-btn>
         </v-card-actions>
@@ -425,353 +533,353 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
-import { useFirestore } from '@/composables/useFirestore'
-import { useAdminAuth } from '@/composables/useAdminAuth'
-import { useAccessControl } from '@/composables/useAccessControl'
-import AdminAuthDialog from '@/components/AdminAuthDialog.vue'
-import ThemeSwitcher from '@/components/ThemeSwitcher.vue'
+  import { onMounted, ref } from 'vue'
+  import { useRouter } from 'vue-router'
+  import AdminAuthDialog from '@/components/AdminAuthDialog.vue'
+  import ThemeSwitcher from '@/components/ThemeSwitcher.vue'
+  import { useAccessControl } from '@/composables/useAccessControl'
+  import { useAdminAuth } from '@/composables/useAdminAuth'
+  import { useFirestore } from '@/composables/useFirestore'
 
-const router = useRouter()
-const { getCharacters, deleteCharacter: deleteFromFirestore } = useFirestore()
-const { requireAuth, isAuthenticated, extendSession, logout, showAuthDialog } = useAdminAuth()
-const { hasAccess, requireAccess, extendAccessSession, getRemainingAccessTime } = useAccessControl()
+  const router = useRouter()
+  const { getCharacters, deleteCharacter: deleteFromFirestore } = useFirestore()
+  const { requireAuth, isAuthenticated, extendSession, logout, showAuthDialog } = useAdminAuth()
+  const { hasAccess, requireAccess, extendAccessSession, getRemainingAccessTime } = useAccessControl()
 
-// Reactive data
-const characters = ref([])
-const loading = ref(true)
-const error = ref(null)
-const deleteDialog = ref(false)
-const selectedCharacter = ref(null)
+  // Reactive data
+  const characters = ref([])
+  const loading = ref(true)
+  const error = ref(null)
+  const deleteDialog = ref(false)
+  const selectedCharacter = ref(null)
 
-// Helper functions for styling
-const getCharacterHeaderStyle = (character) => {
-  const classColors = {
-    'Barbarian': 'linear-gradient(135deg, #8B4513 0%, #A0522D 100%)',
-    'Bard': 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)',
-    'Cleric': 'linear-gradient(135deg, #87CEEB 0%, #4682B4 100%)',
-    'Druid': 'linear-gradient(135deg, #228B22 0%, #32CD32 100%)',
-    'Fighter': 'linear-gradient(135deg, #B22222 0%, #DC143C 100%)',
-    'Monk': 'linear-gradient(135deg, #8A2BE2 0%, #9370DB 100%)',
-    'Paladin': 'linear-gradient(135deg, #FFD700 0%, #F0E68C 100%)',
-    'Ranger': 'linear-gradient(135deg, #006400 0%, #228B22 100%)',
-    'Rogue': 'linear-gradient(135deg, #2F4F4F 0%, #696969 100%)',
-    'Sorcerer': 'linear-gradient(135deg, #FF4500 0%, #FF6347 100%)',
-    'Warlock': 'linear-gradient(135deg, #4B0082 0%, #8A2BE2 100%)',
-    'Wizard': 'linear-gradient(135deg, #191970 0%, #4169E1 100%)'
+  // Helper functions for styling
+  const getCharacterHeaderStyle = character => {
+    const classColors = {
+      Barbarian: 'linear-gradient(135deg, #8B4513 0%, #A0522D 100%)',
+      Bard: 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)',
+      Cleric: 'linear-gradient(135deg, #87CEEB 0%, #4682B4 100%)',
+      Druid: 'linear-gradient(135deg, #228B22 0%, #32CD32 100%)',
+      Fighter: 'linear-gradient(135deg, #B22222 0%, #DC143C 100%)',
+      Monk: 'linear-gradient(135deg, #8A2BE2 0%, #9370DB 100%)',
+      Paladin: 'linear-gradient(135deg, #FFD700 0%, #F0E68C 100%)',
+      Ranger: 'linear-gradient(135deg, #006400 0%, #228B22 100%)',
+      Rogue: 'linear-gradient(135deg, #2F4F4F 0%, #696969 100%)',
+      Sorcerer: 'linear-gradient(135deg, #FF4500 0%, #FF6347 100%)',
+      Warlock: 'linear-gradient(135deg, #4B0082 0%, #8A2BE2 100%)',
+      Wizard: 'linear-gradient(135deg, #191970 0%, #4169E1 100%)',
+    }
+
+    const className = character.classDetails?.name
+    const background = classColors[className] || 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)'
+
+    return {
+      background,
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      position: 'relative',
+    }
   }
 
-  const className = character.classDetails?.name
-  const background = classColors[className] || 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)'
-
-  return {
-    background,
-    backgroundSize: 'cover',
-    backgroundPosition: 'center',
-    position: 'relative'
+  const getClassIcon = className => {
+    const classIcons = {
+      Barbarian: 'mdi-axe',
+      Bard: 'mdi-music',
+      Cleric: 'mdi-cross',
+      Druid: 'mdi-leaf',
+      Fighter: 'mdi-sword',
+      Monk: 'mdi-hand-peace',
+      Paladin: 'mdi-shield-sword',
+      Ranger: 'mdi-bow-arrow',
+      Rogue: 'mdi-knife',
+      Sorcerer: 'mdi-fire',
+      Warlock: 'mdi-eye',
+      Wizard: 'mdi-hat-fedora',
+    }
+    return classIcons[className] || 'mdi-account'
   }
-}
 
-const getClassIcon = (className) => {
-  const classIcons = {
-    'Barbarian': 'mdi-axe',
-    'Bard': 'mdi-music',
-    'Cleric': 'mdi-cross',
-    'Druid': 'mdi-leaf',
-    'Fighter': 'mdi-sword',
-    'Monk': 'mdi-hand-peace',
-    'Paladin': 'mdi-shield-sword',
-    'Ranger': 'mdi-bow-arrow',
-    'Rogue': 'mdi-knife',
-    'Sorcerer': 'mdi-fire',
-    'Warlock': 'mdi-eye',
-    'Wizard': 'mdi-hat-fedora'
+  const getClassColor = className => {
+    const classColors = {
+      Barbarian: '#8B4513',
+      Bard: '#FFD700',
+      Cleric: '#4682B4',
+      Druid: '#228B22',
+      Fighter: '#B22222',
+      Monk: '#8A2BE2',
+      Paladin: '#FFD700',
+      Ranger: '#006400',
+      Rogue: '#2F4F4F',
+      Sorcerer: '#FF4500',
+      Warlock: '#4B0082',
+      Wizard: '#191970',
+    }
+    return classColors[className] || '#6366f1'
   }
-  return classIcons[className] || 'mdi-account'
-}
 
-const getClassColor = (className) => {
-  const classColors = {
-    'Barbarian': '#8B4513',
-    'Bard': '#FFD700',
-    'Cleric': '#4682B4',
-    'Druid': '#228B22',
-    'Fighter': '#B22222',
-    'Monk': '#8A2BE2',
-    'Paladin': '#FFD700',
-    'Ranger': '#006400',
-    'Rogue': '#2F4F4F',
-    'Sorcerer': '#FF4500',
-    'Warlock': '#4B0082',
-    'Wizard': '#191970'
+  const getAbilityColor = modifier => {
+    if (modifier >= 4) return 'green-lighten-4'
+    if (modifier >= 2) return 'blue-lighten-4'
+    if (modifier >= 0) return 'grey-lighten-3'
+    if (modifier >= -2) return 'orange-lighten-4'
+    return 'red-lighten-4'
   }
-  return classColors[className] || '#6366f1'
-}
 
-const getAbilityColor = (modifier) => {
-  if (modifier >= 4) return 'green-lighten-4'
-  if (modifier >= 2) return 'blue-lighten-4'
-  if (modifier >= 0) return 'grey-lighten-3'
-  if (modifier >= -2) return 'orange-lighten-4'
-  return 'red-lighten-4'
-}
+  // Get top 3 ability scores for a character
+  const getTopAbilities = abilityScores => {
+    if (!abilityScores) return {}
 
-// Get top 3 ability scores for a character
-const getTopAbilities = (abilityScores) => {
-  if (!abilityScores) return {}
+    const abilities = Object.entries(abilityScores)
+      .sort(([, a], [, b]) => b.score - a.score)
+      .slice(0, 3)
+      .reduce((obj, [key, value]) => {
+        obj[key] = value
+        return obj
+      }, {})
 
-  const abilities = Object.entries(abilityScores)
-    .sort(([, a], [, b]) => b.score - a.score)
-    .slice(0, 3)
-    .reduce((obj, [key, value]) => {
-      obj[key] = value
-      return obj
-    }, {})
+    return abilities
+  }
 
-  return abilities
-}
+  // Get notable features for a character
+  const getNotableFeatures = character => {
+    const features = []
 
-// Get notable features for a character
-const getNotableFeatures = (character) => {
-  const features = []
+    // Add racial traits
+    if (character.speciesDetails?.traits) {
+      for (const trait of character.speciesDetails.traits) {
+        features.push(trait.name)
+      }
+    }
 
-  // Add racial traits
-  if (character.speciesDetails?.traits) {
-    character.speciesDetails.traits.forEach(trait => {
-      features.push(trait.name)
+    // Add class features (placeholder - would need actual class data)
+    if (character.classDetails?.name) {
+      const classFeatures = {
+        Barbarian: ['Rage', 'Unarmored Defense'],
+        Bard: ['Bardic Inspiration', 'Spellcasting'],
+        Cleric: ['Divine Domain', 'Spellcasting'],
+        Druid: ['Druidcraft', 'Spellcasting'],
+        Fighter: ['Fighting Style', 'Second Wind'],
+        Monk: ['Martial Arts', 'Ki'],
+        Paladin: ['Divine Sense', 'Lay on Hands'],
+        Ranger: ['Favored Enemy', 'Natural Explorer'],
+        Rogue: ['Sneak Attack', 'Thieves\' Cant'],
+        Sorcerer: ['Spellcasting', 'Sorcerous Origin'],
+        Warlock: ['Otherworldly Patron', 'Pact Magic'],
+        Wizard: ['Spellcasting', 'Arcane Recovery'],
+      }
+
+      const feats = classFeatures[character.classDetails.name] || []
+      features.push(...feats)
+    }
+
+    // Add background feature
+    if (character.backgroundDetails?.feature?.name) {
+      features.push(character.backgroundDetails.feature.name)
+    }
+
+    return features
+  }
+
+  // Helper functions for character choices dropdown
+  const getCharacterChoicesCount = character => {
+    let count = 0
+
+    // Count lineage selection
+    if (character.speciesLineage) count += 1
+
+    // Count languages
+    count += getCharacterLanguages(character).length
+
+    // Count tools
+    count += getCharacterTools(character).length
+
+    // Count skills (limit display to avoid overwhelming)
+    const skills = getCharacterSkills(character)
+    if (skills.length > 0) count += Math.min(skills.length, 6)
+
+    return count
+  }
+
+  const getLineageName = character => {
+    if (!character.speciesLineage || !character.speciesDetails?.lineages) return ''
+    const lineage = character.speciesDetails.lineages.find(l => l.id === character.speciesLineage)
+    return lineage?.name || character.speciesLineage
+  }
+
+  const getSpeciesDisplayName = character => {
+    const speciesName = character.speciesDetails?.name || 'Unknown'
+    const lineageName = getLineageName(character)
+
+    if (lineageName) {
+      return `${speciesName} (${lineageName})`
+    }
+
+    return speciesName
+  }
+
+  const getCharacterLanguages = character => {
+    const languages = []
+
+    // Add common/standard languages (Basic D&D assumption)
+    languages.push('Common')
+
+    // Add species languages
+    if (character.speciesDetails?.name) {
+      const speciesLanguages = {
+        'Dragonborn': ['Draconic'],
+        'Dwarf': ['Dwarvish'],
+        'Elf': ['Elvish'],
+        'Gnome': ['Gnomish'],
+        'Half-Elf': ['Elvish'],
+        'Halfling': ['Halfling'],
+        'Half-Orc': ['Orc'],
+        'Tiefling': ['Infernal'],
+      }
+      const speciesLangs = speciesLanguages[character.speciesDetails.name] || []
+      languages.push(...speciesLangs)
+    }
+
+    // Add additional selected languages if available
+    if (character.additionalLanguages) {
+      languages.push(...character.additionalLanguages.filter(Boolean))
+    }
+
+    return [...new Set(languages)] // Remove duplicates
+  }
+
+  const getCharacterTools = character => {
+    const tools = []
+
+    // Add background tools (common examples)
+    if (character.backgroundDetails?.name) {
+      const backgroundTools = {
+        'Acolyte': [],
+        'Criminal': ['Thieves\' Tools'],
+        'Folk Hero': ['Smith\'s Tools', 'Vehicles (Land)'],
+        'Noble': ['Gaming Set'],
+        'Sage': [],
+        'Soldier': ['Gaming Set', 'Vehicles (Land)'],
+      }
+      const bgTools = backgroundTools[character.backgroundDetails.name] || []
+      tools.push(...bgTools)
+    }
+
+    // Add selected tools if available
+    if (character.selectedTools) {
+      tools.push(...character.selectedTools.filter(Boolean))
+    }
+
+    return [...new Set(tools)] // Remove duplicates
+  }
+
+  const getCharacterSkills = character => {
+    const skills = []
+
+    // Add background skills (common examples)
+    if (character.backgroundDetails?.name) {
+      const backgroundSkills = {
+        'Acolyte': ['Insight', 'Religion'],
+        'Criminal': ['Deception', 'Stealth'],
+        'Folk Hero': ['Animal Handling', 'Survival'],
+        'Noble': ['History', 'Persuasion'],
+        'Sage': ['Arcana', 'History'],
+        'Soldier': ['Athletics', 'Intimidation'],
+      }
+      const bgSkills = backgroundSkills[character.backgroundDetails.name] || []
+      skills.push(...bgSkills)
+    }
+
+    // Add class skills if selected/saved
+    if (character.selectedSkills) {
+      skills.push(...character.selectedSkills.filter(Boolean))
+    }
+
+    return [...new Set(skills)] // Remove duplicates
+  }
+
+  // Load characters from Firestore
+  const loadCharacters = async () => {
+    loading.value = true
+    error.value = null
+
+    try {
+      const result = await getCharacters()
+
+      if (result.success) {
+        characters.value = result.data
+      } else {
+        throw new Error(result.error)
+      }
+    } catch (error_) {
+      error.value = error_.message
+      console.error('Error loading characters:', error_)
+    } finally {
+      loading.value = false
+    }
+  }
+
+  // Edit character - requires admin authentication
+  const editCharacter = character => {
+    requireAuth(() => {
+      // Navigate to character form with character ID as a query parameter
+      router.push({
+        name: 'CharacterForm',
+        query: { edit: character.id },
+      })
     })
   }
 
-  // Add class features (placeholder - would need actual class data)
-  if (character.classDetails?.name) {
-    const classFeatures = {
-      'Barbarian': ['Rage', 'Unarmored Defense'],
-      'Bard': ['Bardic Inspiration', 'Spellcasting'],
-      'Cleric': ['Divine Domain', 'Spellcasting'],
-      'Druid': ['Druidcraft', 'Spellcasting'],
-      'Fighter': ['Fighting Style', 'Second Wind'],
-      'Monk': ['Martial Arts', 'Ki'],
-      'Paladin': ['Divine Sense', 'Lay on Hands'],
-      'Ranger': ['Favored Enemy', 'Natural Explorer'],
-      'Rogue': ['Sneak Attack', 'Thieves\' Cant'],
-      'Sorcerer': ['Spellcasting', 'Sorcerous Origin'],
-      'Warlock': ['Otherworldly Patron', 'Pact Magic'],
-      'Wizard': ['Spellcasting', 'Arcane Recovery']
-    }
-
-    const feats = classFeatures[character.classDetails.name] || []
-    features.push(...feats)
-  }
-
-  // Add background feature
-  if (character.backgroundDetails?.feature?.name) {
-    features.push(character.backgroundDetails.feature.name)
-  }
-
-  return features
-}
-
-// Helper functions for character choices dropdown
-const getCharacterChoicesCount = (character) => {
-  let count = 0
-
-  // Count lineage selection
-  if (character.speciesLineage) count += 1
-
-  // Count languages
-  count += getCharacterLanguages(character).length
-
-  // Count tools
-  count += getCharacterTools(character).length
-
-  // Count skills (limit display to avoid overwhelming)
-  const skills = getCharacterSkills(character)
-  if (skills.length > 0) count += Math.min(skills.length, 6)
-
-  return count
-}
-
-const getLineageName = (character) => {
-  if (!character.speciesLineage || !character.speciesDetails?.lineages) return ''
-  const lineage = character.speciesDetails.lineages.find(l => l.id === character.speciesLineage)
-  return lineage?.name || character.speciesLineage
-}
-
-const getSpeciesDisplayName = (character) => {
-  const speciesName = character.speciesDetails?.name || 'Unknown'
-  const lineageName = getLineageName(character)
-
-  if (lineageName) {
-    return `${speciesName} (${lineageName})`
-  }
-
-  return speciesName
-}
-
-const getCharacterLanguages = (character) => {
-  const languages = []
-
-  // Add common/standard languages (Basic D&D assumption)
-  languages.push('Common')
-
-  // Add species languages
-  if (character.speciesDetails?.name) {
-    const speciesLanguages = {
-      'Dragonborn': ['Draconic'],
-      'Dwarf': ['Dwarvish'],
-      'Elf': ['Elvish'],
-      'Gnome': ['Gnomish'],
-      'Half-Elf': ['Elvish'],
-      'Halfling': ['Halfling'],
-      'Half-Orc': ['Orc'],
-      'Tiefling': ['Infernal']
-    }
-    const speciesLangs = speciesLanguages[character.speciesDetails.name] || []
-    languages.push(...speciesLangs)
-  }
-
-  // Add additional selected languages if available
-  if (character.additionalLanguages) {
-    languages.push(...character.additionalLanguages.filter(lang => lang))
-  }
-
-  return [...new Set(languages)] // Remove duplicates
-}
-
-const getCharacterTools = (character) => {
-  const tools = []
-
-  // Add background tools (common examples)
-  if (character.backgroundDetails?.name) {
-    const backgroundTools = {
-      'Acolyte': [],
-      'Criminal': ['Thieves\' Tools'],
-      'Folk Hero': ['Smith\'s Tools', 'Vehicles (Land)'],
-      'Noble': ['Gaming Set'],
-      'Sage': [],
-      'Soldier': ['Gaming Set', 'Vehicles (Land)']
-    }
-    const bgTools = backgroundTools[character.backgroundDetails.name] || []
-    tools.push(...bgTools)
-  }
-
-  // Add selected tools if available
-  if (character.selectedTools) {
-    tools.push(...character.selectedTools.filter(tool => tool))
-  }
-
-  return [...new Set(tools)] // Remove duplicates
-}
-
-const getCharacterSkills = (character) => {
-  const skills = []
-
-  // Add background skills (common examples)
-  if (character.backgroundDetails?.name) {
-    const backgroundSkills = {
-      'Acolyte': ['Insight', 'Religion'],
-      'Criminal': ['Deception', 'Stealth'],
-      'Folk Hero': ['Animal Handling', 'Survival'],
-      'Noble': ['History', 'Persuasion'],
-      'Sage': ['Arcana', 'History'],
-      'Soldier': ['Athletics', 'Intimidation']
-    }
-    const bgSkills = backgroundSkills[character.backgroundDetails.name] || []
-    skills.push(...bgSkills)
-  }
-
-  // Add class skills if selected/saved
-  if (character.selectedSkills) {
-    skills.push(...character.selectedSkills.filter(skill => skill))
-  }
-
-  return [...new Set(skills)] // Remove duplicates
-}
-
-// Load characters from Firestore
-const loadCharacters = async () => {
-  loading.value = true
-  error.value = null
-
-  try {
-    const result = await getCharacters()
-
-    if (result.success) {
-      characters.value = result.data
-    } else {
-      throw new Error(result.error)
-    }
-  } catch (err) {
-    error.value = err.message
-    console.error('Error loading characters:', err)
-  } finally {
-    loading.value = false
-  }
-}
-
-// Edit character - requires admin authentication
-const editCharacter = (character) => {
-  requireAuth(() => {
-    // Navigate to character form with character ID as a query parameter
-    router.push({
-      name: 'CharacterForm',
-      query: { edit: character.id }
+  // Confirm character deletion - requires admin authentication
+  const confirmDelete = character => {
+    requireAuth(() => {
+      selectedCharacter.value = character
+      deleteDialog.value = true
     })
-  })
-}
-
-// Confirm character deletion - requires admin authentication
-const confirmDelete = (character) => {
-  requireAuth(() => {
-    selectedCharacter.value = character
-    deleteDialog.value = true
-  })
-}
-
-// Delete character
-const deleteCharacter = async () => {
-  if (!selectedCharacter.value) return
-
-  try {
-    const result = await deleteFromFirestore(selectedCharacter.value.id)
-
-    if (result.success) {
-      // Remove from local array
-      characters.value = characters.value.filter(c => c.id !== selectedCharacter.value.id)
-      alert('Character deleted successfully')
-
-      // Extend admin session on successful action
-      extendSession()
-    } else {
-      throw new Error(result.error)
-    }
-  } catch (err) {
-    alert('Error deleting character: ' + err.message)
-    console.error('Error deleting character:', err)
-  } finally {
-    deleteDialog.value = false
-    selectedCharacter.value = null
   }
-}
 
-// Show admin login dialog
-const showAdminLogin = () => {
-  showAuthDialog.value = true
-}
+  // Delete character
+  const deleteCharacter = async () => {
+    if (!selectedCharacter.value) return
 
-// Require access for character creation
-const requireAccessForCreation = () => {
-  requireAccess(() => {
-    // Navigate to character form
-    router.push('/character-form')
+    try {
+      const result = await deleteFromFirestore(selectedCharacter.value.id)
+
+      if (result.success) {
+        // Remove from local array
+        characters.value = characters.value.filter(c => c.id !== selectedCharacter.value.id)
+        alert('Character deleted successfully')
+
+        // Extend admin session on successful action
+        extendSession()
+      } else {
+        throw new Error(result.error)
+      }
+    } catch (error_) {
+      alert('Error deleting character: ' + error_.message)
+      console.error('Error deleting character:', error_)
+    } finally {
+      deleteDialog.value = false
+      selectedCharacter.value = null
+    }
+  }
+
+  // Show admin login dialog
+  const showAdminLogin = () => {
+    showAuthDialog.value = true
+  }
+
+  // Require access for character creation
+  const requireAccessForCreation = () => {
+    requireAccess(() => {
+      // Navigate to character form
+      router.push('/character-form')
+    })
+  }
+
+  // Load characters on component mount
+  onMounted(() => {
+    loadCharacters()
   })
-}
-
-// Load characters on component mount
-onMounted(() => {
-  loadCharacters()
-})
 </script>
 
 <style scoped>

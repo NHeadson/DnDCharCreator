@@ -23,7 +23,9 @@ export class DnDAPI {
   }
 
   async processQueue() {
-    if (this.isProcessingQueue || this.requestQueue.length === 0) return;
+    if (this.isProcessingQueue || this.requestQueue.length === 0) {
+      return;
+    }
 
     this.isProcessingQueue = true;
 
@@ -74,7 +76,7 @@ export class DnDAPI {
     try {
       // Add timeout to prevent hanging
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+      const timeoutId = setTimeout(() => controller.abort(), 10_000); // 10 second timeout
 
       const response = await fetch(url, {
         headers: defaultHeaders,
@@ -98,29 +100,315 @@ export class DnDAPI {
     }
   }
 
-  // Get all D&D races (optimized for fast loading)
+  // Helper methods for parsing race data
+  extractDarkvision(race) {
+    try {
+      // First check if there's a direct vision property
+      if (race.vision && race.vision.darkvision) {
+        return race.vision.darkvision;
+      }
+
+      // Check traits for darkvision
+      const darkvisionTrait = (race.traits || []).find((t) =>
+        t.name?.toLowerCase().includes("darkvision")
+      );
+
+      if (darkvisionTrait) {
+        // Handle both array and string descriptions
+        const descText = Array.isArray(darkvisionTrait.desc)
+          ? darkvisionTrait.desc[0]
+          : darkvisionTrait.desc;
+
+        if (descText) {
+          const match = descText.match(/(\d+)/);
+          return match ? Number.parseInt(match[0]) : 60; // Default to 60 if no number found
+        }
+      }
+
+      // Finally, check if the race name itself indicates darkvision
+      const darkVisionRaces = [
+        "dwarf",
+        "elf",
+        "drow",
+        "half-elf",
+        "half-orc",
+        "tiefling",
+        "gnome",
+      ];
+      if (
+        race.index?.toLowerCase &&
+        darkVisionRaces.includes(race.index?.toLowerCase())
+      ) {
+        return 60; // Standard darkvision range
+      }
+
+      return null;
+    } catch (error) {
+      console.error(
+        `Error extracting darkvision for ${race?.name || "unknown"}:`,
+        error
+      );
+      return null;
+    }
+  }
+
+  extractResistances(race) {
+    try {
+      // Check direct damage_resistances property
+      if (race.damage_resistances && race.damage_resistances.length > 0) {
+        return race.damage_resistances
+          .map((dr) => (typeof dr === "string" ? dr : dr.name || dr.type || ""))
+          .filter(Boolean)
+          .join(", ");
+      }
+
+      // Check traits for resistance information
+      const resistanceTrait = (race.traits || []).find(
+        (t) =>
+          t.name?.toLowerCase().includes("damage resistance") ||
+          (t.desc &&
+            (Array.isArray(t.desc)
+              ? t.desc[0]?.toLowerCase().includes("resistance")
+              : t.desc?.toLowerCase().includes("resistance")))
+      );
+
+      if (resistanceTrait) {
+        const descText = Array.isArray(resistanceTrait.desc)
+          ? resistanceTrait.desc[0]
+          : resistanceTrait.desc;
+        return descText || null;
+      }
+
+      // Check if race typically has resistances
+      const resistanceRaces = {
+        dragonborn: "Acid, Cold, Fire, Lightning, or Poison (chosen)",
+        dwarf: "Poison",
+        tiefling: "Fire",
+      };
+
+      if (race.index?.toLowerCase && resistanceRaces[race.index]) {
+        return resistanceRaces[race.index];
+      }
+
+      return null;
+    } catch (error) {
+      console.error(
+        `Error extracting resistances for ${race?.name || "unknown"}:`,
+        error
+      );
+      return null;
+    }
+  }
+
+  extractBonusLanguage(race) {
+    try {
+      // Check direct languages property
+      if (race.languages && race.languages.length > 0) {
+        const nonCommonLang = race.languages.find(
+          (l) =>
+            l.name?.toLowerCase() !== "common" ||
+            l.index?.toLowerCase() !== "common"
+        );
+        if (nonCommonLang) {
+          return nonCommonLang.name || nonCommonLang.index;
+        }
+      }
+
+      // Check language traits
+      const languageTrait = (race.traits || []).find(
+        (t) =>
+          t.name?.toLowerCase().includes("language") ||
+          (t.desc &&
+            (Array.isArray(t.desc)
+              ? t.desc[0]?.toLowerCase().includes("language")
+              : t.desc?.toLowerCase().includes("language")))
+      );
+
+      if (languageTrait) {
+        const descText = Array.isArray(languageTrait.desc)
+          ? languageTrait.desc[0]
+          : languageTrait.desc;
+        return descText || null;
+      }
+
+      // Check if race typically has bonus languages
+      const bonusLanguageRaces = ["high-elf", "half-elf"];
+      if (
+        race.index?.toLowerCase &&
+        bonusLanguageRaces.includes(race.index?.toLowerCase())
+      ) {
+        return "choice";
+      }
+
+      return null;
+    } catch (error) {
+      console.error(
+        `Error extracting bonus language for ${race?.name || "unknown"}:`,
+        error
+      );
+      return null;
+    }
+  }
+
+  extractSubraces(race) {
+    try {
+      if (race.subraces && Array.isArray(race.subraces)) {
+        return race.subraces
+          .filter((sub) => sub && (sub.index || sub.name)) // Filter out invalid subraces
+          .map((sub) => ({
+            id: sub.index || sub.name?.toLowerCase().replace(/\s+/g, "-"),
+            name:
+              sub.name ||
+              sub.index
+                ?.split("-")
+                .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+                .join(" "),
+          }));
+      }
+
+      // Fallback subrace data for common races
+      const fallbackSubraces = {
+        dwarf: [
+          { id: "hill-dwarf", name: "Hill Dwarf" },
+          { id: "mountain-dwarf", name: "Mountain Dwarf" },
+        ],
+        elf: [
+          { id: "high-elf", name: "High Elf" },
+          { id: "wood-elf", name: "Wood Elf" },
+          { id: "dark-elf", name: "Dark Elf (Drow)" },
+        ],
+        halfling: [
+          { id: "lightfoot", name: "Lightfoot" },
+          { id: "stout", name: "Stout" },
+        ],
+        gnome: [
+          { id: "forest-gnome", name: "Forest Gnome" },
+          { id: "rock-gnome", name: "Rock Gnome" },
+        ],
+      };
+
+      // If no subraces found, check fallback data
+      if (race.index?.toLowerCase && fallbackSubraces[race.index]) {
+        return fallbackSubraces[race.index];
+      }
+
+      return [];
+    } catch (error) {
+      console.error(
+        `Error extracting subraces for ${race?.name || "unknown"}:`,
+        error
+      );
+      return [];
+    }
+  }
+
+  // Get all D&D races
   async getRaces() {
     try {
-      const data = await this.apiRequest("/races"); // 5e-bits API endpoint
+      console.log("Fetching races from API...");
+      const response = await this.apiRequest("/races", {
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+      });
 
-      // For initial loading, use basic race info to show options quickly
-      // We can fetch detailed info later when a race is selected
-      const basicRaces = data.results.map((race) => ({
-        id: race.index,
-        index: race.index, // Add index property for detail fetching
-        name: race.name,
-        size: "Medium", // Default values for quick loading
-        speed: 30,
-        darkvision: null,
-        damageResistance: null,
-        lineages: [],
-        bonusLanguage: null,
-        traits: [],
-        abilityScoreIncrease: [],
-        isBasicData: true, // Flag to indicate this is basic data
-      }));
+      if (!response || !response.results) {
+        console.warn("Invalid API response format, using fallback data");
+        return this.getFallbackRaces();
+      }
 
-      return basicRaces;
+      console.log(
+        `Found ${response.results.length} races, fetching details...`
+      );
+
+      // Get detailed information for each race in parallel
+      const racePromises = response.results.map((race) =>
+        this.apiRequest(`/races/${race.index}`).catch((error) => {
+          console.error(
+            `Failed to fetch details for race ${race.index}:`,
+            error
+          );
+          // Return a basic race object if detail fetch fails
+          return {
+            index: race.index,
+            name: race.name,
+            url: race.url,
+            isBasicData: true,
+          };
+        })
+      );
+
+      const raceDetails = await Promise.all(racePromises);
+      console.log(
+        `Successfully fetched details for ${raceDetails.length} races`
+      );
+
+      const races = raceDetails
+        .map((race) => {
+          if (!race || !race.index) {
+            console.warn("Received invalid race data:", race);
+            return null;
+          }
+
+          try {
+            // Start with basic required fields
+            const processedRace = {
+              id: race.index,
+              index: race.index,
+              name: race.name || race.index.replace(/-/g, " "),
+              size: race.size || "Medium",
+              speed: race.speed || 30,
+              darkvision: this.extractDarkvision(race),
+              damageResistance: this.extractResistances(race),
+              lineages: this.extractSubraces(race),
+              bonusLanguage: this.extractBonusLanguage(race),
+              traits: [],
+            };
+
+            // Add optional fields if they exist
+            if (race.traits) {
+              processedRace.traits = race.traits.map((trait) => ({
+                name: trait.name,
+                description: Array.isArray(trait.desc)
+                  ? trait.desc.join("\n")
+                  : trait.desc || "",
+              }));
+            }
+
+            if (race.ability_bonuses) {
+              processedRace.abilityBonus = race.ability_bonuses.map(
+                (bonus) => ({
+                  ability:
+                    bonus.ability_score?.name ||
+                    bonus.ability_score?.index?.toUpperCase() ||
+                    "Unknown",
+                  bonus: bonus.bonus || 0,
+                })
+              );
+            }
+
+            console.log(`Successfully processed race: ${race.name}`);
+            return processedRace;
+          } catch (error) {
+            console.error(
+              `Error processing race ${
+                race?.name || race?.index || "unknown"
+              }:`,
+              error
+            );
+            return null;
+          }
+        })
+        .filter((race) => race !== null);
+
+      if (races.length === 0) {
+        console.warn("No races processed successfully, using fallback data");
+        return this.getFallbackRaces();
+      }
+
+      console.log(`Returning ${races.length} processed races`);
+      return races;
     } catch (error) {
       console.error("Failed to fetch races:", error);
       // Return fallback data or empty array
@@ -246,29 +534,120 @@ export class DnDAPI {
 
   // ========== CLASSES API ==========
 
-  // Get all available classes
+  // Get all D&D classes with full details
   async getClasses() {
     try {
-      const data = await this.apiRequest("/classes");
+      const response = await this.apiRequest("/classes", {
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+      });
 
-      if (data && data.results) {
-        // Transform basic class data
-        const classes = data.results.map((cls) => ({
-          id: cls.index,
-          index: cls.index, // Add index property for detail fetching
-          name: cls.name,
-          isBasicData: true, // Mark as basic data that needs detail fetching
-        }));
-
-        return classes;
+      if (!response || !response.results) {
+        throw new Error("Invalid API response format");
       }
 
-      return this.getFallbackClasses();
+      // Get detailed information for each class in parallel
+      const classPromises = response.results.map((dndClass) =>
+        this.apiRequest(`/classes/${dndClass.index}`)
+      );
+
+      const classDetails = await Promise.all(classPromises);
+
+      const classes = classDetails
+        .map((dndClass) => {
+          try {
+            return {
+              id: dndClass.index,
+              index: dndClass.index,
+              name: dndClass.name,
+              hitDie: dndClass.hit_die || 8,
+              proficiencies: (dndClass.proficiencies || []).map((prof) => {
+                const type = prof.index?.split("-")?.[0] || "skill";
+                return {
+                  name: prof.name || prof.index?.replace(/-/g, " ") || "",
+                  type,
+                };
+              }),
+              savingThrows: (dndClass.saving_throws || []).map(
+                (save) => save.name || save.index?.toUpperCase() || ""
+              ),
+              startingEquipment: this.extractStartingEquipment(dndClass),
+              spellcasting: dndClass.spellcasting
+                ? {
+                    ability:
+                      dndClass.spellcasting.spellcasting_ability?.name ||
+                      dndClass.spellcasting.spellcasting_ability?.index?.toUpperCase() ||
+                      "",
+                    level: dndClass.spellcasting.level || 1,
+                    info: Array.isArray(dndClass.spellcasting.info)
+                      ? dndClass.spellcasting.info.map((i) => ({
+                          name: i.name,
+                          desc: Array.isArray(i.desc)
+                            ? i.desc.join("\n")
+                            : i.desc || "",
+                        }))
+                      : [],
+                  }
+                : null,
+              features: (dndClass.features || [])
+                .filter((f) => f.level === 1)
+                .map((feature) => ({
+                  name: feature.name || "",
+                  description: Array.isArray(feature.desc)
+                    ? feature.desc.join("\n")
+                    : feature.desc || "",
+                  level: feature.level || 1,
+                })),
+              subclassType: dndClass.subclass_flavor || "Archetype",
+            };
+          } catch (error) {
+            console.error(
+              `Error processing class ${dndClass?.name || "unknown"}:`,
+              error
+            );
+            return null;
+          }
+        })
+        .filter((cls) => cls !== null);
+
+      return classes;
     } catch (error) {
       console.error("Failed to fetch classes:", error);
       return this.getFallbackClasses();
     }
   }
+
+  // Generate a character name based on race
+  generateCharacterName(race = "human") {
+    // Import and use the name generator
+    try {
+      const { generateCharacterName } = require("./nameGenerator");
+      return generateCharacterName(race);
+    } catch (error) {
+      console.error("Error generating name:", error);
+      return this.generateFallbackName(race);
+    }
+  }
+
+  // Fallback name generation in case the main generator fails
+  generateFallbackName(race = "human") {
+    const fallbackNames = {
+      human: ["John Smith", "Mary Johnson", "James Wilson", "Sarah Brown"],
+      elf: [
+        "Aelindra Silverleaf",
+        "Celeborn Starweaver",
+        "Galador Moonwhisper",
+      ],
+      dwarf: ["Thorin Stonefist", "Dwalin Ironbeard", "Balin Rockbreaker"],
+    };
+
+    const names = fallbackNames[race.toLowerCase()] || fallbackNames.human;
+    return names[Math.floor(Math.random() * names.length)];
+  }
+
+  // This method has been moved and combined with the other extractStartingEquipment implementation
 
   // Get specific class details (called when user selects a class)
   async getClassDetails(classId) {
@@ -899,22 +1278,6 @@ export class DnDAPI {
     ];
   }
 
-  getSpellsForClass(classIndex) {
-    // Starting spells known/prepared at level 1
-    const spells = {
-      bard: 4,
-      cleric: "Wisdom modifier + 1",
-      druid: "Wisdom modifier + 1",
-      paladin: 0, // Gets spells at level 2
-      ranger: 0, // Gets spells at level 2
-      sorcerer: 2,
-      warlock: 1,
-      wizard: "Intelligence modifier + 1",
-    };
-
-    return spells[classIndex] || 0;
-  }
-
   // Fallback data in case API fails
   getFallbackClasses() {
     return [
@@ -952,18 +1315,57 @@ export class DnDAPI {
       },
     ];
   }
+
   getFallbackRaces() {
+    console.log("Using fallback race data");
     return [
       {
-        id: "human",
-        index: "human",
-        name: "Human",
+        id: "dragonborn",
+        index: "dragonborn",
+        name: "Dragonborn",
         size: "Medium",
         speed: 30,
         darkvision: null,
-        damageResistance: null,
+        damageResistance: "Acid, Cold, Fire, Lightning, or Poison (chosen)",
         lineages: [],
-        bonusLanguage: null,
+        bonusLanguage: "Draconic",
+        traits: [
+          {
+            name: "Breath Weapon",
+            description:
+              "You can use your action to exhale destructive energy.",
+          },
+          {
+            name: "Damage Resistance",
+            description:
+              "You have resistance to the damage type associated with your draconic ancestry.",
+          },
+        ],
+        abilityBonus: [
+          { ability: "STRENGTH", bonus: 2 },
+          { ability: "CHARISMA", bonus: 1 },
+        ],
+      },
+      {
+        id: "dwarf",
+        index: "dwarf",
+        name: "Dwarf",
+        size: "Medium",
+        speed: 25,
+        darkvision: 60,
+        damageResistance: "Poison",
+        lineages: [
+          { id: "hill-dwarf", name: "Hill Dwarf" },
+          { id: "mountain-dwarf", name: "Mountain Dwarf" },
+        ],
+        bonusLanguage: "Dwarvish",
+        traits: [
+          {
+            name: "Dwarven Resilience",
+            description: "You have advantage on saving throws against poison.",
+          },
+        ],
+        abilityBonus: [{ ability: "CONSTITUTION", bonus: 2 }],
       },
       {
         id: "elf",
@@ -974,12 +1376,77 @@ export class DnDAPI {
         darkvision: 60,
         damageResistance: null,
         lineages: [
-          { id: "high_elf", name: "High Elf" },
-          { id: "wood_elf", name: "Wood Elf" },
+          { id: "high-elf", name: "High Elf" },
+          { id: "wood-elf", name: "Wood Elf" },
+          { id: "dark-elf", name: "Dark Elf (Drow)" },
         ],
-        bonusLanguage: null,
+        bonusLanguage: "Elvish",
+        traits: [
+          {
+            name: "Keen Senses",
+            description: "You have proficiency in the Perception skill.",
+          },
+          {
+            name: "Fey Ancestry",
+            description:
+              "You have advantage on saving throws against being charmed.",
+          },
+        ],
+        abilityBonus: [{ ability: "DEXTERITY", bonus: 2 }],
       },
-      // Add more fallback races as needed
+      {
+        id: "human",
+        index: "human",
+        name: "Human",
+        size: "Medium",
+        speed: 30,
+        darkvision: null,
+        damageResistance: null,
+        lineages: [{ id: "variant-human", name: "Variant Human" }],
+        bonusLanguage: "Any",
+        traits: [
+          {
+            name: "Extra Language",
+            description:
+              "You can speak, read, and write one extra language of your choice.",
+          },
+        ],
+        abilityBonus: [
+          { ability: "STRENGTH", bonus: 1 },
+          { ability: "DEXTERITY", bonus: 1 },
+          { ability: "CONSTITUTION", bonus: 1 },
+          { ability: "INTELLIGENCE", bonus: 1 },
+          { ability: "WISDOM", bonus: 1 },
+          { ability: "CHARISMA", bonus: 1 },
+        ],
+      },
+      {
+        id: "halfling",
+        index: "halfling",
+        name: "Halfling",
+        size: "Small",
+        speed: 25,
+        darkvision: null,
+        damageResistance: null,
+        lineages: [
+          { id: "lightfoot", name: "Lightfoot" },
+          { id: "stout", name: "Stout" },
+        ],
+        bonusLanguage: "Halfling",
+        traits: [
+          {
+            name: "Lucky",
+            description:
+              "When you roll a 1 on an attack roll, ability check, or saving throw, you can reroll the die.",
+          },
+          {
+            name: "Brave",
+            description:
+              "You have advantage on saving throws against being frightened.",
+          },
+        ],
+        abilityBonus: [{ ability: "DEXTERITY", bonus: 2 }],
+      },
     ];
   }
 }

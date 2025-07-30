@@ -1,32 +1,22 @@
 <template>
-  <v-app-bar app height="80" class="theme-primary-bg header-enhanced" elevation="4">
+  <v-app-bar app class="theme-primary-bg header-enhanced" elevation="4" height="80">
     <v-toolbar-title class="header-title">
-      <router-link to="/" class="text-decoration-none theme-text title-link">
-        <v-icon icon="mdi-dice-d20" class="me-2 title-icon"></v-icon>
+      <router-link class="text-decoration-none theme-text title-link" to="/">
+        <v-icon class="me-2 title-icon" icon="mdi-dice-d20" />
         DnD Character Tool
       </router-link>
     </v-toolbar-title>
 
-    <v-spacer></v-spacer>
+    <v-spacer />
 
     <div class="nav-buttons">
-      <v-btn variant="flat" class="theme-secondary-bg nav-btn" to="/" rounded="lg">
-        <v-icon icon="mdi-home" class="me-2"></v-icon>
+      <v-btn class="theme-secondary-bg nav-btn" rounded="lg" to="/" variant="flat">
+        <v-icon class="me-2" icon="mdi-home" />
         Home
       </v-btn>
 
-      <v-btn v-if="hasAccess" variant="flat" class="theme-secondary-bg nav-btn mx-3" to="/character-form" rounded="lg">
-        <v-icon icon="mdi-account-plus" class="me-2"></v-icon>
-        Create Character
-      </v-btn>
-      <v-btn v-else variant="outlined" class="theme-secondary-border theme-secondary-text nav-btn mx-3"
-        @click="requireAccessForCreation" rounded="lg">
-        <v-icon icon="mdi-lock-open" class="me-2"></v-icon>
-        Get Access
-      </v-btn>
-
-      <v-btn variant="flat" class="theme-secondary-bg nav-btn me-3" to="/characters" rounded="lg">
-        <v-icon icon="mdi-account-group" class="me-2"></v-icon>
+      <v-btn class="theme-secondary-bg nav-btn me-3" rounded="lg" to="/characters" variant="flat">
+        <v-icon class="me-2" icon="mdi-account-group" />
         My Characters
       </v-btn>
     </div>
@@ -34,20 +24,20 @@
 </template>
 
 <script setup>
-import { useRouter } from 'vue-router'
-import { useAccessControlSingleton } from '@/composables/useAccessControl'
-import { computed } from 'vue'
+  import { computed } from 'vue'
+  import { useRouter } from 'vue-router'
+  import { useAccessControlSingleton } from '@/composables/useAccessControl'
 
-const router = useRouter()
-const accessControl = useAccessControlSingleton()
-const hasAccess = computed(() => accessControl.hasAccess)
-const requireAccess = accessControl.requireAccess
+  const router = useRouter()
+  const accessControl = useAccessControlSingleton()
+  const hasAccess = computed(() => accessControl.hasAccess)
+  const requireAccess = accessControl.requireAccess
 
-const requireAccessForCreation = () => {
-  requireAccess(() => {
-    router.push('/character-form')
-  }, 'create a new character')
-}
+  const requireAccessForCreation = () => {
+    requireAccess(() => {
+      router.push('/character-form')
+    }, 'create a new character')
+  }
 </script>
 
 <style scoped>

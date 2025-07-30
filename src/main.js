@@ -1,12 +1,15 @@
-import { createApp } from "vue";
-import router from "@/plugins/router.js";
-import vuetify from "@/plugins/vuetify.js";
-import App from "./App.vue";
-import "unfonts.css";
-import "@/styles/theme.css";
-import { initializeApp } from "firebase/app";
-import { getFirestore } from "firebase/firestore";
-import { getAuth } from "firebase/auth";
+import { initializeApp } from 'firebase/app'
+import { getAuth } from 'firebase/auth'
+import { getFirestore } from 'firebase/firestore'
+import { createApp } from 'vue'
+import router from '@/plugins/router.js'
+import vuetify from '@/plugins/vuetify.js'
+// Import the D&D API singleton
+import { dndAPI } from '@/services/dndAPI.js'
+import App from './App.vue'
+import 'unfonts.css'
+
+import '@/styles/theme.css'
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -16,12 +19,18 @@ const firebaseConfig = {
   storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
   messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
   appId: import.meta.env.VITE_FIREBASE_APP_ID,
-};
+}
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-const auth = getAuth(app);
+const app = initializeApp(firebaseConfig)
+const db = getFirestore(app)
+const auth = getAuth(app)
 
-export { app, db, auth };
+export { app, auth, db }
 
-createApp(App).use(vuetify).use(router).mount("#app");
+const vueApp = createApp(App)
+
+// Make dndAPI available globally
+vueApp.config.globalProperties.$dndAPI = dndAPI
+
+vueApp.use(vuetify).use(router).mount('#app')
+export { dndAPI } from '@/services/dndAPI.js'
