@@ -8,255 +8,215 @@
             Class Selection
           </v-card-title>
           <v-card-text class="pt-2 pb-3">
-            <v-select
-              v-model="character.class"
-              density="compact"
-              :error="!!characterData?.classError"
-              item-title="name"
-              :error-messages="characterData?.classError"
-              item-value="id"
-              :items="characterData?.classOptions || []"
-              label="Choose Your Class"
-              :loading="characterData?.isLoadingClasses"
-              variant="outlined"
-              @update:model-value="characterData?.updateClassTraits"
-            >
+            <v-select v-model="character.class" density="compact" :error="!!characterData?.classError" item-title="name"
+              :error-messages="characterData?.classError" item-value="id" :items="characterData?.classOptions || []"
+              label="Choose Your Class" :loading="characterData?.isLoadingClasses" variant="outlined"
+              @update:model-value="onClassChange">
               <template #prepend>
                 <v-icon color="primary" size="small">mdi-shield-sword</v-icon>
               </template>
-</v-select>
-</v-card-text>
-</v-card>
-</v-col>
-<v-col cols="12" md="7">
-  <v-card v-if="!character.class" class="text-blue-grey-lighten-5 class-preview-card" variant="tonal">
-    <v-card-title class="d-flex align-center py-2">
-      <v-icon class="text-blue-grey-darken-2 me-2" size="small">mdi-sword-cross</v-icon>
-      <span class="text-subtitle-2 text-grey">Class Details</span>
-    </v-card-title>
-    <v-divider />
-    <v-card-text class="d-flex align-center justify-center text-center py-4">
-      <v-fade-transition>
-        <div v-if="characterData?.isLoadingClasses">
-          <v-progress-circular class="mb-2" color="primary" indeterminate :size="32" />
-          <div class="text-subtitle-2 text-primary">Loading Class Data...</div>
-        </div>
-        <div v-else>
-          <v-icon class="mb-2 text-grey-darken-1" size="32">mdi-sword-cross</v-icon>
-          <div class="text-subtitle-2 text-grey-darken-1">Select a Class</div>
-          <div class="text-caption text-grey mt-1">Choose your character's class to view details</div>
-        </div>
-      </v-fade-transition>
-    </v-card-text>
-  </v-card>
-  <v-card v-else-if="selectedClassInfo" class="text-blue-grey-lighten-5 class-preview-card" variant="tonal">
-    <v-card-title class="d-flex align-center py-2">
-      <v-icon class="text-blue-grey-darken-2 me-2" size="small">mdi-sword-cross</v-icon>
-      <span class="text-subtitle-2">{{ selectedClassInfo.name }}</span>
-    </v-card-title>
-    <v-divider />
-    <v-card-text class="pt-3 pb-2" style="max-height: 400px; overflow-y: auto;">
-      <!-- Class Description -->
-      <div v-if="selectedClassInfo.description" class="mb-3">
-        <div class="text-body-2 text-grey-darken-2">{{ selectedClassInfo.description }}</div>
-      </div>
-
-      <!-- Core Attributes Grid -->
-      <v-container class="pa-0 mb-3">
-        <v-row class="class-attributes-grid" dense>
-          <v-col cols="6" sm="3">
-            <v-hover v-slot="{ isHovering, props: hoverProps }">
-              <v-card class="pa-2 attribute-card" :color="isHovering ? 'blue-grey-lighten-4' : 'blue-grey-lighten-5'"
-                flat v-bind="hoverProps">
-                <v-tooltip text="Determines your Hit Points and healing during short rests">
-                  <template #activator="{ props }">
-                          <div class="text-center" v-bind="props">
-                            <div class="text-overline text-blue-grey-darken-1">Hit Die</div>
-                            <div class="text-h6 font-weight-bold text-error">d{{ selectedClassInfo.hitDie }}</div>
-                          </div>
-                        </template>
-                </v-tooltip>
-              </v-card>
-            </v-hover>
-          </v-col>
-          <v-col cols="6" sm="3">
-            <v-hover v-slot="{ isHovering, props: hoverProps }">
-              <v-card class="pa-2 attribute-card" :color="isHovering ? 'blue-grey-lighten-4' : 'blue-grey-lighten-5'"
-                flat v-bind="hoverProps">
-                <v-tooltip text="Your starting Hit Points at 1st level">
-                  <template #activator="{ props }">
-                          <div class="text-center" v-bind="props">
-                            <div class="text-overline text-blue-grey-darken-1">HP at 1st</div>
-                            <div class="text-h6 font-weight-bold text-error">{{ selectedClassInfo.hitDie }} + CON</div>
-                          </div>
-                        </template>
-                </v-tooltip>
-              </v-card>
-            </v-hover>
-          </v-col>
-          <v-col cols="6" sm="3">
-            <v-hover v-slot="{ isHovering, props: hoverProps }">
-              <v-card class="pa-2 attribute-card" :color="isHovering ? 'blue-grey-lighten-4' : 'blue-grey-lighten-5'"
-                flat v-bind="hoverProps">
-                <v-tooltip text="The most important ability score for your class abilities">
-                  <template #activator="{ props }">
-                          <div class="text-center" v-bind="props">
-                            <div class="text-overline text-blue-grey-darken-1">Primary</div>
-                            <div class="text-h6 font-weight-bold text-primary">{{ selectedClassInfo.primaryAbility }}</div>
-                          </div>
-                        </template>
-                </v-tooltip>
-              </v-card>
-            </v-hover>
-          </v-col>
-          <v-col cols="6" sm="3">
-            <v-hover v-slot="{ isHovering, props: hoverProps }">
-              <v-card class="pa-2 attribute-card" :color="isHovering ? 'blue-grey-lighten-4' : 'blue-grey-lighten-5'"
-                flat v-bind="hoverProps">
-                <v-tooltip text="Ability saves your class is proficient in">
-                  <template #activator="{ props }">
-                          <div class="text-center" v-bind="props">
-                            <div class="text-overline text-blue-grey-darken-1">Saves</div>
-                            <div class="text-subtitle-2 font-weight-bold text-primary">
-                              {{ selectedClassInfo.savingThrows?.join(', ') }}
-                            </div>
-                          </div>
-                        </template>
-                </v-tooltip>
-              </v-card>
-            </v-hover>
-          </v-col>
-        </v-row>
-      </v-container>
-
-      <!-- Proficiencies Section -->
-      <div class="proficiencies-section mb-3">
-        <h5 class="text-subtitle-2 text-blue-grey-darken-2 mb-2 d-flex align-center">
-          <v-icon class="me-2" color="success" size="small">mdi-shield-star</v-icon>
-          Proficiencies
-        </h5>
-
-        <!-- Armor -->
-        <div v-if="selectedClassInfo.armorTraining" class="ms-4 mb-2">
-          <div class="text-caption text-grey-darken-2 mb-1">Armor:</div>
-          <v-chip-group class="proficiency-chips">
-            <v-chip v-if="selectedClassInfo.armorTraining.light" color="success" density="comfortable" size="x-small"
-              variant="flat">Light</v-chip>
-            <v-chip v-if="selectedClassInfo.armorTraining.medium" color="success" density="comfortable" size="x-small"
-              variant="flat">Medium</v-chip>
-            <v-chip v-if="selectedClassInfo.armorTraining.heavy" color="success" density="comfortable" size="x-small"
-              variant="flat">Heavy</v-chip>
-            <v-chip v-if="selectedClassInfo.armorTraining.shields" color="success" density="comfortable" size="x-small"
-              variant="flat">Shields</v-chip>
-          </v-chip-group>
-        </div>
-
-        <!-- Weapons -->
-        <div v-if="selectedClassInfo.weaponProficiencies" class="ms-4 mb-2">
-          <div class="text-caption text-grey-darken-2 mb-1">Weapons:</div>
-          <v-chip-group class="proficiency-chips">
-            <v-chip v-for="prof in selectedClassInfo.weaponProficiencies" :key="prof" color="error"
-              density="comfortable" size="x-small" variant="flat">
-              {{ prof }}
-            </v-chip>
-          </v-chip-group>
-        </div>
-
-        <!-- Tools -->
-        <div v-if="selectedClassInfo.toolProficiencies" class="ms-4 mb-2">
-          <div class="text-caption text-grey-darken-2 mb-1">Tools:</div>
-          <v-chip-group class="proficiency-chips">
-            <v-chip v-for="tool in selectedClassInfo.toolProficiencies" :key="tool" color="warning"
-              density="comfortable" size="x-small" variant="flat">
-              {{ tool }}
-            </v-chip>
-          </v-chip-group>
-        </div>
-
-        <!-- Skills -->
-        <div v-if="selectedClassInfo.skillProficiencies" class="ms-4">
-          <div class="text-caption text-grey-darken-2 mb-1">
-            Skills (Choose {{ selectedClassInfo.skillProficiencies.count }}):
-          </div>
-          <v-chip-group class="proficiency-chips">
-            <v-chip v-for="skill in selectedClassInfo.skillProficiencies.from" :key="skill" color="blue-grey"
-              density="comfortable" size="x-small" variant="flat">
-              {{ skill }}
-            </v-chip>
-          </v-chip-group>
-        </div>
-      </div>
-
-      <!-- Class Features -->
-      <div v-if="selectedClassInfo.features?.length" class="class-features-section mb-3">
-        <h5 class="text-subtitle-2 text-blue-grey-darken-2 mb-2 d-flex align-center">
-          <v-icon class="me-2" color="info" size="small">mdi-star-circle</v-icon>
-          Class Features
-        </h5>
-        <v-expansion-panels variant="accordion">
-          <v-expansion-panel v-for="feature in selectedClassInfo.features" :key="feature.name" class="feature-panel"
-            density="compact">
-            <v-expansion-panel-title class="text-subtitle-2">
-              {{ feature.name }}
-            </v-expansion-panel-title>
-            <v-expansion-panel-text class="text-body-2">
-              {{ feature.description }}
-            </v-expansion-panel-text>
-          </v-expansion-panel>
-        </v-expansion-panels>
-      </div>
-
-      <!-- Spellcasting -->
-      <div v-if="selectedClassInfo.spellcasting?.isSpellcaster" class="spellcasting-section">
-        <h5 class="text-subtitle-2 text-blue-grey-darken-2 mb-2 d-flex align-center">
-          <v-icon class="me-2" color="purple" size="small">mdi-magic-staff</v-icon>
-          Spellcasting
-        </h5>
-        <v-card class="pa-3" color="purple-lighten-5" flat>
-          <div class="d-flex align-center mb-2">
-            <div class="text-caption text-grey-darken-2">Spellcasting Ability:</div>
-            <v-chip class="ms-2" color="purple" size="x-small" variant="flat">
-              {{ selectedClassInfo.spellcasting.spellcastingAbility }}
-            </v-chip>
-          </div>
-          <v-row dense>
-            <v-col v-if="selectedClassInfo.spellcasting.cantripsKnown" cols="6">
-              <div class="text-caption">
-                Cantrips Known: <span class="text-purple-darken-2 font-weight-bold">
-                  {{ selectedClassInfo.spellcasting.cantripsKnown }}
-                </span>
-              </div>
-            </v-col>
-            <v-col v-if="selectedClassInfo.spellcasting.spellsKnown" cols="6">
-              <div class="text-caption">
-                1st Level Spells: <span class="text-purple-darken-2 font-weight-bold">
-                  {{ selectedClassInfo.spellcasting.spellsKnown }}
-                </span>
-              </div>
-            </v-col>
-          </v-row>
+            </v-select>
+            <!-- Subclass Selection -->
+            <v-select v-if="character.class && availableSubclasses.length > 0" v-model="character.subclass" class="mt-3"
+              density="compact" item-title="name" item-value="index" :items="availableSubclasses" :label="`Choose Your ${selectedClassInfo?.subclassType || 'Subclass'
+                }`" variant="outlined" @update:model-value="onSubclassChange">
+              <template #prepend>
+                <v-icon color="secondary" size="small">mdi-star-circle</v-icon>
+              </template>
+            </v-select>
+          </v-card-text>
         </v-card>
-      </div>
-    </v-card-text>
-  </v-card>
-</v-col>
-</v-row>
-</div>
+      </v-col>
+
+      <v-col cols="12" md="7">
+        <v-card v-if="!character.class" class="text-blue-grey-lighten-5 class-preview-card" variant="tonal">
+          <v-card-title class="d-flex align-center py-2">
+            <v-icon class="text-blue-grey-darken-2 me-2" size="small">mdi-sword-cross</v-icon>
+            <span class="text-subtitle-2 text-grey">Class Details</span>
+          </v-card-title>
+          <v-divider />
+          <v-card-text class="d-flex align-center justify-center text-center py-4">
+            <v-fade-transition>
+              <div v-if="characterData?.isLoadingClasses">
+                <v-progress-circular class="mb-2" color="primary" indeterminate :size="32" />
+                <div class="text-subtitle-2 text-primary">
+                  Loading Class Data...
+                </div>
+              </div>
+              <div v-else>
+                <v-icon class="mb-2 text-grey-darken-1" size="32">mdi-sword-cross</v-icon>
+                <div class="text-subtitle-2 text-grey-darken-1">
+                  Select a Class
+                </div>
+                <div class="text-caption text-grey mt-1">
+                  Choose your character's class to view details
+                </div>
+              </div>
+            </v-fade-transition>
+          </v-card-text>
+        </v-card>
+
+        <v-card v-else-if="selectedClassInfo" class="class-preview-card class-detail-modern class-detail-bordered"
+          variant="outlined">
+          <v-card-title class="d-flex align-center py-2 class-detail-header">
+            <v-icon class="me-2" color="primary" size="small">mdi-sword-cross</v-icon>
+            <span class="text-h6 font-weight-bold">{{ selectedClassInfo.name }}</span>
+            <v-chip v-if="character.subclass && selectedSubclassInfo" color="secondary" size="small" variant="elevated"
+              class="ms-2">
+              {{ selectedSubclassInfo.name }}
+            </v-chip>
+          </v-card-title>
+          <v-card-text class="pt-3 pb-3 px-2">
+            <div v-if="selectedClassInfo.description" class="mb-2 text-grey-darken-2 text-body-2">{{
+              selectedClassInfo.description }}</div>
+            <div v-if="selectedClassInfo.notes" class="mb-2 text-caption text-grey-darken-2">{{ selectedClassInfo.notes
+            }}
+            </div>
+            <div v-if="selectedClassInfo.overview" class="mb-2 text-caption text-grey-darken-1">{{
+              selectedClassInfo.overview
+            }}</div>
+
+            <v-divider class="my-2" />
+            <v-row class="mb-2">
+              <v-col cols="12" sm="6">
+                <div class="core-stats-label mb-2 styled-section"><v-icon size="small"
+                    class="me-1">mdi-information-variant</v-icon>Core Stats</div>
+                <div class="core-stats-row align-center mb-2">
+                  <v-icon size="small" class="me-1">mdi-dice-d20</v-icon>
+                  <span class="core-stats-key">Hit Die:</span>
+                  <span class="core-stats-value ms-1">d{{ selectedClassInfo.hitDie || '-' }}</span>
+                </div>
+                <div v-if="selectedClassInfo.primaryAbility" class="core-stats-row align-center mb-2">
+                  <v-icon size="small" class="me-1">mdi-star</v-icon>
+                  <span class="core-stats-key">Primary:</span>
+                  <span class="core-stats-value ms-1">
+                    <v-chip
+                      v-for="(ability, idx) in (Array.isArray(selectedClassInfo.primaryAbility) ? selectedClassInfo.primaryAbility : [selectedClassInfo.primaryAbility])"
+                      :key="ability + idx" color="primary" size="x-small" variant="flat" class="me-1 mb-1">{{ ability
+                      }}</v-chip>
+                  </span>
+                </div>
+              </v-col>
+              <v-col cols="12" sm="6">
+                <div class="core-stats-label mb-2 styled-section"><v-icon size="small"
+                    class="me-1">mdi-shield-account</v-icon>Proficiencies</div>
+                <div v-if="selectedClassInfo.savingThrows && selectedClassInfo.savingThrows.length"
+                  class="core-stats-row align-center mb-2">
+                  <v-icon size="small" class="me-1">mdi-shield</v-icon>
+                  <span class="core-stats-key">Saves:</span>
+                  <span class="core-stats-value ms-1">
+                    <v-chip v-for="(save, idx) in selectedClassInfo.savingThrows" :key="save + idx" color="primary"
+                      size="x-small" variant="flat" class="me-1 mb-1">{{ save }}</v-chip>
+                  </span>
+                </div>
+                <div
+                  v-if="selectedClassInfo.armorTraining && (selectedClassInfo.armorTraining.light || selectedClassInfo.armorTraining.medium || selectedClassInfo.armorTraining.heavy || selectedClassInfo.armorTraining.shields)"
+                  class="core-stats-row align-center mb-2">
+                  <v-icon size="small" class="me-1">mdi-shield-half-full</v-icon>
+                  <span class="core-stats-key">Armor:</span>
+                  <span class="core-stats-value ms-1">
+                    <v-chip v-if="selectedClassInfo.armorTraining.light" color="primary" size="x-small" variant="flat"
+                      class="me-1 mb-1">Light</v-chip>
+                    <v-chip v-if="selectedClassInfo.armorTraining.medium" color="primary" size="x-small" variant="flat"
+                      class="me-1 mb-1">Medium</v-chip>
+                    <v-chip v-if="selectedClassInfo.armorTraining.heavy" color="primary" size="x-small" variant="flat"
+                      class="me-1 mb-1">Heavy</v-chip>
+                    <v-chip v-if="selectedClassInfo.armorTraining.shields" color="primary" size="x-small" variant="flat"
+                      class="me-1 mb-1">Shields</v-chip>
+                  </span>
+                </div>
+                <div v-if="selectedClassInfo.weaponProficiencies && selectedClassInfo.weaponProficiencies.length"
+                  class="core-stats-row align-center mb-2">
+                  <v-icon size="small" class="me-1">mdi-sword</v-icon>
+                  <span class="core-stats-key">Weapons:</span>
+                  <span class="core-stats-value ms-1">
+                    <v-chip v-for="(wpn, idx) in selectedClassInfo.weaponProficiencies" :key="wpn + idx" color="primary"
+                      size="x-small" variant="flat" class="me-1 mb-1">{{ wpn }}</v-chip>
+                  </span>
+                </div>
+                <div v-if="selectedClassInfo.toolProficiencies && selectedClassInfo.toolProficiencies.length"
+                  class="core-stats-row align-center mb-2">
+                  <v-icon size="small" class="me-1">mdi-hammer-wrench</v-icon>
+                  <span class="core-stats-key">Tools:</span>
+                  <span class="core-stats-value ms-1">
+                    <v-chip v-for="(tool, idx) in selectedClassInfo.toolProficiencies" :key="tool + idx" color="primary"
+                      size="x-small" variant="flat" class="me-1 mb-1">{{ tool }}</v-chip>
+                  </span>
+                </div>
+                <div
+                  v-if="selectedClassInfo.skillProficiencies && selectedClassInfo.skillProficiencies.from && selectedClassInfo.skillProficiencies.from.length"
+                  class="core-stats-row align-center mb-2">
+                  <v-icon size="small" class="me-1">mdi-account-group</v-icon>
+                  <span class="core-stats-key">Skills:</span>
+                  <span class="core-stats-value ms-1">
+                    <span class="me-1">Choose {{ selectedClassInfo.skillProficiencies.count }}:</span>
+                    <v-chip v-for="(skill, idx) in selectedClassInfo.skillProficiencies.from" :key="skill + idx"
+                      color="primary" size="x-small" variant="flat" class="me-1 mb-1">{{ skill }}</v-chip>
+                  </span>
+                </div>
+              </v-col>
+            </v-row>
+            <v-divider class="my-3" />
+
+            <div v-if="selectedClassInfo.startingEquipment?.length" class="mb-3">
+              <div class="core-stats-label mb-2 styled-section"><v-icon size="small"
+                  class="me-1">mdi-backpack</v-icon>Starting Equipment</div>
+              <div class="core-stats-row flex-wrap">
+                <v-chip v-for="(item, idx) in selectedClassInfo.startingEquipment" :key="item.name || item || idx"
+                  color="brown" size="x-small" variant="flat" class="me-1 mb-1">
+                  {{ typeof item === 'object' && item.name ? item.name + (item.quantity && item.quantity > 1 ? ' x' +
+                    item.quantity : '') : item }}
+                </v-chip>
+              </div>
+            </div>
+
+            <div v-if="selectedClassInfo.spellcasting?.isSpellcaster" class="mb-2">
+              <div class="core-stats-label mb-2 styled-section"><v-icon size="small"
+                  class="me-1">mdi-auto-fix</v-icon>Spellcasting</div>
+              <div class="core-stats-row mb-2 align-center">
+                <v-icon size="small" class="me-1">mdi-star-four-points</v-icon>
+                <span class="core-stats-key">Ability:</span>
+                <span class="core-stats-value ms-1">
+                  <v-chip color="primary" size="x-small" variant="flat">{{
+                    selectedClassInfo.spellcasting.spellcastingAbility
+                  }}</v-chip>
+                </span>
+              </div>
+              <div v-if="selectedClassInfo.spellcasting.cantripsKnown" class="core-stats-row mb-2 align-center">
+                <v-icon size="small" class="me-1">mdi-flash</v-icon>
+                <span class="core-stats-key">Cantrips Known:</span>
+                <span class="core-stats-value ms-1">
+                  <v-chip color="primary" size="x-small" variant="flat">{{ selectedClassInfo.spellcasting.cantripsKnown
+                  }}</v-chip>
+                </span>
+              </div>
+              <div v-if="selectedClassInfo.spellcasting.spellsKnown" class="core-stats-row mb-2 align-center">
+                <v-icon size="small" class="me-1">mdi-book-open-variant</v-icon>
+                <span class="core-stats-key">1st Level Spells:</span>
+                <span class="core-stats-value ms-1">
+                  <v-chip color="primary" size="x-small" variant="flat">{{ selectedClassInfo.spellcasting.spellsKnown
+                  }}</v-chip>
+                </span>
+              </div>
+            </div>
+          </v-card-text>
+        </v-card>
+      </v-col>
+    </v-row>
+  </div>
 </template>
 
 <script setup>
-import { computed } from 'vue'
 
+import { ref, computed, watch } from 'vue'
 const props = defineProps({
-  character: {
-    type: Object,
-    required: true,
-  },
-  characterData: {
-    type: Object,
-    required: true,
-  },
-})
+  character: { type: Object, required: true },
+  characterData: { type: Object, required: true }
+});
+
+// Reactive data for subclasses
+const availableSubclasses = ref([])
+const selectedSubclassInfo = ref(null)
 
 const selectedClassInfo = computed(() => {
   if (!props.character.class || !props.characterData?.classData) {
@@ -266,15 +226,101 @@ const selectedClassInfo = computed(() => {
     classInfo => classInfo.id === props.character.class,
   )
 })
+
+// Mock subclasses data for now - we'll enhance the API later
+const mockSubclasses = {
+  'ranger': [
+    { index: 'hunter', name: 'Hunter' },
+    { index: 'beast-master', name: 'Beast Master' },
+    { index: 'gloom-stalker', name: 'Gloom Stalker' }
+  ],
+  'fighter': [
+    { index: 'champion', name: 'Champion' },
+    { index: 'battle-master', name: 'Battle Master' },
+    { index: 'eldritch-knight', name: 'Eldritch Knight' }
+  ],
+  'wizard': [
+    { index: 'abjuration', name: 'School of Abjuration' },
+    { index: 'divination', name: 'School of Divination' },
+    { index: 'evocation', name: 'School of Evocation' }
+  ]
+}
+
+// Watch for class changes to load subclasses
+watch(() => props.character.class, async (newClassId) => {
+  if (newClassId) {
+    // For now, use mock data. Later we'll implement API calls
+    availableSubclasses.value = mockSubclasses[newClassId] || []
+  } else {
+    availableSubclasses.value = []
+  }
+
+  // Clear subclass selection when class changes
+  props.character.subclass = null
+  selectedSubclassInfo.value = null
+}, { immediate: true })
+
+// Watch for subclass changes
+watch(() => props.character.subclass, async (newSubclassId) => {
+  if (newSubclassId) {
+    // Mock subclass details for now
+    selectedSubclassInfo.value = {
+      name: availableSubclasses.value.find(s => s.index === newSubclassId)?.name || newSubclassId,
+      features: [
+        {
+          name: 'Subclass Feature',
+          description: 'This is a placeholder for subclass features that will be loaded from the API.'
+        }
+      ]
+    }
+    props.character.subclassDetails = selectedSubclassInfo.value
+  } else {
+    selectedSubclassInfo.value = null
+    props.character.subclassDetails = null
+  }
+})
+
+const onClassChange = () => {
+  if (props.characterData?.updateClassTraits) {
+    props.characterData.updateClassTraits()
+  }
+}
+
+const onSubclassChange = () => {
+  console.log('Subclass changed to:', props.character.subclass)
+}
 </script>
 
 <style scoped>
+
+.class-detail-header {
+  font-weight: 600;
+  color: var(--v-primary-darken2, #2a3a5a);
+  letter-spacing: 0.05em;
+}
+
 .class-preview-card {
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 14px;
+  box-shadow: 0 2px 12px rgba(60, 60, 100, 0.08);
+  background: var(--v-theme-surface-variant, #f5f5fa);
+}
+
+.class-preview-card {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 14px;
+  box-shadow: 0 2px 12px rgba(60, 60, 100, 0.08);
+  background: var(--v-theme-surface-variant, #f5f5fa);
+}
+
+.styled-section {
+  font-weight: 600;
+  color: var(--v-primary-darken2, #2a3a5a);
+  letter-spacing: 0.05em;
 }
 
 .class-preview-card :deep(.v-card-text) {
-  padding: 12px 16px;
+  padding: 18px 22px 18px 0;
 }
 
 .class-attributes-grid :deep(.v-card) {

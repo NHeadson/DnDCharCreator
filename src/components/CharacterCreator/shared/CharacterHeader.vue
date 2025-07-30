@@ -1,89 +1,62 @@
 <template>
   <v-card class="character-header-card mb-6">
-    <v-row class="dense-form" no-gutters>
-      <!-- Left Column: Character Portrait -->
-      <v-col class="pa-4" cols="12" md="3">
-        <div class="character-portrait">
-          <v-img class="bg-grey-lighten-2" cover height="200" :src="character.portrait || 'placeholder-avatar.png'">
-            <template #placeholder>
-              <div class="d-flex align-center justify-center fill-height">
-                <v-icon color="grey-lighten-1" size="64">mdi-account-circle</v-icon>
+    <v-row class="dense-form align-center" no-gutters>
+      <!-- Character Portrait (Smaller) -->
+      <v-col class="pa-3" cols="12" sm="2">
+        <div class="character-portrait-container">
+          <div class="character-portrait" @click="uploadPortrait">
+            <v-img class="portrait-image" cover height="100" width="100" :src="character.portrait">
+              <template #placeholder>
+                <div class="portrait-placeholder d-flex align-center justify-center fill-height">
+                  <v-icon color="grey-lighten-2" size="36">mdi-account-circle</v-icon>
+                </div>
+              </template>
+              <div class="portrait-overlay d-flex align-center justify-center">
+                <v-icon color="white" size="24">mdi-camera</v-icon>
               </div>
-            </template>
-          </v-img>
-          <v-btn block class="mt-2" prepend-icon="mdi-image" size="small" variant="outlined" @click="uploadPortrait">
-            Upload Portrait
-          </v-btn>
+            </v-img>
+          </div>
         </div>
       </v-col>
 
-      <!-- Middle Column: Basic Info -->
-      <v-col class="pa-4" cols="12" md="6">
-        <!-- Character Name -->
-        <div class="character-name-field mb-4">
-          <v-text-field v-model="character.name" class="text-h4 font-weight-bold" hide-details
-            placeholder="CHARACTER NAME" density="comfortable" :rules="[v => !!v || 'Name is required']"
-            variant="outlined">
-            <template #prepend>
-              <v-icon color="primary" size="large">mdi-account-circle</v-icon>
-            </template>
-            <template #append>
-              <v-btn color="primary" icon :loading="isGeneratingName" size="x-large" variant="text"
+      <!-- Character Name (Prominent) -->
+      <v-col class="pa-3" cols="12" sm="4">
+        <div class="character-name-section">
+          <v-text-field v-model="character.name" class="character-name-input" hide-details
+            placeholder="Enter Character Name" density="compact" variant="outlined">
+            <template #append-inner>
+              <v-btn color="primary" icon :loading="isGeneratingName" size="small" variant="text"
                 @click="generateRandomName">
-                <v-icon>mdi-dice-6</v-icon>
+                <v-icon size="24">mdi-dice-6</v-icon>
                 <v-tooltip activator="parent" location="top">Generate random name</v-tooltip>
               </v-btn>
             </template>
           </v-text-field>
         </div>
-
-        <!-- Class, Level & XP Row -->
-        <v-row class="mb-2" dense>
-          <v-col cols="6">
-            <v-select v-model="character.class" density="comfortable" hide-details class="mb-2" item-title="name"
-              item-value="id" :items="characterData?.classOptions?.value || []" placeholder="CLASS" variant="outlined"
-              @update:model-value="(value) => { character.class = value; characterData?.updateClassTraits(); }" />
-          </v-col>
-          <v-col cols="3">
-            <v-text-field v-model.number="character.level" density="comfortable" max="20" hide-details min="1"
-              placeholder="LEVEL" type="number" class="mb-2" variant="outlined" />
-          </v-col>
-          <v-col cols="3">
-            <v-text-field v-model.number="character.xp" density="comfortable" class="mb-2" hide-details placeholder="XP"
-              type="number" variant="outlined" />
-          </v-col>
-        </v-row>
-
-        <!-- Race, Background & Alignment Row -->
-        <v-row dense>
-          <v-col cols="4">
-            <v-select v-model="character.species" density="comfortable" hide-details class="mb-2" item-title="name"
-              item-value="id" :items="characterData?.speciesOptions?.value || []" placeholder="RACE"
-              variant="outlined" />
-          </v-col>
-          <v-col cols="4">
-            <v-select v-model="character.background" density="comfortable" hide-details item-title="name" class="mb-2"
-              item-value="id" :items="characterData?.backgroundOptions?.value || []" placeholder="BACKGROUND"
-              variant="outlined" />
-          </v-col>
-          <v-col cols="4">
-            <v-select v-model="character.alignment" class="mb-2" density="comfortable" hide-details
-              :items="alignmentOptions" placeholder="ALIGNMENT" variant="outlined" />
-          </v-col>
-        </v-row>
       </v-col>
 
-      <!-- Right Column: Player Info & Inspiration -->
-      <v-col class="pa-4" cols="12" md="3">
-        <v-text-field v-model="character.playerName" class="mb-2" density="comfortable" hide-details label="PLAYER NAME"
+      <!-- Player Name -->
+      <v-col class="pa-3" cols="12" sm="4">
+        <v-text-field v-model="character.playerName" density="compact" hide-details label="Player Name"
           variant="outlined" />
-        <v-switch v-model="character.inspiration" class="mb-2" color="warning" hide-details label="Inspiration">
-          <template #prepend>
-            <v-icon color="warning">mdi-star</v-icon>
-          </template>
-        </v-switch>
-        <v-text-field v-model="character.faction" class="mb-2" density="comfortable" hide-details label="FACTION"
-          variant="outlined" />
+      </v-col>
+
+      <!-- Level & XP (Display Only) -->
+      <v-col class="pa-3" cols="12" sm="2">
+        <v-row dense>
+          <v-col cols="6">
+            <div class="stat-display">
+              <div class="stat-label">Level</div>
+              <div class="stat-value">1</div>
+            </div>
+          </v-col>
+          <v-col cols="6">
+            <div class="stat-display">
+              <div class="stat-label">XP</div>
+              <div class="stat-value">0</div>
+            </div>
+          </v-col>
+        </v-row>
       </v-col>
     </v-row>
   </v-card>
@@ -118,24 +91,47 @@ const alignmentOptions = [
 ]
 
 // Initialize character properties if they don't exist
-if (!props.character.inspiration) props.character.inspiration = false
-if (!props.character.xp) props.character.xp = 0
 if (!props.character.playerName) props.character.playerName = ''
-if (!props.character.faction) props.character.faction = ''
 
 const generateRandomName = async () => {
+  if (!props.characterData?.generateName) {
+    // Fallback if no name generator available
+    generateFallbackName()
+    return
+  }
+
   isGeneratingName.value = true
   try {
-    // TODO: Implement name generation based on race/class
-    await new Promise(resolve => setTimeout(resolve, 1000))
-    // For now, just generate a placeholder name
-    const randomName = `Adventurer_${Math.floor(Math.random() * 1000)}`
-    props.character.name = randomName
+    // Use the species for name generation, fallback to 'human'
+    const race = props.character.species || 'human'
+    const generatedName = await props.characterData.generateName(race)
+    props.character.name = generatedName
   } catch (error) {
     console.error('Error generating name:', error)
+    generateFallbackName()
   } finally {
     isGeneratingName.value = false
   }
+}
+
+const generateFallbackName = () => {
+  const firstNames = [
+    'Aeliana', 'Bran', 'Cora', 'Dain', 'Elen', 'Finn', 'Gwen', 'Hal',
+    'Ivy', 'Jace', 'Kira', 'Liam', 'Maya', 'Nox', 'Ora', 'Pike',
+    'Quinn', 'Rae', 'Sage', 'Tara', 'Uma', 'Vale', 'Wren', 'Zara'
+  ]
+
+  const lastNames = [
+    'Brightblade', 'Stormwind', 'Ironforge', 'Goldleaf', 'Shadowmere',
+    'Flameheart', 'Frostborn', 'Starweaver', 'Moonwhisper', 'Thornfield',
+    'Dragonbane', 'Swiftarrow', 'Battlehammer', 'Silverbough', 'Nightfall',
+    'Dawnbreaker', 'Riverstone', 'Wildmane', 'Emberfall', 'Crystalvein',
+    'Ashwood', 'Blackthorn', 'Greycloak', 'Redbeard', 'Silverhand'
+  ]
+
+  const firstName = firstNames[Math.floor(Math.random() * firstNames.length)]
+  const lastName = lastNames[Math.floor(Math.random() * lastNames.length)]
+  props.character.name = `${firstName} ${lastName}`
 }
 
 const uploadPortrait = () => {
@@ -148,115 +144,177 @@ const uploadPortrait = () => {
 /* Card styling */
 .character-header-card {
   transition: all 0.3s ease;
-  border: 1px solid var(--theme-border);
-  background-color: var(--theme-surface);
+  border-radius: 12px;
+  overflow: hidden;
 }
 
 /* Portrait section styling */
+.character-portrait-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .character-portrait {
+  position: relative;
+  width: 100px;
+  height: 100px;
   border-radius: 8px;
   overflow: hidden;
-  border: 2px solid var(--theme-border);
-  background-color: var(--theme-background);
+  border: 2px solid rgba(var(--v-theme-primary), 0.2);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: var(--v-theme-surface-variant);
+}
 
-  .v-img {
-    transition: all 0.3s ease;
+.character-portrait:hover {
+  border-color: rgba(var(--v-theme-primary), 0.5);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
 
-    &:hover {
-      opacity: 0.9;
-    }
-  }
+.portrait-image {
+  transition: all 0.3s ease;
+  width: 100%;
+  height: 100%;
+}
+
+.character-portrait:hover .portrait-image {
+  transform: scale(1.05);
+}
+
+.portrait-placeholder {
+  background: var(--v-theme-surface-variant);
+  width: 100%;
+  height: 100%;
+}
+
+.portrait-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.4);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.character-portrait:hover .portrait-overlay {
+  opacity: 1;
 }
 
 /* Name field styling */
-.character-name-field {
-  :deep(.v-field__input) {
-    font-size: 1.5rem;
+.character-name-section {
+  :deep(.character-name-input .v-field__input) {
+    font-size: 1.25rem;
     font-weight: 600;
-    color: var(--theme-text-primary);
+    color: var(--v-theme-primary);
   }
 
   :deep(.v-field) {
-    border-radius: 8px;
+    border-radius: 6px;
+    border: 2px solid rgba(var(--v-theme-primary), 0.2);
+  }
 
-    &.v-field--focused {
-      border-color: var(--theme-primary);
-    }
+  :deep(.v-field--focused) {
+    border-color: var(--v-theme-primary);
+    box-shadow: 0 0 0 2px rgba(var(--v-theme-primary), 0.1);
   }
 }
 
 /* Input field common styles */
 :deep(.v-input) {
   .v-field {
-    border-radius: 4px;
+    border-radius: 6px;
     transition: all 0.2s ease;
   }
 
   .v-field--focused {
-    box-shadow: 0 0 0 2px var(--theme-primary-lighten-3);
+    box-shadow: 0 0 0 2px rgba(var(--v-theme-primary), 0.1);
   }
 
   .v-field__input {
-    font-size: 1rem;
-    color: var(--theme-text-primary);
+    font-size: 0.95rem;
+    font-weight: 500;
   }
 
   .v-label {
     font-size: 0.875rem;
     font-weight: 500;
-    color: var(--theme-text-secondary);
   }
 }
 
-:deep(.v-input--density-comfortable .v-field__input) {
-  padding-top: 8px;
-  padding-bottom: 8px;
-}
+/* Read-only field styling - no hover effects */
+:deep(.readonly-field) {
+  .v-field {
+    background-color: var(--v-theme-surface-variant);
+    opacity: 0.8;
+  }
 
-/* Select field specific styles */
-:deep(.v-select) {
+  .v-field--focused {
+    box-shadow: none !important;
+  }
+
   .v-field__input {
-    min-height: 40px;
+    color: var(--v-theme-on-surface-variant);
+    font-weight: 400;
   }
+}
 
-  .v-select__selection {
-    color: var(--theme-text-primary);
-  }
+/* Stat display styling */
+.stat-display {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 8px;
+  border: 1px solid rgba(var(--v-theme-outline), 0.3);
+  border-radius: 6px;
+  background-color: var(--v-theme-surface-variant);
+  min-height: 56px;
+  justify-content: center;
+}
+
+.stat-label {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--v-theme-on-surface-variant);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 2px;
+}
+
+.stat-value {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--v-theme-on-surface);
 }
 
 /* Switch styling */
 :deep(.v-switch) {
   .v-switch__track {
-    opacity: 0.2;
+    opacity: 0.3;
   }
 
   .v-switch__thumb {
-    color: var(--theme-accent);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   }
 }
 
 /* Button styling */
 :deep(.v-btn) {
   text-transform: none;
-  letter-spacing: 0.5px;
   font-weight: 500;
-}
-
-:deep(.v-btn--outlined) {
-  border-color: var(--theme-border);
-}
-
-:deep(.v-btn--outlined:hover) {
-  background-color: var(--theme-primary-lighten-5);
-  opacity: 0.9;
+  border-radius: 6px;
 }
 
 :deep(.v-btn--icon) {
-  opacity: 0.8;
+  border-radius: 50%;
+  transition: all 0.2s ease;
 }
 
 :deep(.v-btn--icon:hover) {
-  opacity: 1;
+  transform: scale(1.1);
 }
 
 /* Row and column spacing */
@@ -268,22 +326,26 @@ const uploadPortrait = () => {
   }
 }
 
-/* Dense form styling */
-.dense-form {
-  .v-input {
-    margin-bottom: 8px;
+/* Responsive adjustments */
+@media (max-width: 960px) {
+  .character-name-section :deep(.character-name-input .v-field__input) {
+    font-size: 1.1rem;
+  }
+
+  .character-portrait {
+    margin: 0 auto;
+    max-width: 100px;
   }
 }
 
-/* Responsive adjustments */
-@media (max-width: 960px) {
-  .character-name-field :deep(.v-field__input) {
-    font-size: 1.25rem;
+@media (max-width: 600px) {
+  .character-name-section :deep(.character-name-input .v-field__input) {
+    font-size: 1rem;
   }
 
-  :deep(.v-input--density-comfortable .v-field__input) {
-    padding-top: 6px;
-    padding-bottom: 6px;
+  /* Stack vertically on mobile */
+  .v-row .v-col {
+    margin-bottom: 8px;
   }
 }
 </style>

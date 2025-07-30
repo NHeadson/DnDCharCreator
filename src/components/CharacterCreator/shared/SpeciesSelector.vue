@@ -8,20 +8,21 @@
             Species Selection
           </v-card-title>
           <v-card-text class="pt-2 pb-3">
-            <v-select
-              v-model="character.species"
-              density="compact"
-              :error="!!characterData?.speciesError"
-              item-title="name"
-              :error-messages="characterData?.speciesError"
-              item-value="id"
-              :items="characterData?.speciesOptions || []"
-              label="Choose Your Species"
-              :loading="characterData?.isLoadingSpecies"
-              variant="outlined"
-            >
+            <v-select v-model="character.species" density="compact" :error="!!characterData?.speciesError"
+              item-title="name" :error-messages="characterData?.speciesError" item-value="id"
+              :items="characterData?.speciesOptions || []" label="Choose Your Species"
+              :loading="characterData?.isLoadingSpecies" variant="outlined" @update:model-value="onSpeciesChange">
               <template #prepend>
                 <v-icon color="primary" size="small">mdi-account-group</v-icon>
+              </template>
+            </v-select>
+
+            <!-- Subspecies/Lineage Selection -->
+            <v-select v-if="character.species && availableLineages.length > 0" v-model="character.speciesLineage"
+              class="mt-3" density="compact" item-title="name" item-value="name" :items="availableLineages"
+              label="Choose Your Lineage/Subrace" variant="outlined" @update:model-value="onLineageChange">
+              <template #prepend>
+                <v-icon color="secondary" size="small">mdi-family-tree</v-icon>
               </template>
             </v-select>
           </v-card-text>
@@ -48,144 +49,95 @@
             </v-fade-transition>
           </v-card-text>
         </v-card>
-        <v-card v-else-if="selectedSpeciesInfo" class="text-blue-grey-lighten-5 species-preview-card" variant="tonal">
-          <v-card-title class="d-flex align-center py-2">
-            <v-icon class="text-blue-grey-darken-2 me-2" size="small">mdi-dna</v-icon>
-            <span class="text-subtitle-2">{{ selectedSpeciesInfo.name }}</span>
+        <v-card v-else-if="selectedSpeciesInfo" class="species-preview-card" variant="outlined">
+          <v-card-title class="d-flex align-center justify-space-between py-2">
+            <div class="d-flex align-center">
+              <v-icon class="me-2" color="primary" size="small">mdi-dna</v-icon>
+              <span class="text-subtitle-1 font-weight-bold">{{ selectedSpeciesInfo.name }}</span>
+            </div>
+            <v-chip-group v-if="selectedSpeciesInfo.abilityBonus?.length" class="ma-0">
+              <v-chip v-for="bonus in selectedSpeciesInfo.abilityBonus" :key="bonus.ability" color="blue" size="x-small"
+                variant="text">
+                +{{ bonus.bonus }} {{ bonus.ability.slice(0, 3) }}
+              </v-chip>
+            </v-chip-group>
           </v-card-title>
           <v-divider />
-          <v-card-text class="pt-3 pb-2" style="max-height: 300px; overflow-y: auto;">
-            <div class="mb-2">
-              <h5 class="text-caption text-blue-grey-darken-2 mb-1 font-weight-bold">Physical Attributes</h5>
-              <div class="ms-2">
-                <v-row dense>
-                  <v-col cols="6" sm="4">
-                    <v-tooltip text="Determines your character's physical stature and carrying capacity">
-                      <template #activator="{ props }">
-                        <div class="text-center" v-bind="props">
-                          <div class="text-overline text-grey-darken-1">Size</div>
-                          <div class="text-caption font-weight-bold">{{ selectedSpeciesInfo.size }}</div>
-                        </div>
-                      </template>
-                    </v-tooltip>
-                  </v-col>
-                  <v-col cols="6" sm="4">
-                    <v-tooltip text="Base walking speed in feet per round">
-                      <template #activator="{ props }">
-                        <div class="text-center" v-bind="props">
-                          <div class="text-overline text-grey-darken-1">Speed</div>
-                          <div class="text-caption font-weight-bold">{{ selectedSpeciesInfo.speed }} ft</div>
-                        </div>
-                      </template>
-                    </v-tooltip>
-                  </v-col>
-                  <v-col v-if="selectedSpeciesInfo.darkvision" cols="6" sm="4">
-                    <div class="text-center">
-                      <div class="text-overline text-grey-darken-1">Darkvision</div>
-                      <div class="text-caption font-weight-bold text-purple">{{ selectedSpeciesInfo.darkvision }} ft
-                      </div>
-                    </div>
-                  </v-col>
-                </v-row>
-              </div>
-            </div>
-
-            <!-- Ability Score Improvements -->
-            <div v-if="selectedSpeciesInfo.abilityScores" class="mb-3">
-              <h5 class="text-caption text-blue-grey-darken-2 mb-1 font-weight-bold d-flex align-center">
-                <v-icon class="me-1" size="x-small">mdi-arrow-up-bold</v-icon>
-                Ability Score Improvements
-                <v-tooltip class="ms-1" location="right">
-                  <template #activator="{ props }">
-                    <v-icon color="grey" size="x-small" v-bind="props">mdi-help-circle-outline</v-icon>
-                  </template>
-                  These bonuses are added to your base ability scores
-                </v-tooltip>
-              </h5>
-              <div class="ability-scores-grid ms-2">
-                <v-chip
-                  v-for="(value, ability) in selectedSpeciesInfo.abilityScores"
-                  :key="ability"
-                  class="ability-score-chip"
-                  color="success"
-                  density="comfortable"
-                  size="x-small"
-                  variant="flat"
-                >
-                  <v-icon size="x-small" start>mdi-plus</v-icon>
-                  {{ value }} {{ ability }}
-                </v-chip>
-              </div>
+          <v-card-text class="pt-3 pb-2">
+            <!-- Quick Stats -->
+            <div class="d-flex flex-wrap gap-2 mb-3">
+              <v-chip color="green" size="small" variant="flat">
+                <v-icon start size="small">mdi-resize</v-icon>
+                {{ selectedSpeciesInfo.size }}
+              </v-chip>
+              <v-chip color="green" size="small" variant="flat">
+                <v-icon start size="small">mdi-run</v-icon>
+                {{ selectedSpeciesInfo.speed }}ft
+              </v-chip>
+              <v-chip v-if="selectedSpeciesInfo.darkvision" color="purple" size="small" variant="flat">
+                <v-icon start size="small">mdi-eye</v-icon>
+                {{ selectedSpeciesInfo.darkvision }}ft vision
+              </v-chip>
+              <v-chip v-if="selectedSpeciesInfo.damageResistance" color="orange" size="small" variant="flat">
+                <v-icon start size="small">mdi-shield</v-icon>
+                Resistances
+              </v-chip>
             </div>
 
             <!-- Special Traits -->
             <div v-if="selectedSpeciesInfo.traits?.length" class="mb-3">
-              <h5 class="text-caption text-blue-grey-darken-2 mb-1 font-weight-bold">
-                <v-icon class="me-1" size="x-small">mdi-star</v-icon>
-                Special Traits
-              </h5>
-              <v-expansion-panels variant="accordion">
-                <v-expansion-panel
-                  v-for="trait in selectedSpeciesInfo.traits"
-                  :key="trait.name"
-                  class="trait-panel"
-                  density="compact"
-                >
-                  <v-expansion-panel-title class="text-caption">
-                    {{ trait.name }}
-                  </v-expansion-panel-title>
-                  <v-expansion-panel-text class="text-caption">
-                    {{ trait.description || 'No description available.' }}
-                  </v-expansion-panel-text>
-                </v-expansion-panel>
-              </v-expansion-panels>
+              <div class="d-flex align-center mb-1">
+                <v-icon class="me-1" color="amber" size="small">mdi-star-circle</v-icon>
+                <span class="text-caption font-weight-bold text-grey-darken-2">Special Traits</span>
+              </div>
+              <div class="ms-3">
+                <v-chip v-for="trait in selectedSpeciesInfo.traits" :key="trait.name" color="amber-lighten-4"
+                  size="x-small" variant="flat" class="me-1 mb-1">
+                  {{ trait.name }}
+                </v-chip>
+              </div>
             </div>
 
             <!-- Languages -->
-            <div v-if="selectedSpeciesInfo.languages" class="mb-3">
-              <h5 class="text-caption text-blue-grey-darken-2 mb-1 font-weight-bold">
-                <v-icon class="me-1" size="x-small">mdi-translate</v-icon>
-                Languages
-              </h5>
-              <v-chip-group class="ms-2">
-                <v-chip
-                  v-for="lang in selectedSpeciesInfo.languages"
-                  :key="lang"
-                  color="info"
-                  density="comfortable"
-                  size="x-small"
-                  variant="flat"
-                >
+            <div v-if="selectedSpeciesInfo.languages?.length" class="mb-3">
+              <div class="d-flex align-center mb-1">
+                <v-icon class="me-1" color="indigo" size="small">mdi-translate</v-icon>
+                <span class="text-caption font-weight-bold text-grey-darken-2">Languages</span>
+              </div>
+              <div class="ms-3">
+                <v-chip v-for="lang in selectedSpeciesInfo.languages" :key="lang" color="indigo" size="x-small"
+                  variant="outlined" class="me-1">
                   {{ lang }}
                 </v-chip>
-              </v-chip-group>
+              </div>
             </div>
 
+            <!-- Lineage Options with Highlights -->
             <div v-if="selectedSpeciesInfo.lineages?.length" class="mt-3">
-              <h5 class="text-caption text-blue-grey-darken-2 mb-2 font-weight-bold">
-                <v-icon class="me-1" size="small">mdi-family-tree</v-icon>
-                Available Lineages/Subraces
-              </h5>
-              <v-tabs v-model="activeSubrace" class="mb-3 subrace-tabs" density="compact" grow>
-                <v-tab
-                  v-for="(subrace, index) in selectedSpeciesInfo.lineages"
-                  :key="index"
-                  class="text-caption"
-                  :value="index"
-                >
-                  {{ subrace.name }}
-                </v-tab>
-              </v-tabs>
-              <v-window v-model="activeSubrace" class="v-tabs-window">
-                <v-window-item v-for="(subrace, index) in selectedSpeciesInfo.lineages" :key="index" :value="index">
-                  <v-card class="pa-3" color="grey-lighten-5" variant="outlined">
-                    <div class="text-caption">
-                      <!-- This would need to come from the API -->
-                      A detailed description of the {{ subrace.name }} subrace would go here.
+              <div class="d-flex align-center mb-2">
+                <v-icon class="me-1" color="primary" size="small">mdi-family-tree</v-icon>
+                <span class="text-caption font-weight-bold text-grey-darken-2">
+                  {{ selectedSpeciesInfo.lineages.length > 1 ? 'Lineage Options' : 'Available Lineage' }}
+                </span>
+              </div>
+              <div v-if="selectedSpeciesInfo.lineages.length === 1" class="ms-3">
+                <v-chip color="primary" size="small" variant="outlined">
+                  {{ selectedSpeciesInfo.lineages[0].name }}
+                </v-chip>
+              </div>
+              <div v-else class="ms-3">
+                <div class="lineage-options-row">
+                  <div v-for="lineage in selectedSpeciesInfo.lineages" :key="lineage.id"
+                    class="lineage-option-card compact">
+                    <div class="d-flex align-center justify-space-between">
+                      <span class="text-caption font-weight-bold">{{ lineage.name }}</span>
                     </div>
-                  </v-card>
-                </v-window-item>
-              </v-window>
+                    <div v-if="getLineageHighlights(lineage)" class="text-caption text-grey-darken-1 mt-1">
+                      {{ getLineageHighlights(lineage) }}
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </v-card-text>
         </v-card>
@@ -195,32 +147,95 @@
 </template>
 
 <script setup>
-  import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 
-  const props = defineProps({
-    character: {
-      type: Object,
-      required: true,
-    },
-    characterData: {
-      type: Object,
-      required: true,
-    },
-  })
+const props = defineProps({
+  character: {
+    type: Object,
+    required: true,
+  },
+  characterData: {
+    type: Object,
+    required: true,
+  },
+})
 
-  const activeSubrace = ref(0)
+const activeSubrace = ref(0)
+const availableLineages = ref([])
 
-  const selectedSpeciesInfo = computed(() => {
-    if (!props.character.species || !props.characterData?.speciesData) {
-      return null
-    }
+const selectedSpeciesInfo = computed(() => {
+  if (!props.character.species || !props.characterData?.speciesData) {
+    return null
+  }
 
-    // speciesData is a ref, so we need to access its value
-    const info = props.characterData.speciesData.find(
-      species => species.id === props.character.species,
-    )
-    return info
-  })
+  // speciesData is a ref, so we need to access its value
+  const info = props.characterData.speciesData.find(
+    species => species.id === props.character.species,
+  )
+  return info
+})
+
+// Watch for species changes to load lineages
+watch(() => props.character.species, (newSpeciesId) => {
+  if (newSpeciesId && selectedSpeciesInfo.value?.lineages) {
+    availableLineages.value = selectedSpeciesInfo.value.lineages || []
+  } else {
+    availableLineages.value = []
+  }
+
+  // Clear lineage selection when species changes
+  props.character.speciesLineage = null
+}, { immediate: true })
+
+const onSpeciesChange = () => {
+  // Update species details when species changes
+  if (props.character.species && selectedSpeciesInfo.value) {
+    props.character.speciesDetails = selectedSpeciesInfo.value
+  }
+
+  // Call the original update function if it exists
+  if (props.characterData?.updateSpeciesTraits) {
+    props.characterData.updateSpeciesTraits()
+  }
+}
+
+const onLineageChange = () => {
+  console.log('Lineage changed to:', props.character.speciesLineage)
+  // Additional logic for lineage changes can be added here
+}
+
+// Get key differentiators for each lineage/subrace
+const getLineageHighlights = (lineage) => {
+  const highlights = {
+    // Elf lineages
+    'High Elf': '+1 INT, Cantrip, Extra Language',
+    'Wood Elf': '+1 WIS, Elf Weapon Training, Stealth',
+    'Dark Elf (Drow)': '+1 CHA, Superior Darkvision, Drow Magic',
+    'Drow': '+1 CHA, Superior Darkvision, Drow Magic',
+
+    // Dwarf lineages
+    'Hill Dwarf': '+1 WIS, +1 HP per level, Wisdom bonus',
+    'Mountain Dwarf': '+2 STR, Armor Proficiency, More robust',
+
+    // Halfling lineages
+    'Lightfoot': '+1 CHA, Naturally Stealthy, Social',
+    'Lightfoot Halfling': '+1 CHA, Naturally Stealthy, Social',
+    'Stout': '+1 CON, Poison Resistance, Hardy',
+    'Stout Halfling': '+1 CON, Poison Resistance, Hardy',
+
+    // Gnome lineages
+    'Forest Gnome': '+1 DEX, Speak with Animals, Nature magic',
+    'Rock Gnome': '+1 CON, Tinker abilities, Tool expertise',
+
+    // Human variants
+    'Variant Human': 'Extra Feat, Extra Skill, Flexible stats',
+
+    // Default fallback
+    'default': 'Unique traits and abilities'
+  }
+
+  return highlights[lineage.name] || highlights['default']
+}
 </script>
 
 <style scoped>
@@ -230,6 +245,37 @@
 
 .species-preview-card :deep(.v-card-text) {
   padding: 12px 16px;
+}
+
+
+
+
+.lineage-options-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 4px;
+}
+
+.lineage-option-card {
+  background: #181b20 !important;
+  border: 1.5px solid #23272e !important;
+  color: #f3f4f6 !important;
+  transition: all 0.2s ease;
+  min-width: 0;
+  flex: 1 1 180px;
+  max-width: 220px;
+  padding: 8px 12px !important;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.lineage-option-card:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  border-color: rgba(0, 0, 0, 0.15);
 }
 
 .trait-panel {

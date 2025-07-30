@@ -1,6 +1,29 @@
 import { computed, onMounted, reactive, ref, watch } from "vue";
 import { dndAPI } from "@/services/dndAPI.js";
 
+// Loading placeholders - show immediately while API loads
+const loadingPlaceholders = {
+  species: [
+    { id: "loading-1", name: "Loading species...", isPlaceholder: true },
+    { id: "loading-2", name: "Fetching races...", isPlaceholder: true },
+    { id: "loading-3", name: "Getting data...", isPlaceholder: true },
+  ],
+  classes: [
+    { id: "loading-1", name: "Loading classes...", isPlaceholder: true },
+    { id: "loading-2", name: "Fetching class data...", isPlaceholder: true },
+    { id: "loading-3", name: "Getting abilities...", isPlaceholder: true },
+  ],
+  backgrounds: [
+    { id: "loading-1", name: "Loading backgrounds...", isPlaceholder: true },
+    {
+      id: "loading-2",
+      name: "Fetching background data...",
+      isPlaceholder: true,
+    },
+    { id: "loading-3", name: "Getting features...", isPlaceholder: true },
+  ],
+};
+
 // Fallback species data in case API fails
 const fallbackSpeciesData = [
   {
@@ -218,14 +241,14 @@ const fallbackClassData = [
   },
 ];
 
-// Dynamic species data loaded from API - start with fallback data
-const speciesData = ref([...fallbackSpeciesData]);
-const isLoadingSpecies = ref(false);
+// Dynamic species data loaded from API - start with loading placeholders
+const speciesData = ref([...loadingPlaceholders.species]);
+const isLoadingSpecies = ref(true);
 const speciesError = ref(null);
 
-// Dynamic class data loaded from API - start with fallback data
-const classData = ref([...fallbackClassData]);
-const isLoadingClasses = ref(false);
+// Dynamic class data loaded from API - start with loading placeholders
+const classData = ref([...loadingPlaceholders.classes]);
+const isLoadingClasses = ref(true);
 const classError = ref(null);
 
 // Load data from API
@@ -489,8 +512,8 @@ const fallbackBackgroundData = [
   },
 ];
 
-const backgroundData = ref([...fallbackBackgroundData]);
-const isLoadingBackgrounds = ref(false);
+const backgroundData = ref([...loadingPlaceholders.backgrounds]);
+const isLoadingBackgrounds = ref(true);
 const backgroundError = ref(null);
 
 const loadSpeciesData = async () => {
@@ -834,18 +857,27 @@ export function useCharacterData() {
     userName: "",
     species: null,
     speciesDetails: null,
-    speciesLineage: null,
+    speciesLineage: null, // Wood Elf, High Elf, etc.
     class: null,
     classDetails: null,
+    subclass: null, // Archetype/Subclass selection
+    subclassDetails: null,
     background: null,
     backgroundDetails: null,
     level: 1,
     xp: 0,
     alignment: null,
     backstory: "",
+    personality: {
+      traits: [],
+      ideals: [],
+      bonds: [],
+      flaws: [],
+    },
     additionalLanguages: [],
     selectedTools: [],
     selectedClassSkills: [],
+    feats: [], // Character feats
     abilityScores: {
       strength: { score: 10, modifier: 0 },
       dexterity: { score: 10, modifier: 0 },
@@ -869,6 +901,7 @@ export function useCharacterData() {
       heavy: false,
       shields: false,
     },
+    weaponProficiencies: [], // Weapon proficiencies from class/background
     equipment: [],
     coins: { cp: 0, sp: 0, ep: 0, gp: 0, pp: 0 },
     attunedItems: ["", "", ""],

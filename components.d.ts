@@ -18,6 +18,7 @@ declare module 'vue' {
     AppFooter: typeof import('./src/components/AppFooter.vue')['default']
     AppHeader: typeof import('./src/components/AppHeader.vue')['default']
     BackgroundSelector: typeof import('./src/components/CharacterCreator/shared/BackgroundSelector.vue')['default']
+    BackstoryPersonality: typeof import('./src/components/CharacterCreator/shared/BackstoryPersonality.vue')['default']
     BasicDetails: typeof import('./src/components/CharacterCreator/shared/BasicDetails.vue')['default']
     CharacterCreatorMain: typeof import('./src/components/CharacterCreator/CharacterCreatorMain.vue')['default']
     CharacterCreatorStepper: typeof import('./src/components/CharacterCreator/CharacterCreatorStepper.vue')['default']
@@ -27,10 +28,14 @@ declare module 'vue' {
     ClassAbilityTips: typeof import('./src/components/CharacterCreator/shared/ClassAbilityTips.vue')['default']
     ClassSelector: typeof import('./src/components/CharacterCreator/shared/ClassSelector.vue')['default']
     EquipmentAndGear: typeof import('./src/components/CharacterCreator/steps/EquipmentAndGear.vue')['default']
+    EquipmentLanguages: typeof import('./src/components/CharacterCreator/shared/EquipmentLanguages.vue')['default']
+    FeatsList: typeof import('./src/components/CharacterCreator/shared/FeatsList.vue')['default']
     FeaturesAndTraits: typeof import('./src/components/CharacterCreator/steps/FeaturesAndTraits.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     SpeciesSelector: typeof import('./src/components/CharacterCreator/shared/SpeciesSelector.vue')['default']
+    SpeciesTraits: typeof import('./src/components/CharacterCreator/shared/SpeciesTraits.vue')['default']
     ThemeSwitcher: typeof import('./src/components/ThemeSwitcher.vue')['default']
+    WeaponsCantripsList: typeof import('./src/components/CharacterCreator/shared/WeaponsCantripsList.vue')['default']
   }
 }

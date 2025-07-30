@@ -11,7 +11,27 @@ export class DnDAPI {
     this.requestQueue = [];
     this.isProcessingQueue = false;
     this.lastRequestTime = 0;
-    this.minRequestInterval = 150; // Minimum 150ms between requests to avoid rate limiting
+    this.minRequestInterval = 100; // Minimum 100ms between requests to avoid rate limiting
+
+    // Simple cache to avoid re-fetching data
+    this.cache = new Map();
+    this.cacheExpiry = 5 * 60 * 1000; // 5 minutes cache
+  }
+
+  // Check cache before making API requests
+  getCachedData(key) {
+    const cached = this.cache.get(key);
+    if (cached && Date.now() - cached.timestamp < this.cacheExpiry) {
+      return cached.data;
+    }
+    return null;
+  }
+
+  setCachedData(key, data) {
+    this.cache.set(key, {
+      data,
+      timestamp: Date.now(),
+    });
   }
 
   // Rate-limited API request method
@@ -29,28 +49,43 @@ export class DnDAPI {
 
     this.isProcessingQueue = true;
 
+    // Process requests in batches for better performance
+    const batchSize = 3; // Process 3 requests in parallel
+
     while (this.requestQueue.length > 0) {
-      const { endpoint, options, resolve, reject } = this.requestQueue.shift();
+      const batch = this.requestQueue.splice(0, batchSize);
 
-      try {
-        // Ensure minimum interval between requests
-        const now = Date.now();
-        const timeSinceLastRequest = now - this.lastRequestTime;
-        if (timeSinceLastRequest < this.minRequestInterval) {
-          await new Promise((resolve) =>
-            setTimeout(resolve, this.minRequestInterval - timeSinceLastRequest)
-          );
+      // Process batch in parallel
+      const batchPromises = batch.map(
+        async ({ endpoint, options, resolve, reject }) => {
+          try {
+            // Reduce delay between requests
+            const now = Date.now();
+            const timeSinceLastRequest = now - this.lastRequestTime;
+            if (timeSinceLastRequest < this.minRequestInterval) {
+              await new Promise((resolve) =>
+                setTimeout(
+                  resolve,
+                  this.minRequestInterval - timeSinceLastRequest
+                )
+              );
+            }
+
+            const result = await this.makeActualRequest(endpoint, options);
+            this.lastRequestTime = Date.now();
+            resolve(result);
+          } catch (error) {
+            reject(error);
+          }
         }
+      );
 
-        const result = await this.makeActualRequest(endpoint, options);
-        this.lastRequestTime = Date.now();
-        resolve(result);
-      } catch (error) {
-        reject(error);
+      await Promise.all(batchPromises);
+
+      // Reduced delay between batches
+      if (this.requestQueue.length > 0) {
+        await new Promise((resolve) => setTimeout(resolve, 15)); // Reduced to 15ms for better performance
       }
-
-      // Small delay between requests to be API-friendly
-      await new Promise((resolve) => setTimeout(resolve, 50));
     }
 
     this.isProcessingQueue = false;
@@ -304,6 +339,13 @@ export class DnDAPI {
 
   // Get all D&D races
   async getRaces() {
+    const cacheKey = "all-races";
+    const cached = this.getCachedData(cacheKey);
+    if (cached) {
+      console.log("Using cached races data");
+      return cached;
+    }
+
     try {
       console.log("Fetching races from API...");
       const response = await this.apiRequest("/races", {
@@ -408,6 +450,7 @@ export class DnDAPI {
       }
 
       console.log(`Returning ${races.length} processed races`);
+      this.setCachedData(cacheKey, races);
       return races;
     } catch (error) {
       console.error("Failed to fetch races:", error);
@@ -536,6 +579,13 @@ export class DnDAPI {
 
   // Get all D&D classes with full details
   async getClasses() {
+    const cacheKey = "all-classes";
+    const cached = this.getCachedData(cacheKey);
+    if (cached) {
+      console.log("Using cached classes data");
+      return cached;
+    }
+
     try {
       const response = await this.apiRequest("/classes", {
         headers: {
@@ -612,6 +662,7 @@ export class DnDAPI {
         })
         .filter((cls) => cls !== null);
 
+      this.setCachedData(cacheKey, classes);
       return classes;
     } catch (error) {
       console.error("Failed to fetch classes:", error);
@@ -843,6 +894,13 @@ export class DnDAPI {
 
   // Get all available backgrounds
   async getBackgrounds() {
+    const cacheKey = "all-backgrounds";
+    const cached = this.getCachedData(cacheKey);
+    if (cached) {
+      console.log("Using cached backgrounds data");
+      return cached;
+    }
+
     try {
       const data = await this.apiRequest("/backgrounds");
 
@@ -874,6 +932,7 @@ export class DnDAPI {
         }
 
         console.log(`Successfully loaded ${backgrounds.length} backgrounds`);
+        this.setCachedData(cacheKey, backgrounds);
         return backgrounds;
       }
 

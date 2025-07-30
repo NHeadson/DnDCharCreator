@@ -3,7 +3,7 @@
     <v-toolbar-title class="header-title">
       <router-link class="text-decoration-none theme-text title-link" to="/">
         <v-icon class="me-2 title-icon" icon="mdi-dice-d20" />
-        DnD Character Tool
+        D&D Character Tool
       </router-link>
     </v-toolbar-title>
 
