@@ -10,12 +10,12 @@
     <v-spacer />
 
     <div class="nav-buttons">
-      <v-btn class="theme-secondary-bg nav-btn" rounded="lg" to="/" variant="flat">
+      <v-btn class="theme-accent-bg nav-btn" rounded="lg" to="/" variant="flat">
         <v-icon class="me-2" icon="mdi-home" />
         Home
       </v-btn>
 
-      <v-btn class="theme-secondary-bg nav-btn me-3" rounded="lg" to="/characters" variant="flat">
+      <v-btn class="theme-accent-bg nav-btn me-3" rounded="lg" to="/characters" variant="flat">
         <v-icon class="me-2" icon="mdi-account-group" />
         My Characters
       </v-btn>
@@ -24,20 +24,18 @@
 </template>
 
 <script setup>
-  import { computed } from 'vue'
-  import { useRouter } from 'vue-router'
-  import { useAccessControlSingleton } from '@/composables/useAccessControl'
+import { computed } from 'vue'
+import { useRouter } from 'vue-router'
+import { useAdminStore } from '@/stores/adminStore'
 
-  const router = useRouter()
-  const accessControl = useAccessControlSingleton()
-  const hasAccess = computed(() => accessControl.hasAccess)
-  const requireAccess = accessControl.requireAccess
-
-  const requireAccessForCreation = () => {
-    requireAccess(() => {
-      router.push('/character-form')
-    }, 'create a new character')
-  }
+const router = useRouter()
+const adminStore = useAdminStore()
+const hasAccess = computed(() => adminStore.hasAccess)
+const requireAccessForCreation = () => {
+  adminStore.requireAccess(() => {
+    router.push('/character-form')
+  }, 'create a new character')
+}
 </script>
 
 <style scoped>

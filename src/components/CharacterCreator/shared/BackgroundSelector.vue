@@ -8,18 +8,10 @@
             Background Selection
           </v-card-title>
           <v-card-text class="pt-2 pb-3">
-            <v-select
-              v-model="character.background"
-              density="compact"
-              :error="!!characterData?.backgroundError"
-              item-title="name"
-              :error-messages="characterData?.backgroundError"
-              item-value="id"
-              :items="characterData?.backgroundOptions || []"
-              label="Choose Your Background"
-              :loading="characterData?.isLoadingBackgrounds"
-              variant="outlined"
-            >
+            <v-select v-model="character.background" density="compact" :error="!!characterData?.backgroundError"
+              item-title="name" :error-messages="characterData?.backgroundError" item-value="id"
+              :items="characterData?.backgroundData || []" label="Choose Your Background"
+              :loading="characterData?.isLoadingBackgrounds" variant="outlined">
               <template #prepend>
                 <v-icon color="primary" size="small">mdi-account-details</v-icon>
               </template>
@@ -42,11 +34,8 @@
             </div>
           </v-card-text>
         </v-card>
-        <v-card
-          v-else-if="selectedBackgroundInfo"
-          class="text-blue-grey-lighten-5 background-preview-card"
-          variant="tonal"
-        >
+        <v-card v-else-if="selectedBackgroundInfo" class="text-blue-grey-lighten-5 background-preview-card"
+          variant="tonal">
           <v-card-title class="d-flex align-center py-2">
             <v-icon class="text-blue-grey-darken-2 me-2" size="small">mdi-book-open-variant</v-icon>
             <span class="text-subtitle-2">{{ selectedBackgroundInfo.name }}</span>
@@ -76,14 +65,8 @@
               </h5>
               <div class="ms-2">
                 <v-chip-group>
-                  <v-chip
-                    v-for="skill in selectedBackgroundInfo.skillProficiencies"
-                    :key="skill"
-                    class="mb-1"
-                    color="success"
-                    size="x-small"
-                    variant="flat"
-                  >
+                  <v-chip v-for="skill in selectedBackgroundInfo.skillProficiencies" :key="skill" class="mb-1"
+                    color="success" size="x-small" variant="flat">
                     {{ skill }}
                   </v-chip>
                 </v-chip-group>
@@ -97,14 +80,8 @@
               </h5>
               <div class="ms-2">
                 <v-chip-group>
-                  <v-chip
-                    v-for="tool in selectedBackgroundInfo.toolProficiencies"
-                    :key="tool"
-                    class="mb-1"
-                    color="info"
-                    size="x-small"
-                    variant="flat"
-                  >
+                  <v-chip v-for="tool in selectedBackgroundInfo.toolProficiencies" :key="tool" class="mb-1" color="info"
+                    size="x-small" variant="flat">
                     {{ tool }}
                   </v-chip>
                 </v-chip-group>
@@ -118,14 +95,8 @@
               </h5>
               <div class="ms-2">
                 <v-chip-group v-if="selectedBackgroundInfo.languages?.length">
-                  <v-chip
-                    v-for="language in selectedBackgroundInfo.languages"
-                    :key="language"
-                    class="mb-1"
-                    color="purple"
-                    size="x-small"
-                    variant="flat"
-                  >
+                  <v-chip v-for="language in selectedBackgroundInfo.languages" :key="language" class="mb-1"
+                    color="purple" size="x-small" variant="flat">
                     {{ language }}
                   </v-chip>
                 </v-chip-group>
@@ -142,25 +113,25 @@
 </template>
 
 <script setup>
-  import { computed } from 'vue'
+import { computed } from 'vue'
 
-  const props = defineProps({
-    character: {
-      type: Object,
-      required: true,
-    },
-    characterData: {
-      type: Object,
-      required: true,
-    },
-  })
+const props = defineProps({
+  character: {
+    type: Object,
+    required: true,
+  },
+  characterData: {
+    type: Object,
+    required: true,
+  },
+})
 
-  const selectedBackgroundInfo = computed(() => {
-    if (!props.character.background || !props.characterData?.backgroundData) return null
-    return props.characterData.backgroundData.find(
-      background => background.id === props.character.background,
-    )
-  })
+const selectedBackgroundInfo = computed(() => {
+  if (!props.character.background || !props.characterData?.backgroundData) return null
+  return props.characterData.backgroundData.find(
+    background => background.id === props.character.background,
+  )
+})
 </script>
 
 <style scoped>

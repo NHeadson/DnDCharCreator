@@ -1,7 +1,7 @@
 <template>
   <div class="character-form-page character-creator theme-aware">
     <!-- Show character creator if user has access -->
-    <CharacterCreatorMain v-if="hasAccess" />
+    <CharacterCreatorMain v-if="isAccessValid" />
 
     <!-- Show access required message if no access -->
     <v-container v-else class="d-flex flex-column align-center justify-center" style="min-height: 80vh;">
@@ -26,18 +26,20 @@
 </template>
 
 <script setup>
-  import { useRouter } from 'vue-router'
-  import CharacterCreatorMain from '@/components/CharacterCreator/CharacterCreatorMain.vue'
-  import { useAccessControl } from '@/composables/useAccessControl'
+import { useRouter } from 'vue-router'
+import CharacterCreatorMain from '@/components/CharacterCreator/CharacterCreatorMain.vue'
+import { useAdminStore } from '@/stores/adminStore'
+import { storeToRefs } from 'pinia'
 
-  const router = useRouter()
-  const { hasAccess, requireAccess } = useAccessControl()
+const router = useRouter()
+const adminStore = useAdminStore()
+const { isAccessValid } = storeToRefs(adminStore)
 
-  const requireAccessForCreation = () => {
-    requireAccess(() => {
+const requireAccessForCreation = () => {
+  adminStore.requireAccess(() => {
     // Once access is granted, the component will re-render showing the character creator
-    }, 'create a new character')
-  }
+  }, 'create a new character')
+}
 </script>
 
 <style scoped>

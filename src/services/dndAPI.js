@@ -1,7 +1,46 @@
+// --- Robust LocalStorage Caching for Species (Races) ---
+// Helper for extracting spellcasting info (for use outside the class)
+function extractSpellcastingInfo(apiClass) {
+  const spellcastingClasses = [
+    "bard",
+    "cleric",
+    "druid",
+    "paladin",
+    "ranger",
+    "sorcerer",
+    "warlock",
+    "wizard",
+  ];
+  if (spellcastingClasses.includes(apiClass.index)) {
+    const abilities = {
+      bard: "Charisma",
+      cleric: "Wisdom",
+      druid: "Wisdom",
+      paladin: "Charisma",
+      ranger: "Wisdom",
+      sorcerer: "Charisma",
+      warlock: "Charisma",
+      wizard: "Intelligence",
+    };
+    const cantrips = {
+      bard: 2,
+      cleric: 3,
+      druid: 2,
+      sorcerer: 4,
+      warlock: 2,
+      wizard: 3,
+    };
+    // You can expand this as needed for more spellcasting info
+    return {
+      spellcastingAbility: abilities[apiClass.index] || "",
+      cantripsKnown: cantrips[apiClass.index] || 0,
+    };
+  }
+  return null;
+}
 // API service for D&D data (races, classes, spells, etc.)
 const API_BASE_URL =
-  import.meta.env.VUE_APP_DND_API_BASE_URL ||
-  "https://www.dnd5eapi.co/api/2014";
+  import.meta.env.VUE_APP_DND_API_BASE_URL || "https://www.dnd5eapi.co/api";
 
 export class DnDAPI {
   constructor(apiKey = null) {
@@ -16,6 +55,38 @@ export class DnDAPI {
     // Simple cache to avoid re-fetching data
     this.cache = new Map();
     this.cacheExpiry = 5 * 60 * 1000; // 5 minutes cache
+  }
+
+  // --- Robust LocalStorage Caching for Species (Races) ---
+  static SPECIES_CACHE_KEY = "dnd_species_data_v2";
+  static SPECIES_CACHE_TTL = 1000 * 60 * 60 * 24; // 24 hours
+
+  static getCachedSpeciesData() {
+    try {
+      const cached = localStorage.getItem(DnDAPI.SPECIES_CACHE_KEY);
+      if (!cached) return null;
+      const parsed = JSON.parse(cached);
+      if (
+        parsed &&
+        parsed.timestamp &&
+        Date.now() - parsed.timestamp < DnDAPI.SPECIES_CACHE_TTL &&
+        Array.isArray(parsed.data)
+      ) {
+        return parsed.data;
+      }
+      return null;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  static setCachedSpeciesData(data) {
+    try {
+      localStorage.setItem(
+        DnDAPI.SPECIES_CACHE_KEY,
+        JSON.stringify({ data, timestamp: Date.now() })
+      );
+    } catch (e) {}
   }
 
   // Check cache before making API requests
@@ -54,23 +125,10 @@ export class DnDAPI {
 
     while (this.requestQueue.length > 0) {
       const batch = this.requestQueue.splice(0, batchSize);
-
       // Process batch in parallel
       const batchPromises = batch.map(
         async ({ endpoint, options, resolve, reject }) => {
           try {
-            // Reduce delay between requests
-            const now = Date.now();
-            const timeSinceLastRequest = now - this.lastRequestTime;
-            if (timeSinceLastRequest < this.minRequestInterval) {
-              await new Promise((resolve) =>
-                setTimeout(
-                  resolve,
-                  this.minRequestInterval - timeSinceLastRequest
-                )
-              );
-            }
-
             const result = await this.makeActualRequest(endpoint, options);
             this.lastRequestTime = Date.now();
             resolve(result);
@@ -79,12 +137,10 @@ export class DnDAPI {
           }
         }
       );
-
       await Promise.all(batchPromises);
-
-      // Reduced delay between batches
+      // Increased delay between batches to avoid 429 rate limit
       if (this.requestQueue.length > 0) {
-        await new Promise((resolve) => setTimeout(resolve, 15)); // Reduced to 15ms for better performance
+        await new Promise((resolve) => setTimeout(resolve, 400)); // Increased to 400ms for better rate limiting
       }
     }
 
@@ -171,10 +227,10 @@ export class DnDAPI {
         "gnome",
       ];
       if (
-        race.index?.toLowerCase &&
-        darkVisionRaces.includes(race.index?.toLowerCase())
+        typeof race.index === "string" &&
+        darkVisionRaces.includes(race.index.toLowerCase())
       ) {
-        return 60; // Standard darkvision range
+        return 60;
       }
 
       return null;
@@ -287,20 +343,6 @@ export class DnDAPI {
 
   extractSubraces(race) {
     try {
-      if (race.subraces && Array.isArray(race.subraces)) {
-        return race.subraces
-          .filter((sub) => sub && (sub.index || sub.name)) // Filter out invalid subraces
-          .map((sub) => ({
-            id: sub.index || sub.name?.toLowerCase().replace(/\s+/g, "-"),
-            name:
-              sub.name ||
-              sub.index
-                ?.split("-")
-                .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-                .join(" "),
-          }));
-      }
-
       // Fallback subrace data for common races
       const fallbackSubraces = {
         dwarf: [
@@ -322,9 +364,29 @@ export class DnDAPI {
         ],
       };
 
+      if (race.subraces && Array.isArray(race.subraces)) {
+        // If API returns only 0 or 1 subrace for a race that should have more, use fallback
+        const key = race.index?.toLowerCase();
+        if (fallbackSubraces[key] && race.subraces.length < 2) {
+          return fallbackSubraces[key];
+        }
+        return race.subraces
+          .filter((sub) => sub && (sub.index || sub.name))
+          .map((sub) => ({
+            id: sub.index || sub.name?.toLowerCase().replace(/\s+/g, "-"),
+            name:
+              sub.name ||
+              sub.index
+                ?.split("-")
+                .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+                .join(" "),
+          }));
+      }
+
       // If no subraces found, check fallback data
-      if (race.index?.toLowerCase && fallbackSubraces[race.index]) {
-        return fallbackSubraces[race.index];
+      const key = race.index?.toLowerCase();
+      if (fallbackSubraces[key]) {
+        return fallbackSubraces[key];
       }
 
       return [];
@@ -339,11 +401,18 @@ export class DnDAPI {
 
   // Get all D&D races
   async getRaces() {
-    const cacheKey = "all-races";
-    const cached = this.getCachedData(cacheKey);
-    if (cached) {
-      console.log("Using cached races data");
+    // Try robust localStorage cache first
+    const cached = DnDAPI.getCachedSpeciesData();
+    if (cached && Array.isArray(cached) && cached.length > 0) {
+      console.log("Using robust localStorage species cache");
       return cached;
+    }
+
+    const cacheKey = "all-races";
+    const memCached = this.getCachedData(cacheKey);
+    if (memCached) {
+      console.log("Using in-memory races data");
+      return memCached;
     }
 
     try {
@@ -451,11 +520,19 @@ export class DnDAPI {
 
       console.log(`Returning ${races.length} processed races`);
       this.setCachedData(cacheKey, races);
-      return races;
+      // Always return fully transformed race data
+      const transformed = races.map((race) => this.transformRaceData(race));
+      DnDAPI.setCachedSpeciesData(transformed);
+      return transformed;
     } catch (error) {
       console.error("Failed to fetch races:", error);
       // Return fallback data or empty array
-      return this.getFallbackRaces();
+      // Always return fully transformed fallback data
+      const fallback = this.getFallbackRaces().map((race) =>
+        this.transformRaceData(race)
+      );
+      DnDAPI.setCachedSpeciesData(fallback);
+      return fallback;
     }
   }
 
@@ -479,9 +556,16 @@ export class DnDAPI {
       trait.name?.toLowerCase().includes("darkvision")
     );
 
-    // Extract damage resistances (some races might have this)
+    // Extract damage resististances (some races might have this)
     const damageResistances = race.damage_resistances || [];
 
+    let languages = Array.isArray(race.languages)
+      ? race.languages.map((l) => (typeof l === "string" ? l : l.name || l))
+      : [];
+    // Fallback for Dragonborn if languages is empty
+    if ((!languages || !languages.length) && race.index === "dragonborn") {
+      languages = ["Common", "Draconic"];
+    }
     return {
       id: raceId,
       name: race.name,
@@ -492,11 +576,7 @@ export class DnDAPI {
         damageResistances.length > 0
           ? damageResistances.map((dr) => dr.name || dr).join(", ")
           : null,
-      lineages:
-        race.subraces?.map((sub) => ({
-          id: sub.index || sub.name?.toLowerCase().replace(/\s+/g, "_"),
-          name: sub.name,
-        })) || [],
+      lineages: this.extractSubraces(race),
       bonusLanguage:
         race.languages?.find((lang) => lang.name !== "Common")?.name || null,
       // Additional 5e-bits specific data
@@ -516,7 +596,7 @@ export class DnDAPI {
       sizeDescription: race.size_description || null,
       languageDescription: race.language_desc || null,
       startingProficiencies: race.starting_proficiencies || [],
-      languages: race.languages || [],
+      languages,
       isBasicData: false,
     };
   }
@@ -533,7 +613,7 @@ export class DnDAPI {
         trait.name?.toLowerCase().includes("darkvision")
       );
 
-      // Extract damage resistances (some races might have this)
+      // Extract damage resististances (some races might have this)
       const damageResistances = race.damage_resistances || [];
 
       return {
@@ -598,69 +678,14 @@ export class DnDAPI {
         throw new Error("Invalid API response format");
       }
 
-      // Get detailed information for each class in parallel
+      // Use getClassDetails for each class to ensure features and spellcasting are fetched
       const classPromises = response.results.map((dndClass) =>
-        this.apiRequest(`/classes/${dndClass.index}`)
+        this.getClassDetails(dndClass.index)
       );
 
-      const classDetails = await Promise.all(classPromises);
-
-      const classes = classDetails
-        .map((dndClass) => {
-          try {
-            return {
-              id: dndClass.index,
-              index: dndClass.index,
-              name: dndClass.name,
-              hitDie: dndClass.hit_die || 8,
-              proficiencies: (dndClass.proficiencies || []).map((prof) => {
-                const type = prof.index?.split("-")?.[0] || "skill";
-                return {
-                  name: prof.name || prof.index?.replace(/-/g, " ") || "",
-                  type,
-                };
-              }),
-              savingThrows: (dndClass.saving_throws || []).map(
-                (save) => save.name || save.index?.toUpperCase() || ""
-              ),
-              startingEquipment: this.extractStartingEquipment(dndClass),
-              spellcasting: dndClass.spellcasting
-                ? {
-                    ability:
-                      dndClass.spellcasting.spellcasting_ability?.name ||
-                      dndClass.spellcasting.spellcasting_ability?.index?.toUpperCase() ||
-                      "",
-                    level: dndClass.spellcasting.level || 1,
-                    info: Array.isArray(dndClass.spellcasting.info)
-                      ? dndClass.spellcasting.info.map((i) => ({
-                          name: i.name,
-                          desc: Array.isArray(i.desc)
-                            ? i.desc.join("\n")
-                            : i.desc || "",
-                        }))
-                      : [],
-                  }
-                : null,
-              features: (dndClass.features || [])
-                .filter((f) => f.level === 1)
-                .map((feature) => ({
-                  name: feature.name || "",
-                  description: Array.isArray(feature.desc)
-                    ? feature.desc.join("\n")
-                    : feature.desc || "",
-                  level: feature.level || 1,
-                })),
-              subclassType: dndClass.subclass_flavor || "Archetype",
-            };
-          } catch (error) {
-            console.error(
-              `Error processing class ${dndClass?.name || "unknown"}:`,
-              error
-            );
-            return null;
-          }
-        })
-        .filter((cls) => cls !== null);
+      const classes = (await Promise.all(classPromises)).filter(
+        (cls) => cls !== null
+      );
 
       this.setCachedData(cacheKey, classes);
       return classes;
@@ -704,7 +729,51 @@ export class DnDAPI {
   async getClassDetails(classId) {
     try {
       const details = await this.apiRequest(`/classes/${classId}`);
-      return this.transformClassData(details);
+      // Only fetch spellcasting info for classes that have it
+      const spellcastingClasses = [
+        "bard",
+        "cleric",
+        "druid",
+        "paladin",
+        "ranger",
+        "sorcerer",
+        "warlock",
+        "wizard",
+      ];
+      let spellcasting = null;
+      if (spellcastingClasses.includes(details.index)) {
+        try {
+          spellcasting = await this.apiRequest(
+            `/classes/${classId}/spellcasting`
+          );
+        } catch (e) {
+          spellcasting = null;
+        }
+      }
+
+      // Fetch level 1 features from /classes/{classId}/levels/1
+      let features = [];
+      try {
+        const level1 = await this.apiRequest(`/classes/${classId}/levels/1`);
+        if (level1 && Array.isArray(level1.features)) {
+          const featurePromises = level1.features.map(async (f) => {
+            try {
+              const featureDetail = await this.apiRequest(
+                `/features/${f.index}`
+              );
+              return featureDetail;
+            } catch (e) {
+              return null;
+            }
+          });
+          features = (await Promise.all(featurePromises)).filter(Boolean);
+        }
+      } catch (e) {
+        // fallback: no features found
+        features = [];
+      }
+
+      return this.transformClassData(details, spellcasting, features);
     } catch (error) {
       console.error(`Failed to fetch class ${classId}:`, error);
       return null;
@@ -712,10 +781,50 @@ export class DnDAPI {
   }
 
   // Transform single class data
-  transformClassData(classData) {
+  transformClassData(
+    classData,
+    spellcastingDetails = null,
+    featureDetails = null
+  ) {
     console.log("Transforming class data:", classData);
+    console.log(
+      "[transformClassData] proficiency_choices:",
+      classData.proficiency_choices
+    );
     const classId =
       classData.index || classData.name?.toLowerCase().replace(/\s+/g, "_");
+
+    // Normalize spellcasting
+    let spellcasting =
+      spellcastingDetails || extractSpellcastingInfo(classData);
+    if (spellcastingDetails && spellcastingDetails.info) {
+      spellcasting = {
+        ability: spellcastingDetails.spellcasting_ability?.name || "",
+        cantripsKnown: spellcastingDetails.cantrips_known,
+        spellsKnown: spellcastingDetails.spells_known,
+        spellSlots: spellcastingDetails.spell_slots,
+        info: spellcastingDetails.info.map((i) => ({
+          name: i.name,
+          desc: Array.isArray(i.desc) ? i.desc.join(" ") : i.desc,
+        })),
+      };
+    }
+
+    // Normalize features
+    let features = [];
+    if (featureDetails && Array.isArray(featureDetails)) {
+      features = featureDetails.map((f) => ({
+        name: f.name,
+        desc: Array.isArray(f.desc) ? f.desc : f.desc || "",
+        feature_specific: f.feature_specific || null,
+      }));
+    } else if (classData.features && Array.isArray(classData.features)) {
+      features = classData.features.map((f) => ({
+        name: f.name,
+        desc: Array.isArray(f.desc) ? f.desc : f.desc || "",
+        feature_specific: f.feature_specific || null,
+      }));
+    }
 
     const transformed = {
       id: classId,
@@ -723,7 +832,7 @@ export class DnDAPI {
       name: classData.name,
       description: classData.desc?.join(" ") || `The ${classData.name} class.`,
       hitDie: `D${classData.hit_die}`,
-      hpDie: `D${classData.hit_die}`, // Alternative property name
+      hpDie: `D${classData.hit_die}`,
       primaryAbility: this.extractPrimaryAbility(classData),
       savingThrows: classData.saving_throws?.map((st) => st.name) || [],
       skillChoices:
@@ -733,9 +842,15 @@ export class DnDAPI {
       skills: this.extractSkillOptions(classData),
       armorTraining: this.extractArmorProficiencies(classData),
       startingEquipment: this.extractStartingEquipment(classData),
+      weaponProficiencies: this.extractWeaponProficiencies(classData),
+      toolProficiencies: this.extractToolProficiencies(classData) || [],
+      skillProficiencies: this.extractSkillProficiencies(classData) || {
+        count: 0,
+        from: [],
+      },
       weaponMasteryChoices: 0, // 2024 rules specific
       expertiseSkills: [], // Will be class-specific
-      spellcasting: this.extractSpellcastingInfo(classData),
+      spellcasting,
       subclasses:
         classData.subclasses?.map((sub) => ({
           id: sub.index,
@@ -744,6 +859,16 @@ export class DnDAPI {
         })) || [],
       multiclassing: classData.multi_classing || null,
       classLevels: classData.class_levels || null,
+      features,
+      // Additional fields for full detail display:
+      prerequisites:
+        classData.prerequisites ||
+        classData.multi_classing?.prerequisites ||
+        [],
+      proficiencies: classData.proficiencies || [],
+      proficiencyChoices: classData.proficiency_choices || [],
+      startingEquipmentOptions: classData.starting_equipment_options || [],
+      raw: classData, // Optionally include the full raw object for debugging/expansion
     };
 
     console.log("Transformed class data result:", transformed);
@@ -775,13 +900,41 @@ export class DnDAPI {
     const skillChoice = classData.proficiency_choices?.find((pc) =>
       pc.desc?.toLowerCase().includes("skill")
     );
-
-    if (skillChoice && skillChoice.from && skillChoice.from.options) {
-      return skillChoice.from.options
-        .filter((opt) => opt.item?.name?.startsWith("Skill:"))
-        .map((opt) => opt.item.name.replace("Skill: ", ""));
+    if (skillChoice && skillChoice.from) {
+      let options = [];
+      if (
+        typeof skillChoice.from === "object" &&
+        skillChoice.from !== null &&
+        Array.isArray(skillChoice.from.options)
+      ) {
+        // Handles { option_set_type: 'options_array', options: [...] }
+        options = skillChoice.from.options;
+      } else if (Array.isArray(skillChoice.from)) {
+        options = skillChoice.from;
+      } else if (Array.isArray(skillChoice.from?.items)) {
+        options = skillChoice.from.items;
+      } else if (typeof skillChoice.from === "string") {
+        options = [skillChoice.from];
+      }
+      console.log("[extractSkillOptions] options:", options);
+      return options
+        .map((opt) => {
+          let name = null;
+          if (opt && opt.item && typeof opt.item.name === "string") {
+            name = opt.item.name;
+          } else if (opt && typeof opt.name === "string") {
+            name = opt.name;
+          }
+          if (name && name.startsWith("Skill:")) {
+            // Remove everything up to and including the colon and any whitespace
+            return name.replace(/^Skill:\s*/, "");
+          } else if (name) {
+            return name;
+          }
+          return null;
+        })
+        .filter(Boolean);
     }
-
     return [];
   }
 
@@ -810,6 +963,156 @@ export class DnDAPI {
     return result;
   }
 
+  extractWeaponProficiencies(classData) {
+    // Extract weapon proficiencies from the class data
+    const proficiencies = classData.proficiencies || [];
+    // Filter for weapon proficiencies (usually contain 'Weapon' in the name)
+    return proficiencies
+      .filter(
+        (p) =>
+          p.name &&
+          (p.name.includes("Weapon") ||
+            p.name.match(/^(Simple|Martial) Weapons?$/i) ||
+            p.name.match(/\bWeapons?\b/i))
+      )
+      .map((p) => p.name);
+  }
+
+  extractToolProficiencies(classData) {
+    // Extract tool proficiencies from the class data
+    const proficiencies = classData.proficiencies || [];
+    // Filter for tool proficiencies (usually contain 'Tool' in the name)
+    return proficiencies
+      .filter((p) => p.name && p.name.toLowerCase().includes("tool"))
+      .map((p) => p.name);
+  }
+
+  extractSkillProficiencies(classData) {
+    // Extract skill proficiencies from the class data
+    console.log("[extractSkillProficiencies] class:", classData.name);
+    console.log(
+      "[extractSkillProficiencies] proficiency_choices:",
+      classData.proficiency_choices
+    );
+    const skillChoices = (classData.proficiency_choices || []).filter((pc) => {
+      // If from.options contains any option whose item.index starts with 'skill-', treat as skill proficiency
+      let options = [];
+      if (
+        pc.from &&
+        typeof pc.from === "object" &&
+        Array.isArray(pc.from.options)
+      ) {
+        options = pc.from.options;
+      } else if (Array.isArray(pc.from)) {
+        options = pc.from;
+      } else if (Array.isArray(pc.from?.items)) {
+        options = pc.from.items;
+      } else if (typeof pc.from === "string") {
+        options = [pc.from];
+      } else if (pc.from && typeof pc.from === "object") {
+        const arrProp = Object.values(pc.from).find(Array.isArray);
+        if (arrProp) options = arrProp;
+      }
+      return options.some(
+        (opt) =>
+          (opt &&
+            opt.item &&
+            typeof opt.item.index === "string" &&
+            opt.item.index.startsWith("skill-")) ||
+          (opt &&
+            typeof opt.index === "string" &&
+            opt.index.startsWith("skill-"))
+      );
+    });
+    let allSkills = [];
+    let totalChoose = 0;
+    for (const skillChoice of skillChoices) {
+      let options = [];
+      if (
+        skillChoice.from &&
+        typeof skillChoice.from === "object" &&
+        Array.isArray(skillChoice.from.options)
+      ) {
+        options = skillChoice.from.options;
+      } else if (Array.isArray(skillChoice.from)) {
+        options = skillChoice.from;
+      } else if (Array.isArray(skillChoice.from?.items)) {
+        options = skillChoice.from.items;
+      } else if (typeof skillChoice.from === "string") {
+        options = [skillChoice.from];
+      } else if (skillChoice.from && typeof skillChoice.from === "object") {
+        const arrProp = Object.values(skillChoice.from).find(Array.isArray);
+        if (arrProp) {
+          options = arrProp;
+        }
+      }
+
+      if (!options.length && skillChoice.from) {
+        console.warn(
+          "[extractSkillProficiencies] Unhandled skillChoice.from structure (no options):",
+          skillChoice.from
+        );
+      }
+
+      console.log("[extractSkillProficiencies] options:", options);
+      let skills = options
+        .map((opt) => {
+          let name = null;
+          if (opt && opt.item && typeof opt.item.name === "string") {
+            name = opt.item.name;
+          } else if (opt && typeof opt.name === "string") {
+            name = opt.name;
+          }
+          if (name && name.startsWith("Skill:")) {
+            return name.replace(/^Skill:\s*/, "");
+          } else if (name) {
+            return name;
+          }
+          return null;
+        })
+        .filter(Boolean);
+
+      if (!skills.length && Array.isArray(skillChoice.from)) {
+        skills = skillChoice.from
+          .map((ref) => {
+            if (ref && ref.name) return ref.name;
+            if (ref && ref.item && ref.item.name) return ref.item.name;
+            return null;
+          })
+          .filter(Boolean);
+      }
+
+      if (!skills.length) {
+        console.warn(
+          "[extractSkillProficiencies] Unhandled skillChoice object (no skills extracted):",
+          skillChoice
+        );
+      }
+      if (skills.length) {
+        allSkills.push(...skills);
+        totalChoose += skillChoice.choose || 0;
+        console.log(
+          "[extractSkillProficiencies] found skillChoice:",
+          skillChoice
+        );
+        console.log("[extractSkillProficiencies] skills:", skills);
+      }
+    }
+    if (allSkills.length) {
+      // Remove duplicates
+      allSkills = [...new Set(allSkills)];
+      return {
+        count: totalChoose,
+        from: allSkills,
+      };
+    }
+    console.warn(
+      "[extractSkillProficiencies] No skill proficiencies found for class:",
+      classData.name
+    );
+    return { count: 0, from: [] };
+  }
+
   extractStartingEquipment(classData) {
     const equipment = classData.starting_equipment || [];
 
@@ -818,46 +1121,6 @@ export class DnDAPI {
       quantity: item.quantity,
       // Add more details as needed
     }));
-  }
-
-  extractSpellcastingInfo(classData) {
-    // Check if class has spellcasting
-    const spellcastingClasses = [
-      "bard",
-      "cleric",
-      "druid",
-      "paladin",
-      "ranger",
-      "sorcerer",
-      "warlock",
-      "wizard",
-    ];
-
-    if (spellcastingClasses.includes(classData.index)) {
-      return {
-        isSpellcaster: true,
-        spellcastingAbility: this.getSpellcastingAbility(classData.index),
-        cantripsKnown: this.getCantripsForClass(classData.index),
-        spellsKnown: this.getSpellsForClass(classData.index),
-      };
-    }
-
-    return { isSpellcaster: false };
-  }
-
-  getSpellcastingAbility(classIndex) {
-    const abilities = {
-      bard: "Charisma",
-      cleric: "Wisdom",
-      druid: "Wisdom",
-      paladin: "Charisma",
-      ranger: "Wisdom",
-      sorcerer: "Charisma",
-      warlock: "Charisma",
-      wizard: "Intelligence",
-    };
-
-    return abilities[classIndex] || "";
   }
 
   getCantripsForClass(classIndex) {
@@ -1376,137 +1639,8 @@ export class DnDAPI {
   }
 
   getFallbackRaces() {
-    console.log("Using fallback race data");
-    return [
-      {
-        id: "dragonborn",
-        index: "dragonborn",
-        name: "Dragonborn",
-        size: "Medium",
-        speed: 30,
-        darkvision: null,
-        damageResistance: "Acid, Cold, Fire, Lightning, or Poison (chosen)",
-        lineages: [],
-        bonusLanguage: "Draconic",
-        traits: [
-          {
-            name: "Breath Weapon",
-            description:
-              "You can use your action to exhale destructive energy.",
-          },
-          {
-            name: "Damage Resistance",
-            description:
-              "You have resistance to the damage type associated with your draconic ancestry.",
-          },
-        ],
-        abilityBonus: [
-          { ability: "STRENGTH", bonus: 2 },
-          { ability: "CHARISMA", bonus: 1 },
-        ],
-      },
-      {
-        id: "dwarf",
-        index: "dwarf",
-        name: "Dwarf",
-        size: "Medium",
-        speed: 25,
-        darkvision: 60,
-        damageResistance: "Poison",
-        lineages: [
-          { id: "hill-dwarf", name: "Hill Dwarf" },
-          { id: "mountain-dwarf", name: "Mountain Dwarf" },
-        ],
-        bonusLanguage: "Dwarvish",
-        traits: [
-          {
-            name: "Dwarven Resilience",
-            description: "You have advantage on saving throws against poison.",
-          },
-        ],
-        abilityBonus: [{ ability: "CONSTITUTION", bonus: 2 }],
-      },
-      {
-        id: "elf",
-        index: "elf",
-        name: "Elf",
-        size: "Medium",
-        speed: 30,
-        darkvision: 60,
-        damageResistance: null,
-        lineages: [
-          { id: "high-elf", name: "High Elf" },
-          { id: "wood-elf", name: "Wood Elf" },
-          { id: "dark-elf", name: "Dark Elf (Drow)" },
-        ],
-        bonusLanguage: "Elvish",
-        traits: [
-          {
-            name: "Keen Senses",
-            description: "You have proficiency in the Perception skill.",
-          },
-          {
-            name: "Fey Ancestry",
-            description:
-              "You have advantage on saving throws against being charmed.",
-          },
-        ],
-        abilityBonus: [{ ability: "DEXTERITY", bonus: 2 }],
-      },
-      {
-        id: "human",
-        index: "human",
-        name: "Human",
-        size: "Medium",
-        speed: 30,
-        darkvision: null,
-        damageResistance: null,
-        lineages: [{ id: "variant-human", name: "Variant Human" }],
-        bonusLanguage: "Any",
-        traits: [
-          {
-            name: "Extra Language",
-            description:
-              "You can speak, read, and write one extra language of your choice.",
-          },
-        ],
-        abilityBonus: [
-          { ability: "STRENGTH", bonus: 1 },
-          { ability: "DEXTERITY", bonus: 1 },
-          { ability: "CONSTITUTION", bonus: 1 },
-          { ability: "INTELLIGENCE", bonus: 1 },
-          { ability: "WISDOM", bonus: 1 },
-          { ability: "CHARISMA", bonus: 1 },
-        ],
-      },
-      {
-        id: "halfling",
-        index: "halfling",
-        name: "Halfling",
-        size: "Small",
-        speed: 25,
-        darkvision: null,
-        damageResistance: null,
-        lineages: [
-          { id: "lightfoot", name: "Lightfoot" },
-          { id: "stout", name: "Stout" },
-        ],
-        bonusLanguage: "Halfling",
-        traits: [
-          {
-            name: "Lucky",
-            description:
-              "When you roll a 1 on an attack roll, ability check, or saving throw, you can reroll the die.",
-          },
-          {
-            name: "Brave",
-            description:
-              "You have advantage on saving throws against being frightened.",
-          },
-        ],
-        abilityBonus: [{ ability: "DEXTERITY", bonus: 2 }],
-      },
-    ];
+    // Fallback races removed. This function now returns an empty array.
+    return [];
   }
 }
 

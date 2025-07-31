@@ -10,7 +10,7 @@
           <v-card-text class="pt-2 pb-3">
             <v-select v-model="character.species" density="compact" :error="!!characterData?.speciesError"
               item-title="name" :error-messages="characterData?.speciesError" item-value="id"
-              :items="characterData?.speciesOptions || []" label="Choose Your Species"
+              :items="characterData?.speciesData || []" label="Choose Your Species"
               :loading="characterData?.isLoadingSpecies" variant="outlined" @update:model-value="onSpeciesChange">
               <template #prepend>
                 <v-icon color="primary" size="small">mdi-account-group</v-icon>
@@ -55,30 +55,28 @@
               <v-icon class="me-2" color="primary" size="small">mdi-dna</v-icon>
               <span class="text-subtitle-1 font-weight-bold">{{ selectedSpeciesInfo.name }}</span>
             </div>
-            <v-chip-group v-if="selectedSpeciesInfo.abilityBonus?.length" class="ma-0">
-              <v-chip v-for="bonus in selectedSpeciesInfo.abilityBonus" :key="bonus.ability" color="blue" size="x-small"
-                variant="text">
-                +{{ bonus.bonus }} {{ bonus.ability.slice(0, 3) }}
-              </v-chip>
-            </v-chip-group>
+            <v-chip v-for="bonus in selectedSpeciesInfo.abilityBonus" :key="bonus.ability" color="blue" size="small"
+              variant="tonal">
+              +{{ bonus.bonus }} {{ bonus.ability.slice(0, 3) }}
+            </v-chip>
           </v-card-title>
           <v-divider />
           <v-card-text class="pt-3 pb-2">
             <!-- Quick Stats -->
             <div class="d-flex flex-wrap gap-2 mb-3">
-              <v-chip color="green" size="small" variant="flat">
+              <v-chip color="green" size="small" variant="tonal">
                 <v-icon start size="small">mdi-resize</v-icon>
                 {{ selectedSpeciesInfo.size }}
               </v-chip>
-              <v-chip color="green" size="small" variant="flat">
+              <v-chip color="green" size="small" variant="tonal">
                 <v-icon start size="small">mdi-run</v-icon>
                 {{ selectedSpeciesInfo.speed }}ft
               </v-chip>
-              <v-chip v-if="selectedSpeciesInfo.darkvision" color="purple" size="small" variant="flat">
+              <v-chip v-if="selectedSpeciesInfo.darkvision" color="purple" size="small" variant="tonal">
                 <v-icon start size="small">mdi-eye</v-icon>
                 {{ selectedSpeciesInfo.darkvision }}ft vision
               </v-chip>
-              <v-chip v-if="selectedSpeciesInfo.damageResistance" color="orange" size="small" variant="flat">
+              <v-chip v-if="selectedSpeciesInfo.damageResistance" color="orange" size="small" variant="tonal">
                 <v-icon start size="small">mdi-shield</v-icon>
                 Resistances
               </v-chip>
@@ -92,12 +90,11 @@
               </div>
               <div class="ms-3">
                 <v-chip v-for="trait in selectedSpeciesInfo.traits" :key="trait.name" color="amber-lighten-4"
-                  size="x-small" variant="flat" class="me-1 mb-1">
+                  size="small" variant="tonal" class="me-1 mb-1">
                   {{ trait.name }}
                 </v-chip>
               </div>
             </div>
-
             <!-- Languages -->
             <div v-if="selectedSpeciesInfo.languages?.length" class="mb-3">
               <div class="d-flex align-center mb-1">
@@ -105,8 +102,8 @@
                 <span class="text-caption font-weight-bold text-grey-darken-2">Languages</span>
               </div>
               <div class="ms-3">
-                <v-chip v-for="lang in selectedSpeciesInfo.languages" :key="lang" color="indigo" size="x-small"
-                  variant="outlined" class="me-1">
+                <v-chip v-for="lang in selectedSpeciesInfo.languages" :key="lang" color="indigo" size="small"
+                  variant="tonal" class="me-1">
                   {{ lang }}
                 </v-chip>
               </div>
@@ -121,19 +118,25 @@
                 </span>
               </div>
               <div v-if="selectedSpeciesInfo.lineages.length === 1" class="ms-3">
-                <v-chip color="primary" size="small" variant="outlined">
+                <v-chip color="primary" size="small" variant="tonal">
                   {{ selectedSpeciesInfo.lineages[0].name }}
                 </v-chip>
+                <div v-if="selectedSpeciesInfo.lineages[0].desc" class="text-caption text-grey-darken-1 mt-1 ms-1">
+                  {{ selectedSpeciesInfo.lineages[0].desc }}
+                </div>
               </div>
               <div v-else class="ms-3">
                 <div class="lineage-options-row">
                   <div v-for="lineage in selectedSpeciesInfo.lineages" :key="lineage.id"
                     class="lineage-option-card compact">
                     <div class="d-flex align-center justify-space-between">
-                      <span class="text-caption font-weight-bold">{{ lineage.name }}</span>
+                      <span class="text-caption font-weight-bold text-grey">{{ lineage.name }}</span>
                     </div>
                     <div v-if="getLineageHighlights(lineage)" class="text-caption text-grey-darken-1 mt-1">
                       {{ getLineageHighlights(lineage) }}
+                    </div>
+                    <div v-if="lineage.desc" class="text-caption text-grey-darken-1 mt-1">
+                      {{ lineage.desc }}
                     </div>
                   </div>
                 </div>
@@ -172,19 +175,75 @@ const selectedSpeciesInfo = computed(() => {
   const info = props.characterData.speciesData.find(
     species => species.id === props.character.species,
   )
-  return info
+  if (!info) return null
+
+  // Normalize languages: always array of strings
+  let languages = []
+  if (Array.isArray(info.languages)) {
+    languages = info.languages.map(l => typeof l === 'string' ? l : (l?.name || l?.index || String(l)))
+  } else if (typeof info.languages === 'string') {
+    languages = [info.languages]
+  }
+
+  // Fallback for common races if languages is empty
+  if ((!languages || !languages.length) && info.id === 'dragonborn') {
+    languages = ['Common', 'Draconic']
+  } else if ((!languages || !languages.length) && info.id === 'dwarf') {
+    languages = ['Common', 'Dwarvish']
+  } else if ((!languages || !languages.length) && info.id === 'elf') {
+    languages = ['Common', 'Elvish']
+  } else if ((!languages || !languages.length) && info.id === 'halfling') {
+    languages = ['Common', 'Halfling']
+  } else if ((!languages || !languages.length) && info.id === 'human') {
+    languages = ['Common']
+  }
+
+
+  // Normalize lineages: always array, fallback to subraces if present
+  let lineages = [];
+  if (Array.isArray(info.lineages) && info.lineages.length > 0) {
+    lineages = info.lineages.map(sub => ({
+      id: sub.id || sub.index || sub.name?.toLowerCase().replace(/\s+/g, "_"),
+      name: sub.name || sub.index,
+      desc: sub.desc || sub.description || ''
+    }));
+  } else if (Array.isArray(info.subraces) && info.subraces.length > 0) {
+    // Some API data may use 'subraces' instead of 'lineages'
+    lineages = info.subraces.map(sub => ({
+      id: sub.index || sub.name?.toLowerCase().replace(/\s+/g, "_"),
+      name: sub.name || sub.index,
+      desc: sub.desc || sub.description || ''
+    }));
+  }
+
+  return {
+    ...info,
+    languages,
+    lineages,
+  }
 })
+
+
 
 // Watch for species changes to load lineages
 watch(() => props.character.species, (newSpeciesId) => {
-  if (newSpeciesId && selectedSpeciesInfo.value?.lineages) {
-    availableLineages.value = selectedSpeciesInfo.value.lineages || []
-  } else {
-    availableLineages.value = []
+  const info = props.characterData.speciesData.find(
+    species => species.id === newSpeciesId,
+  );
+  let lineages = [];
+  if (info) {
+    if (Array.isArray(info.lineages) && info.lineages.length > 0) {
+      lineages = info.lineages;
+    } else if (Array.isArray(info.subraces) && info.subraces.length > 0) {
+      lineages = info.subraces.map(sub => ({
+        id: sub.index || sub.name?.toLowerCase().replace(/\s+/g, "_"),
+        name: sub.name || sub.index
+      }));
+    }
   }
-
+  availableLineages.value = lineages;
   // Clear lineage selection when species changes
-  props.character.speciesLineage = null
+  props.character.speciesLineage = null;
 }, { immediate: true })
 
 const onSpeciesChange = () => {
@@ -239,7 +298,9 @@ const getLineageHighlights = (lineage) => {
 </script>
 
 <style scoped>
-.species-preview-card {
+.species-preview-card,
+.class-preview-card,
+.background-preview-card {
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
