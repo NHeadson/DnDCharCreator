@@ -36,73 +36,126 @@
         </v-card>
         <v-card v-else-if="selectedBackgroundInfo" class="text-blue-grey-lighten-5 background-preview-card"
           variant="tonal">
-          <v-card-title class="d-flex align-center py-2">
-            <v-icon class="text-blue-grey-darken-2 me-2" size="small">mdi-book-open-variant</v-icon>
-            <span class="text-subtitle-2">{{ selectedBackgroundInfo.name }}</span>
+          <v-card-title class="d-flex align-center justify-space-between py-2">
+            <div class="d-flex align-center">
+              <v-icon class="text-blue-grey-darken-2 me-2" size="small">mdi-book-open-variant</v-icon>
+              <span class="text-subtitle-1 font-weight-bold">{{ selectedBackgroundInfo.name }}</span>
+            </div>
+            <div class="d-flex flex-column align-end">
+              <span class="text-caption text-grey-darken-1 mb-1" style="font-size: 0.85em;">Key Abilities</span>
+              <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+                <v-chip v-for="score in selectedBackgroundInfo.abilityScores || []" :key="'score-' + score" size="small"
+                  variant="tonal" color="accent">
+                  {{ score }}
+                </v-chip>
+              </div>
+            </div>
           </v-card-title>
           <v-divider />
-          <v-card-text class="pt-3 pb-2" style="max-height: 300px; overflow-y: auto;">
-            <div class="mb-3">
-              <div class="text-caption">{{ selectedBackgroundInfo.description }}</div>
+          <v-card-text class="pt-3 pb-2">
+            <!-- Description -->
+            <div class="mb-2 ms-3">
+              <span class="text-caption text-grey-darken-1">{{ selectedBackgroundInfo.description }}</span>
             </div>
 
-            <div v-if="selectedBackgroundInfo.feature" class="mb-3">
-              <h5 class="text-caption text-blue-grey-darken-2 mb-1 font-weight-bold">
-                <v-icon class="me-1" size="small">mdi-star</v-icon>
-                Background Feature
-              </h5>
-              <div class="ms-2">
-                <div class="text-caption font-weight-bold text-warning mb-1">{{ selectedBackgroundInfo.feature.name
-                }}</div>
-                <div class="text-caption">{{ selectedBackgroundInfo.feature.description }}</div>
+            <!-- Feature -->
+            <div v-if="selectedBackgroundInfo.feature" class="mb-3 ms-3">
+              <div class="d-flex align-center mb-1">
+                <v-icon class="me-1" color="amber" size="small">mdi-star-circle-outline</v-icon>
+                <span class="text-caption font-weight-bold text-grey-darken-2">Background Feature</span>
+              </div>
+              <div class="ms-3">
+                <v-chip color="amber" size="small" variant="tonal" class="me-2 mb-1">
+                  {{ selectedBackgroundInfo.feature.name }}
+                </v-chip>
+                <span class="text-caption">{{ selectedBackgroundInfo.feature.description }}</span>
               </div>
             </div>
 
-            <div v-if="selectedBackgroundInfo.skillProficiencies?.length" class="mb-3">
-              <h5 class="text-caption text-blue-grey-darken-2 mb-1 font-weight-bold">
-                <v-icon class="me-1" size="small">mdi-account-cog</v-icon>
-                Skill Proficiencies
-              </h5>
-              <div class="ms-2">
-                <v-chip-group>
-                  <v-chip v-for="skill in selectedBackgroundInfo.skillProficiencies" :key="skill" class="mb-1"
-                    color="success" size="x-small" variant="flat">
+            <!-- Skill Proficiencies -->
+            <div v-if="selectedBackgroundInfo.skillProficiencies?.length" class="mb-3 ms-3">
+              <div class="d-flex align-center mb-1">
+                <v-icon class="me-1" color="success" size="small">mdi-account-cog</v-icon>
+                <span class="text-caption font-weight-bold text-grey-darken-2">Skill Proficiencies</span>
+              </div>
+              <div class="ms-3">
+                <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+                  <v-chip v-for="skill in selectedBackgroundInfo.skillProficiencies" :key="'skill-' + skill"
+                    color="success" size="small" variant="tonal">
                     {{ skill }}
                   </v-chip>
-                </v-chip-group>
+                </div>
               </div>
             </div>
 
-            <div v-if="selectedBackgroundInfo.toolProficiencies?.length" class="mb-3">
-              <h5 class="text-caption text-blue-grey-darken-2 mb-1 font-weight-bold">
-                <v-icon class="me-1" size="small">mdi-tools</v-icon>
-                Tool Proficiencies
-              </h5>
-              <div class="ms-2">
-                <v-chip-group>
-                  <v-chip v-for="tool in selectedBackgroundInfo.toolProficiencies" :key="tool" class="mb-1" color="info"
-                    size="x-small" variant="flat">
+            <!-- Tool Proficiencies -->
+            <div v-if="selectedBackgroundInfo.toolProficiencies?.length" class="mb-3 ms-3">
+              <div class="d-flex align-center mb-1">
+                <v-icon class="me-1" color="info" size="small">mdi-tools</v-icon>
+                <span class="text-caption font-weight-bold text-grey-darken-2">Tool Proficiencies</span>
+              </div>
+              <div class="ms-3">
+                <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+                  <v-chip v-for="tool in selectedBackgroundInfo.toolProficiencies" :key="'tool-' + tool" color="info"
+                    size="small" variant="tonal">
                     {{ tool }}
                   </v-chip>
-                </v-chip-group>
+                </div>
               </div>
             </div>
 
-            <div v-if="selectedBackgroundInfo.languages?.length || selectedBackgroundInfo.languageOptions" class="mb-3">
-              <h5 class="text-caption text-blue-grey-darken-2 mb-1 font-weight-bold">
-                <v-icon class="me-1" size="small">mdi-translate</v-icon>
-                Languages
-              </h5>
-              <div class="ms-2">
-                <v-chip-group v-if="selectedBackgroundInfo.languages?.length">
-                  <v-chip v-for="language in selectedBackgroundInfo.languages" :key="language" class="mb-1"
-                    color="purple" size="x-small" variant="flat">
+            <!-- Languages -->
+            <div v-if="selectedBackgroundInfo.languages?.length || selectedBackgroundInfo.languageOptions"
+              class="mb-3 ms-3">
+              <div class="d-flex align-center mb-1">
+                <v-icon class="me-1" color="purple" size="small">mdi-translate</v-icon>
+                <span class="text-caption font-weight-bold text-grey-darken-2">Languages</span>
+              </div>
+              <div class="ms-3">
+                <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+                  <v-chip v-for="language in selectedBackgroundInfo.languages || []" :key="'lang-' + language"
+                    color="purple" size="small" variant="tonal">
                     {{ language }}
                   </v-chip>
-                </v-chip-group>
-                <div v-if="selectedBackgroundInfo.languageOptions" class="text-caption">
+                  <v-chip
+                    v-if="selectedBackgroundInfo.languageOptions && selectedBackgroundInfo.languageOptions.from && Array.isArray(selectedBackgroundInfo.languageOptions.from)"
+                    v-for="option in selectedBackgroundInfo.languageOptions.from" :key="'langopt-' + option"
+                    color="purple" size="small" variant="tonal">
+                    {{ option }}
+                  </v-chip>
+                </div>
+                <div v-if="selectedBackgroundInfo.languageOptions" class="text-caption mt-1">
                   Choose {{ selectedBackgroundInfo.languageOptions.choose }} additional languages
                 </div>
+              </div>
+            </div>
+
+            <!-- Starting Equipment -->
+            <div v-if="selectedBackgroundInfo.startingEquipment && selectedBackgroundInfo.startingEquipment.length"
+              class="mb-3 ms-3">
+              <div class="d-flex align-center mb-1">
+                <v-icon class="me-1" color="red" size="small">mdi-package-variant</v-icon>
+                <span class="text-caption font-weight-bold text-grey-darken-2">Starting Equipment</span>
+              </div>
+              <div class="ms-3">
+                <v-chip v-for="item in selectedBackgroundInfo.startingEquipment" :key="'equip-' + (item.name || item)"
+                  size="small" variant="tonal" color="red" class="me-2 mb-1">
+                  {{ typeof item === 'object' && item.name ? item.name + (item.quantity && item.quantity > 1 ? ' x' +
+                    item.quantity : '') : item }}
+                </v-chip>
+              </div>
+            </div>
+
+            <!-- Feat (if present) -->
+            <div v-if="selectedBackgroundInfo.feat" class="mb-3 ms-3">
+              <div class="d-flex align-center mb-1">
+                <v-icon class="me-1" color="deep-purple" size="small">mdi-star-four-points</v-icon>
+                <span class="text-caption font-weight-bold text-grey-darken-2">Bonus Feat</span>
+              </div>
+              <div class="ms-3">
+                <v-chip color="deep-purple" size="small" variant="tonal" class="me-2 mb-1">
+                  {{ selectedBackgroundInfo.feat }}
+                </v-chip>
               </div>
             </div>
           </v-card-text>

@@ -57,7 +57,7 @@
           </v-card-text>
         </v-card>
 
-        <v-card v-else-if="selectedClassInfo" class="class-preview-card" variant="outlined">
+        <v-card v-else-if="selectedClassInfo" class="class-preview-card" variant="tonal">
           <v-card-title class="d-flex align-center justify-space-between py-2">
             <div class="d-flex align-center">
               <v-icon class="me-2" color="primary" size="small">mdi-sword-cross</v-icon>
@@ -65,8 +65,8 @@
             </div>
 
             <v-chip
-              v-for="(ability, idx) in (Array.isArray(selectedClassInfo.primaryAbility) ? selectedClassInfo.primaryAbility : [selectedClassInfo.primaryAbility])"
-              :key="ability + idx" size="small" variant="tonal" color="accent">
+              v-for="ability in (Array.isArray(selectedClassInfo.primaryAbility) ? selectedClassInfo.primaryAbility : [selectedClassInfo.primaryAbility])"
+              :key="'ability-' + ability" size="small" variant="tonal" color="accent">
               {{ ability }}
             </v-chip>
           </v-card-title>
@@ -112,12 +112,12 @@
               <div class="ms-5 mb-2">
                 <span class="chip-label">Weapons:</span>
                 <template v-if="selectedClassInfo.weaponProficiencies && selectedClassInfo.weaponProficiencies.length">
-                  <span class="d-flex flex-wrap align-center" style="gap: 4px; margin: 0% 5%;">
-                    <v-chip v-for="(wp, idx) in selectedClassInfo.weaponProficiencies" :key="'wp' + idx" size="small"
+                  <div style="display: flex; gap: 6px; flex-wrap: wrap; margin: 4px 0;">
+                    <v-chip v-for="wp in selectedClassInfo.weaponProficiencies" :key="'wp-' + wp" size="small"
                       variant="tonal" color="orange">
                       {{ wp }}
                     </v-chip>
-                  </span>
+                  </div>
                 </template>
                 <template v-else>
                   <span class="text-grey ms-2">None</span>
@@ -126,12 +126,12 @@
               <div class="ms-5 mb-2">
                 <span class="chip-label">Tools:</span>
                 <template v-if="selectedClassInfo.toolProficiencies && selectedClassInfo.toolProficiencies.length">
-                  <span class="d-flex flex-wrap align-center" style="gap: 4px; margin: 0% 5%;">
-                    <v-chip v-for="(tp, idx) in selectedClassInfo.toolProficiencies" :key="'tp' + idx" size="small"
+                  <div style="display: flex; gap: 6px; flex-wrap: wrap; margin: 4px 0;">
+                    <v-chip v-for="tp in selectedClassInfo.toolProficiencies" :key="'tp-' + tp" size="small"
                       variant="tonal" color="pink">
                       {{ tp }}
                     </v-chip>
-                  </span>
+                  </div>
                 </template>
                 <template v-else>
                   <span class="text-grey ms-2">None</span>
@@ -144,12 +144,12 @@
                   <span class="text-caption text-grey-darken-1"
                     style="font-size: 0.85em; font-weight: 400; margin-left: 12px;">(Choice of {{
                       selectedClassInfo.skillProficiencies.count }})</span>
-                  <span class="d-flex flex-wrap align-center" style="gap: 4px; margin: 0% 5%;">
-                    <v-chip v-for="(sk, idx) in selectedClassInfo.skillProficiencies.from" :key="'sk' + idx"
-                      size="small" variant="tonal" color="purple">
+                  <div style="display: flex; gap: 6px; flex-wrap: wrap; margin: 4px 0;">
+                    <v-chip v-for="sk in selectedClassInfo.skillProficiencies.from" :key="'sk-' + sk" size="small"
+                      variant="tonal" color="purple">
                       {{ sk }}
                     </v-chip>
-                  </span>
+                  </div>
                 </template>
                 <span v-else class="text-grey ms-2">None</span>
               </div>
@@ -210,12 +210,12 @@
               </div>
               <div class="ms-3">
                 <v-expansion-panels multiple elevation="0" class="feature-panel">
-                  <v-expansion-panel v-for="(feature, idx) in selectedClassInfo.features" :key="feature.name + idx">
+                  <v-expansion-panel v-for="feature in selectedClassInfo.features" :key="'feature-' + feature.name">
                     <v-expansion-panel-title>{{ feature.name }}</v-expansion-panel-title>
                     <v-expansion-panel-text>
                       <div v-if="Array.isArray(feature.desc)">
                         <ul class="feature-desc-list">
-                          <li v-for="(line, i) in feature.desc" :key="i">{{ line }}</li>
+                          <li v-for="line in feature.desc" :key="'feature-line-' + line">{{ line }}</li>
                         </ul>
                       </div>
                       <div v-else>
@@ -229,14 +229,16 @@
                         </div>
                         <div v-if="feature.feature_specific.enemy_type_options">
                           <div class="feature-choice-chips">
-                            <v-chip v-for="type in feature.feature_specific.enemy_type_options.from.options" :key="type"
-                              color="amber" size="small" class="ms-3 me-1 mb-1">{{ type }}</v-chip>
+                            <v-chip v-for="type in feature.feature_specific.enemy_type_options.from.options"
+                              :key="'enemy-' + type" color="amber" size="small" class="ms-3 me-1 mb-1">{{ type
+                              }}</v-chip>
                           </div>
                         </div>
                         <div v-if="feature.feature_specific.terrain_type_options">
                           <div class="feature-choice-chips">
                             <v-chip v-for="type in feature.feature_specific.terrain_type_options.from.options"
-                              :key="type" color="teal" size="small" class="ms-3 me-1 mb-1">{{ type }}</v-chip>
+                              :key="'terrain-' + type" color="teal" size="small" class="ms-3 me-1 mb-1">{{ type
+                              }}</v-chip>
                           </div>
                         </div>
                       </div>
@@ -254,7 +256,7 @@
                 <span class="text-caption font-weight-bold text-grey-darken-2">Starting Equipment</span>
               </div>
               <div class="ms-10">
-                <v-chip v-for="(item, idx) in selectedClassInfo.startingEquipment" :key="item.name || item || idx"
+                <v-chip v-for="item in selectedClassInfo.startingEquipment" :key="'equip-' + (item.name || item)"
                   size="small" variant="tonal" color="red" class="ms-2 me-1 mb-1">
                   {{ typeof item === 'object' && item.name ? item.name + (item.quantity && item.quantity > 1 ? ' x' +
                     item.quantity : '') : item }}
@@ -270,21 +272,23 @@
                 <span class="text-caption font-weight-bold text-grey-darken-2">Equipment Choices</span>
               </div>
               <div class="ms-10">
-                <div v-for="(opt, idx) in selectedClassInfo.startingEquipmentOptions" :key="'eqopt' + idx" class="mb-2">
+                <div v-for="opt in selectedClassInfo.startingEquipmentOptions"
+                  :key="'eqopt-' + (opt.desc || opt.choose || Math.random())" class="mb-2">
                   <template v-if="opt.from && Array.isArray(opt.from.options)">
-                    <span v-for="(choice, cidx) in opt.from.options" :key="'choice' + cidx">
+                    <span v-for="(choice, choiceIdx) in opt.from.options"
+                      :key="'choice-' + getEquipmentChoiceLabel(choice)">
                       <v-chip size="small" color="blue-grey" variant="tonal" class="me-1 mb-1">
                         {{ getEquipmentChoiceLabel(choice) }}
                       </v-chip>
-                      <span v-if="cidx < opt.from.options.length - 1" class="mx-1 text-grey-darken-1">or</span>
+                      <span v-if="choiceIdx < opt.from.options.length - 1" class="mx-1 text-grey-darken-1">or</span>
                     </span>
                   </template>
                   <template v-else-if="opt.options && Array.isArray(opt.options)">
-                    <span v-for="(choice, cidx) in opt.options" :key="'choice' + cidx">
+                    <span v-for="(choice, choiceIdx) in opt.options" :key="'choice-' + getEquipmentChoiceLabel(choice)">
                       <v-chip size="small" color="blue-grey" variant="tonal" class="me-1 mb-1">
                         {{ getEquipmentChoiceLabel(choice) }}
                       </v-chip>
-                      <span v-if="cidx < opt.options.length - 1" class="mx-1 text-grey-darken-1">or</span>
+                      <span v-if="choiceIdx < opt.options.length - 1" class="mx-1 text-grey-darken-1">or</span>
                     </span>
                   </template>
                   <template v-else>

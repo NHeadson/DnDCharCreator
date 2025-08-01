@@ -49,7 +49,7 @@
             </v-fade-transition>
           </v-card-text>
         </v-card>
-        <v-card v-else-if="selectedSpeciesInfo" class="species-preview-card" variant="outlined">
+        <v-card v-else-if="selectedSpeciesInfo" class="species-preview-card" variant="tonal">
           <v-card-title class="d-flex align-center justify-space-between py-2">
             <div class="d-flex align-center">
               <v-icon class="me-2" color="primary" size="small">mdi-dna</v-icon>

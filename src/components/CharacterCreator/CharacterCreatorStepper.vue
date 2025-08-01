@@ -12,6 +12,11 @@
     </v-alert>
 
     <v-stepper v-else v-model="localCurrentStep" elevation="2" :items="stepItems">
+      <template #next-text="{ next }">
+        <v-btn class="force-primary-btn" color="primary" variant="elevated" @click="next">
+          Next
+        </v-btn>
+      </template>
       <!-- Step 1: Character Information -->
       <template #item.1>
         <character-information :character="character" :character-data="characterData" />
@@ -37,43 +42,44 @@
         <character-summary :character="character" :character-data="characterData" />
       </template>
     </v-stepper>
+    <!-- Removed extra navigation buttons; only stepper navigation remains -->
   </div>
 </template>
 
 <script setup>
-  import { ref } from 'vue'
-  import AbilityScores from './steps/AbilityScores.vue'
-  import CharacterInformation from './steps/CharacterInformation.vue'
-  import CharacterSummary from './steps/CharacterSummary.vue'
-  import EquipmentAndGear from './steps/EquipmentAndGear.vue'
-  import FeaturesAndTraits from './steps/FeaturesAndTraits.vue'
+import { ref } from 'vue'
+import AbilityScores from './steps/AbilityScores.vue'
+import CharacterInformation from './steps/CharacterInformation.vue'
+import CharacterSummary from './steps/CharacterSummary.vue'
+import EquipmentAndGear from './steps/EquipmentAndGear.vue'
+import FeaturesAndTraits from './steps/FeaturesAndTraits.vue'
 
-  defineProps({
-    character: {
-      type: Object,
-      required: true,
-    },
-    characterData: {
-      type: Object,
-      required: true,
-    },
-    currentStep: {
-      type: Number,
-      default: 1,
-    },
-  })
+defineProps({
+  character: {
+    type: Object,
+    required: true,
+  },
+  characterData: {
+    type: Object,
+    required: true,
+  },
+  currentStep: {
+    type: Number,
+    default: 1,
+  },
+})
 
-  defineEmits(['update:current-step'])
+defineEmits(['update:current-step'])
 
-  const localCurrentStep = ref(1)
+const localCurrentStep = ref(1)
 
-  const stepItems = [
-    { title: 'Character', value: 1 },
-    { title: 'Abilities', value: 2 },
-    { title: 'Features', value: 3 },
-    { title: 'Equipment', value: 4 },
-    { title: 'Summary', value: 5 },
-  ]
+const stepItems = [
+  { title: 'Character', value: 1 },
+  { title: 'Abilities', value: 2 },
+  { title: 'Features', value: 3 },
+  { title: 'Equipment', value: 4 },
+  { title: 'Summary', value: 5 },
+]
 </script>
 
 <style scoped>
@@ -87,5 +93,12 @@
 
 .equipment-category-header-compact {
   padding: 8px 16px;
+}
+
+.force-primary-btn {
+  background-color: var(--v-theme-primary) !important;
+  color: #fff !important;
+  font-weight: 600;
+  font-size: 1.1rem;
 }
 </style>

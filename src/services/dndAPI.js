@@ -1163,10 +1163,25 @@ export class DnDAPI {
 
     try {
       const data = await this.apiRequest("/backgrounds");
+      console.log("[dndAPI] Raw /backgrounds API response:", data);
+      if (!data) {
+        console.error("[dndAPI] /backgrounds API returned null or undefined.");
+      } else if (!data.results) {
+        console.error(
+          "[dndAPI] /backgrounds API response missing 'results' property:",
+          data
+        );
+      } else if (Array.isArray(data.results) && data.results.length === 0) {
+        console.warn(
+          "[dndAPI] /backgrounds API response 'results' is an empty array:",
+          data
+        );
+      }
 
       if (data && data.results) {
         console.log(
-          `Loading background details for ${data.results.length} backgrounds...`
+          `[dndAPI] Loading background details for ${data.results.length} backgrounds...`,
+          data.results
         );
         const backgrounds = [];
 
@@ -1179,8 +1194,9 @@ export class DnDAPI {
             }
           } catch (error) {
             console.error(
-              `Failed to fetch details for background ${bg.index}:`,
-              error
+              `[dndAPI] Failed to fetch details for background ${bg.index}:`,
+              error,
+              bg
             );
             // Return basic data if details fetch fails
             backgrounds.push({
@@ -1191,14 +1207,20 @@ export class DnDAPI {
           }
         }
 
-        console.log(`Successfully loaded ${backgrounds.length} backgrounds`);
+        console.log(
+          `[dndAPI] Successfully loaded ${backgrounds.length} backgrounds`,
+          backgrounds
+        );
         this.setCachedData(cacheKey, backgrounds);
         return backgrounds;
       }
 
+      console.error(
+        "[dndAPI] Falling back to getFallbackBackgrounds due to missing/invalid API response."
+      );
       return this.getFallbackBackgrounds();
     } catch (error) {
-      console.error("Failed to fetch backgrounds:", error);
+      console.error("[dndAPI] Failed to fetch backgrounds:", error);
       return this.getFallbackBackgrounds();
     }
   }
@@ -1258,14 +1280,15 @@ export class DnDAPI {
           from: ["Common", "Celestial", "Abyssal"],
         },
         startingEquipment: [
-          { name: "Holy Symbol", quantity: 1 },
-          { name: "Prayer Book", quantity: 1 },
-          { name: "Incense", quantity: 5 },
+          { name: "Clothes, common", quantity: 1 },
+          { name: "Pouch", quantity: 1 },
         ],
+        startingEquipmentOptions: [],
         feature: {
           name: "Shelter of the Faithful",
-          description:
-            "You can perform religious ceremonies and gain shelter at temples.",
+          desc: [
+            "As an acolyte, you command the respect of those who share your faith, and you can perform the religious ceremonies of your deity.",
+          ],
         },
         isBasicData: true,
       },
@@ -1273,20 +1296,22 @@ export class DnDAPI {
         id: "criminal",
         name: "Criminal",
         description:
-          "You are an experienced criminal with a history of breaking the law.",
+          "You have a history of breaking the law and surviving by your wits.",
         skillProficiencies: ["Deception", "Stealth"],
-        toolProficiencies: ["Thieves' Tools", "Gaming Set"],
+        toolProficiencies: ["Thieves' Tools"],
         languages: [],
         languageOptions: null,
         startingEquipment: [
           { name: "Crowbar", quantity: 1 },
-          { name: "Dark Common Clothes", quantity: 1 },
-          { name: "Belt Pouch", quantity: 1 },
+          { name: "Clothes, common", quantity: 1 },
+          { name: "Pouch", quantity: 1 },
         ],
+        startingEquipmentOptions: [],
         feature: {
           name: "Criminal Contact",
-          description:
-            "You have a reliable contact in the criminal underworld.",
+          desc: [
+            "You have a reliable and trustworthy contact in the criminal underworld.",
+          ],
         },
         isBasicData: true,
       },
@@ -1294,40 +1319,89 @@ export class DnDAPI {
         id: "folk-hero",
         name: "Folk Hero",
         description:
-          "You come from a humble social rank, but you are destined for so much more.",
+          "You come from humble beginnings, but you are destined for greatness.",
         skillProficiencies: ["Animal Handling", "Survival"],
-        toolProficiencies: ["Artisan's Tools", "Vehicles (Land)"],
+        toolProficiencies: ["Smith's Tools", "Vehicles (Land)"],
         languages: [],
         languageOptions: null,
         startingEquipment: [
-          { name: "Artisan's Tools", quantity: 1 },
-          { name: "Shovel", quantity: 1 },
-          { name: "Common Clothes", quantity: 1 },
+          { name: "Plow", quantity: 1 },
+          { name: "Clothes, common", quantity: 1 },
+          { name: "Pouch", quantity: 1 },
         ],
+        startingEquipmentOptions: [],
         feature: {
           name: "Rustic Hospitality",
-          description:
-            "Common folk will provide you with simple accommodations and food.",
+          desc: [
+            "You can find a place to hide, rest, or recuperate among commoners.",
+          ],
         },
         isBasicData: true,
       },
       {
         id: "noble",
         name: "Noble",
-        description: "You understand wealth, power, and privilege from birth.",
+        description: "You understand wealth, power, and privilege.",
         skillProficiencies: ["History", "Persuasion"],
         toolProficiencies: ["Gaming Set"],
         languages: [],
         languageOptions: { choose: 1, from: ["Any"] },
         startingEquipment: [
-          { name: "Fine Clothes", quantity: 1 },
           { name: "Signet Ring", quantity: 1 },
-          { name: "Scroll of Pedigree", quantity: 1 },
+          { name: "Scroll of pedigree", quantity: 1 },
+          { name: "Clothes, fine", quantity: 1 },
+          { name: "Pouch", quantity: 1 },
         ],
+        startingEquipmentOptions: [],
         feature: {
           name: "Position of Privilege",
-          description:
-            "You are welcome in high society and can secure audiences with nobles.",
+          desc: ["People are inclined to think the best of you."],
+        },
+        isBasicData: true,
+      },
+      {
+        id: "sage",
+        name: "Sage",
+        description: "You spent years learning the lore of the multiverse.",
+        skillProficiencies: ["Arcana", "History"],
+        toolProficiencies: [],
+        languages: [],
+        languageOptions: { choose: 2, from: ["Any"] },
+        startingEquipment: [
+          { name: "Bottle of ink", quantity: 1 },
+          { name: "Quill", quantity: 1 },
+          { name: "Small knife", quantity: 1 },
+          { name: "Letter from a dead colleague", quantity: 1 },
+          { name: "Clothes, common", quantity: 1 },
+          { name: "Pouch", quantity: 1 },
+        ],
+        startingEquipmentOptions: [],
+        feature: {
+          name: "Researcher",
+          desc: [
+            "When you attempt to learn or recall a piece of lore, if you do not know that information, you often know where and from whom you can obtain it.",
+          ],
+        },
+        isBasicData: true,
+      },
+      {
+        id: "soldier",
+        name: "Soldier",
+        description: "You have fought in battles and survived.",
+        skillProficiencies: ["Athletics", "Intimidation"],
+        toolProficiencies: ["Gaming Set", "Vehicles (Land)"],
+        languages: [],
+        languageOptions: null,
+        startingEquipment: [
+          { name: "Insignia of rank", quantity: 1 },
+          { name: "Trophy from a fallen enemy", quantity: 1 },
+          { name: "Clothes, common", quantity: 1 },
+          { name: "Pouch", quantity: 1 },
+        ],
+        startingEquipmentOptions: [],
+        feature: {
+          name: "Military Rank",
+          desc: ["You have a military rank from your career as a soldier."],
         },
         isBasicData: true,
       },
@@ -1345,30 +1419,12 @@ export class DnDAPI {
           { name: "Scroll Case", quantity: 1 },
           { name: "Winter Blanket", quantity: 1 },
         ],
+        startingEquipmentOptions: [],
         feature: {
           name: "Discovery",
-          description:
+          desc: [
             "You discovered a unique and powerful secret about the cosmos.",
-        },
-        isBasicData: true,
-      },
-      {
-        id: "soldier",
-        name: "Soldier",
-        description: "You have a military rank from your career as a soldier.",
-        skillProficiencies: ["Athletics", "Intimidation"],
-        toolProficiencies: ["Vehicles (Land)", "Gaming Set"],
-        languages: [],
-        languageOptions: null,
-        startingEquipment: [
-          { name: "Insignia of Rank", quantity: 1 },
-          { name: "Common Clothes", quantity: 1 },
-          { name: "Belt Pouch", quantity: 1 },
-        ],
-        feature: {
-          name: "Military Rank",
-          description:
-            "You have a military rank that commands respect from soldiers.",
+          ],
         },
         isBasicData: true,
       },
@@ -1386,9 +1442,10 @@ export class DnDAPI {
           { name: "Costume", quantity: 1 },
           { name: "Belt Pouch", quantity: 1 },
         ],
+        startingEquipmentOptions: [],
         feature: {
           name: "By Popular Demand",
-          description: "You can perform in exchange for lodging and food.",
+          desc: ["You can perform in exchange for lodging and food."],
         },
         isBasicData: true,
       },
@@ -1406,30 +1463,10 @@ export class DnDAPI {
           { name: "Letter of Introduction", quantity: 1 },
           { name: "Traveler's Clothes", quantity: 1 },
         ],
+        startingEquipmentOptions: [],
         feature: {
           name: "Guild Membership",
-          description: "You have access to guild resources and lodging.",
-        },
-        isBasicData: true,
-      },
-      {
-        id: "sage",
-        name: "Sage",
-        description: "You spent years learning the lore of the multiverse.",
-        skillProficiencies: ["Arcana", "History"],
-        toolProficiencies: [],
-        languages: [],
-        languageOptions: { choose: 2, from: ["Any"] },
-        startingEquipment: [
-          { name: "Ink", quantity: 1 },
-          { name: "Quill", quantity: 1 },
-          { name: "Small Knife", quantity: 1 },
-          { name: "Letter from Dead Colleague", quantity: 1 },
-        ],
-        feature: {
-          name: "Researcher",
-          description:
-            "You know how to obtain information and where to find it.",
+          desc: ["You have access to guild resources and lodging."],
         },
         isBasicData: true,
       },
@@ -1446,10 +1483,12 @@ export class DnDAPI {
           { name: "Hunting Trap", quantity: 1 },
           { name: "Traveler's Clothes", quantity: 1 },
         ],
+        startingEquipmentOptions: [],
         feature: {
           name: "Wanderer",
-          description:
+          desc: [
             "You have an excellent memory for geography and can find food and shelter.",
+          ],
         },
         isBasicData: true,
       },

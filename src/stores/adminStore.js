@@ -1,5 +1,8 @@
 import { defineStore } from "pinia";
 import { ref, computed } from "vue";
+import { getFirestore, doc, getDoc } from "firebase/firestore";
+
+const db = getFirestore();
 
 export const useAdminStore = defineStore("admin", {
   state: () => ({
@@ -59,21 +62,45 @@ export const useAdminStore = defineStore("admin", {
         sessionStorage.removeItem("dnd_access_type");
       } catch (error) {}
     },
-    authenticateAccess(password) {
-      const ADMIN_PASSWORD = import.meta.env.VITE_ADMIN_PASSWORD;
-      const ACCESS_PASSWORD = import.meta.env.VITE_ACCESS_PASSWORD;
+    async fetchAdminPassword() {
+      try {
+        const docRef = doc(db, "config", "adminPassword");
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          return docSnap.data().value;
+        }
+        return null;
+      } catch (e) {
+        return null;
+      }
+    },
+    async fetchAccessPassword() {
+      try {
+        const docRef = doc(db, "config", "accessPassword");
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          return docSnap.data().value;
+        }
+        return null;
+      } catch (e) {
+        return null;
+      }
+    },
+    async authenticateAccess(password) {
       const ACCESS_SESSION_TIMEOUT = 2 * 60 * 60 * 1000;
-      if (!ADMIN_PASSWORD || !ACCESS_PASSWORD) {
+      const adminPassword = await this.fetchAdminPassword();
+      const accessPassword = await this.fetchAccessPassword();
+      if (!adminPassword || !accessPassword) {
         this.accessError = "Access control is not properly configured.";
         return false;
       }
-      if (password === ACCESS_PASSWORD || password === ADMIN_PASSWORD) {
+      if (password === accessPassword || password === adminPassword) {
         this.hasAccess = true;
         this.accessExpiresAt = Date.now() + ACCESS_SESSION_TIMEOUT;
         this.accessError = "";
         this.showAccessDialog = false;
         this.accessPasswordInput = "";
-        this.accessType = password === ADMIN_PASSWORD ? "admin" : "user";
+        this.accessType = password === adminPassword ? "admin" : "user";
         this.saveAccessState();
         return true;
       } else {
