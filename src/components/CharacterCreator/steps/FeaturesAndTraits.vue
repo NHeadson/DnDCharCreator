@@ -59,12 +59,12 @@
         <v-card-title class="text-h6">🪄 Spell Selection</v-card-title>
         <v-card-text>
           <div v-if="characterStore.isLoadingSpells">
-            <v-progress-circular indeterminate color="primary" /> Loading spells...
+            <v-progress-circular indeterminate color="accent" /> Loading spells...
           </div>
           <div v-else>
-            <v-tabs v-model="spellTab" grow class="mb-2">
-              <v-tab v-if="cantripsKnown > 0">Cantrips</v-tab>
-              <v-tab v-if="spellsKnown > 0">1st-level Spells</v-tab>
+            <v-tabs v-model="spellTab" grow class="mb-2" color="accent">
+              <v-tab v-if="cantripsKnown > 0" color="accent">Cantrips</v-tab>
+              <v-tab v-if="spellsKnown > 0" color="accent">1st-level Spells</v-tab>
             </v-tabs>
             <v-window v-model="spellTab">
               <!-- Cantrips Tab -->
@@ -84,7 +84,7 @@
                     <v-card class="mt-2" color="grey-lighten-4" variant="tonal">
                       <v-card-title>{{ selectedCantripDetailObj.name }}</v-card-title>
                       <v-card-text style="white-space: pre-line">{{ selectedCantripDetailObj.desc?.join('\n')
-                        }}</v-card-text>
+                      }}</v-card-text>
                     </v-card>
                   </div>
                 </v-expand-transition>
@@ -106,7 +106,7 @@
                     <v-card class="mt-2" color="grey-lighten-4" variant="tonal">
                       <v-card-title>{{ selectedSpellDetailObj.name }}</v-card-title>
                       <v-card-text style="white-space: pre-line">{{ selectedSpellDetailObj.desc?.join('\n')
-                        }}</v-card-text>
+                      }}</v-card-text>
                     </v-card>
                   </div>
                 </v-expand-transition>

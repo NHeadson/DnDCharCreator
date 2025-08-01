@@ -2,7 +2,7 @@
   <v-dialog v-model="showAccessDialog" max-width="500">
     <v-card class="access-control-card">
       <v-card-title class="d-flex align-center justify-center pa-6 bg-gradient">
-        <v-icon class="me-3" color="primary" size="large">mdi-shield-account</v-icon>
+        <v-icon class="me-3" color="accent" size="large">mdi-shield-account</v-icon>
         <span class="text-h5 font-weight-bold">Access Required</span>
       </v-card-title>
 
@@ -48,7 +48,8 @@
       </v-card-text>
 
       <v-card-actions class="pa-6 pt-0">
-        <v-btn class="flex-grow-1" prepend-icon="mdi-close" variant="outlined" @click="closeAccessDialog">
+        <v-btn class="flex-grow-1" prepend-icon="mdi-close" color="secondary" variant="outlined"
+          @click="closeAccessDialog">
           Cancel
         </v-btn>
         <v-btn color="primary" form="access-form" prepend-icon="mdi-check" class="flex-grow-1 ml-3" type="submit"

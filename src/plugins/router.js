@@ -11,7 +11,7 @@ import { useAdminStore } from "@/stores/adminStore";
 // Pages
 import CharacterForm from "@/pages/character-form.vue";
 import Characters from "@/pages/characters.vue";
-import ThemeDemo from "@/pages/theme-demo.vue";
+import Theme from "@/pages/theme.vue";
 
 const routes = [
   {
@@ -30,9 +30,9 @@ const routes = [
     component: Characters,
   },
   {
-    path: "/theme-demo",
-    name: "ThemeDemo",
-    component: ThemeDemo,
+    path: "/theme",
+    name: "Theme",
+    component: Theme,
   },
 ];
 

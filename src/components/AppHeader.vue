@@ -10,14 +10,21 @@
     <v-spacer />
 
     <div class="nav-buttons">
-      <v-btn class="theme-accent-bg nav-btn" rounded="lg" to="/" variant="flat">
+      <v-btn class="nav-btn me-2" :class="{ 'nav-btn--active': $route.path === '/' }" rounded="lg" to="/"
+        variant="flat">
         <v-icon class="me-2" icon="mdi-home" />
         Home
       </v-btn>
-
-      <v-btn class="theme-accent-bg nav-btn me-3" rounded="lg" to="/characters" variant="flat">
+      <v-btn class="nav-btn me-2" :class="{ 'nav-btn--active': $route.path.startsWith('/characters') }" rounded="lg"
+        to="/characters" variant="flat">
         <v-icon class="me-2" icon="mdi-account-group" />
         My Characters
+      </v-btn>
+      <v-btn v-if="adminStore.isAdminUser" class="nav-btn me-2"
+        :class="{ 'nav-btn--active': $route.path.startsWith('/theme') }" rounded="lg" to="/theme" variant="flat"
+        color="accent" title="Theme Settings">
+        <v-icon class="me-2" icon="mdi-palette" />
+        Theme
       </v-btn>
     </div>
   </v-app-bar>
@@ -25,11 +32,13 @@
 
 <script setup>
 import { computed } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import { useAdminStore } from '@/stores/adminStore'
 
 const router = useRouter()
+const $route = useRoute()
 const adminStore = useAdminStore()
+// Use isAuthenticated for admin-only UI
 const hasAccess = computed(() => adminStore.hasAccess)
 const requireAccessForCreation = () => {
   adminStore.requireAccess(() => {
@@ -40,6 +49,22 @@ const requireAccessForCreation = () => {
 
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Quattrocento:wght@400;700&display=swap');
+
+/* Nav button active state */
+.nav-btn {
+  background-color: var(--theme-secondary) !important;
+  color: var(--theme-on-secondary, #1A1A1A) !important;
+  opacity: 0.92;
+  transition: background 0.2s, color 0.2s, opacity 0.2s;
+}
+
+.nav-btn--active {
+  background-color: var(--theme-secondary-darken-2, #bfa22e) !important;
+  color: var(--theme-on-secondary, #1A1A1A) !important;
+  opacity: 1 !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
+  z-index: 1;
+}
 
 .text-decoration-none {
   text-decoration: none;

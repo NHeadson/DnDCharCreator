@@ -45,15 +45,15 @@
       <v-col class="pa-3" cols="12" sm="2">
         <v-row dense>
           <v-col cols="6">
-            <div class="stat-display">
+            <div class="stat-display stat-secondary-bg">
               <div class="stat-label">Level</div>
-              <div class="stat-value">1</div>
+              <div class="stat-value">{{ character.level ?? 1 }}</div>
             </div>
           </v-col>
           <v-col cols="6">
-            <div class="stat-display">
+            <div class="stat-display stat-secondary-bg">
               <div class="stat-label">XP</div>
-              <div class="stat-value">0</div>
+              <div class="stat-value">{{ character.xp ?? 0 }}</div>
             </div>
           </v-col>
         </v-row>
@@ -161,7 +161,7 @@ const uploadPortrait = () => {
   height: 100px;
   border-radius: 8px;
   overflow: hidden;
-  border: 2px solid rgba(var(--v-theme-primary), 0.2);
+  border: 2px solid var(--theme-accent);
   cursor: pointer;
   transition: all 0.3s ease;
   background: var(--v-theme-surface-variant);
@@ -262,17 +262,27 @@ const uploadPortrait = () => {
   }
 }
 
+
 /* Stat display styling */
 .stat-display {
   display: flex;
   flex-direction: column;
   align-items: center;
   padding: 8px;
-  border: 1px solid rgba(var(--v-theme-outline), 0.3);
+  border: 1px solid var(--theme-secondary);
   border-radius: 6px;
-  background-color: var(--v-theme-surface-variant);
   min-height: 56px;
   justify-content: center;
+}
+
+/* Use secondary color for background, and theme-on-secondary for text */
+.stat-secondary-bg {
+  background-color: var(--theme-secondary);
+}
+
+.stat-secondary-bg .stat-label,
+.stat-secondary-bg .stat-value {
+  color: #222;
 }
 
 .stat-label {

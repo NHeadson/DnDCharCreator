@@ -5,12 +5,12 @@
       <div class="page-header text-center mb-4">
         <h1 class="display-1 font-weight-bold text-primary mb-2">🎭 My Characters</h1>
         <p class="text-h6 text-grey-darken-1">Your collection of heroes and adventurers</p>
-        <v-divider class="mx-auto mt-4" style="max-width: 200px;" />
+        <v-divider class="mx-auto mt-4" style="max-width: 200px; border-color: var(--theme-accent);" />
       </div>
 
       <!-- Loading State -->
       <div v-if="loading" class="text-center pa-8">
-        <v-progress-circular class="mb-4" color="primary" indeterminate size="64" width="6" />
+        <v-progress-circular class="mb-4" color="accent" indeterminate size="64" width="6" />
         <h3 class="text-h5 text-grey-darken-1">Loading your characters...</h3>
       </div>
 
@@ -21,20 +21,20 @@
           <v-alert-title>Something went wrong</v-alert-title>
           {{ error }}
         </v-alert>
-        <v-btn color="primary" prepend-icon="mdi-refresh" variant="elevated" @click="loadCharacters">
+        <v-btn color="accent" prepend-icon="mdi-refresh" variant="elevated" @click="loadCharacters">
           Try Again
         </v-btn>
       </div>
 
       <!-- Empty State -->
       <div v-else-if="characters.length === 0" class="empty-state text-center pa-8">
-        <v-card class="mx-auto pa-8" color="primary-lighten-5" style="max-width: 600px;" variant="tonal">
+        <v-card class="mx-auto pa-8" style="max-width: 600px; background: var(--theme-card-bg);" variant="tonal">
           <v-icon class="mb-4" color="primary-lighten-1" size="80">mdi-sword-cross</v-icon>
           <h2 class="text-h4 font-weight-bold text-primary mb-3">Your Adventure Awaits</h2>
           <p class="text-h6 text-grey-darken-1 mb-6">
             You haven't created any characters yet. Start your legendary journey today!
           </p>
-          <v-btn v-if="hasAccess" class="create-character-btn" color="#822522" prepend-icon="mdi-plus-circle"
+          <v-btn v-if="hasAccess" class="create-character-btn" color="accent" prepend-icon="mdi-plus-circle"
             size="large" variant="elevated" @click="requireAccessForCreation">
             Create Your First Character
           </v-btn>
@@ -52,8 +52,8 @@
           <v-row align="center">
             <v-col cols="12" md="3">
               <div class="d-flex align-center">
-                <v-icon class="me-2" color="primary">mdi-information</v-icon>
-                <span class="text-subtitle-1">
+                <v-icon class="me-2" color="accent">mdi-information</v-icon>
+                <span class="text-subtitle-1 theme-secondary">
                   <strong>{{ characters.length }}</strong> character{{ characters.length !== 1 ? 's' : '' }} in your
                   collection
                 </span>
@@ -63,7 +63,7 @@
             <!-- Access Status -->
             <v-col class="text-center" cols="12" md="3">
               <div v-if="hasAccess" class="d-flex flex-column align-center">
-                <v-chip class="mb-1" color="primary" prepend-icon="mdi-account-check" size="small" variant="elevated">
+                <v-chip class="mb-1" color="accent" prepend-icon="mdi-account-check" size="small" variant="elevated">
                   Group Access Active
                 </v-chip>
                 <div class="text-caption text-grey">
@@ -81,7 +81,7 @@
             <v-col class="text-center" cols="12" md="3">
               <div v-if="isAuthenticated" class="d-flex flex-column align-center">
                 <div class="d-flex align-center justify-center mb-2">
-                  <v-chip class="me-2" color="success" prepend-icon="mdi-shield-check" size="small" variant="elevated">
+                  <v-chip class="me-2" color="accent" prepend-icon="mdi-shield-check" size="small" variant="elevated">
                     Admin Active
                   </v-chip>
                   <v-btn color="grey" size="small" title="Logout from admin" variant="text" @click="logout">
@@ -107,7 +107,7 @@
             </v-col>
 
             <v-col class="text-md-end" cols="12" md="3">
-              <v-btn v-if="hasAccess" class="text-white create-character-btn" color="primary" prepend-icon="mdi-plus"
+              <v-btn v-if="hasAccess" class="text-white create-character-btn" color="accent" prepend-icon="mdi-plus"
                 variant="elevated" @click="requireAccessForCreation">
                 Create New Character
               </v-btn>
@@ -122,7 +122,7 @@
         <!-- Character Cards -->
         <v-row>
           <v-col v-for="character in characters" :key="character.id" cols="12" lg="4" md="4" sm="6" xl="4">
-            <v-card class="character-card h-100" elevation="4" hover>
+            <v-card class="character-card h-100" elevation="4" hover :style="{ background: 'var(--theme-surface)' }">
               <!-- Character Header with Background -->
               <div class="character-header" :style="getCharacterHeaderStyle(character)">
                 <div class="character-overlay pa-3">
@@ -143,10 +143,17 @@
                   </div>
 
                   <div class="character-subtitle">
-                    <v-chip class="me-2" color="rgba(255,255,255,0.9)" dark size="small">
+                    <v-chip class="me-2"
+                      style="background: var(--theme-card-bg); color: var(--theme-text-primary); font-weight: 600;"
+                      size="small">
                       Level {{ character.level || 1 }}
                     </v-chip>
-                    <v-chip color="rgba(255,255,255,0.8)" dark size="small" variant="outlined">
+                    <v-chip class="me-2"
+                      style="background: var(--theme-card-bg); color: var(--theme-text-primary); font-weight: 600;"
+                      size="small">
+                      XP {{ character.xp || 0 }}
+                    </v-chip>
+                    <v-chip color="accent" text-color="black" size="small" variant="elevated">
                       {{ character.classDetails?.name || 'Unknown Class' }}
                     </v-chip>
                   </div>
@@ -159,7 +166,7 @@
                 <div class="character-info mb-3">
                   <v-row dense>
                     <v-col cols="6">
-                      <v-card class="pa-2 mb-2" color="blue-lighten-5" variant="tonal">
+                      <v-card class="pa-2 mb-2" style="background: var(--theme-surface);" variant="tonal">
                         <div class="d-flex align-center">
                           <v-icon class="me-2" color="blue-darken-2" size="small">mdi-dna</v-icon>
                           <div>
@@ -173,7 +180,7 @@
                           </div>
                         </div>
                       </v-card>
-                      <v-card class="pa-2" color="green-lighten-5" variant="tonal">
+                      <v-card class="pa-2" style="background: var(--theme-surface);" variant="tonal">
                         <div class="d-flex align-center">
                           <v-icon class="me-2" color="green-darken-2" size="small">mdi-book-open-page-variant</v-icon>
                           <div>
@@ -185,7 +192,7 @@
                       </v-card>
                     </v-col>
                     <v-col cols="6">
-                      <v-card class="pa-2 mb-2" color="purple-lighten-5" variant="tonal">
+                      <v-card class="pa-2 mb-2" style="background: var(--theme-surface);" variant="tonal">
                         <div class="d-flex align-center">
                           <v-icon class="me-2" color="purple-darken-2" size="small">mdi-compass</v-icon>
                           <div>
@@ -194,7 +201,7 @@
                           </div>
                         </div>
                       </v-card>
-                      <v-card class="pa-2" color="orange-lighten-5" variant="tonal">
+                      <v-card class="pa-2" style="background: var(--theme-surface);" variant="tonal">
                         <div class="d-flex align-center">
                           <v-icon class="me-2" color="orange-darken-2" size="small">mdi-star-outline</v-icon>
                           <div>
@@ -211,7 +218,7 @@
                 <div class="core-stats mb-3">
                   <v-row dense>
                     <v-col cols="3">
-                      <v-card class="pa-2 text-center" color="red-lighten-4" variant="tonal">
+                      <v-card class="pa-2 text-center" style="background: var(--theme-surface);" variant="tonal">
                         <v-icon class="mb-1" color="red-darken-2" size="small">mdi-heart</v-icon>
                         <div class="text-caption font-weight-bold">HP</div>
                         <div class="text-h6 font-weight-bold">
@@ -220,7 +227,7 @@
                       </v-card>
                     </v-col>
                     <v-col cols="3">
-                      <v-card class="pa-2 text-center" color="blue-lighten-4" variant="tonal">
+                      <v-card class="pa-2 text-center" style="background: var(--theme-surface);" variant="tonal">
                         <v-icon class="mb-1" color="blue-darken-2" size="small">mdi-shield</v-icon>
                         <div class="text-caption font-weight-bold">AC</div>
                         <div class="text-h6 font-weight-bold">
@@ -229,7 +236,7 @@
                       </v-card>
                     </v-col>
                     <v-col cols="3">
-                      <v-card class="pa-2 text-center" color="green-lighten-4" variant="tonal">
+                      <v-card class="pa-2 text-center" style="background: var(--theme-surface);" variant="tonal">
                         <v-icon class="mb-1" color="green-darken-2" size="small">mdi-run-fast</v-icon>
                         <div class="text-caption font-weight-bold">Speed</div>
                         <div class="text-h6 font-weight-bold">
@@ -238,7 +245,7 @@
                       </v-card>
                     </v-col>
                     <v-col cols="3">
-                      <v-card class="pa-2 text-center" color="purple-lighten-4" variant="tonal">
+                      <v-card class="pa-2 text-center" style="background: var(--theme-surface);" variant="tonal">
                         <v-icon class="mb-1" color="purple-darken-2" size="small">mdi-sword-cross</v-icon>
                         <div class="text-caption font-weight-bold">Init</div>
                         <div class="text-h6 font-weight-bold">
@@ -286,12 +293,12 @@
                     Notable Features
                   </h4>
                   <div class="d-flex flex-wrap" style="gap: 4px;">
-                    <v-chip v-for="feature in getNotableFeatures(character).slice(0, 3)" :key="feature"
-                      color="amber-lighten-4" size="x-small" variant="tonal">
+                    <v-chip v-for="feature in getNotableFeatures(character).slice(0, 3)" :key="feature" color="accent"
+                      size="x-small" variant="elevated">
                       {{ feature }}
                     </v-chip>
-                    <v-chip v-if="getNotableFeatures(character).length > 3" color="grey-lighten-2" size="x-small"
-                      variant="tonal">
+                    <v-chip v-if="getNotableFeatures(character).length > 3" color="accent" size="x-small"
+                      variant="outlined">
                       +{{ getNotableFeatures(character).length - 3 }} more
                     </v-chip>
                   </div>
@@ -306,7 +313,7 @@
                           <v-icon class="me-2" color="purple-darken-2" size="small">mdi-format-list-checks</v-icon>
                           <span class="text-caption font-weight-bold">Character Choices</span>
                           <v-spacer />
-                          <v-badge color="purple" :content="getCharacterChoicesCount(character)" inline />
+                          <v-badge color="accent" :content="getCharacterChoicesCount(character)" inline />
                         </div>
                       </v-expansion-panel-title>
                       <v-expansion-panel-text class="pa-2">
@@ -329,8 +336,8 @@
                               <v-icon class="me-2" color="purple-darken-2" size="x-small">mdi-translate</v-icon>
                               <span class="text-caption font-weight-bold text-purple-darken-2 me-2">Languages:</span>
                               <div class="d-flex flex-wrap" style="gap: 2px;">
-                                <v-chip v-for="lang in getCharacterLanguages(character)" :key="lang"
-                                  color="purple-lighten-4" size="x-small" variant="tonal">
+                                <v-chip v-for="lang in getCharacterLanguages(character)" :key="lang" color="accent"
+                                  size="x-small" variant="tonal">
                                   {{ lang }}
                                 </v-chip>
                               </div>
@@ -343,8 +350,8 @@
                               <v-icon class="me-2" color="orange-darken-2" size="x-small">mdi-tools</v-icon>
                               <span class="text-caption font-weight-bold text-orange-darken-2 me-2">Tools:</span>
                               <div class="d-flex flex-wrap" style="gap: 2px;">
-                                <v-chip v-for="tool in getCharacterTools(character)" :key="tool"
-                                  color="orange-lighten-4" size="x-small" variant="tonal">
+                                <v-chip v-for="tool in getCharacterTools(character)" :key="tool" color="accent"
+                                  size="x-small" variant="tonal">
                                   {{ tool }}
                                 </v-chip>
                               </div>
@@ -358,11 +365,11 @@
                               <span class="text-caption font-weight-bold text-green-darken-2 me-2">Skills:</span>
                               <div class="d-flex flex-wrap" style="gap: 2px;">
                                 <v-chip v-for="skill in getCharacterSkills(character).slice(0, 4)" :key="skill"
-                                  color="green-lighten-4" size="x-small" variant="tonal">
+                                  color="accent" size="x-small" variant="tonal">
                                   {{ skill }}
                                 </v-chip>
-                                <v-chip v-if="getCharacterSkills(character).length > 4" color="grey-lighten-2"
-                                  size="x-small" variant="tonal">
+                                <v-chip v-if="getCharacterSkills(character).length > 4" color="accent" size="x-small"
+                                  variant="outlined">
                                   +{{ getCharacterSkills(character).length - 4 }}
                                 </v-chip>
                               </div>

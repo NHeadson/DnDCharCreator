@@ -13,7 +13,7 @@
 
     <v-stepper v-else v-model="localCurrentStep" elevation="2" :items="stepItems">
       <template #next-text="{ next }">
-        <v-btn class="force-primary-btn" color="primary" variant="elevated" @click="next">
+        <v-btn class="force-primary-btn" color="accent" variant="elevated" @click="next">
           Next
         </v-btn>
       </template>

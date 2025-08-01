@@ -2,7 +2,7 @@
   <v-dialog v-model="showAccessDialog" max-width="500" persistent>
     <v-card class="admin-auth-card">
       <v-card-title class="d-flex align-center justify-center pa-6 bg-gradient">
-        <v-icon class="me-3" color="primary" size="large">mdi-shield-key</v-icon>
+        <v-icon class="me-3" color="accent" size="large">mdi-shield-key</v-icon>
         <span class="text-h5 font-weight-bold">Access Code Required</span>
       </v-card-title>
 
@@ -32,7 +32,8 @@
       </v-card-text>
 
       <v-card-actions class="pa-6 pt-0">
-        <v-btn class="flex-grow-1" prepend-icon="mdi-close" variant="outlined" @click="closeAccessDialog">
+        <v-btn class="flex-grow-1" prepend-icon="mdi-close" color="secondary" variant="outlined"
+          @click="closeAccessDialog">
           Cancel
         </v-btn>
         <v-btn class="flex-grow-1 ml-3" color="primary" :disabled="!accessPasswordInput.trim()" prepend-icon="mdi-key"

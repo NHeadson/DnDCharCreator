@@ -22,6 +22,6 @@ declare module 'vue-router/auto-routes' {
     '/api-debug': RouteRecordInfo<'/api-debug', '/api-debug', Record<never, never>, Record<never, never>>,
     '/character-form': RouteRecordInfo<'/character-form', '/character-form', Record<never, never>, Record<never, never>>,
     '/characters': RouteRecordInfo<'/characters', '/characters', Record<never, never>, Record<never, never>>,
-    '/theme-demo': RouteRecordInfo<'/theme-demo', '/theme-demo', Record<never, never>, Record<never, never>>,
+    '/theme': RouteRecordInfo<'/theme', '/theme', Record<never, never>, Record<never, never>>,
   }
 }
