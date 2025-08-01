@@ -122,9 +122,11 @@ export function useAdminAuth () {
     }
   }
 
+  // Expose isAuthenticated as a writable ref for external sync
+  // (This allows adminStore to set admin status)
   return {
     // State
-    isAuthenticated: computed(() => isSessionValid.value),
+    isAuthenticated,
     showAuthDialog,
     passwordInput,
     authError,

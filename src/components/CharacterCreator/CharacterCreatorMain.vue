@@ -4,6 +4,7 @@
     <h2 class="text-center mb-6">{{ isEditing ? 'Edit your Character' : 'Create your Character - Choose wisely...' }}
     </h2>
 
+    <!-- Only the parent page should render the access dialog. No access dialog here. -->
     <CharacterCreatorStepper :character="character" :character-data="characterStore" :current-step="currentStep"
       :is-editing="isEditing" @submit-character="handleSubmitCharacter" @update:character="updateCharacter"
       @update:current-step="currentStep = $event" />
@@ -11,11 +12,14 @@
 </template>
 
 <script setup>
-import { onMounted, provide, ref } from 'vue'
+import { onMounted, provide, ref, watch, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useCharacterStore } from '@/stores/characterStore'
 import { useFirestore } from '@/composables/useFirestore'
 import CharacterCreatorStepper from './CharacterCreatorStepper.vue'
+
+// Access control
+// Access control is handled by parent (character-form.vue). No dialog logic here.
 
 // Use the character Pinia store
 const characterStore = useCharacterStore()
@@ -99,6 +103,9 @@ onMounted(async () => {
     await loadExistingCharacter(editId)
   }
 })
+
+// Watch for access being granted after mount
+// No access dialog or access state watcher here. Only data loading and character logic.
 
 // Provide character data to all child components
 provide('characterData', {

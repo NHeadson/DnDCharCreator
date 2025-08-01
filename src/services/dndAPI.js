@@ -659,10 +659,10 @@ export class DnDAPI {
 
   // Get all D&D classes with full details
   async getClasses() {
-    const cacheKey = "all-classes";
+    const cacheKey = "all-classes-basic";
     const cached = this.getCachedData(cacheKey);
     if (cached) {
-      console.log("Using cached classes data");
+      console.log("Using cached basic classes data");
       return cached;
     }
 
@@ -678,17 +678,14 @@ export class DnDAPI {
         throw new Error("Invalid API response format");
       }
 
-      // Use getClassDetails for each class to ensure features and spellcasting are fetched
-      const classPromises = response.results.map((dndClass) =>
-        this.getClassDetails(dndClass.index)
-      );
+      // Only fetch basic info for initial load
+      const basicClasses = response.results.map((dndClass) => ({
+        index: dndClass.index,
+        name: dndClass.name,
+      }));
 
-      const classes = (await Promise.all(classPromises)).filter(
-        (cls) => cls !== null
-      );
-
-      this.setCachedData(cacheKey, classes);
-      return classes;
+      this.setCachedData(cacheKey, basicClasses);
+      return basicClasses;
     } catch (error) {
       console.error("Failed to fetch classes:", error);
       return this.getFallbackClasses();

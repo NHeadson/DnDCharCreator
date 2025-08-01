@@ -18,13 +18,11 @@ const routes = [
     path: "/",
     name: "Home",
     component: CharacterForm,
-    meta: { requiresAuth: true },
   },
   {
     path: "/character-form",
     name: "CharacterForm",
     component: CharacterForm,
-    meta: { requiresAuth: true },
   },
   {
     path: "/characters",
@@ -43,23 +41,6 @@ const router = createRouter({
   routes,
 });
 
-// Navigation guard to check authentication
-router.beforeEach((to, from, next) => {
-  const adminStore = useAdminStore();
-  if (to.meta.requiresAuth && !adminStore.isAccessValid) {
-    sessionStorage.setItem("redirectAfterLogin", to.fullPath);
-    adminStore.requireAccess(() => {
-      const redirectPath = sessionStorage.getItem("redirectAfterLogin");
-      if (redirectPath) {
-        sessionStorage.removeItem("redirectAfterLogin");
-        next(redirectPath);
-      } else {
-        next();
-      }
-    });
-    return;
-  }
-  next();
-});
+// Removed navigation guard; access control is now handled by the overlay dialog in the page/component.
 
 export default router;

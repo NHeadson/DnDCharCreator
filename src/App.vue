@@ -28,7 +28,6 @@ themeStore.loadSavedTheme()
 
     <AppFooter />
 
-    <!-- Global Access Control Dialog -->
-    <AccessControlDialog />
+    <!-- AccessControlDialog removed; only AdminAuthDialog in character-form.vue will be used for access control. -->
   </v-app>
 </template>

@@ -250,19 +250,29 @@
                   </v-row>
                 </div>
 
-                <!-- Primary Ability Scores (Top 3) -->
+                <!-- All 6 Ability Scores -->
                 <div class="primary-abilities mb-3">
                   <h4 class="text-subtitle-2 font-weight-bold mb-2 d-flex align-center">
                     <v-icon class="me-2" color="primary" size="small">mdi-chart-box</v-icon>
-                    Key Abilities
+                    Ability Scores
                   </h4>
                   <v-row dense>
-                    <v-col v-for="(ability, name) in getTopAbilities(character.abilityScores)" :key="name" cols="4">
+                    <v-col
+                      v-for="abilityKey in ['strength', 'dexterity', 'constitution', 'intelligence', 'wisdom', 'charisma']"
+                      :key="abilityKey" cols="4" md="2" sm="4">
                       <v-card class="pa-2 text-center" variant="outlined">
-                        <div class="text-caption font-weight-bold text-primary">{{ name.toUpperCase() }}</div>
-                        <div class="text-h6 font-weight-bold">{{ ability.score }}</div>
-                        <div class="text-caption" :class="ability.modifier >= 0 ? 'text-success' : 'text-error'">
-                          {{ ability.modifier >= 0 ? '+' : '' }}{{ ability.modifier }}
+                        <div class="text-caption font-weight-bold text-primary">
+                          {{ ({
+                            strength: 'STR', dexterity: 'DEX', constitution: 'CON', intelligence: 'INT', wisdom: 'WIS',
+                            charisma: 'CHA'
+                          })[abilityKey] }}
+                        </div>
+                        <div class="text-h6 font-weight-bold">{{ character.abilityScores?.[abilityKey]?.score ?? '-' }}
+                        </div>
+                        <div class="text-caption"
+                          :class="(character.abilityScores?.[abilityKey]?.modifier ?? 0) >= 0 ? 'text-success' : 'text-error'">
+                          {{ (character.abilityScores?.[abilityKey]?.modifier ?? 0) >= 0 ? '+' : '' }}{{
+                            character.abilityScores?.[abilityKey]?.modifier ?? 0 }}
                         </div>
                       </v-card>
                     </v-col>
@@ -425,27 +435,41 @@
 </template>
 
 <script setup>
-import { onMounted, ref, computed } from 'vue'
+import { onMounted, ref, computed, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import AdminAuthDialog from '@/components/AdminAuthDialog.vue'
 import ThemeSwitcher from '@/components/ThemeSwitcher.vue'
 import { useAdminStore } from '@/stores/adminStore'
-import { useUserStore } from '@/stores/userStore'
+import { useAdminAuth } from '@/composables/useAdminAuth'
 import { useFirestore } from '@/composables/useFirestore'
 
 const router = useRouter()
 const { getCharacters, deleteCharacter: deleteFromFirestore } = useFirestore()
 const adminStore = useAdminStore()
-const userStore = useUserStore()
+const {
+  isAuthenticated,
+  showAuthDialog,
+  requireAuth,
+  logout,
+  extendSession
+} = useAdminAuth()
+// Synchronize admin access between adminStore and useAdminAuth
+watch(
+  () => adminStore.accessType,
+  (newType) => {
+    if (newType === 'admin' && !isAuthenticated.value) {
+      isAuthenticated.value = true
+      extendSession()
+    } else if (newType !== 'admin' && isAuthenticated.value) {
+      logout()
+    }
+  },
+  { immediate: true }
+)
 const hasAccess = computed(() => adminStore.isAccessValid)
 const requireAccess = adminStore.requireAccess
 const extendAccessSession = adminStore.extendAccessSession
 const getRemainingAccessTime = adminStore.getRemainingAccessTime
-const requireAuth = userStore.requireAuth
-const isAuthenticated = computed(() => userStore.isSessionValid)
-const extendSession = userStore.extendSession
-const logout = userStore.logout
-const showAuthDialog = computed(() => userStore.showAuthDialog)
 
 // Reactive data
 const characters = ref([])
@@ -722,7 +746,6 @@ const loadCharacters = async () => {
 // Edit character - requires admin authentication
 const editCharacter = character => {
   requireAuth(() => {
-    // Navigate to character form with character ID as a query parameter
     router.push({
       name: 'CharacterForm',
       query: { edit: character.id },

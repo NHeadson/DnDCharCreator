@@ -16,10 +16,11 @@
                 <v-icon color="primary" size="small">mdi-shield-sword</v-icon>
               </template>
             </v-select>
-            <!-- Subclass Selection -->
-            <v-select v-if="props.character.class && availableSubclasses.length > 0" v-model="props.character.subclass"
-              class="mt-3" density="compact" item-title="name" item-value="index" :items="availableSubclasses"
-              :label="`Choose Your ${selectedClassInfo?.subclassType || 'Subclass'}`" variant="outlined">
+            <!-- Subclass Selection: Only show for classes that require it at level 1 -->
+            <v-select v-if="props.character.class && availableSubclasses.length > 0 && shouldShowSubclassSelector"
+              v-model="props.character.subclass" class="mt-3" density="compact" item-title="name" item-value="index"
+              :items="availableSubclasses" :label="`Choose Your ${selectedClassInfo?.subclassType || 'Subclass'}`"
+              variant="outlined">
               <template #prepend>
                 <v-icon color="secondary" size="small">mdi-star-circle</v-icon>
               </template>
@@ -302,11 +303,35 @@
 </template>
 
 <script setup>
+// Classes that require subclass selection at level 1
+const subclassAtLevel1 = ['warlock', 'cleric', 'sorcerer'];
+
+const shouldShowSubclassSelector = computed(() => {
+  if (!props.character.class) return false;
+  const classIndex = props.character.class.toLowerCase();
+  // Show if class requires subclass at level 1
+  if (subclassAtLevel1.includes(classIndex)) return true;
+  // Otherwise, only show if character.level >= 2 (Ranger, etc. at level 2 or 3)
+  return props.character.level && props.character.level >= 2;
+});
 import { ref, computed, watch } from 'vue'
 const props = defineProps({
   character: { type: Object, required: true },
   characterData: { type: Object, required: true }
 });
+import { dndAPI } from '@/services/dndAPI.js'
+
+// Watch for class selection and fetch details
+watch(() => props.character.class, async (newClass, oldClass) => {
+  if (newClass && newClass !== oldClass) {
+    props.character.classDetails = null;
+    // Always use lowercase index for API
+    const details = await dndAPI.getClassDetails(newClass.toLowerCase());
+    if (details) {
+      props.character.classDetails = { ...details, id: newClass };
+    }
+  }
+})
 
 const featureMessage = computed(() => {
   if (selectedClassInfo && selectedClassInfo.features === null) {
@@ -379,12 +404,16 @@ const selectedSubclassInfo = ref(null)
 const selectedClassInfo = computed(() => {
   // Use the detailed class info if available, otherwise fallback to classData
   if (!props.character.class) return null;
-  if (props.character.classDetails && props.character.classDetails.id === props.character.class) {
+  // Prefer classDetails if available
+  if (props.character.classDetails &&
+    (props.character.classDetails.id === props.character.class || props.character.classDetails.index === props.character.class.toLowerCase())) {
     return props.character.classDetails;
   }
+  // Fallback to classData (basic info)
   if (props.characterData?.classData) {
+    // Try to match by id or index
     return props.characterData.classData.find(
-      classInfo => classInfo.id === props.character.class,
+      classInfo => classInfo.id === props.character.class || classInfo.index === props.character.class.toLowerCase()
     );
   }
   return null;
