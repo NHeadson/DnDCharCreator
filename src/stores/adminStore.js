@@ -1,8 +1,7 @@
 import { defineStore } from "pinia";
 import { ref, computed } from "vue";
-import { getFirestore, doc, getDoc } from "firebase/firestore";
-
-const db = getFirestore();
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "@/main.js";
 
 export const useAdminStore = defineStore("admin", {
   state: () => ({

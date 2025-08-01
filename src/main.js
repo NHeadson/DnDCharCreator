@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { getAuth } from "firebase/auth";
+import { getAuth, signInAnonymously, onAuthStateChanged } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 import { createApp } from "vue";
 import { createPinia } from "pinia";
@@ -24,7 +24,12 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-const auth = getAuth(app);
+const auth = getAuth();
+onAuthStateChanged(auth, (user) => {
+  if (!user) {
+    signInAnonymously(auth);
+  }
+});
 
 export { app, auth, db };
 
