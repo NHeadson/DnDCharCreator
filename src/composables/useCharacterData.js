@@ -854,7 +854,7 @@ export function useCharacterData() {
   // Character state
   const character = reactive({
     name: "",
-    userName: "",
+    playerName: "",
     species: null,
     speciesDetails: null,
     speciesLineage: null, // Wood Elf, High Elf, etc.

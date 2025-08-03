@@ -1,9 +1,17 @@
 <template>
   <v-card flat class="ability-score-section-card">
     <v-card-text>
-      <ability-score-header :character="character" :character-data="characterData"
+
+      <AbilityScoreHeader :character="character" :character-data="characterData"
         :is-assigning-scores="isAssigningScores" @roll-ability-scores="rollAbilityScores"
         @set-standard-array="setStandardArray" />
+
+      <div class="d-flex justify-end mb-2">
+        <v-btn v-if="isAssigningScores || availableScores.length" color="secondary" variant="text" size="small"
+          @click="manualEntry">
+          Manual Entry
+        </v-btn>
+      </div>
 
       <div v-if="isAssigningScores && availableScores.length" class="mb-4 d-flex justify-center">
         <v-card class="rolled-array-card pa-3" variant="tonal" elevation="2">
@@ -21,16 +29,17 @@
         </v-card>
       </div>
 
-      <ability-score-grid :available-scores="availableScores" :character="character" :character-data="characterData"
+      <AbilityScoreGrid :available-scores="availableScores" :character="character" :character-data="characterData"
         :is-assigning-scores="isAssigningScores" @assign-score="assignScore" />
 
-      <ability-score-reference />
+      <AbilityScoreReference />
     </v-card-text>
   </v-card>
 </template>
 
+
 <script setup>
-import { ref } from 'vue'
+import { ref, toRefs } from 'vue'
 import AbilityScoreGrid from '../shared/AbilityScoreGrid.vue'
 import AbilityScoreHeader from '../shared/AbilityScoreHeader.vue'
 import AbilityScoreReference from '../shared/AbilityScoreReference.vue'
@@ -46,10 +55,21 @@ const props = defineProps({
   },
 })
 
+// Destructure for template access (but keep props for script logic)
+const { character, characterData } = toRefs(props)
+
 const isAssigningScores = ref(false)
 const availableScores = ref([])
 const assignedStats = ref({})
 const statKeys = ['strength', 'dexterity', 'constitution', 'intelligence', 'wisdom', 'charisma']
+
+// Allow user to clear arrays and enter scores manually
+const manualEntry = () => {
+  isAssigningScores.value = false
+  availableScores.value = []
+  assignedStats.value = {}
+  // Optionally clear assigned scores if desired, or leave as-is for manual editing
+}
 
 const setStandardArray = () => {
   isAssigningScores.value = true
@@ -57,7 +77,10 @@ const setStandardArray = () => {
   assignedStats.value = {}
   // Reset character scores
   statKeys.forEach(key => {
-    if (props.character[key] !== undefined) props.character[key] = null
+    if (character.value.abilityScores[key]) {
+      character.value.abilityScores[key].score = null
+      character.value.abilityScores[key].modifier = 0
+    }
   })
 }
 
@@ -74,7 +97,10 @@ const rollAbilityScores = () => {
   availableScores.value = rolls.sort((a, b) => b - a) // highest first
   assignedStats.value = {}
   statKeys.forEach(key => {
-    if (props.character[key] !== undefined) props.character[key] = null
+    if (character.value.abilityScores[key]) {
+      character.value.abilityScores[key].score = null
+      character.value.abilityScores[key].modifier = 0
+    }
   })
 }
 
@@ -90,26 +116,34 @@ const assignScore = statName => {
   if (!isAssigningScores.value) return
   // If a score is being dragged, assign it
   if (draggedScore !== null && draggedIdx !== null) {
-    props.character[statName] = draggedScore
+    if (!character.value.abilityScores[statName]) {
+      character.value.abilityScores[statName] = { score: 0, modifier: 0 }
+    }
+    character.value.abilityScores[statName].score = draggedScore
+    character.value.abilityScores[statName].modifier = Math.floor((draggedScore - 10) / 2)
     availableScores.value.splice(draggedIdx, 1)
     draggedScore = null
     draggedIdx = null
     // If all scores assigned, stop assigning
-    const allAssigned = statKeys.every(key => props.character[key] !== null && props.character[key] !== undefined)
+    const allAssigned = statKeys.every(key => character.value.abilityScores[key]?.score !== null && character.value.abilityScores[key]?.score !== undefined)
     if (allAssigned) {
       isAssigningScores.value = false
     }
     return
   }
   // Fallback: assign next available score (for click)
-  const alreadyAssigned = statKeys.map(key => props.character[key]).filter(v => v !== null && v !== undefined)
+  const alreadyAssigned = statKeys.map(key => character.value.abilityScores[key]?.score).filter(v => v !== null && v !== undefined)
   const nextScore = availableScores.value.find(score => !alreadyAssigned.includes(score))
   if (nextScore !== undefined) {
-    props.character[statName] = nextScore
+    if (!character.value.abilityScores[statName]) {
+      character.value.abilityScores[statName] = { score: 0, modifier: 0 }
+    }
+    character.value.abilityScores[statName].score = nextScore
+    character.value.abilityScores[statName].modifier = Math.floor((nextScore - 10) / 2)
     const idx = availableScores.value.indexOf(nextScore)
     if (idx !== -1) availableScores.value.splice(idx, 1)
   }
-  const allAssigned = statKeys.every(key => props.character[key] !== null && props.character[key] !== undefined)
+  const allAssigned = statKeys.every(key => character.value.abilityScores[key]?.score !== null && character.value.abilityScores[key]?.score !== undefined)
   if (allAssigned) {
     isAssigningScores.value = false
   }
@@ -163,8 +197,13 @@ const assignScore = statName => {
   font-weight: 600;
   letter-spacing: 0.5px;
   cursor: grab;
-  border-radius: 10px;
+  border-radius: 16px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.10);
-  padding: 10px 18px;
+  width: 96px;
+  height: 96px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
 }
 </style>

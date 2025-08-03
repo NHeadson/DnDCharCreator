@@ -6,7 +6,7 @@ export const useCharacterStore = defineStore("character", {
   state: () => ({
     character: {
       name: "",
-      userName: "",
+      playerName: "",
       species: null,
       speciesDetails: null,
       speciesLineage: null,

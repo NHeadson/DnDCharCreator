@@ -1,30 +1,44 @@
 <template>
   <v-container class="ability-score-grid-container" fluid>
     <v-row class="justify-center">
-      <v-col v-for="stat in stats" :key="stat.name" cols="12" md="4" sm="6" class="d-flex justify-center">
-        <v-card :class="['ability-card-enhanced', 'pa-4', 'd-flex', 'flex-column', 'align-center']" variant="outlined">
+      <v-col v-for="stat in stats" :key="stat.name" cols="4" class="d-flex justify-center">
+        <v-card :class="['ability-card-enhanced', 'd-flex', 'flex-column', 'align-center']" variant="outlined">
           <v-card-title class="d-flex justify-space-between align-center mb-2">
             <span class="stat-title">{{ stat.name }}</span>
-            <v-chip :color="getModifierColor(character[stat.key])" size="small">
-              {{ getAbilityModifier(character[stat.key]) }}
+            <v-chip class="ml-2" :color="getModifierColor(character.abilityScores[stat.key]?.score)" size="small">
+              {{ getAbilityModifier(character.abilityScores[stat.key]?.score) }}
             </v-chip>
           </v-card-title>
           <v-card-text class="text-center px-0">
-            <v-btn-group rounded="lg" class="justify-center">
-              <v-btn :disabled="!isAssigningScores || character[stat.key] <= 3" size="small" class="score-adjust-btn"
-                @click="character[stat.key]--">
-                -
-              </v-btn>
-              <v-btn :color="isAssigningScores ? 'primary' : undefined" :disabled="!isAssigningScores" size="large"
-                variant="flat" class="ability-score-btn mx-2" @click="$emit('assign-score', stat.key)" @dragover.prevent
-                @drop="$emit('assign-score', stat.key)">
-                {{ character[stat.key] || '—' }}
-              </v-btn>
-              <v-btn :disabled="!isAssigningScores || character[stat.key] >= 20" size="small" class="score-adjust-btn"
-                @click="character[stat.key]++">
-                +
-              </v-btn>
-            </v-btn-group>
+            <v-text-field v-if="!isAssigningScores" :model-value="character.abilityScores[stat.key]?.score || ''"
+              @update:model-value="(val) => {
+                // Ensure the ability score object exists
+                if (!character.abilityScores[stat.key]) {
+                  character.abilityScores[stat.key] = { score: 10, modifier: 0 };
+                }
+                character.abilityScores[stat.key].score = val;
+              }" type="text" class="ability-score-input" hide-details inputmode="numeric" pattern="^(1[0-9]|20|[1-9])$"
+              @input="(e) => {
+                // Ensure the ability score object exists
+                if (!character.abilityScores[stat.key]) {
+                  character.abilityScores[stat.key] = { score: 10, modifier: 0 };
+                }
+                let val = e.target.value.replace(/[^0-9]/g, '');
+                if (val === '' || isNaN(Number(val))) {
+                  character.abilityScores[stat.key].score = '';
+                } else {
+                  val = Number(val);
+                  if (val < 1) val = 1;
+                  if (val > 20) val = 20;
+                  character.abilityScores[stat.key].score = val;
+                  character.abilityScores[stat.key].modifier = Math.floor((val - 10) / 2);
+                }
+              }" />
+            <v-btn v-else :color="isAssigningScores ? 'primary' : undefined" :disabled="!isAssigningScores" size="large"
+              variant="flat" class="ability-score-btn mx-2" @click="$emit('assign-score', stat.key)" @dragover.prevent
+              @drop="$emit('assign-score', stat.key)">
+              {{ character.abilityScores[stat.key]?.score || '—' }}
+            </v-btn>
           </v-card-text>
         </v-card>
       </v-col>
@@ -67,16 +81,24 @@ const stats = [
   { name: 'Charisma', key: 'charisma' },
 ]
 
+// Always treat ability score as a number for calculations
+const getNumericScore = (score) => {
+  if (score === '' || score === null || score === undefined) return null;
+  return typeof score === 'number' ? score : Number(score);
+}
+
 const getAbilityModifier = score => {
-  if (!score) return '—'
-  const modifier = Math.floor((score - 10) / 2)
-  return modifier >= 0 ? `+${modifier}` : modifier.toString()
+  const num = getNumericScore(score);
+  if (num === null || isNaN(num)) return '—';
+  const modifier = Math.floor((num - 10) / 2);
+  return modifier >= 0 ? `+${modifier}` : modifier.toString();
 }
 
 const getModifierColor = score => {
-  if (!score) return 'grey'
-  const modifier = Math.floor((score - 10) / 2)
-  return modifier >= 0 ? 'success' : 'error'
+  const num = getNumericScore(score);
+  if (num === null || isNaN(num)) return 'grey';
+  const modifier = Math.floor((num - 10) / 2);
+  return modifier >= 0 ? 'success' : 'error';
 }
 </script>
 
@@ -90,13 +112,14 @@ const getModifierColor = score => {
   transition: all 0.3s ease;
   cursor: pointer;
   border-radius: 16px;
-  min-height: 140px;
+  width: 70%;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
   margin-bottom: 18px;
+  padding: 10%;
+  box-sizing: border-box;
 }
 
 .stat-title {
@@ -119,12 +142,29 @@ const getModifierColor = score => {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
-.score-adjust-btn {
-  min-width: 40px;
-  min-height: 40px;
-  font-size: 1.5rem;
-  font-weight: 500;
-  border-radius: 8px;
-  margin: 0 2px;
+.ability-score-input {
+  min-width: 72px;
+  min-height: 72px;
+  font-size: 2rem;
+  font-weight: 600;
+  border-radius: 12px;
+  padding: 18px 0;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+/* Hide number input spinners for all browsers */
+.ability-score-input input[type=number]::-webkit-inner-spin-button,
+.ability-score-input input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.ability-score-input input[type=number] {
+  -moz-appearance: textfield;
+  appearance: textfield;
 }
 </style>

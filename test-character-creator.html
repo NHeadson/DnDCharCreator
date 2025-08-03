@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0" />
+    <title>Character Creator Test</title>
+    <script>
+      // Simple test to check the character creator
+      window.onload = function () {
+        console.log('Testing character creator navigation...');
+
+        // Try to navigate to character form
+        fetch('http://localhost:3000/character-form')
+          .then((response) => {
+            console.log('Character form status:', response.status);
+            if (response.ok) {
+              console.log('✅ Character form page loads successfully');
+            } else {
+              console.log('❌ Character form page failed to load');
+            }
+          })
+          .catch((error) => {
+            console.log('❌ Error accessing character form:', error);
+          });
+      };
+    </script>
+  </head>
+  <body>
+    <h1>Character Creator Test</h1>
+    <p>Check the console for test results...</p>
+    <p>
+      <a
+        href="http://localhost:3000/character-form"
+        target="_blank"
+        >Open Character Form</a
+      >
+    </p>
+  </body>
+</html>

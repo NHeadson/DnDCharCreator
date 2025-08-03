@@ -48,11 +48,7 @@
       </v-card-text>
 
       <v-card-actions class="pa-6 pt-0">
-        <v-btn class="flex-grow-1" prepend-icon="mdi-close" color="secondary" variant="outlined"
-          @click="closeAccessDialog">
-          Cancel
-        </v-btn>
-        <v-btn color="primary" form="access-form" prepend-icon="mdi-check" class="flex-grow-1 ml-3" type="submit"
+        <v-btn color="primary" form="access-form" prepend-icon="mdi-check" class="flex-grow-1" type="submit"
           :disabled="!accessPasswordInput.trim()" variant="elevated">
           Enter
         </v-btn>

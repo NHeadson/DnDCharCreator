@@ -9,7 +9,7 @@
           </v-card-title>
           <v-card-text class="pt-2 pb-3">
             <v-select v-model="props.character.class" density="compact" :error="!!props.characterData?.classError"
-              item-title="name" :error-messages="props.characterData?.classError" item-value="id"
+              item-title="name" :error-messages="props.characterData?.classError" item-value="index"
               :items="props.characterData?.classData || []" label="Choose Your Class"
               :loading="props.characterData?.isLoadingClasses" variant="outlined">
               <template #prepend>

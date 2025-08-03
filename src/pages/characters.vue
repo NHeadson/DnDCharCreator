@@ -137,7 +137,7 @@
                         {{ character.name || 'Unnamed Character' }}
                       </h3>
                       <p class="text-subtitle-2 text-white opacity-90 mb-0">
-                        {{ character.userName || 'Unknown Player' }}
+                        {{ character.playerName || 'Unknown Player' }}
                       </p>
                     </div>
                   </div>
@@ -162,60 +162,8 @@
 
               <!-- Character Details -->
               <v-card-text class="pa-3">
-                <!-- Basic Info Row -->
-                <div class="character-info mb-3">
-                  <v-row dense>
-                    <v-col cols="6">
-                      <v-card class="pa-2 mb-2" style="background: var(--theme-surface);" variant="tonal">
-                        <div class="d-flex align-center">
-                          <v-icon class="me-2" color="blue-darken-2" size="small">mdi-dna</v-icon>
-                          <div>
-                            <div class="text-caption text-blue-darken-2 font-weight-bold">Species</div>
-                            <div class="text-body-2 font-weight-medium">
-                              {{ character.speciesDetails?.name || 'Unknown' }}
-                              <span v-if="getLineageName(character)" class="text-caption text-grey ms-1">
-                                ({{ getLineageName(character) }})
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-                      </v-card>
-                      <v-card class="pa-2" style="background: var(--theme-surface);" variant="tonal">
-                        <div class="d-flex align-center">
-                          <v-icon class="me-2" color="green-darken-2" size="small">mdi-book-open-page-variant</v-icon>
-                          <div>
-                            <div class="text-caption text-green-darken-2 font-weight-bold">Background</div>
-                            <div class="text-body-2 font-weight-medium">{{ character.backgroundDetails?.name ||
-                              'Unknown' }}</div>
-                          </div>
-                        </div>
-                      </v-card>
-                    </v-col>
-                    <v-col cols="6">
-                      <v-card class="pa-2 mb-2" style="background: var(--theme-surface);" variant="tonal">
-                        <div class="d-flex align-center">
-                          <v-icon class="me-2" color="purple-darken-2" size="small">mdi-compass</v-icon>
-                          <div>
-                            <div class="text-caption text-purple-darken-2 font-weight-bold">Alignment</div>
-                            <div class="text-body-2 font-weight-medium">{{ character.alignment || 'Neutral' }}</div>
-                          </div>
-                        </div>
-                      </v-card>
-                      <v-card class="pa-2" style="background: var(--theme-surface);" variant="tonal">
-                        <div class="d-flex align-center">
-                          <v-icon class="me-2" color="orange-darken-2" size="small">mdi-star-outline</v-icon>
-                          <div>
-                            <div class="text-caption text-orange-darken-2 font-weight-bold">Proficiency</div>
-                            <div class="text-body-2 font-weight-medium">+{{ Math.ceil(character.level / 4) + 1 }}</div>
-                          </div>
-                        </div>
-                      </v-card>
-                    </v-col>
-                  </v-row>
-                </div>
-
-                <!-- Core Stats Row -->
-                <div class="core-stats mb-3">
+                <!-- Essential Combat Stats (Always Visible) -->
+                <div class="essential-stats mb-3">
                   <v-row dense>
                     <v-col cols="3">
                       <v-card class="pa-2 text-center" style="background: var(--theme-surface);" variant="tonal">
@@ -257,8 +205,43 @@
                   </v-row>
                 </div>
 
-                <!-- All 6 Ability Scores -->
-                <div class="primary-abilities mb-3">
+                <!-- Core Character Info (Always Visible) -->
+                <div class="core-character-info mb-3">
+                  <v-row dense>
+                    <v-col cols="6">
+                      <div class="d-flex align-center mb-2">
+                        <v-icon class="me-2" color="blue-darken-2" size="small">mdi-dna</v-icon>
+                        <span class="text-caption font-weight-bold text-blue-darken-2 me-2">Species:</span>
+                        <span class="text-body-2 font-weight-medium">
+                          {{ character.speciesDetails?.name || 'Unknown' }}
+                          <span v-if="getLineageName(character)" class="text-caption text-grey ms-1">
+                            ({{ getLineageName(character) }})
+                          </span>
+                        </span>
+                      </div>
+                      <div class="d-flex align-center">
+                        <v-icon class="me-2" color="green-darken-2" size="small">mdi-book-open-page-variant</v-icon>
+                        <span class="text-caption font-weight-bold text-green-darken-2 me-2">Background:</span>
+                        <span class="text-body-2 font-weight-medium">{{ getBackgroundName(character) }}</span>
+                      </div>
+                    </v-col>
+                    <v-col cols="6">
+                      <div class="d-flex align-center mb-2">
+                        <v-icon class="me-2" color="purple-darken-2" size="small">mdi-compass</v-icon>
+                        <span class="text-caption font-weight-bold text-purple-darken-2 me-2">Alignment:</span>
+                        <span class="text-body-2 font-weight-medium">{{ character.alignment || 'Neutral' }}</span>
+                      </div>
+                      <div class="d-flex align-center">
+                        <v-icon class="me-2" color="orange-darken-2" size="small">mdi-star-outline</v-icon>
+                        <span class="text-caption font-weight-bold text-orange-darken-2 me-2">Proficiency:</span>
+                        <span class="text-body-2 font-weight-medium">+{{ Math.ceil(character.level / 4) + 1 }}</span>
+                      </div>
+                    </v-col>
+                  </v-row>
+                </div>
+
+                <!-- Ability Scores (Always Visible) -->
+                <div class="ability-scores-main mb-3">
                   <h4 class="text-subtitle-2 font-weight-bold mb-2 d-flex align-center">
                     <v-icon class="me-2" color="primary" size="small">mdi-chart-box</v-icon>
                     Ability Scores
@@ -266,8 +249,8 @@
                   <v-row dense>
                     <v-col
                       v-for="abilityKey in ['strength', 'dexterity', 'constitution', 'intelligence', 'wisdom', 'charisma']"
-                      :key="abilityKey" cols="4" md="2" sm="4">
-                      <v-card class="pa-2 text-center" variant="outlined">
+                      :key="abilityKey" cols="4" lg="2" md="2" sm="4">
+                      <v-card class="pa-2 text-center ability-score-card-main" variant="outlined">
                         <div class="text-caption font-weight-bold text-primary">
                           {{ ({
                             strength: 'STR', dexterity: 'DEX', constitution: 'CON', intelligence: 'INT', wisdom: 'WIS',
@@ -286,100 +269,80 @@
                   </v-row>
                 </div>
 
-                <!-- Notable Features -->
-                <div v-if="getNotableFeatures(character).length > 0" class="notable-features mb-3">
-                  <h4 class="text-subtitle-2 font-weight-bold mb-2 d-flex align-center">
-                    <v-icon class="me-2" color="amber-darken-2" size="small">mdi-star-circle</v-icon>
-                    Notable Features
-                  </h4>
-                  <div class="d-flex flex-wrap" style="gap: 4px;">
-                    <v-chip v-for="feature in getNotableFeatures(character).slice(0, 3)" :key="feature" color="accent"
-                      size="x-small" variant="elevated">
-                      {{ feature }}
-                    </v-chip>
-                    <v-chip v-if="getNotableFeatures(character).length > 3" color="accent" size="x-small"
-                      variant="outlined">
-                      +{{ getNotableFeatures(character).length - 3 }} more
-                    </v-chip>
-                  </div>
-                </div>
+                <!-- Show More Details Expansion -->
+                <v-expansion-panels class="character-details-expansion" variant="accordion">
+                  <v-expansion-panel>
+                    <v-expansion-panel-title class="pa-2">
+                      <div class="d-flex align-center w-100">
+                        <v-icon class="me-2" color="primary" size="small">mdi-information-outline</v-icon>
+                        <span class="text-subtitle-2 font-weight-bold">Show More Details</span>
+                        <v-spacer />
+                        <v-chip color="primary" size="x-small" variant="tonal">
+                          {{ getCharacterDetailsCount(character) }} items
+                        </v-chip>
+                      </div>
+                    </v-expansion-panel-title>
+                    <v-expansion-panel-text class="pa-3">
 
-                <!-- Character Choices & Features Dropdown -->
-                <div v-if="getCharacterChoicesCount(character) > 0" class="character-choices mb-3">
-                  <v-expansion-panels class="character-choices-panels" variant="accordion">
-                    <v-expansion-panel>
-                      <v-expansion-panel-title class="pa-2">
-                        <div class="d-flex align-center w-100">
-                          <v-icon class="me-2" color="purple-darken-2" size="small">mdi-format-list-checks</v-icon>
-                          <span class="text-caption font-weight-bold">Character Choices</span>
-                          <v-spacer />
-                          <v-badge color="accent" :content="getCharacterChoicesCount(character)" inline />
+                      <!-- Notable Features -->
+                      <div v-if="getNotableFeatures(character).length > 0" class="notable-features mb-4">
+                        <h4 class="text-subtitle-2 font-weight-bold mb-2 d-flex align-center">
+                          <v-icon class="me-2" color="amber-darken-2" size="small">mdi-star-circle</v-icon>
+                          Notable Features
+                        </h4>
+                        <div class="d-flex flex-wrap" style="gap: 4px;">
+                          <v-chip v-for="feature in getNotableFeatures(character)" :key="feature" color="accent"
+                            size="small" variant="elevated">
+                            {{ feature }}
+                          </v-chip>
                         </div>
-                      </v-expansion-panel-title>
-                      <v-expansion-panel-text class="pa-2">
-                        <v-row dense>
-                          <!-- Lineage/Subrace -->
-                          <v-col v-if="character.speciesLineage && character.speciesDetails?.lineages" class="mb-1"
-                            cols="12">
-                            <div class="d-flex align-center">
-                              <v-icon class="me-2" color="blue-darken-2" size="x-small">mdi-dna</v-icon>
-                              <span class="text-caption font-weight-bold text-blue-darken-2 me-2">Lineage:</span>
-                              <v-chip color="blue-lighten-4" size="x-small" variant="tonal">
-                                {{ getLineageName(character) }}
-                              </v-chip>
-                            </div>
-                          </v-col>
+                      </div>
 
-                          <!-- Languages -->
-                          <v-col v-if="getCharacterLanguages(character).length > 0" class="mb-1" cols="12">
-                            <div class="d-flex align-center flex-wrap">
-                              <v-icon class="me-2" color="purple-darken-2" size="x-small">mdi-translate</v-icon>
-                              <span class="text-caption font-weight-bold text-purple-darken-2 me-2">Languages:</span>
-                              <div class="d-flex flex-wrap" style="gap: 2px;">
-                                <v-chip v-for="lang in getCharacterLanguages(character)" :key="lang" color="accent"
-                                  size="x-small" variant="tonal">
-                                  {{ lang }}
-                                </v-chip>
-                              </div>
-                            </div>
-                          </v-col>
+                      <!-- Skills -->
+                      <div v-if="getCharacterSkills(character).length > 0" class="character-skills mb-4">
+                        <h4 class="text-subtitle-2 font-weight-bold mb-2 d-flex align-center">
+                          <v-icon class="me-2" color="green-darken-2" size="small">mdi-brain</v-icon>
+                          Skill Proficiencies
+                        </h4>
+                        <div class="d-flex flex-wrap" style="gap: 4px;">
+                          <v-chip v-for="skill in getCharacterSkills(character)" :key="skill" color="green-lighten-4"
+                            size="small" variant="tonal">
+                            {{ skill }}
+                          </v-chip>
+                        </div>
+                      </div>
 
-                          <!-- Tools -->
-                          <v-col v-if="getCharacterTools(character).length > 0" class="mb-1" cols="12">
-                            <div class="d-flex align-center flex-wrap">
-                              <v-icon class="me-2" color="orange-darken-2" size="x-small">mdi-tools</v-icon>
-                              <span class="text-caption font-weight-bold text-orange-darken-2 me-2">Tools:</span>
-                              <div class="d-flex flex-wrap" style="gap: 2px;">
-                                <v-chip v-for="tool in getCharacterTools(character)" :key="tool" color="accent"
-                                  size="x-small" variant="tonal">
-                                  {{ tool }}
-                                </v-chip>
-                              </div>
-                            </div>
-                          </v-col>
+                      <!-- Languages -->
+                      <div v-if="getCharacterLanguages(character).length > 0" class="character-languages mb-4">
+                        <h4 class="text-subtitle-2 font-weight-bold mb-2 d-flex align-center">
+                          <v-icon class="me-2" color="purple-darken-2" size="small">mdi-translate</v-icon>
+                          Languages
+                        </h4>
+                        <div class="d-flex flex-wrap" style="gap: 4px;">
+                          <v-chip v-for="lang in getCharacterLanguages(character)" :key="lang" color="purple-lighten-4"
+                            size="small" variant="tonal">
+                            {{ lang }}
+                          </v-chip>
+                        </div>
+                      </div>
 
-                          <!-- Skills -->
-                          <v-col v-if="getCharacterSkills(character).length > 0" cols="12">
-                            <div class="d-flex align-center flex-wrap">
-                              <v-icon class="me-2" color="green-darken-2" size="x-small">mdi-brain</v-icon>
-                              <span class="text-caption font-weight-bold text-green-darken-2 me-2">Skills:</span>
-                              <div class="d-flex flex-wrap" style="gap: 2px;">
-                                <v-chip v-for="skill in getCharacterSkills(character).slice(0, 4)" :key="skill"
-                                  color="accent" size="x-small" variant="tonal">
-                                  {{ skill }}
-                                </v-chip>
-                                <v-chip v-if="getCharacterSkills(character).length > 4" color="accent" size="x-small"
-                                  variant="outlined">
-                                  +{{ getCharacterSkills(character).length - 4 }}
-                                </v-chip>
-                              </div>
-                            </div>
-                          </v-col>
-                        </v-row>
-                      </v-expansion-panel-text>
-                    </v-expansion-panel>
-                  </v-expansion-panels>
-                </div>
+                      <!-- Tools -->
+                      <div v-if="getCharacterTools(character).length > 0" class="character-tools">
+                        <h4 class="text-subtitle-2 font-weight-bold mb-2 d-flex align-center">
+                          <v-icon class="me-2" color="orange-darken-2" size="small">mdi-tools</v-icon>
+                          Tool Proficiencies
+                        </h4>
+                        <div class="d-flex flex-wrap" style="gap: 4px;">
+                          <v-chip v-for="tool in getCharacterTools(character)" :key="tool" color="orange-lighten-4"
+                            size="small" variant="tonal">
+                            {{ tool }}
+                          </v-chip>
+                        </div>
+                      </div>
+
+                    </v-expansion-panel-text>
+                  </v-expansion-panel>
+                </v-expansion-panels>
               </v-card-text>
 
               <!-- Actions -->
@@ -632,6 +595,25 @@ const getCharacterChoicesCount = character => {
   return count
 }
 
+// Helper function for character details expansion count
+const getCharacterDetailsCount = character => {
+  let count = 0
+
+  // Count notable features
+  count += getNotableFeatures(character).length
+
+  // Count skills
+  count += getCharacterSkills(character).length
+
+  // Count languages
+  count += getCharacterLanguages(character).length
+
+  // Count tools
+  count += getCharacterTools(character).length
+
+  return count
+}
+
 const getLineageName = character => {
   if (!character.speciesLineage || !character.speciesDetails?.lineages) return ''
   const lineage = character.speciesDetails.lineages.find(l => l.id === character.speciesLineage)
@@ -647,6 +629,32 @@ const getSpeciesDisplayName = character => {
   }
 
   return speciesName
+}
+
+const getBackgroundName = character => {
+  // If backgroundDetails exists, use it
+  if (character.backgroundDetails?.name) {
+    return character.backgroundDetails.name
+  }
+
+  // Otherwise, look up the name from the background ID
+  if (character.background) {
+    const backgroundMap = {
+      'acolyte': 'Acolyte',
+      'criminal': 'Criminal',
+      'folk-hero': 'Folk Hero',
+      'noble': 'Noble',
+      'sage': 'Sage',
+      'soldier': 'Soldier',
+      'hermit': 'Hermit',
+      'entertainer': 'Entertainer',
+      'guild-artisan': 'Guild Artisan',
+      'outlander': 'Outlander'
+    }
+    return backgroundMap[character.background] || character.background
+  }
+
+  return 'Unknown'
 }
 
 const getCharacterLanguages = character => {
@@ -1044,5 +1052,65 @@ onMounted(() => {
 .character-title h3,
 .character-title p {
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+}
+
+/* Character details expansion styling */
+.character-details-expansion {
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.character-details-expansion .v-expansion-panel {
+  background: transparent !important;
+  border: 1px solid rgba(var(--v-theme-on-surface), 0.12) !important;
+  border-radius: 8px !important;
+  margin-bottom: 0 !important;
+}
+
+.character-details-expansion .v-expansion-panel-title {
+  font-size: 0.875rem !important;
+  background: rgba(var(--v-theme-primary), 0.05) !important;
+  border-radius: 8px 8px 0 0 !important;
+}
+
+.character-details-expansion .v-expansion-panel-title:hover {
+  background: rgba(var(--v-theme-primary), 0.1) !important;
+}
+
+.character-details-expansion .v-expansion-panel-text {
+  background: var(--v-theme-surface) !important;
+  border-radius: 0 0 8px 8px !important;
+}
+
+/* Enhanced core character info layout */
+.core-character-info .d-flex {
+  align-items: flex-start;
+}
+
+.essential-stats .v-card {
+  transition: all 0.2s ease;
+}
+
+.essential-stats .v-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Ability scores on main card styling */
+.ability-scores-main .ability-score-card-main {
+  transition: all 0.2s ease;
+  border: 1px solid rgba(var(--v-theme-primary), 0.2) !important;
+  background: rgba(var(--v-theme-primary), 0.02) !important;
+}
+
+.ability-scores-main .ability-score-card-main:hover {
+  transform: translateY(-1px);
+  border-color: rgba(var(--v-theme-primary), 0.4) !important;
+  background: rgba(var(--v-theme-primary), 0.05) !important;
+  box-shadow: 0 2px 8px rgba(var(--v-theme-primary), 0.15) !important;
+}
+
+.ability-scores-main h4 {
+  color: rgb(var(--v-theme-primary)) !important;
 }
 </style>

@@ -40,7 +40,8 @@ function extractSpellcastingInfo(apiClass) {
 }
 // API service for D&D data (races, classes, spells, etc.)
 const API_BASE_URL =
-  import.meta.env.VUE_APP_DND_API_BASE_URL || "https://www.dnd5eapi.co/api";
+  import.meta.env.VUE_APP_DND_API_BASE_URL ||
+  "https://www.dnd5eapi.co/api/2014";
 
 export class DnDAPI {
   constructor(apiKey = null) {

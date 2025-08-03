@@ -137,6 +137,16 @@ const updateCharacter = updatedCharacter => {
   Object.assign(character, updatedCharacter)
 }
 
+// Utility: Ensure all ability scores are numbers before saving
+function normalizeAbilityScores(char) {
+  const statKeys = ['strength', 'dexterity', 'constitution', 'intelligence', 'wisdom', 'charisma']
+  for (const key of statKeys) {
+    if (char[key] !== undefined && char[key] !== null && typeof char[key] !== 'number') {
+      char[key] = Number(char[key])
+    }
+  }
+}
+
 // Handle character submission
 const handleSubmitCharacter = async () => {
   try {
@@ -146,7 +156,7 @@ const handleSubmitCharacter = async () => {
       return
     }
 
-    if (!character.userName.trim()) {
+    if (!character.playerName.trim()) {
       alert('Please enter your name (player name)')
       return
     }
@@ -155,6 +165,9 @@ const handleSubmitCharacter = async () => {
       alert('Please select species, class, and background')
       return
     }
+
+    // Convert ability scores to numbers before saving
+    normalizeAbilityScores(character)
 
     console.log('Saving character to Firestore...', character)
 
