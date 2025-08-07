@@ -1,15 +1,18 @@
 <template>
   <v-container class="ability-score-grid-container" fluid>
     <v-row class="justify-center">
-      <v-col v-for="stat in stats" :key="stat.name" cols="4" class="d-flex justify-center">
+      <v-col v-for="stat in stats" :key="stat.name" cols="6" sm="4" md="4" lg="4" class="d-flex justify-center">
         <v-card :class="['ability-card-enhanced', 'd-flex', 'flex-column', 'align-center']" variant="outlined">
-          <v-card-title class="d-flex justify-space-between align-center mb-2">
-            <span class="stat-title">{{ stat.name }}</span>
-            <v-chip class="ml-2" :color="getModifierColor(character.abilityScores[stat.key]?.score)" size="small">
+          <v-card-title class="d-flex justify-space-between align-center mb-2"
+            :class="{ 'mobile-title': $vuetify.display.smAndDown }">
+            <span class="stat-title" :class="{ 'mobile-stat-title': $vuetify.display.smAndDown }">{{
+              $vuetify.display.smAndDown ? stat.name.slice(0, 3).toUpperCase() : stat.name }}</span>
+            <v-chip class="ml-2" :color="getModifierColor(character.abilityScores[stat.key]?.score)"
+              :size="$vuetify.display.smAndDown ? 'x-small' : 'small'">
               {{ getAbilityModifier(character.abilityScores[stat.key]?.score) }}
             </v-chip>
           </v-card-title>
-          <v-card-text class="text-center px-0">
+          <v-card-text class="text-center px-0" :class="{ 'mobile-card-text': $vuetify.display.smAndDown }">
             <v-text-field v-if="!isAssigningScores" :model-value="character.abilityScores[stat.key]?.score || ''"
               @update:model-value="(val) => {
                 // Ensure the ability score object exists
@@ -34,9 +37,10 @@
                   character.abilityScores[stat.key].modifier = Math.floor((val - 10) / 2);
                 }
               }" />
-            <v-btn v-else :color="isAssigningScores ? 'primary' : undefined" :disabled="!isAssigningScores" size="large"
-              variant="flat" class="ability-score-btn mx-2" @click="$emit('assign-score', stat.key)" @dragover.prevent
-              @drop="$emit('assign-score', stat.key)">
+            <v-btn v-else :color="isAssigningScores ? 'primary' : undefined" :disabled="!isAssigningScores"
+              :size="$vuetify.display.smAndDown ? 'default' : 'large'" variant="flat" class="ability-score-btn mx-2"
+              :class="{ 'mobile-btn': $vuetify.display.smAndDown }" @click="$emit('assign-score', stat.key)"
+              @dragover.prevent @drop="$emit('assign-score', stat.key)">
               {{ character.abilityScores[stat.key]?.score || '—' }}
             </v-btn>
           </v-card-text>
@@ -166,5 +170,61 @@ const getModifierColor = score => {
 .ability-score-input input[type=number] {
   -moz-appearance: textfield;
   appearance: textfield;
+}
+
+/* Mobile responsive adjustments */
+@media (max-width: 960px) {
+  .ability-score-grid-container {
+    padding: 0 8px;
+  }
+
+  .ability-card-enhanced {
+    min-width: 120px;
+    min-height: 140px;
+  }
+}
+
+@media (max-width: 600px) {
+  .ability-score-grid-container {
+    padding: 0 4px;
+  }
+
+  .ability-card-enhanced {
+    min-width: 100px;
+    min-height: 120px;
+    padding: 12px 0;
+  }
+
+  .mobile-title {
+    padding: 8px 12px 4px 12px;
+    margin-bottom: 4px !important;
+  }
+
+  .mobile-stat-title {
+    font-size: 0.875rem;
+    font-weight: 600;
+  }
+
+  .mobile-card-text {
+    padding: 4px 8px 8px 8px;
+  }
+
+  .mobile-btn {
+    min-width: 48px;
+    height: 48px;
+    font-size: 1.2rem;
+    font-weight: bold;
+  }
+
+  .ability-score-input {
+    max-width: 80px;
+  }
+
+  .ability-score-input :deep(.v-field__input) {
+    text-align: center;
+    font-size: 1.1rem;
+    font-weight: bold;
+    padding: 8px 4px;
+  }
 }
 </style>

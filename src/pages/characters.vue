@@ -48,80 +48,95 @@
       <!-- Characters Grid -->
       <div v-else>
         <!-- Quick Actions Bar -->
-        <v-card class="mb-6 pa-4" variant="outlined">
-          <v-row align="center">
-            <v-col cols="12" md="3">
-              <div class="d-flex align-center">
-                <v-icon class="me-2" color="accent">mdi-information</v-icon>
-                <span class="text-subtitle-1 theme-secondary">
-                  <strong>{{ characters.length }}</strong> character{{ characters.length !== 1 ? 's' : '' }} in your
-                  collection
-                </span>
-              </div>
-            </v-col>
+        <v-container fluid>
+          <v-card class="mb-6 py-3" variant="outlined">
+            <v-container class="px-4">
+              <v-row align="center" class="no-gutters" justify="center">
+                <!-- Access Status -->
+                <v-col class="d-flex justify-center px-3" cols="6" lg="2" md="3" sm="6" order="1" order-lg="2">
+                  <div v-if="hasAccess" class="d-flex flex-column align-center">
+                    <div class="d-flex align-center justify-center">
+                      <v-chip class="quick-actions-chip" color="success" prepend-icon="mdi-account-check" size="small"
+                        variant="elevated">
+                        <span class="d-none d-md-inline">Group Access</span>
+                        <span class="d-inline d-md-none">Group</span>
+                      </v-chip>
+                    </div>
+                  </div>
+                  <div v-else class="d-flex flex-column align-center">
+                    <div class="d-flex align-center justify-center">
+                      <v-chip class="quick-actions-chip" color="warning" prepend-icon="mdi-lock" size="small"
+                        variant="elevated">
+                        <span class="d-none d-md-inline">Access Required</span>
+                        <span class="d-inline d-md-none">Access</span>
+                      </v-chip>
+                    </div>
+                  </div>
+                </v-col>
 
-            <!-- Access Status -->
-            <v-col class="text-center" cols="12" md="3">
-              <div v-if="hasAccess" class="d-flex flex-column align-center">
-                <v-chip class="mb-1" color="accent" prepend-icon="mdi-account-check" size="small" variant="elevated">
-                  Group Access Active
-                </v-chip>
-                <div class="text-caption text-grey">
-                  {{ getRemainingAccessTime }} minutes remaining
-                </div>
-              </div>
-              <div v-else class="text-center">
-                <v-chip color="grey" prepend-icon="mdi-lock" size="small" variant="outlined">
-                  Access Required
-                </v-chip>
-              </div>
-            </v-col>
+                <!-- Admin Status -->
+                <v-col class="d-flex justify-center px-3" cols="6" lg="2" md="3" sm="6" order="2" order-lg="3">
+                  <div v-if="adminStore.isAdminUser" class="d-flex flex-column align-center">
+                    <div class="d-flex align-center justify-center">
+                      <v-chip class="ma-0 quick-actions-chip admin-status-chip" color="success"
+                        prepend-icon="mdi-shield-check" size="small" variant="elevated">
+                        <span class="d-none d-md-inline">Admin</span>
+                        <span class="d-inline d-md-none">Admin</span>
+                      </v-chip>
+                      <v-btn class="logout-btn" color="grey" size="medium" title="Logout from admin" variant="text"
+                        @click="adminLogout">
+                        <v-icon size="medium">mdi-logout</v-icon>
+                      </v-btn>
+                    </div>
+                  </div>
+                  <!-- Admin Login Button -->
+                  <div v-else-if="hasAccess" class="d-flex flex-column align-center">
+                    <div class="d-flex align-center justify-center">
+                      <v-chip class="quick-actions-chip admin-status-chip" color="warning" data-admin-login
+                        prepend-icon="mdi-shield-key" size="small" variant="elevated" @click="showAdminLogin">
+                        <span class="d-none d-md-inline">Admin Login</span>
+                        <span class="d-inline d-md-none">Login</span>
+                      </v-chip>
+                    </div>
+                  </div>
+                  <div v-else class="d-flex flex-column align-center">
+                    <div class="text-caption text-grey">
+                      Admin requires access first
+                    </div>
+                  </div>
+                </v-col>
 
-            <!-- Admin Status -->
-            <v-col class="text-center" cols="12" md="3">
-              <div v-if="isAuthenticated" class="d-flex flex-column align-center">
-                <div class="d-flex align-center justify-center mb-2">
-                  <v-chip class="me-2" color="accent" prepend-icon="mdi-shield-check" size="small" variant="elevated">
-                    Admin Active
-                  </v-chip>
-                  <v-btn color="grey" size="small" title="Logout from admin" variant="text" @click="logout">
-                    <v-icon size="small">mdi-logout</v-icon>
+                <!-- Character Count -->
+                <v-col class="d-flex justify-center px-3" cols="6" lg="2" md="3" sm="6" order="3" order-lg="1">
+                  <div class="d-flex align-center text-no-wrap">
+                    <v-icon class="me-2 flex-shrink-0" size="large" color="accent">mdi-information</v-icon>
+                    <span class="text-subtitle-1 theme-secondary text-no-wrap">
+                      <strong>{{ characters.length }}</strong> character{{ characters.length !== 1 ? 's' : '' }}
+                    </span>
+                  </div>
+                </v-col>
+
+                <!-- Create Character Button -->
+                <v-col class="d-flex justify-center px-3" cols="6" lg="2" md="3" sm="6" order="4" order-lg="4">
+                  <v-btn v-if="hasAccess" class="text-white create-character-btn align-center" color="accent"
+                    prepend-icon="mdi-plus" variant="elevated" @click="requireAccessForCreation">
+                    <span class="d-none d-xl-inline">Create New</span>
+                    <span class="d-inline d-xl-none">New</span>
                   </v-btn>
-                </div>
-                <!-- Theme Switcher - Admin Only -->
-                <ThemeSwitcher />
-              </div>
-              <!-- Admin Login Button -->
-              <div v-else-if="hasAccess" class="d-flex flex-column align-center">
-                <v-btn class="mb-1" color="warning" data-admin-login prepend-icon="mdi-shield-key" size="small"
-                  variant="elevated" @click="showAdminLogin">
-                  Admin Login
-                </v-btn>
-                <div class="text-caption text-grey">
-                  For editing/deleting
-                </div>
-              </div>
-              <div v-else class="text-caption text-grey">
-                Admin requires access first
-              </div>
-            </v-col>
-
-            <v-col class="text-md-end" cols="12" md="3">
-              <v-btn v-if="hasAccess" class="text-white create-character-btn" color="accent" prepend-icon="mdi-plus"
-                variant="elevated" @click="requireAccessForCreation">
-                Create New Character
-              </v-btn>
-              <v-btn v-else class="create-character-btn" color="grey" prepend-icon="mdi-lock" variant="outlined"
-                @click="requireAccessForCreation">
-                Create Character (Access Required)
-              </v-btn>
-            </v-col>
-          </v-row>
-        </v-card>
+                  <v-btn v-else class="create-character-btn" color="grey" prepend-icon="mdi-lock" variant="outlined"
+                    @click="requireAccessForCreation">
+                    <span class="d-none d-xl-inline">Create New</span>
+                    <span class="d-inline d-xl-none">New</span>
+                  </v-btn>
+                </v-col>
+              </v-row>
+            </v-container>
+          </v-card>
+        </v-container>
 
         <!-- Character Cards -->
         <v-row>
-          <v-col v-for="character in characters" :key="character.id" cols="12" lg="4" md="4" sm="6" xl="4">
+          <v-col v-for="character in characters" :key="character.id" cols="12" lg="4" md="6" sm="12" xl="4">
             <v-card class="character-card h-100" elevation="4" hover :style="{ background: 'var(--theme-surface)' }">
               <!-- Character Header with Background -->
               <div class="character-header" :style="getCharacterHeaderStyle(character)">
@@ -166,8 +181,9 @@
                 <div class="essential-stats mb-3">
                   <v-row dense>
                     <v-col cols="3">
-                      <v-card class="pa-2 text-center" style="background: var(--theme-surface);" variant="tonal">
-                        <v-icon class="mb-1" color="red-darken-2" size="small">mdi-heart</v-icon>
+                      <v-card class="text-center d-flex flex-column justify-center align-center essential-stat-card"
+                        style="background: var(--theme-surface); min-height: 80px;" variant="tonal">
+                        <v-icon color="red-darken-2" size="small">mdi-heart</v-icon>
                         <div class="text-caption font-weight-bold">HP</div>
                         <div class="text-h6 font-weight-bold">
                           {{ (character.level * 8) + (character.abilityScores?.constitution?.modifier || 0) }}
@@ -175,8 +191,9 @@
                       </v-card>
                     </v-col>
                     <v-col cols="3">
-                      <v-card class="pa-2 text-center" style="background: var(--theme-surface);" variant="tonal">
-                        <v-icon class="mb-1" color="blue-darken-2" size="small">mdi-shield</v-icon>
+                      <v-card class="text-center d-flex flex-column justify-center align-center essential-stat-card"
+                        style="background: var(--theme-surface); min-height: 80px;" variant="tonal">
+                        <v-icon color="blue-darken-2" size="small">mdi-shield</v-icon>
                         <div class="text-caption font-weight-bold">AC</div>
                         <div class="text-h6 font-weight-bold">
                           {{ 10 + (character.abilityScores?.dexterity?.modifier || 0) }}
@@ -184,8 +201,9 @@
                       </v-card>
                     </v-col>
                     <v-col cols="3">
-                      <v-card class="pa-2 text-center" style="background: var(--theme-surface);" variant="tonal">
-                        <v-icon class="mb-1" color="green-darken-2" size="small">mdi-run-fast</v-icon>
+                      <v-card class="text-center d-flex flex-column justify-center align-center essential-stat-card"
+                        style="background: var(--theme-surface); min-height: 80px;" variant="tonal">
+                        <v-icon color="green-darken-2" size="small">mdi-run-fast</v-icon>
                         <div class="text-caption font-weight-bold">Speed</div>
                         <div class="text-h6 font-weight-bold">
                           {{ character.speciesDetails?.speed || 30 }}
@@ -193,8 +211,9 @@
                       </v-card>
                     </v-col>
                     <v-col cols="3">
-                      <v-card class="pa-2 text-center" style="background: var(--theme-surface);" variant="tonal">
-                        <v-icon class="mb-1" color="purple-darken-2" size="small">mdi-sword-cross</v-icon>
+                      <v-card class="text-center d-flex flex-column justify-center align-center essential-stat-card"
+                        style="background: var(--theme-surface); min-height: 80px;" variant="tonal">
+                        <v-icon color="purple-darken-2" size="small">mdi-sword-cross</v-icon>
                         <div class="text-caption font-weight-bold">Init</div>
                         <div class="text-h6 font-weight-bold">
                           {{ (character.abilityScores?.dexterity?.modifier || 0) >= 0 ? '+' : '' }}{{
@@ -229,7 +248,8 @@
                       <div class="d-flex align-center mb-2">
                         <v-icon class="me-2" color="purple-darken-2" size="small">mdi-compass</v-icon>
                         <span class="text-caption font-weight-bold text-purple-darken-2 me-2">Alignment:</span>
-                        <span class="text-body-2 font-weight-medium">{{ character.alignment || 'Neutral' }}</span>
+                        <span class="text-body-2 font-weight-medium text-no-wrap">{{ character.alignment || 'Neutral'
+                        }}</span>
                       </div>
                       <div class="d-flex align-center">
                         <v-icon class="me-2" color="orange-darken-2" size="small">mdi-star-outline</v-icon>
@@ -349,21 +369,21 @@
               <v-card-actions class="pa-4 pt-0">
                 <v-row dense>
                   <v-col cols="8">
-                    <v-btn block class="admin-action-btn" :class="{ 'admin-protected': !isAuthenticated }"
-                      :color="isAuthenticated ? 'primary' : 'grey'" size="large" variant="elevated"
+                    <v-btn block class="admin-action-btn" :class="{ 'admin-protected': !adminStore.isAdminUser }"
+                      :color="adminStore.isAdminUser ? 'primary' : 'grey'" size="large" variant="elevated"
                       @click="editCharacter(character)">
                       <template #prepend>
-                        <v-icon>{{ isAuthenticated ? 'mdi-pencil' : 'mdi-shield-key' }}</v-icon>
+                        <v-icon>{{ adminStore.isAdminUser ? 'mdi-pencil' : 'mdi-shield-key' }}</v-icon>
                       </template>
-                      {{ isAuthenticated ? 'Edit Character' : 'Edit (Admin)' }}
+                      {{ adminStore.isAdminUser ? 'Edit Character' : 'Edit (Admin)' }}
                     </v-btn>
                   </v-col>
                   <v-col cols="4">
-                    <v-btn block class="admin-action-btn" :class="{ 'admin-protected': !isAuthenticated }"
-                      :color="isAuthenticated ? 'error' : 'grey'" size="large"
-                      :title="isAuthenticated ? 'Delete Character' : 'Delete (Admin Only)'" variant="outlined"
+                    <v-btn block class="admin-action-btn" :class="{ 'admin-protected': !adminStore.isAdminUser }"
+                      :color="adminStore.isAdminUser ? 'error' : 'grey'" size="large"
+                      :title="adminStore.isAdminUser ? 'Delete Character' : 'Delete (Admin Only)'" variant="outlined"
                       @click="confirmDelete(character)">
-                      <v-icon>{{ isAuthenticated ? 'mdi-delete' : 'mdi-shield-key' }}</v-icon>
+                      <v-icon>{{ adminStore.isAdminUser ? 'mdi-delete' : 'mdi-shield-key' }}</v-icon>
                     </v-btn>
                   </v-col>
                 </v-row>
@@ -408,7 +428,6 @@
 import { onMounted, ref, computed, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import AdminAuthDialog from '@/components/AdminAuthDialog.vue'
-import ThemeSwitcher from '@/components/ThemeSwitcher.vue'
 import { useAdminStore } from '@/stores/adminStore'
 import { useAdminAuth } from '@/composables/useAdminAuth'
 import { useFirestore } from '@/composables/useFirestore'
@@ -423,19 +442,7 @@ const {
   logout,
   extendSession
 } = useAdminAuth()
-// Synchronize admin access between adminStore and useAdminAuth
-watch(
-  () => adminStore.accessType,
-  (newType) => {
-    if (newType === 'admin' && !isAuthenticated.value) {
-      isAuthenticated.value = true
-      extendSession()
-    } else if (newType !== 'admin' && isAuthenticated.value) {
-      logout()
-    }
-  },
-  { immediate: true }
-)
+
 const hasAccess = computed(() => adminStore.isAccessValid)
 const requireAccess = adminStore.requireAccess
 const extendAccessSession = adminStore.extendAccessSession
@@ -760,7 +767,7 @@ const loadCharacters = async () => {
 
 // Edit character - requires admin authentication
 const editCharacter = character => {
-  requireAuth(() => {
+  adminStore.requireAdminAccess(() => {
     router.push({
       name: 'CharacterForm',
       query: { edit: character.id },
@@ -770,7 +777,7 @@ const editCharacter = character => {
 
 // Confirm character deletion - requires admin authentication
 const confirmDelete = character => {
-  requireAuth(() => {
+  adminStore.requireAdminAccess(() => {
     selectedCharacter.value = character
     deleteDialog.value = true
   })
@@ -804,7 +811,20 @@ const deleteCharacter = async () => {
 
 // Show admin login dialog
 const showAdminLogin = () => {
-  showAuthDialog.value = true
+  adminStore.showAccessDialog = true
+}
+
+// Admin logout - clear admin privileges but keep group access
+const adminLogout = () => {
+  // Reset access type to 'user' if they have group access, or clear completely
+  if (adminStore.hasAccess) {
+    adminStore.accessType = 'user'
+    adminStore.saveAccessState()
+  } else {
+    adminStore.clearAccess()
+  }
+  // Also clear the useAdminAuth state
+  logout()
 }
 
 // Require access for character creation
@@ -822,21 +842,50 @@ onMounted(() => {
 </script>
 
 <style scoped>
-/* Admin login button styles */
-.v-btn[data-admin-login] {
+/* Admin login chip styles */
+.v-chip[data-admin-login] {
   background: linear-gradient(135deg, #FFA726 0%, #FF9800 100%) !important;
   color: #000000 !important;
   box-shadow: 0 2px 8px rgba(255, 152, 0, 0.3);
   transition: all 0.3s ease;
   animation: gentle-pulse 3s ease-in-out infinite;
+  cursor: pointer;
 }
 
-.v-btn[data-admin-login]:hover {
+.v-chip[data-admin-login]:hover {
   background: linear-gradient(135deg, #FFB74D 0%, #FFA726 100%) !important;
   color: #000000 !important;
   box-shadow: 0 4px 12px rgba(255, 152, 0, 0.4);
   transform: translateY(-1px);
   animation: none;
+}
+
+/* Admin status chips consistent width */
+.admin-status-chip {
+  min-width: 100px !important;
+  width: 100px !important;
+}
+
+@media (max-width: 768px) {
+  .admin-status-chip {
+    min-width: 60px !important;
+    width: 60px !important;
+  }
+}
+
+/* All status chips consistent width - includes access and admin chips */
+.quick-actions-chip {
+  min-width: 130px !important;
+  width: 130px !important;
+  text-align: center !important;
+  justify-content: center !important;
+}
+
+@media (max-width: 768px) {
+  .quick-actions-chip {
+    min-width: 70px !important;
+    width: 70px !important;
+  }
 }
 
 @keyframes gentle-pulse {
@@ -910,6 +959,7 @@ onMounted(() => {
   bottom: 0;
   background: rgba(0, 0, 0, 0.3);
   backdrop-filter: blur(1px);
+  padding-bottom: 8px !important;
 }
 
 .character-choices-panels {
@@ -1028,18 +1078,23 @@ onMounted(() => {
   border-radius: 12px !important;
 }
 
-/* Responsive improvements */
 @media (max-width: 768px) {
   .page-header h1 {
     font-size: 2rem !important;
   }
 
-  .character-header {
-    height: 100px;
-  }
-
   .character-overlay {
     padding: 1rem !important;
+    padding-bottom: 12px !important;
+  }
+}
+
+/* Create character button responsive sizing */
+@media (min-width: 960px) and (max-width: 1280px) {
+  .create-character-btn {
+    min-width: 80px !important;
+    padding-left: 8px !important;
+    padding-right: 8px !important;
   }
 }
 
@@ -1087,6 +1142,44 @@ onMounted(() => {
   align-items: flex-start;
 }
 
+/* Essential stats cards styling */
+.essential-stat-card {
+  transition: all 0.2s ease;
+  padding: 0 !important;
+  position: relative !important;
+}
+
+.essential-stat-card>* {
+  width: 100%;
+  text-align: center;
+}
+
+.essential-stat-card .v-icon {
+  top: 5px;
+  flex-shrink: 0;
+}
+
+.essential-stat-card .text-caption {
+  color: rgba(var(--v-theme-on-surface), 0.6);
+  font-weight: 500;
+  top: 5px;
+  position: relative;
+}
+
+.essential-stat-card .text-h6 {
+  bottom: 5px;
+  flex-shrink: 0;
+}
+
+.essential-stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
+}
+
+.v-theme--dark .essential-stat-card:hover {
+  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.1) !important;
+}
+
 .essential-stats .v-card {
   transition: all 0.2s ease;
 }
@@ -1112,5 +1205,17 @@ onMounted(() => {
 
 .ability-scores-main h4 {
   color: rgb(var(--v-theme-primary)) !important;
+}
+
+/* Admin chip group tight spacing */
+.admin-chip-group>*+* {
+  margin-left: 4px !important;
+}
+
+/* Logout button reduced padding */
+.logout-btn {
+  min-width: auto !important;
+  padding-left: 6px !important;
+  padding-right: 6px !important;
 }
 </style>

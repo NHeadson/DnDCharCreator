@@ -1,15 +1,16 @@
 <template>
   <div class="mb-6">
     <v-row>
-      <v-col cols="12" md="5">
+      <v-col cols="12" lg="5" md="6">
         <v-card variant="outlined">
           <v-card-title class="d-flex align-center py-2">
             <v-icon class="me-2" start>mdi-sword-cross</v-icon>
-            Class Selection
+            <span class="text-subtitle-1 text-md-h6">Class Selection</span>
           </v-card-title>
           <v-card-text class="pt-2 pb-3">
-            <v-select v-model="props.character.class" density="compact" :error="!!props.characterData?.classError"
-              item-title="name" :error-messages="props.characterData?.classError" item-value="index"
+            <v-select v-model="props.character.class" :density="$vuetify.display.smAndDown ? 'comfortable' : 'compact'"
+              :error="!!props.characterData?.classError" item-title="name"
+              :error-messages="props.characterData?.classError" item-value="index"
               :items="props.characterData?.classData || []" label="Choose Your Class"
               :loading="props.characterData?.isLoadingClasses" variant="outlined">
               <template #prepend>
@@ -18,7 +19,8 @@
             </v-select>
             <!-- Subclass Selection: Only show for classes that require it at level 1 -->
             <v-select v-if="props.character.class && availableSubclasses.length > 0 && shouldShowSubclassSelector"
-              v-model="props.character.subclass" class="mt-3" density="compact" item-title="name" item-value="index"
+              v-model="props.character.subclass" class="mt-3"
+              :density="$vuetify.display.smAndDown ? 'comfortable' : 'compact'" item-title="name" item-value="index"
               :items="availableSubclasses" :label="`Choose Your ${selectedClassInfo?.subclassType || 'Subclass'}`"
               variant="outlined">
               <template #prepend>
@@ -29,7 +31,7 @@
         </v-card>
       </v-col>
 
-      <v-col cols="12" md="7">
+      <v-col cols="12" lg="7" md="6">
         <v-card v-if="!props.character.class" class="text-blue-grey-lighten-5 class-preview-card" variant="tonal">
           <v-card-title class="d-flex align-center py-2">
             <v-icon class="text-blue-grey-darken-2 me-2" size="small">mdi-sword-cross</v-icon>
@@ -638,5 +640,46 @@ function formatFeatureDesc(desc) {
 
 .class-detail-section-card .v-card-text {
   padding: 1.5rem 1.5rem 1rem 1.5rem;
+}
+
+/* Mobile responsive adjustments */
+@media (max-width: 960px) {
+  .class-details-chip-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .class-details-chip {
+    margin-bottom: 8px;
+    width: 100%;
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 600px) {
+  .class-detail-section-card .v-card-text {
+    padding: 12px 16px 8px 16px;
+  }
+
+  .class-details-chip-row-gap {
+    gap: 4px;
+  }
+
+  .class-details-chip {
+    font-size: 0.75rem;
+    height: auto;
+    min-height: 28px;
+    padding: 4px 8px;
+  }
+
+  .chip-label,
+  .chip-value {
+    font-size: 0.75rem;
+  }
+
+  .spellcasting-section,
+  .feature-section {
+    margin-bottom: 16px;
+  }
 }
 </style>

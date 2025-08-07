@@ -16,9 +16,9 @@
         Home
       </v-btn>
       <v-btn class="nav-btn me-2" :class="{ 'nav-btn--active': $route.path.startsWith('/characters') }" rounded="lg"
-        to="/characters" variant="flat">
+        to="/character-form" variant="flat">
         <v-icon class="me-2" icon="mdi-account-group" />
-        My Characters
+        Create Characater
       </v-btn>
       <v-btn v-if="adminStore.isAdminUser" class="nav-btn me-2"
         :class="{ 'nav-btn--active': $route.path.startsWith('/theme') }" rounded="lg" to="/theme" variant="flat"
@@ -247,7 +247,7 @@ const requireAccessForCreation = () => {
   }
 
   .nav-btn {
-    min-width: 100px;
+    min-width: 90px;
     padding: 10px 16px !important;
     height: 40px !important;
   }
@@ -258,6 +258,10 @@ const requireAccessForCreation = () => {
 
   .title-icon {
     font-size: 1.6rem !important;
+  }
+
+  .nav-buttons {
+    gap: 6px;
   }
 }
 
@@ -273,6 +277,26 @@ const requireAccessForCreation = () => {
 
   .header-title {
     font-size: 1.2rem !important;
+  }
+
+  .nav-buttons {
+    gap: 4px;
+  }
+}
+
+@media (max-width: 480px) {
+  .header-title {
+    font-size: 1rem !important;
+  }
+
+  .title-icon {
+    font-size: 1.4rem !important;
+  }
+
+  .nav-btn {
+    min-width: 44px;
+    height: 36px !important;
+    padding: 8px !important;
   }
 }
 </style>

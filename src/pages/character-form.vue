@@ -24,4 +24,17 @@ const { isAccessValid } = storeToRefs(adminStore)
   min-height: 100vh;
   padding: 20px 0;
 }
+
+/* Mobile responsive adjustments */
+@media (max-width: 768px) {
+  .character-form-page {
+    padding: 12px 0;
+  }
+}
+
+@media (max-width: 600px) {
+  .character-form-page {
+    padding: 8px 0;
+  }
+}
 </style>

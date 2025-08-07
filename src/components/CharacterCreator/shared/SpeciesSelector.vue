@@ -1,16 +1,16 @@
 <template>
   <div class="mb-6">
     <v-row>
-      <v-col cols="12" md="5">
+      <v-col cols="12" lg="5" md="6">
         <v-card variant="outlined">
           <v-card-title class="d-flex align-center py-2">
             <v-icon class="me-2" start>mdi-dna</v-icon>
-            Species Selection
+            <span class="text-subtitle-1 text-md-h6">Species Selection</span>
           </v-card-title>
           <v-card-text class="pt-2 pb-3">
-            <v-select v-model="character.species" density="compact" :error="!!characterData?.speciesError"
-              item-title="name" :error-messages="characterData?.speciesError" item-value="id"
-              :items="characterData?.speciesData || []" label="Choose Your Species"
+            <v-select v-model="character.species" :density="$vuetify.display.smAndDown ? 'comfortable' : 'compact'"
+              :error="!!characterData?.speciesError" item-title="name" :error-messages="characterData?.speciesError"
+              item-value="id" :items="characterData?.speciesData || []" label="Choose Your Species"
               :loading="characterData?.isLoadingSpecies" variant="outlined" @update:model-value="onSpeciesChange">
               <template #prepend>
                 <v-icon color="primary" size="small">mdi-account-group</v-icon>
@@ -19,8 +19,9 @@
 
             <!-- Subspecies/Lineage Selection -->
             <v-select v-if="character.species && availableLineages.length > 0" v-model="character.speciesLineage"
-              class="mt-3" density="compact" item-title="name" item-value="name" :items="availableLineages"
-              label="Choose Your Lineage/Subrace" variant="outlined" @update:model-value="onLineageChange">
+              class="mt-3" :density="$vuetify.display.smAndDown ? 'comfortable' : 'compact'" item-title="name"
+              item-value="name" :items="availableLineages" label="Choose Your Lineage/Subrace" variant="outlined"
+              @update:model-value="onLineageChange">
               <template #prepend>
                 <v-icon color="secondary" size="small">mdi-family-tree</v-icon>
               </template>
@@ -28,7 +29,7 @@
           </v-card-text>
         </v-card>
       </v-col>
-      <v-col cols="12" md="7">
+      <v-col cols="12" lg="7" md="6">
         <v-card v-if="!character.species" class="text-blue-grey-lighten-5 species-preview-card" variant="tonal">
           <v-card-title class="d-flex align-center py-2">
             <v-icon class="text-blue-grey-darken-2 me-2" size="small">mdi-dna</v-icon>
@@ -445,5 +446,39 @@ const getLineageHighlights = (lineage) => {
 
 .species-preview-card:hover {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Mobile responsive adjustments */
+@media (max-width: 960px) {
+  .ability-scores-grid {
+    grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+    gap: 6px;
+  }
+}
+
+@media (max-width: 600px) {
+  .ability-scores-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 4px;
+  }
+
+  .lineage-options-row {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .lineage-option-card {
+    min-width: unset;
+    width: 100%;
+  }
+
+  .species-preview-card:hover {
+    transform: none;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  }
+
+  .trait-panel:hover {
+    transform: none;
+  }
 }
 </style>

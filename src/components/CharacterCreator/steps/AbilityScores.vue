@@ -17,12 +17,16 @@
         <v-card class="rolled-array-card pa-3" variant="tonal" elevation="2">
           <div class="mb-2 text-center">
             <span class="text-subtitle-1 font-weight-bold">Rolled Array</span>
-            <span class="text-caption text-grey-darken-1 ms-2">(Drag a number onto an ability)</span>
+            <span class="text-caption text-grey-darken-1 ms-2" v-if="!$vuetify.display.smAndDown">(Drag a number onto an
+              ability)</span>
+            <div class="text-caption text-grey-darken-1 mt-1" v-else>(Tap a number, then tap an ability)</div>
           </div>
-          <div class="d-flex flex-wrap justify-center align-center">
+          <div class="d-flex flex-wrap justify-center align-center"
+            :class="{ 'mobile-chips': $vuetify.display.smAndDown }">
             <v-chip v-for="(score, idx) in availableScores" :key="score + '-' + idx" color="primary"
-              class="ma-2 px-6 py-3 rolled-chip" draggable="true" @dragstart="onDragStart(score, idx)"
-              style="font-size:2rem;font-weight:600;cursor:grab;box-shadow:0 2px 8px rgba(0,0,0,0.10);">
+              class="ma-2 px-6 py-3 rolled-chip" :class="{ 'mobile-chip': $vuetify.display.smAndDown }" draggable="true"
+              @dragstart="onDragStart(score, idx)" @click="onChipClick(score, idx)"
+              :style="$vuetify.display.smAndDown ? 'font-size:1.5rem;font-weight:600;cursor:pointer;' : 'font-size:2rem;font-weight:600;cursor:grab;box-shadow:0 2px 8px rgba(0,0,0,0.10);'">
               {{ score }}
             </v-chip>
           </div>
@@ -106,15 +110,48 @@ const rollAbilityScores = () => {
 
 let draggedScore = null
 let draggedIdx = null
+let selectedScore = null
+let selectedIdx = null
 
 const onDragStart = (score, idx) => {
   draggedScore = score
   draggedIdx = idx
 }
 
+const onChipClick = (score, idx) => {
+  // For mobile - select the chip on click
+  if (selectedScore === score && selectedIdx === idx) {
+    // Deselect if clicking the same chip
+    selectedScore = null
+    selectedIdx = null
+  } else {
+    selectedScore = score
+    selectedIdx = idx
+  }
+}
+
 const assignScore = statName => {
   if (!isAssigningScores.value) return
-  // If a score is being dragged, assign it
+
+  // Handle mobile selection first
+  if (selectedScore !== null && selectedIdx !== null) {
+    if (!character.value.abilityScores[statName]) {
+      character.value.abilityScores[statName] = { score: 0, modifier: 0 }
+    }
+    character.value.abilityScores[statName].score = selectedScore
+    character.value.abilityScores[statName].modifier = Math.floor((selectedScore - 10) / 2)
+    availableScores.value.splice(selectedIdx, 1)
+    selectedScore = null
+    selectedIdx = null
+    // If all scores assigned, stop assigning
+    const allAssigned = statKeys.every(key => character.value.abilityScores[key]?.score !== null && character.value.abilityScores[key]?.score !== undefined)
+    if (allAssigned) {
+      isAssigningScores.value = false
+    }
+    return
+  }
+
+  // Handle drag and drop
   if (draggedScore !== null && draggedIdx !== null) {
     if (!character.value.abilityScores[statName]) {
       character.value.abilityScores[statName] = { score: 0, modifier: 0 }
@@ -205,5 +242,31 @@ const assignScore = statName => {
   align-items: center;
   justify-content: center;
   padding: 12px;
+}
+
+/* Mobile responsive styles */
+@media (max-width: 600px) {
+  .rolled-array-card {
+    margin: 0 8px;
+    padding: 16px 8px !important;
+  }
+
+  .mobile-chips .rolled-chip {
+    margin: 4px 6px !important;
+    padding: 8px 12px !important;
+  }
+
+  .mobile-chip {
+    font-size: 1.5rem !important;
+  }
+
+  .ability-card-enhanced {
+    min-height: 100px;
+    padding: 16px 0;
+  }
+
+  .ability-score-section-card {
+    margin: 0 -8px;
+  }
 }
 </style>

@@ -1,8 +1,9 @@
 <template>
-  <v-container class="character-creator">
-    <h1 class="text-center">🧝‍♀️ D&D Character {{ isEditing ? 'Editor' : 'Creator' }}</h1>
-    <h2 class="text-center mb-6">{{ isEditing ? 'Edit your Character' : 'Create your Character - Choose wisely...' }}
-    </h2>
+  <v-container class="character-creator" fluid>
+    <div class="text-center mb-6">
+      <h1 class="text-h4 text-md-h3">🧝‍♀️ D&D Character {{ isEditing ? 'Editor' : 'Creator' }}</h1>
+      <h2 class="text-h6 text-md-h5 mb-6">{{ isEditing ? 'Edit your Character' : 'Create your Character - Choose wisely...' }}</h2>
+    </div>
 
     <!-- Only the parent page should render the access dialog. No access dialog here. -->
     <CharacterCreatorStepper :character="character" :character-data="characterStore" :current-step="currentStep"

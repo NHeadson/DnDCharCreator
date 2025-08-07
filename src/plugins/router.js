@@ -17,7 +17,7 @@ const routes = [
   {
     path: "/",
     name: "Home",
-    component: CharacterForm,
+    component: Characters,
   },
   {
     path: "/character-form",

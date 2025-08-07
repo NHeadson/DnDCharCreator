@@ -5,70 +5,79 @@
       <p>Loading character creator...</p>
     </div>
 
-    <v-alert v-else-if="characterData.speciesError?.value" class="ma-4" type="warning">
-      <v-alert-title>API Warning</v-alert-title>
-      Failed to load races from API: {{ characterData.speciesError.value }}
-      <br>Using fallback data instead.
-    </v-alert>
+    <template v-else>
+      <v-alert v-if="characterData.speciesError?.value" class="ma-4" type="warning">
+        <v-alert-title>API Warning</v-alert-title>
+        Failed to load races from API: {{ characterData.speciesError.value }}
+        <br>Using fallback data instead.
+      </v-alert>
 
-    <v-stepper v-else v-model="localCurrentStep" elevation="2" :items="stepItems">
-      <template #next-text="{ next }">
-        <!-- Current step: {{ localCurrentStep }} -->
-        <v-btn v-if="localCurrentStep < 5" class="force-primary-btn" color="accent" variant="elevated" @click="next">
-          Next
-        </v-btn>
-      </template>
-
-      <template #actions="{ next, prev }">
-        <div class="navigation-buttons">
-          <v-btn v-if="localCurrentStep > 1" variant="text" @click="prev">
-            Previous
-          </v-btn>
-          <v-spacer />
+      <v-stepper v-model="localCurrentStep" elevation="2" :items="stepItems" :mobile="$vuetify.display.smAndDown"
+        editable>
+        <template #next-text="{ next }">
+          <!-- Current step: {{ localCurrentStep }} -->
           <v-btn v-if="localCurrentStep < 5" class="force-primary-btn" color="accent" variant="elevated" @click="next">
             Next
           </v-btn>
-          <v-btn v-else-if="localCurrentStep === 5" class="save-character-btn-centered" color="success"
-            variant="elevated" size="x-large" prepend-icon="mdi-content-save" @click="saveCharacter">
-            Save Character
-          </v-btn>
-        </div>
-      </template>
-      <!-- Step 1: Character Information -->
-      <template #item.1>
-        <div>
-          <CharacterInformation :character="character" :character-data="characterData" />
-        </div>
-      </template>
+        </template>
 
-      <!-- Step 2: Ability Scores -->
-      <template #item.2>
-        <div>
-          <AbilityScores :character="character" :character-data="characterData" />
-        </div>
-      </template>
+        <template #actions="{ next, prev }">
+          <div class="navigation-buttons" :class="{ 'mobile-nav': $vuetify.display.smAndDown }">
+            <v-btn v-if="localCurrentStep > 1" variant="text" @click="prev"
+              :size="$vuetify.display.smAndDown ? 'small' : 'default'">
+              <v-icon v-if="$vuetify.display.smAndDown" icon="mdi-chevron-left" />
+              <span v-else>Previous</span>
+            </v-btn>
+            <v-spacer />
+            <v-btn v-if="localCurrentStep < 5" class="force-primary-btn" color="accent" variant="elevated" @click="next"
+              :size="$vuetify.display.smAndDown ? 'small' : 'default'">
+              <span v-if="!$vuetify.display.smAndDown">Next</span>
+              <v-icon v-else icon="mdi-chevron-right" />
+            </v-btn>
+            <v-btn v-else-if="localCurrentStep === 5" class="save-character-btn-centered" color="success"
+              variant="elevated" :size="$vuetify.display.smAndDown ? 'default' : 'x-large'"
+              :prepend-icon="$vuetify.display.smAndDown ? undefined : 'mdi-content-save'" @click="saveCharacter">
+              <v-icon v-if="$vuetify.display.smAndDown" icon="mdi-content-save" class="me-2" />
+              Save Character
+            </v-btn>
+          </div>
+        </template>
+        <!-- Step 1: Character Information -->
+        <template #item.1>
+          <div>
+            <CharacterInformation :character="character" :character-data="characterData" />
+          </div>
+        </template>
 
-      <!-- Step 3: Features -->
-      <template #item.3>
-        <div>
-          <FeaturesAndTraits :character="character" :character-data="characterData" />
-        </div>
-      </template>
+        <!-- Step 2: Ability Scores -->
+        <template #item.2>
+          <div>
+            <AbilityScores :character="character" :character-data="characterData" />
+          </div>
+        </template>
 
-      <!-- Step 4: Equipment -->
-      <template #item.4>
-        <div>
-          <EquipmentAndGear :character="character" :character-data="characterData" />
-        </div>
-      </template>
+        <!-- Step 3: Features -->
+        <template #item.3>
+          <div>
+            <FeaturesAndTraits :character="character" :character-data="characterData" />
+          </div>
+        </template>
 
-      <!-- Step 5: Summary -->
-      <template #item.5>
-        <div>
-          <CharacterSummary :character="character" :character-data="characterData" />
-        </div>
-      </template>
-    </v-stepper>
+        <!-- Step 4: Equipment -->
+        <template #item.4>
+          <div>
+            <EquipmentAndGear :character="character" :character-data="characterData" />
+          </div>
+        </template>
+
+        <!-- Step 5: Summary -->
+        <template #item.5>
+          <div>
+            <CharacterSummary :character="character" :character-data="characterData" />
+          </div>
+        </template>
+      </v-stepper>
+    </template>
     <!-- Removed extra navigation buttons; only stepper navigation remains -->
   </div>
 </template>
@@ -118,12 +127,45 @@ watch(localCurrentStep, (newStep) => {
   emit('update:current-step', newStep)
 })
 
+// Function to determine if a step should be enabled (optional validation)
+const isStepEnabled = (stepValue) => {
+  // Allow clicking on any step for now - you can add validation later
+  // For example: return stepValue <= maxAllowedStep.value
+  return true
+}
+
+// Enhanced step items with better mobile-friendly titles
 const stepItems = [
-  { title: 'Character', value: 1 },
-  { title: 'Abilities', value: 2 },
-  { title: 'Features', value: 3 },
-  { title: 'Equipment', value: 4 },
-  { title: 'Summary', value: 5 },
+  {
+    title: 'Character Info',
+    subtitle: 'Species, Class, Background',
+    value: 1,
+    icon: 'mdi-account-edit'
+  },
+  {
+    title: 'Abilities',
+    subtitle: 'Ability Scores',
+    value: 2,
+    icon: 'mdi-dice-6'
+  },
+  {
+    title: 'Features',
+    subtitle: 'Traits & Skills',
+    value: 3,
+    icon: 'mdi-star-circle'
+  },
+  {
+    title: 'Equipment',
+    subtitle: 'Gear & Items',
+    value: 4,
+    icon: 'mdi-sword'
+  },
+  {
+    title: 'Summary',
+    subtitle: 'Review & Save',
+    value: 5,
+    icon: 'mdi-check-circle'
+  },
 ]
 </script>
 
@@ -198,6 +240,140 @@ const stepItems = [
   width: 100%;
   padding: 24px 16px;
   margin: 16px 0;
+}
+
+.mobile-nav {
+  padding: 12px 8px;
+  margin: 8px 0;
+}
+
+.mobile-nav .save-character-btn-centered {
+  min-width: auto;
+  height: 48px;
+  margin: 4px 8px;
+}
+
+/* Mobile responsive adjustments */
+@media (max-width: 600px) {
+  .navigation-buttons {
+    padding: 16px 8px;
+    margin: 12px 0;
+  }
+
+  .save-character-btn-centered {
+    min-width: 200px;
+    height: 48px;
+    margin: 4px 8px;
+  }
+
+  .save-character-btn-centered:hover {
+    transform: none;
+  }
+}
+
+/* Stepper header customization */
+:deep(.v-stepper-header) {
+  padding: 12px 16px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+:deep(.v-stepper-item) {
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border-radius: 8px;
+  margin: 0 4px;
+}
+
+:deep(.v-stepper-item:hover) {
+  background-color: rgba(var(--v-theme-primary), 0.08);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+:deep(.v-stepper-item--selected) {
+  background-color: rgba(var(--v-theme-primary), 0.12);
+  box-shadow: 0 2px 8px rgba(var(--v-theme-primary), 0.2);
+}
+
+:deep(.v-stepper-item--complete) {
+  background-color: rgba(var(--v-theme-success), 0.05);
+}
+
+:deep(.v-stepper-item--complete .v-stepper-item__icon) {
+  background-color: var(--v-theme-success) !important;
+  box-shadow: 0 2px 4px rgba(var(--v-theme-success), 0.3);
+}
+
+:deep(.v-stepper-item--selected .v-stepper-item__icon) {
+  background-color: var(--v-theme-primary) !important;
+  box-shadow: 0 2px 4px rgba(var(--v-theme-primary), 0.3);
+}
+
+:deep(.v-stepper-item__title) {
+  font-weight: 600;
+  transition: color 0.2s ease;
+}
+
+:deep(.v-stepper-item:hover .v-stepper-item__title) {
+  color: var(--v-theme-primary);
+}
+
+/* Add subtle animation to icons */
+:deep(.v-stepper-item__icon) {
+  transition: all 0.2s ease;
+}
+
+:deep(.v-stepper-item:hover .v-stepper-item__icon) {
+  transform: scale(1.05);
+}
+
+/* Mobile stepper adjustments */
+@media (max-width: 600px) {
+  :deep(.v-stepper-header) {
+    padding: 8px 12px;
+  }
+
+  :deep(.v-stepper-item) {
+    margin: 0 2px;
+    min-height: 64px;
+    /* Larger tap targets */
+    border-radius: 12px;
+  }
+
+  :deep(.v-stepper-item:hover) {
+    transform: none;
+    /* Disable transform on mobile */
+    background-color: rgba(var(--v-theme-primary), 0.1);
+  }
+
+  :deep(.v-stepper-item__title) {
+    font-size: 0.875rem !important;
+    line-height: 1.2;
+  }
+
+  :deep(.v-stepper-item__subtitle) {
+    font-size: 0.75rem !important;
+    line-height: 1.1;
+  }
+
+  :deep(.v-stepper-item__icon) {
+    margin-bottom: 4px;
+  }
+}
+
+@media (max-width: 480px) {
+  :deep(.v-stepper-item__title) {
+    font-size: 0.8rem !important;
+  }
+
+  :deep(.v-stepper-item__subtitle) {
+    font-size: 0.7rem !important;
+  }
+
+  :deep(.v-stepper-item) {
+    min-height: 56px;
+    padding: 8px 4px;
+  }
 }
 
 /* Extra spacing for save button step */

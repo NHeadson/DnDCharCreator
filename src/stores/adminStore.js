@@ -13,6 +13,7 @@ export const useAdminStore = defineStore("admin", {
     accessPasswordInput: "",
     accessError: "",
     pendingAccessAction: null,
+    pendingAdminAction: false, // Flag to indicate if pending action requires admin privileges
     loading: false,
     error: null,
   }),
@@ -101,6 +102,20 @@ export const useAdminStore = defineStore("admin", {
         this.accessPasswordInput = "";
         this.accessType = password === adminPassword ? "admin" : "user";
         this.saveAccessState();
+
+        // Execute pending action only if user has required privileges
+        if (this.pendingAccessAction) {
+          // If this was an admin-only action, only execute if user has admin privileges
+          if (this.pendingAdminAction && this.accessType === "admin") {
+            this.pendingAccessAction();
+            this.pendingAdminAction = false;
+          } else if (!this.pendingAdminAction) {
+            // Regular access action, execute for any valid access
+            this.pendingAccessAction();
+          }
+          this.pendingAccessAction = null;
+        }
+
         return true;
       } else {
         this.accessError = "Invalid access code.";
@@ -140,6 +155,16 @@ export const useAdminStore = defineStore("admin", {
         action();
       } else {
         this.pendingAccessAction = action;
+        this.pendingAdminAction = false;
+        this.showAccessDialog = true;
+      }
+    },
+    requireAdminAccess(action) {
+      if (this.isAdminUser) {
+        action();
+      } else {
+        this.pendingAccessAction = action;
+        this.pendingAdminAction = true;
         this.showAccessDialog = true;
       }
     },
@@ -155,6 +180,7 @@ export const useAdminStore = defineStore("admin", {
       this.accessPasswordInput = "";
       this.accessError = "";
       this.pendingAccessAction = null;
+      this.pendingAdminAction = false;
     },
     initializeAccess() {
       this.loadAccessState();
