@@ -2,7 +2,7 @@
   <v-card class="character-header-card mb-6">
     <v-row class="dense-form align-center" no-gutters>
       <!-- Character Portrait (Smaller) -->
-      <v-col class="pa-3" cols="12" sm="2">
+      <v-col class="px-6 py-4" cols="12" sm="2">
         <div class="character-portrait-container">
           <div class="character-portrait" @click="uploadPortrait">
             <v-img class="portrait-image" cover height="100" width="100" :src="character.portrait">
@@ -20,7 +20,7 @@
       </v-col>
 
       <!-- Character Name (Prominent) -->
-      <v-col class="pa-3" cols="12" sm="4">
+      <v-col class="px-6 py-4" cols="12" sm="4">
         <div class="character-name-section">
           <v-text-field v-model="character.name" class="character-name-input" hide-details
             placeholder="Enter Character Name" density="compact" variant="outlined">
@@ -36,21 +36,21 @@
       </v-col>
 
       <!-- Player Name -->
-      <v-col class="pa-3" cols="12" sm="4">
+      <v-col class="px-6 py-4" cols="12" sm="3">
         <v-text-field v-model="character.playerName" density="compact" hide-details label="Player Name"
           variant="outlined" />
       </v-col>
 
       <!-- Level & XP (Display Only) -->
-      <v-col class="pa-3" cols="12" sm="2">
-        <v-row dense>
-          <v-col cols="6">
+      <v-col class="px-6 py-4" cols="12" sm="3">
+        <v-row dense no-gutters>
+          <v-col class="pe-2" cols="6">
             <div class="stat-display stat-secondary-bg">
               <div class="stat-label">Level</div>
               <div class="stat-value">{{ character.level ?? 1 }}</div>
             </div>
           </v-col>
-          <v-col cols="6">
+          <v-col class="ps-2" cols="6">
             <div class="stat-display stat-secondary-bg">
               <div class="stat-label">XP</div>
               <div class="stat-value">{{ character.xp ?? 0 }}</div>
@@ -157,8 +157,8 @@ const uploadPortrait = () => {
 
 .character-portrait {
   position: relative;
-  width: 100px;
-  height: 100px;
+  width: 10vh;
+  height: 10vh;
   border-radius: 8px;
   overflow: hidden;
   border: 2px solid var(--theme-accent);
@@ -175,8 +175,8 @@ const uploadPortrait = () => {
 
 .portrait-image {
   transition: all 0.3s ease;
-  width: 100%;
-  height: 100%;
+  width: 80%;
+  height: 80%;
 }
 
 .character-portrait:hover .portrait-image {
@@ -329,11 +329,18 @@ const uploadPortrait = () => {
 
 /* Row and column spacing */
 .v-row {
-  margin: 0 -8px;
+  margin: 0;
 
   .v-col {
-    padding: 8px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
   }
+}
+
+/* Ensure equal height columns */
+.dense-form .v-col {
+  min-height: 80px;
 }
 
 /* Responsive adjustments */

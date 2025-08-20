@@ -1,6 +1,179 @@
 <template>
   <div class="characters-page theme-background theme-aware">
     <v-container class="pa-4">
+      <!-- Quick Actions Bar -->
+      <v-container fluid class="px-0 pb-0">
+        <v-card class="mb-4" variant="outlined" :class="{ 'py-2': true }">
+          <v-container :class="{ 'px-4': true, 'py-1': true }">
+            <!-- Desktop Layout (above 1117px) -->
+            <v-row align="center" class="no-gutters quick-actions-desktop" justify="center">
+              <!-- Access Status -->
+              <v-col class="d-flex justify-center px-3" cols="6" lg="2" md="3" sm="6" order="1" order-lg="2">
+                <div v-if="hasAccess" class="d-flex flex-column align-center">
+                  <div class="d-flex align-center justify-center">
+                    <v-chip class="quick-actions-chip" color="success" prepend-icon="mdi-account-check" size="small"
+                      variant="elevated">
+                      <span class="d-none d-md-inline">Group Access</span>
+                      <span class="d-inline d-md-none">Group</span>
+                    </v-chip>
+                  </div>
+                </div>
+                <div v-else class="d-flex flex-column align-center">
+                  <div class="d-flex align-center justify-center">
+                    <v-chip class="quick-actions-chip" color="warning" prepend-icon="mdi-lock" size="small"
+                      variant="elevated">
+                      <span class="d-none d-md-inline">Access Required</span>
+                      <span class="d-inline d-md-none">Access</span>
+                    </v-chip>
+                  </div>
+                </div>
+              </v-col>
+
+              <!-- Admin Status -->
+              <v-col class="d-flex justify-center px-3" cols="6" lg="2" md="3" sm="6" order="2" order-lg="3">
+                <div v-if="adminStore.isAdminUser" class="d-flex flex-column align-center">
+                  <div class="d-flex align-center justify-center">
+                    <v-chip class="ma-0 quick-actions-chip admin-status-chip" color="success"
+                      prepend-icon="mdi-shield-check" size="small" variant="elevated">
+                      <span class="d-none d-md-inline">Admin</span>
+                      <span class="d-inline d-md-none">Admin</span>
+                    </v-chip>
+                    <v-btn class="logout-btn" color="grey" size="medium" title="Logout from admin" variant="text"
+                      @click="adminLogout">
+                      <v-icon size="medium">mdi-logout</v-icon>
+                    </v-btn>
+                  </div>
+                </div>
+                <!-- Admin Login Button -->
+                <div v-else-if="hasAccess" class="d-flex flex-column align-center">
+                  <div class="d-flex align-center justify-center">
+                    <v-chip class="quick-actions-chip admin-status-chip" color="warning" data-admin-login
+                      prepend-icon="mdi-shield-key" size="small" variant="elevated" @click="showAdminLogin">
+                      <span class="d-none d-md-inline">Admin Login</span>
+                      <span class="d-inline d-md-none">Login</span>
+                    </v-chip>
+                  </div>
+                </div>
+                <div v-else class="d-flex flex-column align-center">
+                  <div class="text-caption text-grey">
+                    Admin requires access first
+                  </div>
+                </div>
+              </v-col>
+
+              <!-- Character Count -->
+              <v-col class="d-flex justify-center px-3" cols="6" lg="2" md="3" sm="6" order="3" order-lg="1">
+                <div class="d-flex align-center text-no-wrap">
+                  <v-icon class="me-2 flex-shrink-0" size="large" color="accent">mdi-information</v-icon>
+                  <span class="text-subtitle-1 theme-secondary text-no-wrap">
+                    <strong>{{ characters.length }}</strong> character{{ characters.length !== 1 ? 's' : '' }}
+                  </span>
+                </div>
+              </v-col>
+
+              <!-- Create Character Button -->
+              <v-col class="d-flex justify-center px-3" cols="6" lg="2" md="3" sm="6" order="4" order-lg="4">
+                <v-btn v-if="hasAccess" class="text-white create-character-btn align-center" color="accent"
+                  prepend-icon="mdi-plus" variant="elevated" @click="requireAccessForCreation">
+                  <span class="d-none d-xl-inline">Create New</span>
+                  <span class="d-inline d-xl-none">New</span>
+                </v-btn>
+                <v-btn v-else class="create-character-btn" color="grey" prepend-icon="mdi-lock" variant="outlined"
+                  @click="requireAccessForCreation">
+                  <span class="d-none d-xl-inline">Create New</span>
+                  <span class="d-inline d-xl-none">New</span>
+                </v-btn>
+              </v-col>
+            </v-row>
+
+            <!-- Mobile Layout (1117px and below) -->
+            <div class="quick-actions-mobile">
+              <!-- Top Row - Always visible (Character Count & Create Button) -->
+              <v-row align="center" class="no-gutters mb-1" justify="center">
+                <!-- Character Count -->
+                <v-col class="d-flex justify-center px-2" cols="6">
+                  <div class="d-flex align-center text-no-wrap">
+                    <v-icon class="me-2 flex-shrink-0" color="accent" size="medium">mdi-information</v-icon>
+                    <span class="text-subtitle-2">
+                      <strong>{{ characters.length }}</strong> character{{ characters.length !== 1 ? 's' : '' }}
+                    </span>
+                  </div>
+                </v-col>
+
+                <!-- Create Character Button -->
+                <v-col class="d-flex justify-center px-2" cols="6">
+                  <v-btn v-if="hasAccess" class="text-white create-character-btn-mobile" color="accent"
+                    prepend-icon="mdi-plus" size="small" variant="elevated" @click="requireAccessForCreation">
+                    <span>Create New</span>
+                  </v-btn>
+                  <v-btn v-else class="create-character-btn-mobile" color="grey" prepend-icon="mdi-lock" size="small"
+                    variant="outlined" @click="requireAccessForCreation">
+                    <span>Create New</span>
+                  </v-btn>
+                </v-col>
+              </v-row>
+
+              <!-- Expandable Bottom Row (Access & Admin Status) -->
+              <v-expand-transition>
+                <div v-show="mobileActionsExpanded">
+                  <v-row align="center" class="no-gutters mb-1" justify="center">
+                    <!-- Access Status -->
+                    <v-col class="d-flex justify-center px-2" cols="6">
+                      <div v-if="hasAccess" class="d-flex flex-column align-center">
+                        <v-chip class="quick-actions-chip-mobile" color="success" prepend-icon="mdi-account-check"
+                          size="small" variant="elevated">
+                          <span>Group Access</span>
+                        </v-chip>
+                      </div>
+                      <div v-else class="d-flex flex-column align-center">
+                        <v-chip class="quick-actions-chip-mobile" color="warning" prepend-icon="mdi-lock" size="small"
+                          variant="elevated">
+                          <span>Access Required</span>
+                        </v-chip>
+                      </div>
+                    </v-col>
+
+                    <!-- Admin Status -->
+                    <v-col class="d-flex justify-center px-2" cols="6">
+                      <div v-if="adminStore.isAdminUser" class="d-flex align-center">
+                        <v-chip class="quick-actions-chip-mobile admin-status-chip" color="success"
+                          prepend-icon="mdi-shield-check" size="small" variant="elevated">
+                          <span>Admin</span>
+                        </v-chip>
+                        <v-btn class="logout-btn ml-1" color="grey" size="small" title="Logout from admin"
+                          variant="text" @click="adminLogout">
+                          <v-icon size="small">mdi-logout</v-icon>
+                        </v-btn>
+                      </div>
+                      <div v-else-if="hasAccess" class="d-flex flex-column align-center">
+                        <v-chip class="quick-actions-chip-mobile admin-status-chip" color="warning" data-admin-login
+                          prepend-icon="mdi-shield-key" size="small" variant="elevated" @click="showAdminLogin">
+                          <span>Admin Login</span>
+                        </v-chip>
+                      </div>
+                      <div v-else class="d-flex flex-column align-center">
+                        <div class="text-caption text-grey text-center">
+                          Admin requires access first
+                        </div>
+                      </div>
+                    </v-col>
+                  </v-row>
+                </div>
+              </v-expand-transition>
+
+              <!-- Expand/Collapse Button -->
+              <div class="text-center">
+                <v-btn class="expand-toggle-btn" color="primary" size="small" variant="text"
+                  @click="mobileActionsExpanded = !mobileActionsExpanded">
+                  <v-icon size="small">{{ mobileActionsExpanded ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
+                  <span class="ml-1">{{ mobileActionsExpanded ? 'Less' : 'More' }}</span>
+                </v-btn>
+              </div>
+            </div>
+          </v-container>
+        </v-card>
+      </v-container>
+
       <!-- Header Section -->
       <div class="page-header text-center mb-4">
         <h1 class="display-1 font-weight-bold text-primary mb-2">🎭 My Characters</h1>
@@ -47,93 +220,6 @@
 
       <!-- Characters Grid -->
       <div v-else>
-        <!-- Quick Actions Bar -->
-        <v-container fluid>
-          <v-card class="mb-6 py-3" variant="outlined">
-            <v-container class="px-4">
-              <v-row align="center" class="no-gutters" justify="center">
-                <!-- Access Status -->
-                <v-col class="d-flex justify-center px-3" cols="6" lg="2" md="3" sm="6" order="1" order-lg="2">
-                  <div v-if="hasAccess" class="d-flex flex-column align-center">
-                    <div class="d-flex align-center justify-center">
-                      <v-chip class="quick-actions-chip" color="success" prepend-icon="mdi-account-check" size="small"
-                        variant="elevated">
-                        <span class="d-none d-md-inline">Group Access</span>
-                        <span class="d-inline d-md-none">Group</span>
-                      </v-chip>
-                    </div>
-                  </div>
-                  <div v-else class="d-flex flex-column align-center">
-                    <div class="d-flex align-center justify-center">
-                      <v-chip class="quick-actions-chip" color="warning" prepend-icon="mdi-lock" size="small"
-                        variant="elevated">
-                        <span class="d-none d-md-inline">Access Required</span>
-                        <span class="d-inline d-md-none">Access</span>
-                      </v-chip>
-                    </div>
-                  </div>
-                </v-col>
-
-                <!-- Admin Status -->
-                <v-col class="d-flex justify-center px-3" cols="6" lg="2" md="3" sm="6" order="2" order-lg="3">
-                  <div v-if="adminStore.isAdminUser" class="d-flex flex-column align-center">
-                    <div class="d-flex align-center justify-center">
-                      <v-chip class="ma-0 quick-actions-chip admin-status-chip" color="success"
-                        prepend-icon="mdi-shield-check" size="small" variant="elevated">
-                        <span class="d-none d-md-inline">Admin</span>
-                        <span class="d-inline d-md-none">Admin</span>
-                      </v-chip>
-                      <v-btn class="logout-btn" color="grey" size="medium" title="Logout from admin" variant="text"
-                        @click="adminLogout">
-                        <v-icon size="medium">mdi-logout</v-icon>
-                      </v-btn>
-                    </div>
-                  </div>
-                  <!-- Admin Login Button -->
-                  <div v-else-if="hasAccess" class="d-flex flex-column align-center">
-                    <div class="d-flex align-center justify-center">
-                      <v-chip class="quick-actions-chip admin-status-chip" color="warning" data-admin-login
-                        prepend-icon="mdi-shield-key" size="small" variant="elevated" @click="showAdminLogin">
-                        <span class="d-none d-md-inline">Admin Login</span>
-                        <span class="d-inline d-md-none">Login</span>
-                      </v-chip>
-                    </div>
-                  </div>
-                  <div v-else class="d-flex flex-column align-center">
-                    <div class="text-caption text-grey">
-                      Admin requires access first
-                    </div>
-                  </div>
-                </v-col>
-
-                <!-- Character Count -->
-                <v-col class="d-flex justify-center px-3" cols="6" lg="2" md="3" sm="6" order="3" order-lg="1">
-                  <div class="d-flex align-center text-no-wrap">
-                    <v-icon class="me-2 flex-shrink-0" size="large" color="accent">mdi-information</v-icon>
-                    <span class="text-subtitle-1 theme-secondary text-no-wrap">
-                      <strong>{{ characters.length }}</strong> character{{ characters.length !== 1 ? 's' : '' }}
-                    </span>
-                  </div>
-                </v-col>
-
-                <!-- Create Character Button -->
-                <v-col class="d-flex justify-center px-3" cols="6" lg="2" md="3" sm="6" order="4" order-lg="4">
-                  <v-btn v-if="hasAccess" class="text-white create-character-btn align-center" color="accent"
-                    prepend-icon="mdi-plus" variant="elevated" @click="requireAccessForCreation">
-                    <span class="d-none d-xl-inline">Create New</span>
-                    <span class="d-inline d-xl-none">New</span>
-                  </v-btn>
-                  <v-btn v-else class="create-character-btn" color="grey" prepend-icon="mdi-lock" variant="outlined"
-                    @click="requireAccessForCreation">
-                    <span class="d-none d-xl-inline">Create New</span>
-                    <span class="d-inline d-xl-none">New</span>
-                  </v-btn>
-                </v-col>
-              </v-row>
-            </v-container>
-          </v-card>
-        </v-container>
-
         <!-- Character Cards -->
         <v-row>
           <v-col v-for="character in characters" :key="character.id" cols="12" lg="4" md="6" sm="12" xl="4">
@@ -158,19 +244,32 @@
                   </div>
 
                   <div class="character-subtitle">
-                    <v-chip class="me-2"
-                      style="background: var(--theme-card-bg); color: var(--theme-text-primary); font-weight: 600;"
-                      size="small">
-                      Level {{ character.level || 1 }}
-                    </v-chip>
-                    <v-chip class="me-2"
-                      style="background: var(--theme-card-bg); color: var(--theme-text-primary); font-weight: 600;"
-                      size="small">
-                      XP {{ character.xp || 0 }}
-                    </v-chip>
-                    <v-chip color="accent" text-color="black" size="small" variant="elevated">
-                      {{ character.classDetails?.name || 'Unknown Class' }}
-                    </v-chip>
+                    <v-tooltip text="Character's current level - determines abilities and features available"
+                      location="top">
+                      <template v-slot:activator="{ props }">
+                        <v-chip v-bind="props" class="me-2"
+                          style="background: var(--theme-card-bg); color: var(--theme-text-primary); font-weight: 600;"
+                          size="small">
+                          Level {{ character.level || 1 }}
+                        </v-chip>
+                      </template>
+                    </v-tooltip>
+                    <v-tooltip text="Experience points earned - determines when character levels up" location="top">
+                      <template v-slot:activator="{ props }">
+                        <v-chip v-bind="props" class="me-2"
+                          style="background: var(--theme-card-bg); color: var(--theme-text-primary); font-weight: 600;"
+                          size="small">
+                          XP {{ character.xp || 0 }}
+                        </v-chip>
+                      </template>
+                    </v-tooltip>
+                    <v-tooltip text="Character's class - defines their role and abilities" location="top">
+                      <template v-slot:activator="{ props }">
+                        <v-chip v-bind="props" color="accent" text-color="black" size="small" variant="elevated">
+                          {{ character.classDetails?.name || 'Unknown Class' }}
+                        </v-chip>
+                      </template>
+                    </v-tooltip>
                   </div>
                 </div>
               </div>
@@ -183,7 +282,7 @@
                     <v-col cols="3">
                       <v-card class="text-center d-flex flex-column justify-center align-center essential-stat-card"
                         style="background: var(--theme-surface); min-height: 80px;" variant="tonal">
-                        <v-icon color="red-darken-2" size="small">mdi-heart</v-icon>
+                        <v-icon color="error" size="small">mdi-heart</v-icon>
                         <div class="text-caption font-weight-bold">HP</div>
                         <div class="text-h6 font-weight-bold">
                           {{ (character.level * 8) + (character.abilityScores?.constitution?.modifier || 0) }}
@@ -325,10 +424,14 @@
                           Skill Proficiencies
                         </h4>
                         <div class="d-flex flex-wrap" style="gap: 4px;">
-                          <v-chip v-for="skill in getCharacterSkills(character)" :key="skill" color="green-lighten-4"
-                            size="small" variant="tonal">
-                            {{ skill }}
-                          </v-chip>
+                          <v-tooltip v-for="skill in getCharacterSkills(character)" :key="skill"
+                            text="A trained ability that can be used for various actions and checks" location="top">
+                            <template v-slot:activator="{ props }">
+                              <v-chip v-bind="props" color="green-lighten-4" size="small" variant="tonal">
+                                {{ skill }}
+                              </v-chip>
+                            </template>
+                          </v-tooltip>
                         </div>
                       </div>
 
@@ -339,10 +442,14 @@
                           Languages
                         </h4>
                         <div class="d-flex flex-wrap" style="gap: 4px;">
-                          <v-chip v-for="lang in getCharacterLanguages(character)" :key="lang" color="purple-lighten-4"
-                            size="small" variant="tonal">
-                            {{ lang }}
-                          </v-chip>
+                          <v-tooltip v-for="lang in getCharacterLanguages(character)" :key="lang"
+                            text="A language this character can speak, read, and write" location="top">
+                            <template v-slot:activator="{ props }">
+                              <v-chip v-bind="props" color="purple-lighten-4" size="small" variant="tonal">
+                                {{ lang }}
+                              </v-chip>
+                            </template>
+                          </v-tooltip>
                         </div>
                       </div>
 
@@ -353,10 +460,14 @@
                           Tool Proficiencies
                         </h4>
                         <div class="d-flex flex-wrap" style="gap: 4px;">
-                          <v-chip v-for="tool in getCharacterTools(character)" :key="tool" color="orange-lighten-4"
-                            size="small" variant="tonal">
-                            {{ tool }}
-                          </v-chip>
+                          <v-tooltip v-for="tool in getCharacterTools(character)" :key="tool"
+                            text="Equipment or tools this character is trained to use effectively" location="top">
+                            <template v-slot:activator="{ props }">
+                              <v-chip v-bind="props" color="orange-lighten-4" size="small" variant="tonal">
+                                {{ tool }}
+                              </v-chip>
+                            </template>
+                          </v-tooltip>
                         </div>
                       </div>
 
@@ -454,6 +565,7 @@ const loading = ref(true)
 const error = ref(null)
 const deleteDialog = ref(false)
 const selectedCharacter = ref(null)
+const mobileActionsExpanded = ref(false)
 
 // Helper functions for styling
 const getCharacterHeaderStyle = character => {
@@ -524,7 +636,7 @@ const getAbilityColor = modifier => {
   if (modifier >= 2) return 'blue-lighten-4'
   if (modifier >= 0) return 'grey-lighten-3'
   if (modifier >= -2) return 'orange-lighten-4'
-  return 'red-lighten-4'
+  return 'error-lighten-4'
 }
 
 // Get top 3 ability scores for a character
@@ -639,9 +751,15 @@ const getSpeciesDisplayName = character => {
 }
 
 const getBackgroundName = character => {
+  // Utility function to capitalize first letter
+  const capitalizeFirst = (str) => {
+    if (!str) return str
+    return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase()
+  }
+
   // If backgroundDetails exists, use it
   if (character.backgroundDetails?.name) {
-    return character.backgroundDetails.name
+    return capitalizeFirst(character.backgroundDetails.name)
   }
 
   // Otherwise, look up the name from the background ID
@@ -658,7 +776,7 @@ const getBackgroundName = character => {
       'guild-artisan': 'Guild Artisan',
       'outlander': 'Outlander'
     }
-    return backgroundMap[character.background] || character.background
+    return backgroundMap[character.background] || capitalizeFirst(character.background)
   }
 
   return 'Unknown'
@@ -842,6 +960,99 @@ onMounted(() => {
 </script>
 
 <style scoped>
+/* Quick Actions responsive layout */
+.quick-actions-desktop {
+  display: flex;
+}
+
+.quick-actions-mobile {
+  display: none;
+}
+
+/* At 1117px and below, switch to mobile layout */
+@media (max-width: 1117px) {
+  .quick-actions-desktop {
+    display: none !important;
+  }
+
+  .quick-actions-mobile {
+    display: block !important;
+  }
+
+  /* More compact quick actions card */
+  .quick-actions-mobile .v-card {
+    padding-top: 8px !important;
+    padding-bottom: 8px !important;
+  }
+
+  /* Reduce title size for mobile */
+  .page-header h1 {
+    font-size: 2.5rem !important;
+  }
+
+  .page-header p {
+    font-size: 1.1rem !important;
+  }
+
+  .page-header {
+    padding: 1.5rem 0 !important;
+    margin-bottom: 1rem !important;
+  }
+}
+
+/* Mobile quick actions styling */
+.quick-actions-chip-mobile {
+  min-width: 140px !important;
+  width: 140px !important;
+  text-align: center !important;
+  justify-content: center !important;
+  font-size: 0.75rem !important;
+}
+
+.create-character-btn-mobile {
+  min-width: 120px !important;
+  font-size: 0.75rem !important;
+}
+
+.expand-toggle-btn {
+  min-height: 24px !important;
+  height: 24px !important;
+  font-size: 0.7rem !important;
+  opacity: 0.8;
+  transition: opacity 0.3s ease;
+  padding: 0 8px !important;
+}
+
+.expand-toggle-btn:hover {
+  opacity: 1;
+}
+
+@media (max-width: 600px) {
+  .quick-actions-chip-mobile {
+    min-width: 120px !important;
+    width: 120px !important;
+    font-size: 0.7rem !important;
+  }
+
+  .create-character-btn-mobile {
+    min-width: 100px !important;
+    font-size: 0.7rem !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .quick-actions-chip-mobile {
+    min-width: 100px !important;
+    width: 100px !important;
+    font-size: 0.65rem !important;
+  }
+
+  .create-character-btn-mobile {
+    min-width: 90px !important;
+    font-size: 0.65rem !important;
+  }
+}
+
 /* Admin login chip styles */
 .v-chip[data-admin-login] {
   background: linear-gradient(135deg, #FFA726 0%, #FF9800 100%) !important;

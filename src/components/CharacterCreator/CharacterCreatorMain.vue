@@ -9,6 +9,36 @@
     <CharacterCreatorStepper :character="character" :character-data="characterStore" :current-step="currentStep"
       :is-editing="isEditing" @submit-character="handleSubmitCharacter" @update:character="updateCharacter"
       @update:current-step="currentStep = $event" />
+
+    <!-- Success Dialog with Create Another Option -->
+    <v-dialog v-model="showSuccessDialog" max-width="500" persistent>
+      <v-card>
+        <v-card-title class="d-flex align-center text-h5">
+          <v-icon class="me-2" color="success">mdi-check-circle</v-icon>
+          Character {{ isEditing ? 'Updated' : 'Created' }}!
+        </v-card-title>
+        <v-card-text class="text-body-1">
+          <p class="mb-3">
+            <strong>"{{ character.name }}"</strong> has been {{ isEditing ? 'updated' : 'created' }} successfully!
+          </p>
+          <v-alert type="success" variant="tonal" class="mb-0">
+            {{ isEditing ? 'Your changes have been saved.' : 'Your character is now ready for adventure!' }}
+          </v-alert>
+        </v-card-text>
+        <v-card-actions class="pa-4">
+          <v-btn variant="outlined" @click="viewCharacters">
+            View All Characters
+          </v-btn>
+          <v-spacer />
+          <v-btn v-if="!isEditing" color="primary" variant="elevated" prepend-icon="mdi-plus" @click="createAnother">
+            Create Another
+          </v-btn>
+          <v-btn v-else color="primary" variant="elevated" @click="viewCharacters">
+            Done
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-container>
 </template>
 
@@ -54,6 +84,9 @@ const { saveCharacter, getCharacters, updateCharacter: updateExistingCharacter }
 const router = useRouter()
 const route = useRoute()
 
+// Reactive data
+const showSuccessDialog = ref(false)
+
 // Check if we're editing an existing character
 const isEditing = ref(false)
 const editingCharacterId = ref(null)
@@ -71,9 +104,9 @@ const loadExistingCharacter = async characterId => {
         editingCharacterId.value = characterId
 
         // Update species, class, and background details if needed
-        if (character.species) updateSpeciesTraits()
-        if (character.class) updateClassTraits()
-        if (character.background) updateBackgroundTraits()
+        if (character.species) characterStore.updateSpeciesTraits()
+        if (character.class) characterStore.updateClassTraits()
+        if (character.background) characterStore.updateBackgroundTraits()
 
         console.log('Loaded existing character for editing:', existingCharacter)
       }
@@ -128,7 +161,10 @@ provide('characterData', {
   equipmentData: characterStore.equipmentData,
   isLoadingEquipment: characterStore.isLoadingEquipment,
   equipmentError: characterStore.equipmentError,
-  // Add computed/static as needed
+  // Add the update functions
+  updateSpeciesTraits: characterStore.updateSpeciesTraits,
+  updateClassTraits: characterStore.updateClassTraits,
+  updateBackgroundTraits: characterStore.updateBackgroundTraits,
 })
 
 // Handle character updates
@@ -178,8 +214,8 @@ const handleSubmitCharacter = async () => {
       result = await updateExistingCharacter(editingCharacterId.value, character)
 
       if (result.success) {
-        alert(`Character "${character.name}" updated successfully!`)
         console.log('Character updated with ID:', editingCharacterId.value)
+        showSuccessDialog.value = true
       } else {
         throw new Error(result.error)
       }
@@ -188,19 +224,29 @@ const handleSubmitCharacter = async () => {
       result = await saveCharacter(character)
 
       if (result.success) {
-        alert(`Character "${character.name}" saved successfully!`)
         console.log('Character saved with ID:', result.id)
+        showSuccessDialog.value = true
       } else {
         throw new Error(result.error)
       }
     }
-
-    // Navigate to characters page to see the saved character
-    router.push('/characters')
   } catch (error) {
     console.error('Error saving character:', error)
     alert('Error saving character: ' + error.message)
   }
+}
+
+// Dialog actions
+const viewCharacters = () => {
+  showSuccessDialog.value = false
+  router.push('/characters')
+}
+
+const createAnother = () => {
+  showSuccessDialog.value = false
+  characterStore.$reset() // Reset the store to default state
+  currentStep.value = 1 // Reset to first step
+  // Don't navigate away, just reset the form
 }
 </script>
 
@@ -208,5 +254,35 @@ const handleSubmitCharacter = async () => {
 .character-creator {
   max-width: 1200px;
   margin: 0 auto;
+  padding: 16px;
+}
+
+/* Mobile responsive adjustments */
+@media (max-width: 960px) {
+  .character-creator {
+    padding: 8px;
+  }
+
+  .character-creator h1 {
+    font-size: 2rem !important;
+  }
+
+  .character-creator h2 {
+    font-size: 1.25rem !important;
+  }
+}
+
+@media (max-width: 600px) {
+  .character-creator {
+    padding: 4px;
+  }
+
+  .character-creator h1 {
+    font-size: 1.75rem !important;
+  }
+
+  .character-creator h2 {
+    font-size: 1.1rem !important;
+  }
 }
 </style>

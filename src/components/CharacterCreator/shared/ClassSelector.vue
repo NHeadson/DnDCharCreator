@@ -66,11 +66,16 @@
               <span class="text-subtitle-1 font-weight-bold">{{ selectedClassInfo.name }}</span>
             </div>
 
-            <v-chip
+            <v-tooltip
               v-for="ability in (Array.isArray(selectedClassInfo.primaryAbility) ? selectedClassInfo.primaryAbility : [selectedClassInfo.primaryAbility])"
-              :key="'ability-' + ability" size="small" variant="tonal" color="accent">
-              {{ ability }}
-            </v-chip>
+              :key="'ability-' + ability" text="Primary ability score that's most important for this class"
+              location="top">
+              <template v-slot:activator="{ props }">
+                <v-chip v-bind="props" size="small" variant="tonal" color="accent">
+                  {{ ability }}
+                </v-chip>
+              </template>
+            </v-tooltip>
           </v-card-title>
           <v-divider />
           <v-card-text class="pt-3 pb-2">
@@ -80,18 +85,26 @@
               <span class="ms-5 text-subtitle-2 text-grey-darken-1">Quick Stats</span>
             </div>
             <div class="d-flex flex-wrap ms-5 class-details-chip-row class-details-chip-row-gap">
-              <v-chip color="green" size="small" variant="tonal" class="class-details-chip me-3 ms-5">
-                <v-icon start size="small">mdi-dice-d20</v-icon>
-                <span class="chip-label">Hit Die</span>
-
-                <span class="chip-value">: d{{ selectedClassInfo.hitDie || '-' }}</span>
-              </v-chip>
-              <v-chip v-if="selectedClassInfo.savingThrows && selectedClassInfo.savingThrows.length" color="blue"
-                size="small" variant="tonal" class="class-details-chip me-3">
-                <v-icon start size="small">mdi-shield</v-icon>
-                <span class="chip-label">Saves</span>
-                <span class="chip-value">: {{ selectedClassInfo.savingThrows.join(', ') }}</span>
-              </v-chip>
+              <v-tooltip text="The type of hit dice used to determine hit points when leveling up" location="top">
+                <template v-slot:activator="{ props }">
+                  <v-chip v-bind="props" color="green" size="small" variant="tonal"
+                    class="class-details-chip me-3 ms-5">
+                    <v-icon start size="small">mdi-dice-d20</v-icon>
+                    <span class="chip-label">Hit Die</span>
+                    <span class="chip-value">: d{{ selectedClassInfo.hitDie || '-' }}</span>
+                  </v-chip>
+                </template>
+              </v-tooltip>
+              <v-tooltip v-if="selectedClassInfo.savingThrows && selectedClassInfo.savingThrows.length"
+                text="Ability scores this class is proficient in for saving throws" location="top">
+                <template v-slot:activator="{ props }">
+                  <v-chip v-bind="props" color="blue" size="small" variant="tonal" class="class-details-chip me-3">
+                    <v-icon start size="small">mdi-shield</v-icon>
+                    <span class="chip-label">Saves</span>
+                    <span class="chip-value">: {{ selectedClassInfo.savingThrows.join(', ') }}</span>
+                  </v-chip>
+                </template>
+              </v-tooltip>
               <v-chip
                 v-if="selectedClassInfo.armorTraining && (selectedClassInfo.armorTraining.light || selectedClassInfo.armorTraining.medium || selectedClassInfo.armorTraining.heavy || selectedClassInfo.armorTraining.shields)"
                 color="blue" size="small" variant="tonal" class="class-details-chip me-3">
@@ -259,7 +272,7 @@
               </div>
               <div class="ms-10">
                 <v-chip v-for="item in selectedClassInfo.startingEquipment" :key="'equip-' + (item.name || item)"
-                  size="small" variant="tonal" color="red" class="ms-2 me-1 mb-1">
+                  size="small" variant="tonal" color="error" class="ms-2 me-1 mb-1">
                   {{ typeof item === 'object' && item.name ? item.name + (item.quantity && item.quantity > 1 ? ' x' +
                     item.quantity : '') : item }}
                 </v-chip>

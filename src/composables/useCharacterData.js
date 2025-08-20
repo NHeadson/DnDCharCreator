@@ -1036,42 +1036,43 @@ export function useCharacterData() {
           ? selectedSpecies.lineages[0].id
           : null;
 
-      // If we have basic data, fetch detailed info in the background
-      if (selectedSpecies.isBasicData) {
-        // Non-blocking async call to fetch details
-        dndAPI
-          .getRaceDetails(selectedSpecies.id)
-          .then((detailedRace) => {
-            if (detailedRace) {
-              // Preserve our enhanced lineages data
-              const enhancedLineages = selectedSpecies.lineages;
-              const enhancedBonusLanguage = selectedSpecies.bonusLanguage;
+      // Always fetch detailed trait information to get descriptions
+      console.log(
+        `Fetching detailed traits for species: ${selectedSpecies.name}`
+      );
+      // Non-blocking async call to fetch details
+      dndAPI
+        .getRaceDetails(selectedSpecies.id)
+        .then((detailedRace) => {
+          if (detailedRace) {
+            // Preserve our enhanced lineages data
+            const enhancedLineages = selectedSpecies.lineages;
+            const enhancedBonusLanguage = selectedSpecies.bonusLanguage;
 
-              // Merge detailed API data with our enhanced data
-              const finalRaceData = {
-                ...detailedRace,
-                lineages: enhancedLineages, // Keep our enhanced lineages
-                bonusLanguage: enhancedBonusLanguage, // Keep our enhanced bonus language
-              };
+            // Merge detailed API data with our enhanced data
+            const finalRaceData = {
+              ...detailedRace,
+              lineages: enhancedLineages, // Keep our enhanced lineages
+              bonusLanguage: enhancedBonusLanguage, // Keep our enhanced bonus language
+            };
 
-              const index = speciesData.value.findIndex(
-                (s) => s.id === selectedSpecies.id
-              );
-              if (index !== -1) {
-                speciesData.value[index] = finalRaceData;
-                // Update character if this race is still selected
-                if (character.species === selectedSpecies.id) {
-                  character.speciesDetails = finalRaceData;
-                  character.size = finalRaceData.size;
-                  character.speed = finalRaceData.speed;
-                }
+            const index = speciesData.value.findIndex(
+              (s) => s.id === selectedSpecies.id
+            );
+            if (index !== -1) {
+              speciesData.value[index] = finalRaceData;
+              // Update character if this race is still selected
+              if (character.species === selectedSpecies.id) {
+                character.speciesDetails = finalRaceData;
+                character.size = finalRaceData.size;
+                character.speed = finalRaceData.speed;
               }
             }
-          })
-          .catch((error) => {
-            console.error("Failed to fetch detailed race info:", error);
-          });
-      }
+          }
+        })
+        .catch((error) => {
+          console.error("Failed to fetch detailed race info:", error);
+        });
     } else {
       character.speciesDetails = null;
       character.size = "";

@@ -12,11 +12,11 @@
         <br>Using fallback data instead.
       </v-alert>
 
-      <v-stepper v-model="localCurrentStep" elevation="2" :items="stepItems" :mobile="$vuetify.display.smAndDown"
+      <v-stepper v-model="localCurrentStep" elevation="2" :items="stepItems" :mobile="$vuetify.display.mdAndDown"
         editable>
         <template #next-text="{ next }">
           <!-- Current step: {{ localCurrentStep }} -->
-          <v-btn v-if="localCurrentStep < 5" class="force-primary-btn" color="accent" variant="elevated" @click="next">
+          <v-btn v-if="localCurrentStep < 5" color="primary" variant="elevated" @click="next">
             Next
           </v-btn>
         </template>
@@ -29,7 +29,7 @@
               <span v-else>Previous</span>
             </v-btn>
             <v-spacer />
-            <v-btn v-if="localCurrentStep < 5" class="force-primary-btn" color="accent" variant="elevated" @click="next"
+            <v-btn v-if="localCurrentStep < 5" color="primary" variant="elevated" @click="next"
               :size="$vuetify.display.smAndDown ? 'small' : 'default'">
               <span v-if="!$vuetify.display.smAndDown">Next</span>
               <v-icon v-else icon="mdi-chevron-right" />
@@ -182,13 +182,6 @@ const stepItems = [
   padding: 8px 16px;
 }
 
-.force-primary-btn {
-  background-color: var(--v-theme-primary) !important;
-  color: #fff !important;
-  font-weight: 600;
-  font-size: 1.1rem;
-}
-
 .save-character-btn {
   background-color: var(--v-theme-success) !important;
   color: #fff !important;
@@ -207,30 +200,55 @@ const stepItems = [
 
 /* Enhanced Save Button Styling */
 .save-character-btn-centered {
-  background: linear-gradient(135deg, rgb(var(--v-theme-success)), rgb(var(--v-theme-success-darken-1))) !important;
-  color: #fff !important;
+  background: linear-gradient(135deg, #16a34a, #15803d, #14532d) !important;
+  color: #ffffff !important;
   font-weight: 700;
   font-size: 1.3rem;
   padding: 16px 48px !important;
-  border-radius: 12px;
-  box-shadow: 0 6px 20px rgba(var(--v-theme-success), 0.4) !important;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 16px;
+  box-shadow:
+    0 8px 25px rgba(21, 128, 61, 0.4),
+    0 0 0 1px rgba(255, 255, 255, 0.1) inset !important;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   text-transform: none;
-  letter-spacing: 0.5px;
-  min-width: 250px;
-  height: 60px;
+  letter-spacing: 0.8px;
+  min-width: 280px;
+  height: 64px;
   margin: 8px 16px;
+  position: relative;
+  overflow: hidden;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.save-character-btn-centered::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.6s ease;
 }
 
 .save-character-btn-centered:hover {
-  transform: translateY(-3px) scale(1.02);
-  box-shadow: 0 12px 28px rgba(var(--v-theme-success), 0.5) !important;
-  background: linear-gradient(135deg, rgb(var(--v-theme-success-lighten-1)), rgb(var(--v-theme-success))) !important;
+  transform: translateY(-4px) scale(1.03);
+  box-shadow:
+    0 15px 35px rgba(21, 128, 61, 0.5),
+    0 5px 15px rgba(21, 128, 61, 0.3),
+    0 0 0 1px rgba(255, 255, 255, 0.2) inset !important;
+  background: linear-gradient(135deg, #22c55e, #16a34a, #15803d) !important;
+}
+
+.save-character-btn-centered:hover::before {
+  left: 100%;
 }
 
 .save-character-btn-centered:active {
-  transform: translateY(-1px) scale(1.01);
-  box-shadow: 0 8px 24px rgba(var(--v-theme-success), 0.45) !important;
+  transform: translateY(-2px) scale(1.02);
+  box-shadow:
+    0 10px 30px rgba(21, 128, 61, 0.45),
+    0 0 0 1px rgba(255, 255, 255, 0.15) inset !important;
 }
 
 .navigation-buttons {
@@ -238,7 +256,7 @@ const stepItems = [
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  padding: 24px 16px;
+  padding: 8px 16px 16px 16px;
   margin: 16px 0;
 }
 
@@ -248,26 +266,32 @@ const stepItems = [
 }
 
 .mobile-nav .save-character-btn-centered {
-  min-width: auto;
-  height: 48px;
+  min-width: 200px;
+  height: 52px;
   margin: 4px 8px;
+  font-size: 1.1rem;
+  padding: 12px 32px !important;
+  border-radius: 14px;
 }
 
 /* Mobile responsive adjustments */
 @media (max-width: 600px) {
   .navigation-buttons {
-    padding: 16px 8px;
+    padding: 8px 8px 16px 8px;
     margin: 12px 0;
   }
 
   .save-character-btn-centered {
-    min-width: 200px;
-    height: 48px;
+    min-width: 240px;
+    height: 56px;
     margin: 4px 8px;
+    font-size: 1.2rem;
+    padding: 14px 36px !important;
+    border-radius: 14px;
   }
 
   .save-character-btn-centered:hover {
-    transform: none;
+    transform: translateY(-2px) scale(1.01);
   }
 }
 

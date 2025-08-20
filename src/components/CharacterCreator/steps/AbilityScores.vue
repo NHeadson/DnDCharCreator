@@ -17,16 +17,17 @@
         <v-card class="rolled-array-card pa-3" variant="tonal" elevation="2">
           <div class="mb-2 text-center">
             <span class="text-subtitle-1 font-weight-bold">Rolled Array</span>
-            <span class="text-caption text-grey-darken-1 ms-2" v-if="!$vuetify.display.smAndDown">(Drag a number onto an
+            <span class="text-caption text-grey-darken-1 ms-2" v-if="!$vuetify.display.mdAndDown">(Drag a number onto an
               ability)</span>
             <div class="text-caption text-grey-darken-1 mt-1" v-else>(Tap a number, then tap an ability)</div>
           </div>
           <div class="d-flex flex-wrap justify-center align-center"
-            :class="{ 'mobile-chips': $vuetify.display.smAndDown }">
+            :class="{ 'mobile-chips': $vuetify.display.mdAndDown }">
             <v-chip v-for="(score, idx) in availableScores" :key="score + '-' + idx" color="primary"
-              class="ma-2 px-6 py-3 rolled-chip" :class="{ 'mobile-chip': $vuetify.display.smAndDown }" draggable="true"
-              @dragstart="onDragStart(score, idx)" @click="onChipClick(score, idx)"
-              :style="$vuetify.display.smAndDown ? 'font-size:1.5rem;font-weight:600;cursor:pointer;' : 'font-size:2rem;font-weight:600;cursor:grab;box-shadow:0 2px 8px rgba(0,0,0,0.10);'">
+              class="ma-2 px-6 py-3 rolled-chip" :class="{ 'mobile-chip': $vuetify.display.mdAndDown }"
+              :draggable="!$vuetify.display.mdAndDown" @dragstart="onDragStart(score, idx)"
+              @click="onChipClick(score, idx)"
+              :style="$vuetify.display.mdAndDown ? 'font-size:1.5rem;font-weight:600;cursor:pointer;' : 'font-size:2rem;font-weight:600;cursor:grab;box-shadow:0 2px 8px rgba(0,0,0,0.10);'">
               {{ score }}
             </v-chip>
           </div>
@@ -36,7 +37,73 @@
       <AbilityScoreGrid :available-scores="availableScores" :character="character" :character-data="characterData"
         :is-assigning-scores="isAssigningScores" @assign-score="assignScore" />
 
-      <AbilityScoreReference />
+      <!-- Ability Score Reference Dropdown -->
+      <div class="d-flex justify-center mt-4">
+        <v-menu v-model="showReferenceMenu" :close-on-content-click="false" location="top center" offset="8">
+          <template v-slot:activator="{ props }">
+            <v-btn v-bind="props" color="primary" variant="outlined" prepend-icon="mdi-information">
+              <span v-if="!$vuetify.display.smAndDown">Ability Score Reference</span>
+              <span v-else>Reference</span>
+            </v-btn>
+          </template>
+
+          <v-card max-width="600" class="reference-dropdown" :class="{ 'mobile-dropdown': $vuetify.display.smAndDown }">
+            <v-card-title class="d-flex align-center justify-space-between">
+              <div>
+                <v-icon class="me-2">mdi-information</v-icon>
+                Ability Score Reference
+              </div>
+              <v-btn icon variant="text" size="small" @click="showReferenceMenu = false">
+                <v-icon>mdi-close</v-icon>
+              </v-btn>
+            </v-card-title>
+            <v-card-text>
+              <v-row>
+                <v-col cols="12" md="6">
+                  <h3 class="text-subtitle-1 mb-2">Score Meanings</h3>
+                  <v-list density="compact">
+                    <v-list-item>
+                      <v-list-item-title>3-7: Severely Limited</v-list-item-title>
+                    </v-list-item>
+                    <v-list-item>
+                      <v-list-item-title>8-9: Below Average</v-list-item-title>
+                    </v-list-item>
+                    <v-list-item>
+                      <v-list-item-title>10-11: Average</v-list-item-title>
+                    </v-list-item>
+                    <v-list-item>
+                      <v-list-item-title>12-13: Above Average</v-list-item-title>
+                    </v-list-item>
+                    <v-list-item>
+                      <v-list-item-title>14-15: Gifted</v-list-item-title>
+                    </v-list-item>
+                    <v-list-item>
+                      <v-list-item-title>16-17: Exceptional</v-list-item-title>
+                    </v-list-item>
+                    <v-list-item>
+                      <v-list-item-title>18-20: Legendary</v-list-item-title>
+                    </v-list-item>
+                  </v-list>
+                </v-col>
+                <v-col cols="12" md="6">
+                  <h3 class="text-subtitle-1 mb-2">Quick Tips</h3>
+                  <v-list density="compact">
+                    <v-list-item>
+                      <v-list-item-title>Most characters have at least one score of 14 or higher</v-list-item-title>
+                    </v-list-item>
+                    <v-list-item>
+                      <v-list-item-title>Standard Array: 15, 14, 13, 12, 10, 8</v-list-item-title>
+                    </v-list-item>
+                    <v-list-item>
+                      <v-list-item-title>Rolling: Roll 4d6, drop lowest, six times</v-list-item-title>
+                    </v-list-item>
+                  </v-list>
+                </v-col>
+              </v-row>
+            </v-card-text>
+          </v-card>
+        </v-menu>
+      </div>
     </v-card-text>
   </v-card>
 </template>
@@ -46,7 +113,6 @@
 import { ref, toRefs } from 'vue'
 import AbilityScoreGrid from '../shared/AbilityScoreGrid.vue'
 import AbilityScoreHeader from '../shared/AbilityScoreHeader.vue'
-import AbilityScoreReference from '../shared/AbilityScoreReference.vue'
 
 const props = defineProps({
   character: {
@@ -65,6 +131,7 @@ const { character, characterData } = toRefs(props)
 const isAssigningScores = ref(false)
 const availableScores = ref([])
 const assignedStats = ref({})
+const showReferenceMenu = ref(false)
 const statKeys = ['strength', 'dexterity', 'constitution', 'intelligence', 'wisdom', 'charisma']
 
 // Allow user to clear arrays and enter scores manually
@@ -267,6 +334,36 @@ const assignScore = statName => {
 
   .ability-score-section-card {
     margin: 0 -8px;
+  }
+}
+
+.reference-dropdown {
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+  border-radius: 12px;
+}
+
+.reference-dropdown .v-card-title {
+  background: var(--v-theme-primary-lighten-5);
+  border-bottom: 1px solid var(--v-theme-primary-lighten-3);
+  font-weight: 600;
+}
+
+.reference-dropdown .v-list-item-title {
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.mobile-dropdown {
+  max-width: calc(100vw - 32px) !important;
+  margin: 0 16px;
+}
+
+@media (max-width: 480px) {
+  .mobile-dropdown {
+    max-width: calc(100vw - 16px) !important;
+    margin: 0 8px;
   }
 }
 </style>

@@ -49,8 +49,8 @@ const generateColorVariations = (baseColor) => {
 let themePresets = {
   default: {
     name: "D&D Classic Dark",
-    description: "Classic red, gold, and blue on dark.",
-    primary: "#822522",
+    description: "Classic blue-teal, gold, and blue on dark.",
+    primary: "#4A90A4", // Changed from red to blue-teal
     secondary: "#DFC368", // Yellow/Gold
     accent: "#2A6ACB", // Rich blue accent
     background: "#1A1A1A", // Dark background

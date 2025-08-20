@@ -436,5 +436,109 @@ export const useCharacterStore = defineStore("character", {
         this.loadEquipmentData(),
       ]);
     },
+
+    // Update species traits when species changes
+    updateSpeciesTraits() {
+      const selectedSpecies = this.speciesData.find(
+        (s) => s.id === this.character.species
+      );
+      if (selectedSpecies) {
+        this.character.speciesDetails = selectedSpecies;
+        this.character.size = selectedSpecies.size;
+        this.character.speed = selectedSpecies.speed;
+
+        if (selectedSpecies.id === "human") {
+          this.character.hasHeroicInspiration = true;
+        }
+
+        this.character.speciesLineage =
+          selectedSpecies.lineages.length > 0
+            ? selectedSpecies.lineages[0].id
+            : null;
+      } else {
+        this.character.speciesDetails = null;
+        this.character.size = "";
+        this.character.speed = 0;
+        this.character.hasHeroicInspiration = false;
+        this.character.speciesLineage = null;
+      }
+    },
+
+    // Update class traits when class changes
+    updateClassTraits() {
+      const selectedClass = this.classData.find(
+        (c) => c.id === this.character.class
+      );
+      if (selectedClass) {
+        this.character.classDetails = selectedClass;
+        this.character.armorTraining = { ...selectedClass.armorTraining };
+
+        // Initialize skill proficiencies
+        this.character.skillProficiencies = {};
+        this.character.selectedClassSkills = [];
+
+        // Initialize saving throw proficiencies
+        this.character.savingThrowProficiencies = {};
+        const abilityNames = [
+          "strength",
+          "dexterity",
+          "constitution",
+          "intelligence",
+          "wisdom",
+          "charisma",
+        ];
+        for (const ability of abilityNames) {
+          this.character.savingThrowProficiencies[ability] = {
+            proficient: selectedClass.savingThrows?.includes(ability) || false,
+            bonus: 0,
+          };
+        }
+      } else {
+        this.character.classDetails = null;
+        this.character.armorTraining = {
+          light: false,
+          medium: false,
+          heavy: false,
+          shields: false,
+        };
+      }
+    },
+
+    // Update background traits when background changes
+    updateBackgroundTraits() {
+      const selectedBackground = this.backgroundData.find(
+        (b) => b.id === this.character.background
+      );
+      if (selectedBackground) {
+        this.character.backgroundDetails = selectedBackground;
+
+        // Update skill proficiencies from background
+        const skillProfs =
+          selectedBackground.skillProficiencies ||
+          selectedBackground.skillProfs ||
+          [];
+        for (const skillName of skillProfs) {
+          if (this.character.skillProficiencies[skillName]) {
+            this.character.skillProficiencies[skillName].proficient = true;
+          }
+        }
+
+        // Handle tool proficiencies
+        const toolProfs =
+          selectedBackground.toolProficiencies ||
+          [selectedBackground.toolProf].filter(Boolean);
+        for (const toolProf of toolProfs) {
+          if (
+            toolProf &&
+            !toolProf.includes("(choice)") &&
+            !this.character.toolProficiencies.includes(toolProf)
+          ) {
+            this.character.toolProficiencies.push(toolProf);
+          }
+        }
+      } else {
+        this.character.backgroundDetails = null;
+      }
+    },
   },
 });

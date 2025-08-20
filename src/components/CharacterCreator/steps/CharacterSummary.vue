@@ -12,20 +12,22 @@
         <h1 class="text-h3 font-weight-bold mb-2">{{ character.name || 'Unnamed Character' }}</h1>
         <div class="character-subtitle text-h6 text-primary mb-3">
           Level {{ character.level }}
-          {{ character.classDetails?.name || character.class || 'Unknown Class' }}
-          <span v-if="character.subclass" class="text-secondary">({{ character.subclass }})</span>
         </div>
         <div class="character-details text-h6 mb-2">
           <v-chip color="secondary" variant="outlined" class="me-2">
             {{ character.speciesDetails?.name || character.species || 'Unknown Species' }}
             <span v-if="character.speciesLineage">&nbsp;({{ character.speciesLineage }})</span>
           </v-chip>
+          <v-chip color="primary" variant="outlined" class="me-2">
+            {{ character.classDetails?.name || character.class || 'Unknown Class' }}
+            <span v-if="character.subclass" class="text-secondary">&nbsp;({{ character.subclass }})</span>
+          </v-chip>
           <v-chip color="tertiary" variant="outlined">
-            {{ character.backgroundDetails?.name || character.background || 'Unknown Background' }}
+            {{ capitalizeFirst(character.backgroundDetails?.name || character.background || 'Unknown Background') }}
           </v-chip>
         </div>
         <div class="character-alignment">
-          <v-chip color="surface-variant" size="small">
+          <v-chip color="surface-variant" variant="outlined">
             {{ character.alignment || 'Unaligned' }}
           </v-chip>
         </div>
@@ -75,9 +77,9 @@
       </v-row>
 
       <!-- Main Content Grid -->
-      <v-row>
+      <v-row class="ma-0">
         <!-- Left Column - Proficiencies & Species Traits -->
-        <v-col cols="12" lg="4">
+        <v-col cols="12" md="4" lg="4">
           <!-- Proficiencies & Training -->
           <v-card class="section-card mb-4" variant="outlined">
             <v-card-title class="section-title">
@@ -88,55 +90,60 @@
               <!-- Saving Throws -->
               <div v-if="character.classDetails?.savingThrows?.length" class="mb-3">
                 <div class="subsection-title mb-2">🛡️ Saving Throws</div>
-                  <v-chip v-for="save in character.classDetails.savingThrows" :key="save"
-                    class="mx-1" color="success" size="small"
-                    variant="tonal">
-                    {{ save }}
-                  </v-chip>
+                <v-chip v-for="save in character.classDetails.savingThrows" :key="save" class="ma-1" color="success"
+                  size="small" variant="tonal">
+                  {{ save }}
+                </v-chip>
               </div>
 
               <!-- Armor Training -->
               <div v-if="character.classDetails?.armorTraining" class="mb-3">
                 <div class="subsection-title mb-2">🛡️ Armor Training</div>
-                  <v-chip v-if="character.classDetails.armorTraining.light" class="me-2" color="info" size="small" variant="tonal">
-                    Light Armor
-                  </v-chip>
-                  <v-chip v-if="character.classDetails.armorTraining.medium" class="me-2" color="info" size="small" variant="tonal">
-                    Medium Armor
-                  </v-chip>
-                  <v-chip v-if="character.classDetails.armorTraining.heavy" class="me-2" color="info" size="small" variant="tonal">
-                    Heavy Armor
-                  </v-chip>
-                  <v-chip v-if="character.classDetails.armorTraining.shields" class="me-2" color="info" size="small" variant="tonal">
-                    Shields
-                  </v-chip>
+                <v-chip v-if="character.classDetails.armorTraining.light" class="ma-1" color="info" size="small"
+                  variant="tonal">
+                  Light Armor
+                </v-chip>
+                <v-chip v-if="character.classDetails.armorTraining.medium" class="ma-1" color="info" size="small"
+                  variant="tonal">
+                  Medium Armor
+                </v-chip>
+                <v-chip v-if="character.classDetails.armorTraining.heavy" class="ma-1" color="info" size="small"
+                  variant="tonal">
+                  Heavy Armor
+                </v-chip>
+                <v-chip v-if="character.classDetails.armorTraining.shields" class="ma-1" color="info" size="small"
+                  variant="tonal">
+                  Shields
+                </v-chip>
               </div>
 
               <!-- Languages -->
               <div v-if="allLanguages.length">
                 <div class="subsection-title mb-2">🗣️ Languages</div>
-                  <v-chip v-for="lang in allLanguages" :key="lang" class="me-2" color="secondary" size="small" variant="tonal">
-                    {{ lang }}
-                  </v-chip>
+                <v-chip v-for="lang in allLanguages" :key="lang" class="ma-1" color="secondary" size="small"
+                  variant="tonal">
+                  {{ lang }}
+                </v-chip>
               </div>
             </v-card-text>
           </v-card>
 
-          <!-- Species Traits -->
-          <v-card v-if="character.speciesDetails?.traits?.length" class="section-card mb-4" variant="outlined">
+          <!-- Class Features -->
+          <v-card v-if="character.classDetails?.features?.length" class="section-card mb-4" variant="outlined">
             <v-card-title class="section-title">
-              <v-icon class="me-2" color="teal">mdi-dna</v-icon>
-              Species Traits
+              <v-icon class="me-2" color="warning">mdi-star</v-icon>
+              Class Features
             </v-card-title>
             <v-card-text class="pa-0">
               <v-expansion-panels variant="accordion" class="trait-panels">
-                <v-expansion-panel v-for="trait in character.speciesDetails.traits" :key="trait.name"
+                <v-expansion-panel v-for="feature in character.classDetails.features" :key="feature.name"
                   class="trait-panel">
                   <v-expansion-panel-title class="pa-3">
-                    <span class="font-weight-medium">{{ trait.name }}</span>
+                    <span class="font-weight-medium">{{ feature.name }}</span>
                   </v-expansion-panel-title>
                   <v-expansion-panel-text class="trait-description pa-3">
-                    <div class="text-body-2">{{ trait.description }}</div>
+                    <div class="text-body-2">{{ feature.desc || feature.description || 'No description available.' }}
+                    </div>
                   </v-expansion-panel-text>
                 </v-expansion-panel>
               </v-expansion-panels>
@@ -144,8 +151,8 @@
           </v-card>
         </v-col>
 
-        <!-- Center Column - Ability Scores & Combat Options & Class Features -->
-        <v-col cols="12" lg="4">
+        <!-- Center Column - Ability Scores & Class Features -->
+        <v-col cols="12" md="4" lg="4">
           <!-- Ability Scores -->
           <v-card class="section-card mb-4" variant="outlined">
             <v-card-title class="section-title">
@@ -166,63 +173,10 @@
               </v-row>
             </v-card-text>
           </v-card>
-
-          <!-- Combat Info -->
-          <v-card v-if="character.weapons?.length || character.damagingCantrips?.length" class="section-card mb-4"
-            variant="outlined">
-            <v-card-title class="section-title">
-              <v-icon class="me-2" color="error">mdi-sword-cross</v-icon>
-              Combat Options
-            </v-card-title>
-            <v-card-text class="pa-3">
-              <div v-if="character.weapons?.length" class="mb-3">
-                <div class="subsection-title mb-2">⚔️ Weapons</div>
-                <div class="weapon-grid">
-                  <v-card v-for="weapon in character.weapons" :key="weapon.name" class="weapon-card pa-2 mb-2"
-                    variant="outlined" density="compact">
-                    <div class="weapon-name font-weight-medium">{{ weapon.name }}</div>
-                    <div class="weapon-damage text-caption text-medium-emphasis">{{ weapon.damage }}</div>
-                  </v-card>
-                </div>
-              </div>
-
-              <div v-if="character.damagingCantrips?.length">
-                <div class="subsection-title mb-2">✨ Damage Cantrips</div>
-                <div class="cantrip-grid">
-                  <v-card v-for="cantrip in character.damagingCantrips" :key="cantrip.name"
-                    class="cantrip-card pa-2 mb-2" variant="outlined" density="compact">
-                    <div class="cantrip-name font-weight-medium">{{ cantrip.name }}</div>
-                    <div class="cantrip-damage text-caption text-medium-emphasis">{{ cantrip.damage }}</div>
-                  </v-card>
-                </div>
-              </div>
-            </v-card-text>
-          </v-card>
-
-          <!-- Class Features -->
-          <v-card v-if="character.classDetails?.features?.length" class="section-card mb-4" variant="outlined">
-            <v-card-title class="section-title">
-              <v-icon class="me-2" color="warning">mdi-star</v-icon>
-              Class Features
-            </v-card-title>
-            <v-card-text class="pa-0">
-              <v-expansion-panels variant="accordion" class="trait-panels">
-                <v-expansion-panel v-for="feature in character.classDetails.features" :key="feature.name"
-                  class="trait-panel">
-                  <v-expansion-panel-title class="pa-3">
-                    <span class="font-weight-medium">{{ feature.name }}</span>
-                  </v-expansion-panel-title>
-                  <v-expansion-panel-text class="trait-description pa-3">
-                    <div class="text-body-2">{{ feature.description }}</div>
-                  </v-expansion-panel-text>
-                </v-expansion-panel>
-              </v-expansion-panels>
-            </v-card-text>
-          </v-card>
         </v-col>
 
-        <!-- Right Column - Feats & Personality -->
-        <v-col cols="12" lg="4">
+        <!-- Right Column - Feats & Personality & Equipment -->
+        <v-col cols="12" md="4" lg="4">
           <!-- Feats -->
           <v-card v-if="character.feats?.length" class="section-card mb-4" variant="outlined">
             <v-card-title class="section-title">
@@ -279,7 +233,7 @@
                 <div class="subsection-title mb-2">⚠️ Flaws</div>
                 <div class="personality-items">
                   <v-chip v-for="flaw in character.personality.flaws" :key="flaw" class="personality-chip ma-1"
-                    color="red" size="small" variant="tonal">
+                    color="warning" size="small" variant="tonal">
                     {{ flaw }}
                   </v-chip>
                 </div>
@@ -299,7 +253,7 @@
                 <div v-if="equipmentSummary.weapons.length" class="mb-3">
                   <div class="subsection-title mb-2">⚔️ Weapons ({{ equipmentSummary.weapons.length }})</div>
                   <div class="equipment-grid">
-                    <v-chip v-for="weapon in equipmentSummary.weapons" :key="weapon.name || weapon" color="red"
+                    <v-chip v-for="weapon in equipmentSummary.weapons" :key="weapon.name || weapon" color="accent"
                       size="small" variant="tonal" class="ma-1">
                       {{ weapon.name || weapon }}
                     </v-chip>
@@ -368,12 +322,31 @@
               <v-icon class="me-2" color="indigo">mdi-eye</v-icon>
               Special Senses
             </v-card-title>
-            <v-card-text class="pa-3">
-              <div class="special-sense-item d-flex align-center mb-2">
-                <v-icon color="indigo" class="me-2">mdi-weather-night</v-icon>
-                <span class="font-weight-medium">Darkvision:</span>
-                <span class="ml-2">{{ character.speciesDetails.darkvision }} feet</span>
-              </div>
+            <v-card-text class="px-3 pt-0">
+              <v-chip color="indigo" variant="tonal" size="small" prepend-icon="mdi-weather-night"
+                class="mx-1 my-0 pl-3">
+                Darkvision {{ character.speciesDetails.darkvision }}ft
+              </v-chip>
+            </v-card-text>
+          </v-card>
+
+          <!-- Species Traits -->
+          <v-card v-if="character.speciesDetails?.traits?.length" class="section-card mb-4" variant="outlined">
+            <v-card-title class="section-title">
+              <v-icon class="me-2" color="teal">mdi-dna</v-icon>
+              Species Traits
+            </v-card-title>
+            <v-card-text class="pa-0">
+              <v-expansion-panels variant="accordion" class="trait-panels">
+                <v-expansion-panel v-for="trait in enhancedSpeciesTraits" :key="trait.name" class="trait-panel">
+                  <v-expansion-panel-title class="pa-3">
+                    <span class="font-weight-medium">{{ trait.name }}</span>
+                  </v-expansion-panel-title>
+                  <v-expansion-panel-text class="trait-description pa-3">
+                    <div class="text-body-2">{{ trait.description || 'No description available.' }}</div>
+                  </v-expansion-panel-text>
+                </v-expansion-panel>
+              </v-expansion-panels>
             </v-card-text>
           </v-card>
         </v-col>
@@ -404,59 +377,8 @@
   </v-card>
 </template>
 
-import { computed } from 'vue'
-
-const props = defineProps({
-character: {
-type: Object,
-required: true,
-},
-characterData: {
-type: Object,
-required: true,
-},
-})
-
-// Computed properties for conditional display
-const allLanguages = computed(() => {
-const languages = new Set()
-
-// Add species languages
-if (props.character.speciesDetails?.languages) {
-props.character.speciesDetails.languages.forEach(lang => languages.add(lang))
-}
-
-// Add background languages
-if (props.character.backgroundDetails?.languages) {
-props.character.backgroundDetails.languages.forEach(lang => languages.add(lang))
-}
-
-// Add additional languages
-if (props.character.additionalLanguages) {
-props.character.additionalLanguages.forEach(lang => languages.add(lang))
-}
-
-return Array.from(languages)
-})
-
-const hasPersonality = computed(() => {
-const p = props.character.personality
-return p && (
-(p.traits && p.traits.length) ||
-(p.ideals && p.ideals.length) ||
-(p.bonds && p.bonds.length) ||
-(p.flaws && p.flaws.length)
-)
-})
-
-const hasCoins = computed(() => {
-const coins = props.character.coins
-return coins && (coins.pp || coins.gp || coins.ep || coins.sp || coins.cp)
-})
-
-
 <script setup>
-import { computed, toRefs } from 'vue'
+import { computed, toRefs, ref, watch } from 'vue'
 
 const props = defineProps({
   character: {
@@ -471,6 +393,33 @@ const props = defineProps({
 
 // Destructure for template access while maintaining reactivity
 const { character, characterData } = toRefs(props)
+
+// Trait details storage
+const traitDetails = ref({})
+
+// Fetch trait details from API
+const fetchTraitDetails = async (traitIndex) => {
+  if (traitDetails.value[traitIndex]) return traitDetails.value[traitIndex]
+
+  try {
+    const response = await fetch(`https://www.dnd5eapi.co/api/2014/traits/${traitIndex}`)
+    if (response.ok) {
+      const traitData = await response.json()
+      traitDetails.value[traitIndex] = traitData
+      return traitData
+    }
+  } catch (error) {
+    console.warn(`Failed to fetch trait details for ${traitIndex}:`, error)
+  }
+
+  return null
+}
+
+// Utility function to capitalize first letter
+const capitalizeFirst = (str) => {
+  if (!str) return str
+  return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase()
+}
 
 // Computed properties for conditional display
 const allLanguages = computed(() => {
@@ -523,6 +472,96 @@ const equipmentSummary = computed(() => {
 const hasEquipment = computed(() => {
   const summary = equipmentSummary.value
   return summary.weapons.length || summary.armor.length || summary.tools.length || summary.gear.length
+})
+
+// Load trait details when species changes
+watch(
+  () => character.value.speciesDetails?.traits,
+  async (newTraits) => {
+    if (newTraits?.length) {
+      // Fetch details for all traits that have an index
+      const traitPromises = newTraits.map(trait => {
+        if (trait.index && !traitDetails.value[trait.index]) {
+          return fetchTraitDetails(trait.index)
+        }
+        return Promise.resolve(null)
+      })
+
+      try {
+        await Promise.all(traitPromises)
+      } catch (error) {
+        console.error('Error loading trait details:', error)
+      }
+    }
+  },
+  { immediate: true }
+)
+
+// Enhanced species traits with detailed descriptions
+const enhancedSpeciesTraits = computed(() => {
+  if (!character.value.speciesDetails?.traits) return []
+
+  return character.value.speciesDetails.traits.map(trait => {
+    // If we have trait details from API, use them
+    const traitDetail = traitDetails.value[trait.index]
+    if (traitDetail && traitDetail.desc) {
+      return {
+        ...trait,
+        desc: traitDetail.desc,
+        description: Array.isArray(traitDetail.desc) ? traitDetail.desc.join('\n') : traitDetail.desc
+      }
+    }
+
+    // Check if trait already has description in various possible formats
+    if (trait.description) {
+      return {
+        ...trait,
+        desc: Array.isArray(trait.description) ? trait.description : [trait.description],
+        description: Array.isArray(trait.description) ? trait.description.join('\n') : trait.description
+      }
+    }
+
+    if (trait.desc && trait.desc.length) {
+      return {
+        ...trait,
+        desc: trait.desc,
+        description: Array.isArray(trait.desc) ? trait.desc.join('\n') : trait.desc
+      }
+    }
+
+    // Fallback trait descriptions for common traits (by name)
+    const fallbackDescriptions = {
+      'Draconic Ancestry': ['You have draconic ancestry. Choose one type of dragon from the Draconic Ancestry table. Your breath weapon and damage resistance are determined by the dragon type.'],
+      'Breath Weapon': ['You can use your action to exhale destructive energy. Your draconic ancestry determines the size, shape, and damage type of the exhalation.'],
+      'Damage Resistance': ['You have resistance to the damage type associated with your draconic ancestry.'],
+      'Darkvision': ['You have superior vision in dark and dim conditions. You can see in dim light within 60 feet of you as if it were bright light, and in darkness as if it were dim light. You cannot discern color in darkness, only shades of gray.'],
+      'Fey Ancestry': ['You have advantage on saving throws against being charmed, and magic cannot put you to sleep.'],
+      'Trance': ['Elves do not need to sleep. Instead, they meditate deeply, remaining semiconscious, for 4 hours a day. After resting in this way, you gain the same benefit that a human does from 8 hours of sleep.'],
+      'Keen Senses': ['You have proficiency in the Perception skill.'],
+      'Dwarven Resilience': ['You have advantage on saving throws against poison, and you have resistance against poison damage.'],
+      'Stonecunning': ['Whenever you make an Intelligence (History) check related to the origin of stonework, you are considered proficient in the History skill and add double your proficiency bonus to the check.'],
+      'Lucky': ['When you roll a 1 on the d20 for an attack roll, ability check, or saving throw, you can reroll the die and must use the new roll.'],
+      'Brave': ['You have advantage on saving throws against being frightened.'],
+      'Halfling Nimbleness': ['You can move through the space of any creature that is of a size larger than yours.'],
+      'Hellish Resistance': ['You have resistance to fire damage.'],
+      'Infernal Legacy': ['You know the thaumaturgy cantrip. When you reach 3rd level, you can cast the hellish rebuke spell as a 2nd-level spell once with this trait and regain the ability to do so when you finish a long rest.'],
+      'Extra Language': ['You can speak, read, and write one extra language of your choice.'],
+      'Skill Versatility': ['You gain proficiency in two skills of your choice.'],
+      'Natural Armor': ['You have tough, scaly skin. When you aren\'t wearing armor, your AC is 13 + your Dex modifier.'],
+      'Hungry Jaws': ['In battle, you can throw yourself into a vicious feeding frenzy. As a bonus action, you can make a special attack with your bite.'],
+      'Hold Breath': ['You can hold your breath for up to 15 minutes at a time.'],
+      'Swimming Speed': ['You have a swimming speed of 30 feet.']
+    }
+
+    // Get fallback description by exact name match
+    const fallbackDesc = fallbackDescriptions[trait.name]
+
+    return {
+      ...trait,
+      desc: fallbackDesc || [`${trait.name}: This trait provides special abilities for your character.`],
+      description: fallbackDesc ? fallbackDesc.join('\n') : `${trait.name}: This trait provides special abilities for your character.`
+    }
+  })
 })
 </script>
 <style scoped>
@@ -613,14 +652,15 @@ const hasEquipment = computed(() => {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  background-color: rgb(var(--v-theme-surface)) !important;
-  border: 1px solid rgba(var(--v-theme-outline), 0.3);
+  background: linear-gradient(135deg, rgba(var(--v-theme-primary), 0.15), rgba(var(--v-theme-secondary), 0.08)) !important;
+  border: 1px solid rgba(var(--v-theme-outline), 0.2);
 }
 
 .ability-score-card:hover {
-  transform: scale(1.05);
-  border-color: rgb(var(--v-theme-primary));
-  box-shadow: 0 4px 12px rgba(var(--v-theme-primary), 0.2);
+  transform: scale(1.02);
+  border-color: rgba(var(--v-theme-primary), 0.4);
+  background: linear-gradient(135deg, rgba(var(--v-theme-primary), 0.20), rgba(var(--v-theme-secondary), 0.12)) !important;
+  box-shadow: 0 2px 8px rgba(var(--v-theme-primary), 0.1);
 }
 
 .ability-name {
@@ -638,37 +678,6 @@ const hasEquipment = computed(() => {
 .ability-modifier {
   color: rgb(var(--v-theme-on-surface-variant));
   font-weight: 600;
-}
-
-/* Combat Options */
-.weapon-grid,
-.cantrip-grid {
-  display: grid;
-  gap: 8px;
-}
-
-.weapon-card,
-.cantrip-card {
-  border-radius: 8px;
-  transition: all 0.2s ease;
-  border-color: rgba(var(--v-theme-outline), 0.3);
-}
-
-.weapon-card:hover,
-.cantrip-card:hover {
-  border-color: rgb(var(--v-theme-primary));
-  box-shadow: 0 2px 8px rgba(var(--v-theme-primary), 0.2);
-}
-
-.weapon-name,
-.cantrip-name {
-  font-size: 0.875rem;
-  line-height: 1.2;
-}
-
-.weapon-damage,
-.cantrip-damage {
-  font-size: 0.75rem;
 }
 
 /* Traits and Features */

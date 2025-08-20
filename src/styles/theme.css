@@ -4,17 +4,17 @@
 :root {
   /* Card background for separation */
   --theme-card-bg: #2e3236; /* Default lighter than surface for dark theme */
-  /* Default theme colors (D&D Dark) */
-  --theme-primary: #822522;
-  --theme-primary-lighten-1: #9a3e3a;
-  --theme-primary-lighten-2: #b25651;
-  --theme-primary-lighten-3: #ca6f69;
-  --theme-primary-lighten-4: #e28780;
-  --theme-primary-lighten-5: #fa9f98;
-  --theme-primary-darken-1: #6a1e1c;
-  --theme-primary-darken-2: #521715;
-  --theme-primary-darken-3: #3a100f;
-  --theme-primary-darken-4: #220908;
+  /* Default theme colors (D&D Dark) - Updated to match Vuetify theme */
+  --theme-primary: #4a90a4;
+  --theme-primary-lighten-1: #5ba3b6;
+  --theme-primary-lighten-2: #6cb6c8;
+  --theme-primary-lighten-3: #7dc9da;
+  --theme-primary-lighten-4: #8edcec;
+  --theme-primary-lighten-5: #9fefff;
+  --theme-primary-darken-1: #3e7a8d;
+  --theme-primary-darken-2: #326476;
+  --theme-primary-darken-3: #264e5f;
+  --theme-primary-darken-4: #1a3848;
 
   --theme-secondary: #23272a;
   --theme-secondary-lighten-1: #453528;

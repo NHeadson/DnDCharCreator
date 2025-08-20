@@ -1,0 +1,25 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Allow read access to all documents for anyone
+    match /{document=**} {
+      allow read: if true;
+    }
+    
+    // Allow write operations to characters collection
+    // Note: Since we're using client-side admin auth, we allow all writes
+    // In a production environment, you might want to implement Firebase Auth
+    match /characters/{characterId} {
+      allow create: if true; // Anyone can create characters (with app-level access control)
+      allow update, delete: if true; // Allow updates/deletes (with app-level admin control)
+    }
+    
+    // Allow read access to config documents (for passwords)
+    match /config/{configId} {
+      allow read: if true;
+      // Prevent write access to config documents for security
+      allow write: if false;
+    }
+  }
+}

@@ -1,43 +1,76 @@
 <template>
-  <v-app-bar app class="theme-primary-bg header-enhanced" elevation="4" height="80">
+  <v-app-bar app class="theme-primary-bg header-enhanced" elevation="4" :height="$vuetify.display.mobile ? 64 : 80">
     <v-toolbar-title class="header-title">
       <router-link class="text-decoration-none theme-text title-link" to="/">
-        <v-icon class="me-2 title-icon" icon="mdi-dice-d20" />
-        D&D Character Tool
+        <v-icon class="title-icon" :class="$vuetify.display.mobile ? 'me-1' : 'me-2'" icon="mdi-dice-d20" />
+        <span class="title-text">
+          <span class="d-none title-full">D&D Character Tool</span>
+          <span class="d-none title-medium">D&D Tool</span>
+        </span>
       </router-link>
     </v-toolbar-title>
 
     <v-spacer />
 
-    <div class="nav-buttons">
-      <v-btn class="nav-btn me-2" :class="{ 'nav-btn--active': $route.path === '/' }" rounded="lg" to="/"
-        variant="flat">
-        <v-icon class="me-2" icon="mdi-home" />
-        Home
+    <!-- Desktop Navigation Buttons (hidden at 1117px and below) -->
+    <div class="nav-buttons d-none nav-buttons-desktop">
+      <v-btn class="nav-btn" :class="{ 'nav-btn--active': $route.path === '/' }"
+        :size="$vuetify.display.mobile ? 'small' : 'default'" rounded="lg" to="/" variant="flat">
+        <v-icon :class="$vuetify.display.mobile ? '' : 'me-2'" icon="mdi-home" />
+        <span class="d-none d-md-inline nav-text">Home</span>
       </v-btn>
-      <v-btn class="nav-btn me-2" :class="{ 'nav-btn--active': $route.path.startsWith('/characters') }" rounded="lg"
-        to="/character-form" variant="flat">
-        <v-icon class="me-2" icon="mdi-account-group" />
-        Create Characater
+      <v-btn class="nav-btn" :class="{ 'nav-btn--active': $route.path.startsWith('/characters') }"
+        :size="$vuetify.display.mobile ? 'small' : 'default'" rounded="lg" to="/character-form" variant="flat">
+        <v-icon :class="$vuetify.display.mobile ? '' : 'me-2'" icon="mdi-account-group" />
+        <span class="d-none d-md-inline nav-text">Create</span>
+        <span class="d-none d-lg-inline nav-text"> Character</span>
       </v-btn>
-      <v-btn v-if="adminStore.isAdminUser" class="nav-btn me-2"
-        :class="{ 'nav-btn--active': $route.path.startsWith('/theme') }" rounded="lg" to="/theme" variant="flat"
-        color="accent" title="Theme Settings">
-        <v-icon class="me-2" icon="mdi-palette" />
-        Theme
+      <v-btn v-if="adminStore.isAdminUser" class="nav-btn"
+        :class="{ 'nav-btn--active': $route.path.startsWith('/theme') }"
+        :size="$vuetify.display.mobile ? 'small' : 'default'" rounded="lg" to="/theme" variant="flat" color="accent"
+        title="Theme Settings">
+        <v-icon :class="$vuetify.display.mobile ? '' : 'me-2'" icon="mdi-palette" />
+        <span class="d-none d-md-inline nav-text">Theme</span>
       </v-btn>
     </div>
+
+    <!-- Hamburger Menu Button (shown at 1117px and below) -->
+    <v-btn class="hamburger-btn nav-buttons-mobile" icon variant="text" @click="drawer = !drawer">
+      <v-icon>mdi-menu</v-icon>
+    </v-btn>
   </v-app-bar>
+
+  <!-- Navigation Drawer for Mobile/Tablet -->
+  <v-navigation-drawer v-model="drawer" app temporary location="right" class="theme-primary-bg">
+    <v-list class="nav-drawer-list">
+      <v-list-item class="nav-drawer-item" :class="{ 'nav-drawer-item--active': $route.path === '/' }"
+        prepend-icon="mdi-home" title="Home" to="/" @click="drawer = false">
+      </v-list-item>
+
+      <v-list-item class="nav-drawer-item" :class="{ 'nav-drawer-item--active': $route.path.startsWith('/characters') }"
+        prepend-icon="mdi-account-group" title="Create Character" to="/character-form" @click="drawer = false">
+      </v-list-item>
+
+      <v-list-item v-if="adminStore.isAdminUser" class="nav-drawer-item"
+        :class="{ 'nav-drawer-item--active': $route.path.startsWith('/theme') }" prepend-icon="mdi-palette"
+        title="Theme Settings" to="/theme" @click="drawer = false">
+      </v-list-item>
+    </v-list>
+  </v-navigation-drawer>
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useAdminStore } from '@/stores/adminStore'
 
 const router = useRouter()
 const $route = useRoute()
 const adminStore = useAdminStore()
+
+// Drawer state for hamburger menu
+const drawer = ref(false)
+
 // Use isAuthenticated for admin-only UI
 const hasAccess = computed(() => adminStore.hasAccess)
 const requireAccessForCreation = () => {
@@ -56,6 +89,7 @@ const requireAccessForCreation = () => {
   color: var(--theme-on-secondary, #1A1A1A) !important;
   opacity: 0.92;
   transition: background 0.2s, color 0.2s, opacity 0.2s;
+  margin-right: 8px;
 }
 
 .nav-btn--active {
@@ -86,6 +120,14 @@ const requireAccessForCreation = () => {
   /* Allow dice animation to extend beyond bounds */
   padding: 12px 0;
   /* Increased padding to prevent clipping */
+  flex: 1;
+  max-width: 60%;
+}
+
+.title-text {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .title-link {
@@ -95,6 +137,7 @@ const requireAccessForCreation = () => {
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
   color: #F5F5DC !important;
   /* Force a warm off-white color */
+  width: 100%;
 }
 
 .title-link:hover {
@@ -126,7 +169,7 @@ const requireAccessForCreation = () => {
 }
 
 .title-icon {
-  font-size: 2rem !important;
+  font-size: 2.5rem !important;
   filter: drop-shadow(1px 1px 2px rgba(0, 0, 0, 0.3));
   transition: color 0.3s ease;
   animation: diceRollAuto 6s ease-out infinite;
@@ -163,7 +206,8 @@ const requireAccessForCreation = () => {
 .nav-buttons {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 0;
+  flex-shrink: 0;
 }
 
 .nav-btn {
@@ -178,6 +222,10 @@ const requireAccessForCreation = () => {
   position: relative;
   overflow: hidden;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.nav-text {
+  white-space: nowrap;
 }
 
 /* Theme-specific button text colors for proper contrast */
@@ -240,63 +288,222 @@ const requireAccessForCreation = () => {
   transform: scale(1.1);
 }
 
-/* Mobile responsiveness */
-@media (max-width: 768px) {
-  .header-title {
-    font-size: 1.4rem !important;
+/* Hamburger Menu Button */
+.hamburger-btn {
+  color: var(--theme-on-primary, #F5F5DC) !important;
+  transition: all 0.3s ease;
+}
+
+.hamburger-btn:hover {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+  transform: scale(1.05);
+}
+
+.hamburger-btn .v-icon {
+  font-size: 1.5rem !important;
+}
+
+/* Navigation Drawer Styles */
+.nav-drawer-list {
+  padding-top: 16px;
+}
+
+.nav-drawer-item {
+  margin: 4px 16px;
+  border-radius: 8px;
+  font-family: 'Quattrocento', serif !important;
+  font-weight: 700;
+  transition: all 0.3s ease;
+  background-color: var(--theme-secondary) !important;
+  color: var(--theme-on-secondary, #1A1A1A) !important;
+  opacity: 0.92;
+}
+
+.nav-drawer-item:hover {
+  background-color: var(--theme-secondary-lighten-1, #d4b839) !important;
+  opacity: 1;
+  transform: translateX(4px);
+}
+
+.nav-drawer-item--active {
+  background-color: var(--theme-secondary-darken-2, #bfa22e) !important;
+  opacity: 1 !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
+}
+
+.nav-drawer-item .v-icon {
+  color: inherit !important;
+}
+
+/* Theme-specific drawer item colors */
+[data-theme="default"] .nav-drawer-item {
+  color: rgba(0, 0, 0, 0.87) !important;
+}
+
+[data-theme="custom"] .nav-drawer-item {
+  color: rgba(255, 255, 255, 0.95) !important;
+}
+
+[data-theme="elegant"] .nav-drawer-item {
+  color: rgba(0, 0, 0, 0.87) !important;
+}
+
+[data-theme="light"] .nav-drawer-item {
+  color: rgba(0, 0, 0, 0.87) !important;
+}
+
+/* Navigation responsive display */
+.nav-buttons-desktop {
+  display: flex !important;
+}
+
+.nav-buttons-mobile {
+  display: none !important;
+}
+
+/* At 1117px and below, show hamburger menu */
+@media (max-width: 1117px) {
+  .nav-buttons-desktop {
+    display: none !important;
   }
 
-  .nav-btn {
-    min-width: 90px;
-    padding: 10px 16px !important;
-    height: 40px !important;
+  .nav-buttons-mobile {
+    display: inline-flex !important;
+  }
+}
+
+/* Title responsive text display */
+.title-full {
+  display: inline !important;
+}
+
+.title-medium {
+  display: none !important;
+}
+
+/* At 1116px and below, show medium title */
+@media (max-width: 1116px) {
+  .title-full {
+    display: none !important;
   }
 
-  .nav-btn span {
-    font-size: 0.875rem;
+  .title-medium {
+    display: inline !important;
+  }
+}
+
+/* At 600px and below, hide all text, show only icon */
+@media (max-width: 600px) {
+
+  .title-full,
+  .title-medium {
+    display: none !important;
   }
 
   .title-icon {
-    font-size: 1.6rem !important;
+    margin-right: 0 !important;
+    font-size: 3rem !important;
   }
 
-  .nav-buttons {
-    gap: 6px;
+  .header-title {
+    font-size: 1.3rem !important;
+    max-width: 45%;
+  }
+}
+
+/* Mobile responsiveness */
+@media (max-width: 1024px) {
+  .nav-btn {
+    min-width: 80px;
+    padding: 8px 12px !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .header-title {
+    font-size: 1.5rem !important;
+    max-width: 50%;
+  }
+
+  .title-icon {
+    font-size: 2.5rem !important;
+  }
+
+  .nav-btn {
+    min-width: 60px;
+    padding: 6px 10px !important;
+    height: 38px !important;
+    margin-right: 6px;
+  }
+
+  .nav-btn:last-child {
+    margin-right: 0;
   }
 }
 
 @media (max-width: 600px) {
-  .nav-btn span:not(.v-icon) {
-    display: none;
+  .header-title {
+    font-size: 1.3rem !important;
+    max-width: 45%;
+  }
+
+  .title-icon {
+    font-size: 3rem !important;
   }
 
   .nav-btn {
-    min-width: 48px;
-    padding: 10px !important;
+    min-width: 44px;
+    padding: 6px 8px !important;
+    height: 36px !important;
+    margin-right: 4px;
   }
 
-  .header-title {
-    font-size: 1.2rem !important;
-  }
-
-  .nav-buttons {
-    gap: 4px;
+  .nav-btn .v-icon {
+    font-size: 1.1rem !important;
   }
 }
 
 @media (max-width: 480px) {
   .header-title {
-    font-size: 1rem !important;
+    font-size: 1.1rem !important;
+    max-width: 40%;
   }
 
   .title-icon {
-    font-size: 1.4rem !important;
+    font-size: 2.5rem !important;
   }
 
   .nav-btn {
-    min-width: 44px;
-    height: 36px !important;
-    padding: 8px !important;
+    min-width: 40px;
+    height: 34px !important;
+    padding: 5px 6px !important;
+    margin-right: 3px;
+  }
+
+  .nav-btn .v-icon {
+    font-size: 1rem !important;
+  }
+}
+
+@media (max-width: 360px) {
+  .header-title {
+    font-size: 1rem !important;
+    max-width: 35%;
+  }
+
+  .title-icon {
+    font-size: 2rem !important;
+  }
+
+  .nav-btn {
+    min-width: 36px;
+    height: 32px !important;
+    padding: 4px !important;
+    margin-right: 2px;
+  }
+
+  .nav-btn .v-icon {
+    font-size: 0.9rem !important;
   }
 }
 </style>

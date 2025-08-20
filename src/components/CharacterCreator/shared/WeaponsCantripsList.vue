@@ -1,7 +1,7 @@
 <template>
   <v-card variant="outlined" class="mb-6">
     <v-card-title class="d-flex align-center py-2">
-      <v-icon class="me-2" color="red">mdi-sword</v-icon>
+      <v-icon class="me-2" color="accent">mdi-sword</v-icon>
       Weapons & Damage Cantrips
     </v-card-title>
     <v-divider />
@@ -9,17 +9,17 @@
       <!-- Weapons Section -->
       <div class="mb-4">
         <h5 class="text-subtitle-2 text-grey-darken-2 mb-3 d-flex align-center">
-          <v-icon class="me-2" color="red" size="small">mdi-sword</v-icon>
+          <v-icon class="me-2" color="accent" size="small">mdi-sword</v-icon>
           Weapons
         </h5>
 
         <v-row>
           <v-col v-for="(weapon, index) in character.weapons" :key="index" cols="12" md="6">
-            <v-card class="weapon-card" color="red-lighten-5" flat>
+            <v-card class="weapon-card" color="accent-lighten-5" flat>
               <v-card-text class="pa-3">
                 <div class="d-flex justify-between align-center mb-2">
                   <div class="text-subtitle-2 font-weight-bold">{{ weapon.name || 'Weapon ' + (index + 1) }}</div>
-                  <v-btn @click="removeWeapon(index)" color="red" icon size="x-small" variant="text">
+                  <v-btn @click="removeWeapon(index)" color="error" icon size="x-small" variant="text">
                     <v-icon size="small">mdi-close</v-icon>
                   </v-btn>
                 </div>
@@ -49,7 +49,7 @@
           </v-col>
         </v-row>
 
-        <v-btn @click="addWeapon" class="mt-2" color="red" prepend-icon="mdi-plus" variant="outlined">
+        <v-btn @click="addWeapon" class="mt-2" color="accent" prepend-icon="mdi-plus" variant="outlined">
           Add Weapon
         </v-btn>
       </div>

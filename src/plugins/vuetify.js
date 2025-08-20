@@ -40,11 +40,15 @@ export default createVuetify({
       dark: {
         dark: true,
         colors: {
-          primary: "#822522",
+          primary: "#4A90A4", // Changed from red to blue-teal
           secondary: "#D4AF37",
           accent: "#FF715B",
           background: "#1A1A1A",
           surface: "#2E3236",
+          error: "#F44336",
+          warning: "#FF9800",
+          info: "#2196F3",
+          success: "#4CAF50",
         },
       },
     },

@@ -96,13 +96,13 @@
       <!-- Flaws -->
       <div class="mb-4">
         <h5 class="text-subtitle-2 text-grey-darken-2 mb-2 d-flex align-center">
-          <v-icon class="me-2" color="red" size="small">mdi-alert</v-icon>
+          <v-icon class="me-2" color="warning" size="small">mdi-alert</v-icon>
           Flaws
         </h5>
         <div v-if="backgroundPersonalityOptions?.flaws?.length" class="mb-2">
           <v-chip-group v-model="selectedBackgroundFlaws" multiple>
-            <v-chip v-for="flaw in backgroundPersonalityOptions.flaws" :key="flaw" color="red" filter variant="outlined"
-              size="small">
+            <v-chip v-for="flaw in backgroundPersonalityOptions.flaws" :key="flaw" color="warning" filter
+              variant="outlined" size="small">
               {{ flaw }}
             </v-chip>
           </v-chip-group>

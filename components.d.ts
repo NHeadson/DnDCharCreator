@@ -11,7 +11,6 @@ declare module 'vue' {
     AbilityScoreBlock: typeof import('./src/components/CharacterCreator/shared/AbilityScoreBlock.vue')['default']
     AbilityScoreGrid: typeof import('./src/components/CharacterCreator/shared/AbilityScoreGrid.vue')['default']
     AbilityScoreHeader: typeof import('./src/components/CharacterCreator/shared/AbilityScoreHeader.vue')['default']
-    AbilityScoreReference: typeof import('./src/components/CharacterCreator/shared/AbilityScoreReference.vue')['default']
     AbilityScores: typeof import('./src/components/CharacterCreator/steps/AbilityScores.vue')['default']
     AccessControlDialog: typeof import('./src/components/AccessControlDialog.vue')['default']
     AdminAuthDialog: typeof import('./src/components/AdminAuthDialog.vue')['default']

@@ -540,8 +540,42 @@ export class DnDAPI {
   // Get specific race details (called when user selects a race)
   async getRaceDetails(raceId) {
     try {
+      console.log(`Fetching detailed race info for: ${raceId}`);
       const details = await this.apiRequest(`/races/${raceId}`);
-      return this.transformRaceData(details);
+
+      // Fetch detailed trait information
+      let traits = [];
+      if (details.traits && Array.isArray(details.traits)) {
+        console.log(
+          `Found ${details.traits.length} traits for ${raceId}, fetching descriptions...`
+        );
+        const traitPromises = details.traits.map(async (trait) => {
+          try {
+            const traitDetail = await this.apiRequest(`/traits/${trait.index}`);
+            return {
+              name: traitDetail.name,
+              description: Array.isArray(traitDetail.desc)
+                ? traitDetail.desc.join("\n\n")
+                : traitDetail.desc || "No description available.",
+              index: traitDetail.index,
+            };
+          } catch (e) {
+            console.warn(`Failed to fetch trait ${trait.index}:`, e);
+            return {
+              name: trait.name,
+              description: "Description not available.",
+              index: trait.index,
+            };
+          }
+        });
+        traits = await Promise.all(traitPromises);
+        console.log(
+          `Successfully fetched detailed traits:`,
+          traits.map((t) => ({ name: t.name, hasDesc: !!t.description }))
+        );
+      }
+
+      return this.transformRaceData(details, traits);
     } catch (error) {
       console.error(`Failed to fetch race ${raceId}:`, error);
       return null;
@@ -549,7 +583,7 @@ export class DnDAPI {
   }
 
   // Transform single race data
-  transformRaceData(race) {
+  transformRaceData(race, detailedTraits = null) {
     const raceId = race.index || race.name?.toLowerCase().replace(/\s+/g, "_");
 
     // Extract darkvision from traits
@@ -580,13 +614,16 @@ export class DnDAPI {
       lineages: this.extractSubraces(race),
       bonusLanguage:
         race.languages?.find((lang) => lang.name !== "Common")?.name || null,
-      // Additional 5e-bits specific data
+      // Use detailed traits if provided, otherwise basic trait info
       traits:
+        detailedTraits ||
         race.traits?.map((trait) => ({
           name: trait.name,
           index: trait.index,
           url: trait.url,
-        })) || [],
+          description: "Description not loaded yet.",
+        })) ||
+        [],
       abilityScoreIncrease:
         race.ability_bonuses?.map((bonus) => ({
           ability: bonus.ability_score.name,
@@ -813,13 +850,23 @@ export class DnDAPI {
     if (featureDetails && Array.isArray(featureDetails)) {
       features = featureDetails.map((f) => ({
         name: f.name,
-        desc: Array.isArray(f.desc) ? f.desc : f.desc || "",
+        description: Array.isArray(f.desc)
+          ? f.desc.join("\n\n")
+          : f.desc || "No description available.",
+        desc: Array.isArray(f.desc)
+          ? f.desc.join("\n\n")
+          : f.desc || "No description available.",
         feature_specific: f.feature_specific || null,
       }));
     } else if (classData.features && Array.isArray(classData.features)) {
       features = classData.features.map((f) => ({
         name: f.name,
-        desc: Array.isArray(f.desc) ? f.desc : f.desc || "",
+        description: Array.isArray(f.desc)
+          ? f.desc.join("\n\n")
+          : f.desc || "No description available.",
+        desc: Array.isArray(f.desc)
+          ? f.desc.join("\n\n")
+          : f.desc || "No description available.",
         feature_specific: f.feature_specific || null,
       }));
     }
@@ -1501,11 +1548,32 @@ export class DnDAPI {
   // Get all available equipment
   async getEquipment() {
     try {
+      // Load equipment from multiple categories to ensure we get weapons and armor
+      const categories = ["weapon", "armor", "adventuring-gear", "tools"];
+      const allEquipment = [];
+
+      for (const category of categories) {
+        try {
+          const categoryEquipment = await this.getEquipmentByCategory(category);
+          allEquipment.push(...categoryEquipment);
+        } catch (error) {
+          console.warn(`Failed to load ${category} equipment:`, error);
+        }
+      }
+
+      if (allEquipment.length > 0) {
+        console.log(
+          `Successfully loaded ${allEquipment.length} equipment items from all categories`
+        );
+        return allEquipment;
+      }
+
+      // Fallback to the original method if category loading fails
       const data = await this.apiRequest("/equipment");
 
       if (data && data.results) {
-        // Limit to fewer items and load sequentially to avoid rate limiting
-        const equipmentIds = data.results.slice(0, 20).map((eq) => eq.index); // Reduced from 50 to 20
+        // Load more items to include weapons and armor (increased from 20 to 100)
+        const equipmentIds = data.results.slice(0, 100).map((eq) => eq.index);
 
         console.log(
           `Loading equipment details for ${equipmentIds.length} items...`
@@ -1545,10 +1613,15 @@ export class DnDAPI {
       const data = await this.apiRequest(`/equipment/${equipmentId}`);
       return this.transformEquipmentData(data);
     } catch (error) {
-      console.error(
-        `Failed to fetch equipment details for ${equipmentId}:`,
-        error
-      );
+      // Only log 404s as warnings, other errors as errors
+      if (error.message && error.message.includes("404")) {
+        console.warn(`Equipment not found: ${equipmentId}`);
+      } else {
+        console.error(
+          `Failed to fetch equipment details for ${equipmentId}:`,
+          error
+        );
+      }
       return null;
     }
   }
@@ -1589,6 +1662,109 @@ export class DnDAPI {
       stealthDisadvantage: equipmentData.stealth_disadvantage || false,
       isBasicData: false,
     };
+  }
+
+  // Get equipment by specific category
+  async getEquipmentByCategory(category) {
+    try {
+      const data = await this.apiRequest(`/equipment-categories/${category}`);
+
+      if (data && data.equipment) {
+        // Filter out known problematic magical items that commonly return 404s
+        const blacklistedItems = new Set([
+          "berserker-axe",
+          "dagger-of-venom",
+          "dancing-sword",
+          "defender",
+          "dragon-slayer",
+          "dwarven-thrower",
+          "flame-tongue",
+          "frost-brand",
+          "giant-slayer",
+          "hammer-of-thunderbolts",
+          "holy-avenger",
+          "javelin-of-lightning",
+          "luck-blade",
+          "mace-of-disruption",
+          "mace-of-smiting",
+          "mace-of-terror",
+          "nine-lives-stealer",
+          "oathbow",
+          "scimitar-of-speed",
+          "sun-blade",
+          "sword-of-life-stealing",
+          "sword-of-sharpness",
+          "sword-of-wounding",
+          "trident-of-fish-command",
+          "vicious-weapon",
+          "vorpal-sword",
+          "weapon",
+          "weapon-1",
+          "weapon-2",
+          "weapon-3",
+          "adamantine-armor",
+          "animated-shield",
+          "armor",
+          "armor-of-invulnerability",
+          "armor-of-resistance",
+          "armor-of-vulnerability",
+          "arrow-catching-shield",
+          "demon-armor",
+          "dragon-scale-mail",
+          "dwarven-plate",
+          "elven-chain",
+          "glamoured-studded-leather-armor",
+          "mithral-armor",
+          "plate-armor-of-etherealness",
+          "shield-of-missile-attraction",
+          "spellguard-shield",
+          "armor-1",
+          "armor-2",
+          "armor-3",
+          "dragon-scale-mail-black",
+          "dragon-scale-mail-blue",
+          "dragon-scale-mail-brass",
+          "dragon-scale-mail-bronze",
+          "dragon-scale-mail-copper",
+          "dragon-scale-mail-gold",
+          "dragon-scale-mail-green",
+          "dragon-scale-mail-red",
+          "dragon-scale-mail-silver",
+          "dragon-scale-mail-white",
+        ]);
+
+        const equipmentIds = data.equipment
+          .map((eq) => eq.index)
+          .filter((id) => !blacklistedItems.has(id));
+        const equipment = [];
+
+        console.log(
+          `Loading ${equipmentIds.length} items from ${category} category...`
+        );
+
+        // Load equipment details for this category
+        for (const eqId of equipmentIds) {
+          try {
+            const details = await this.getEquipmentDetails(eqId);
+            if (details) {
+              equipment.push(details);
+            }
+          } catch (error) {
+            console.warn(
+              `Failed to fetch details for ${category} equipment ${eqId}:`,
+              error
+            );
+          }
+        }
+
+        return equipment;
+      }
+
+      return [];
+    } catch (error) {
+      console.error(`Failed to fetch ${category} equipment:`, error);
+      return [];
+    }
   }
 
   getFallbackEquipment() {

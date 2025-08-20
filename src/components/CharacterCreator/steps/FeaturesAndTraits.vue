@@ -9,11 +9,11 @@
       <!-- Core Combat Stats -->
       <v-row class="mb-6">
         <v-col cols="12" md="4">
-          <v-card color="red-lighten-4" variant="outlined">
+          <v-card color="error-lighten-4" variant="outlined" class="combat-stat-card">
             <v-card-title class="text-center">❤️ Hit Points</v-card-title>
-            <v-card-text>
+            <v-card-text class="combat-card-content">
               <div class="text-center">
-                <div class="text-h3 text-red">{{ calculateHitPoints }}</div>
+                <div class="text-h3 text-error">{{ calculateHitPoints }}</div>
                 <div class="text-caption">Maximum HP</div>
                 <v-divider class="my-2" />
                 <div class="text-body-2">
@@ -25,9 +25,9 @@
         </v-col>
 
         <v-col cols="12" md="4">
-          <v-card color="blue-lighten-4" variant="outlined">
+          <v-card color="blue-lighten-4" variant="outlined" class="combat-stat-card">
             <v-card-title class="text-center">🛡️ Armor Class</v-card-title>
-            <v-card-text>
+            <v-card-text class="combat-card-content">
               <div class="text-center">
                 <div class="text-h3 text-blue">{{ calculateArmorClass }}</div>
                 <div class="text-caption">AC</div>
@@ -41,23 +41,35 @@
         </v-col>
 
         <v-col cols="12" md="4">
-          <v-card color="green-lighten-4" variant="outlined">
+          <v-card color="green-lighten-4" variant="outlined" class="combat-stat-card">
             <v-card-title class="text-center">⚔️ Combat Stats</v-card-title>
-            <v-card-text>
-              <v-list density="compact">
+            <v-card-text class="combat-card-content">
+              <v-list class="pt-4 pb-0" density="compact">
                 <v-list-item>
                   <v-list-item-title>Proficiency Bonus</v-list-item-title>
                   <template #append>
-                    <v-chip color="primary" size="small">+{{ character.proficiencyBonus }}</v-chip>
+                    <v-tooltip text="Added to attack rolls, skill checks, and saving throws you're proficient in"
+                      location="top">
+                      <template v-slot:activator="{ props }">
+                        <v-chip v-bind="props" color="primary" size="small">+{{ character.proficiencyBonus }}</v-chip>
+                      </template>
+                    </v-tooltip>
                   </template>
                 </v-list-item>
                 <v-list-item>
                   <v-list-item-title>Initiative</v-list-item-title>
                   <template #append>
-                    <v-chip :color="getDexModifier >= 0 ? 'green' : 'red'" size="small">
-                      {{ getDexModifier >= 0 ? '+' : '' }}{{ getDexModifier }}
-                    </v-chip>
+                    <v-tooltip text="Your Dexterity modifier - determines turn order in combat" location="top">
+                      <template v-slot:activator="{ props }">
+                        <v-chip v-bind="props" :color="getDexModifier >= 0 ? 'success' : 'error'" size="small">
+                          {{ getDexModifier >= 0 ? '+' : '' }}{{ getDexModifier }}
+                        </v-chip>
+                      </template>
+                    </v-tooltip>
                   </template>
+                </v-list-item>
+                <v-list-item class="list-item-spacer">
+                  <!-- Empty spacer item to match height with other cards -->
                 </v-list-item>
               </v-list>
             </v-card-text>
@@ -69,80 +81,154 @@
       <v-card v-if="character.speciesDetails" class="mb-6" variant="outlined">
         <v-card-title class="text-h6">🧬 Species Features ({{ character.speciesDetails.name }})</v-card-title>
         <v-card-text>
-          <v-row>
-            <v-col cols="12" md="6">
-              <div class="mb-4">
-                <h4>📏 Size & Speed</h4>
-                <v-chip-group>
-                  <v-chip color="primary" size="small">Size: {{ character.speciesDetails.size || 'Medium' }}</v-chip>
-                  <v-chip color="secondary" size="small">Speed: {{ character.speciesDetails.speed || 30 }} ft</v-chip>
-                </v-chip-group>
-              </div>
+          <!-- Compact overview section -->
+          <div class="my-2 ml-4">
+            <v-row>
+              <!-- Basic stats in a more compact format -->
+              <v-col cols="12" md="8">
+                <div class="d-flex flex-wrap align-center ga-2 mb-3">
+                  <v-tooltip text="Physical size category - affects space occupied and some mechanics" location="top">
+                    <template v-slot:activator="{ props }">
+                      <v-chip v-bind="props" color="primary" size="small" prepend-icon="mdi-resize">
+                        {{ character.speciesDetails.size || 'Medium' }} Size
+                      </v-chip>
+                    </template>
+                  </v-tooltip>
+                  <v-tooltip text="Base walking speed in feet per round during combat" location="top">
+                    <template v-slot:activator="{ props }">
+                      <v-chip v-bind="props" color="secondary" size="small" prepend-icon="mdi-run-fast">
+                        {{ character.speciesDetails.speed || 30 }} ft Speed
+                      </v-chip>
+                    </template>
+                  </v-tooltip>
+                  <v-tooltip v-if="character.speciesDetails.darkvision"
+                    text="Can see in darkness as if it were dim light within this range" location="top">
+                    <template v-slot:activator="{ props }">
+                      <v-chip v-bind="props" color="purple" size="small" prepend-icon="mdi-eye">
+                        {{ character.speciesDetails.darkvision }} ft Darkvision
+                      </v-chip>
+                    </template>
+                  </v-tooltip>
+                  <v-tooltip v-if="character.speciesDetails.damageResistance"
+                    text="Takes half damage from these damage types" location="top">
+                    <template v-slot:activator="{ props }">
+                      <v-chip v-bind="props" color="orange" size="small" prepend-icon="mdi-shield">
+                        {{ character.speciesDetails.damageResistance }}
+                      </v-chip>
+                    </template>
+                  </v-tooltip>
+                </div>
+              </v-col>
+              <v-col cols="12" md="4">
+                <div v-if="character.speciesDetails.ability_bonuses?.length" class="d-flex flex-wrap align-center ga-1">
+                  <strong class="text-body-2 me-2">💪 Bonuses:</strong>
+                  <v-tooltip v-for="bonus in character.speciesDetails.ability_bonuses" :key="bonus.ability_score?.name"
+                    :text="`Adds +${bonus.bonus} to your ${bonus.ability_score?.name} score`" location="top">
+                    <template v-slot:activator="{ props }">
+                      <v-chip v-bind="props" color="success" size="x-small">
+                        {{ bonus.ability_score?.name }}: +{{ bonus.bonus }}
+                      </v-chip>
+                    </template>
+                  </v-tooltip>
+                </div>
+              </v-col>
+            </v-row>
+          </div>
 
-              <div v-if="character.speciesDetails.ability_bonuses?.length" class="mb-4">
-                <h4>💪 Ability Score Increases</h4>
-                <v-chip-group>
-                  <v-chip v-for="bonus in character.speciesDetails.ability_bonuses" :key="bonus.ability_score?.name"
-                    color="success" size="small">
-                    {{ bonus.ability_score?.name }}: +{{ bonus.bonus }}
-                  </v-chip>
-                </v-chip-group>
-              </div>
-            </v-col>
-
-            <v-col cols="12" md="6">
-              <div v-if="character.speciesDetails.languages?.length" class="mb-4">
-                <h4>🗣️ Languages</h4>
-                <v-chip-group>
-                  <v-chip v-for="lang in character.speciesDetails.languages" :key="lang.index || lang.name" color="info"
-                    size="small">
+          <!-- Languages -->
+          <div v-if="character.speciesDetails.languages?.length" class="mb-4">
+            <div class="d-flex flex-wrap align-center ga-2">
+              <strong class="text-body-2">🗣️ Languages:</strong>
+              <v-tooltip v-for="lang in character.speciesDetails.languages" :key="lang.index || lang.name"
+                :text="`You can speak, read, and write ${typeof lang === 'string' ? lang : lang.name}`" location="top">
+                <template v-slot:activator="{ props }">
+                  <v-chip v-bind="props" color="info" size="small">
                     {{ typeof lang === 'string' ? lang : lang.name }}
                   </v-chip>
-                </v-chip-group>
+                </template>
+              </v-tooltip>
+            </div>
+          </div>
+
+          <!-- Special Traits -->
+          <div class="mb-4">
+            <div v-if="speciesTraitsWithDetails.length">
+              <h4 class="mb-3">✨ Special Traits</h4>
+              <div class="trait-accordion">
+                <v-card v-for="(trait, index) in speciesTraitsWithDetails" :key="trait.name || trait.index" class="mb-2"
+                  variant="outlined">
+                  <v-card-title class="pa-3 cursor-pointer trait-header" @click="toggleTrait(index)"
+                    :class="{ 'trait-expanded': expandedTraits[index] }">
+                    <v-icon class="mr-2">{{ expandedTraits[index] ? 'mdi-chevron-down' : 'mdi-chevron-right'
+                    }}</v-icon>
+                    {{ trait.name || 'Unknown Trait' }}
+                  </v-card-title>
+                  <v-expand-transition>
+                    <v-card-text v-if="expandedTraits[index]" class="pt-0">
+                      <v-divider class="mb-3"></v-divider>
+                      <div v-if="Array.isArray(trait.desc) && trait.desc.length">
+                        <p v-for="(desc, descIndex) in trait.desc" :key="descIndex" class="mb-2">
+                          {{ desc }}
+                        </p>
+                      </div>
+                      <div v-else-if="trait.desc">
+                        <p>{{ trait.desc }}</p>
+                      </div>
+                      <div v-else class="text-caption text-grey">
+                        Loading trait details...
+                      </div>
+                    </v-card-text>
+                  </v-expand-transition>
+                </v-card>
               </div>
+            </div>
 
-
-
-              <div v-if="speciesTraitsWithDetails.length" class="mb-4">
-                <h4>✨ Special Traits</h4>
-                <div class="trait-accordion">
-                  <v-card v-for="(trait, index) in speciesTraitsWithDetails" :key="trait.name || trait.index"
-                    class="mb-2" variant="outlined">
-                    <v-card-title class="pa-3 cursor-pointer trait-header" @click="toggleTrait(index)"
-                      :class="{ 'trait-expanded': expandedTraits[index] }">
-                      <v-icon class="mr-2">{{ expandedTraits[index] ? 'mdi-chevron-down' : 'mdi-chevron-right'
-                      }}</v-icon>
-                      {{ trait.name || 'Unknown Trait' }}
-                    </v-card-title>
-                    <v-expand-transition>
-                      <v-card-text v-if="expandedTraits[index]" class="pt-0">
-                        <v-divider class="mb-3"></v-divider>
-                        <div v-if="Array.isArray(trait.desc) && trait.desc.length">
-                          <p v-for="(desc, descIndex) in trait.desc" :key="descIndex" class="mb-2">
-                            {{ desc }}
-                          </p>
-                        </div>
-                        <div v-else-if="trait.desc">
-                          <p>{{ trait.desc }}</p>
-                        </div>
-                        <div v-else class="text-caption text-grey">
-                          Loading trait details...
-                        </div>
-                      </v-card-text>
-                    </v-expand-transition>
-                  </v-card>
+            <!-- Human special case -->
+            <div v-else-if="character.speciesDetails.name === 'Human'">
+              <h4 class="mb-3">✨ Human Versatility</h4>
+              <v-card color="blue-lighten-5" variant="tonal" class="pa-4">
+                <div class="text-body-2 mb-3">
+                  <strong>Adaptable Nature:</strong> Humans excel through versatility rather than specialized traits:
                 </div>
-              </div>
+                <v-row>
+                  <v-col cols="12" md="6">
+                    <v-list density="compact">
+                      <v-list-item class="pa-1">
+                        <v-icon class="me-3" size="small" color="primary">mdi-account-multiple</v-icon>
+                        <v-list-item-title class="text-body-2">Diverse skill development</v-list-item-title>
+                      </v-list-item>
+                      <v-list-item class="pa-1">
+                        <v-icon class="me-3" size="small" color="primary">mdi-star</v-icon>
+                        <v-list-item-title class="text-body-2">Extra ability improvements</v-list-item-title>
+                      </v-list-item>
+                    </v-list>
+                  </v-col>
+                  <v-col cols="12" md="6">
+                    <v-list density="compact">
+                      <v-list-item class="pa-1">
+                        <v-icon class="me-3" size="small" color="primary">mdi-heart</v-icon>
+                        <v-list-item-title class="text-body-2">Cultural adaptability</v-list-item-title>
+                      </v-list-item>
+                      <v-list-item class="pa-1">
+                        <v-icon class="me-3" size="small" color="primary">mdi-lightning-bolt</v-icon>
+                        <v-list-item-title class="text-body-2">Quick learning ability</v-list-item-title>
+                      </v-list-item>
+                    </v-list>
+                  </v-col>
+                </v-row>
+              </v-card>
+            </div>
 
-              <!-- Show this if no traits are found -->
-              <div v-else-if="character.speciesDetails" class="mb-4">
-                <h4>✨ Special Traits</h4>
-                <p class="text-caption">No traits found for {{ character.speciesDetails.name }}.</p>
-                <pre
-                  class="text-caption">{{ JSON.stringify(character.speciesDetails, null, 2).substring(0, 500) }}...</pre>
-              </div>
-            </v-col>
-          </v-row>
+            <!-- Fallback for other species -->
+            <div v-else-if="character.speciesDetails">
+              <h4 class="mb-3">✨ Special Traits</h4>
+              <v-alert type="info" variant="tonal" class="text-body-2">
+                No special traits found for {{ character.speciesDetails.name }}. This species may have unique abilities
+                that
+                aren't yet loaded.
+              </v-alert>
+            </div>
+          </div>
         </v-card-text>
       </v-card>
 
@@ -150,47 +236,101 @@
       <v-card v-if="character.classDetails" class="mb-6" variant="outlined">
         <v-card-title class="text-h6">⚔️ Class Features ({{ character.classDetails.name }})</v-card-title>
         <v-card-text>
-          <v-row>
-            <v-col cols="12" md="6">
-              <div class="mb-4">
-                <h4>🎲 Hit Die & Proficiencies</h4>
-                <v-chip-group>
-                  <v-chip color="red" size="small">Hit Die: d{{ character.classDetails.hit_die ||
-                    character.classDetails.hpDie?.replace('D', '') || '8' }}</v-chip>
-                  <v-chip color="primary" size="small">Primary: {{
-                    Array.isArray(character.classDetails.primary_ability)
+          <!-- Compact overview section -->
+          <div class="my-1 ml-4">
+            <div class="d-flex flex-wrap align-center ga-2 mb-3">
+              <v-tooltip text="The die used to determine hit points gained each level" location="top">
+                <template v-slot:activator="{ props }">
+                  <v-chip v-bind="props" color="error" size="small" prepend-icon="mdi-dice-6">
+                    d{{ character.classDetails.hit_die || character.classDetails.hpDie?.replace('D', '') || '8' }} Hit
+                    Die
+                  </v-chip>
+                </template>
+              </v-tooltip>
+              <v-tooltip text="The most important ability score(s) for this class" location="top">
+                <template v-slot:activator="{ props }">
+                  <v-chip v-bind="props" color="primary" size="small" prepend-icon="mdi-star">
+                    {{ Array.isArray(character.classDetails.primary_ability)
                       ? character.classDetails.primary_ability.join(', ')
-                      : character.classDetails.primaryAbility || character.classDetails.primary_ability || 'Varies'
-                  }}</v-chip>
-                </v-chip-group>
-              </div>
-
-              <div v-if="character.classDetails.saving_throws?.length || character.classDetails.savingThrows?.length"
-                class="mb-4">
-                <h4>🛡️ Saving Throw Proficiencies</h4>
-                <v-chip-group>
-                  <v-chip
-                    v-for="save in (character.classDetails.saving_throws || character.classDetails.savingThrows || [])"
-                    :key="typeof save === 'string' ? save : save.name" color="warning" size="small">
+                      : character.classDetails.primaryAbility || character.classDetails.primary_ability || 'Varies' }}
+                  </v-chip>
+                </template>
+              </v-tooltip>
+              <v-tooltip
+                v-for="save in (character.classDetails.saving_throws || character.classDetails.savingThrows || [])"
+                :key="typeof save === 'string' ? save : save.name"
+                :text="`You add your proficiency bonus to ${typeof save === 'string' ? save : save.name} saving throws`"
+                location="top">
+                <template v-slot:activator="{ props }">
+                  <v-chip v-bind="props" color="warning" size="small" prepend-icon="mdi-shield-check">
                     {{ typeof save === 'string' ? save : save.name }}
                   </v-chip>
-                </v-chip-group>
-              </div>
-            </v-col>
+                </template>
+              </v-tooltip>
+            </div>
+          </div>
 
-            <v-col cols="12" md="6">
-              <div v-if="availableClassSkills.length" class="mb-4">
-                <h4>📚 Choose Class Skills</h4>
-                <p class="text-caption mb-2">Select {{ getClassSkillChoices }} skills from your class list:</p>
-                <v-chip-group v-model="selectedClassSkills" multiple>
-                  <v-chip v-for="skill in availableClassSkills" :key="skill" :value="skill" filter color="blue"
-                    size="small">
+          <!-- 1st Level Class Features -->
+          <div v-if="character.classDetails.features?.length" class="mb-4">
+            <h4 class="mb-3">✨ 1st Level Features</h4>
+            <div class="class-features-accordion">
+              <v-card v-for="(feature, index) in character.classDetails.features" :key="feature.name || feature.index"
+                class="mb-2" variant="outlined">
+                <v-card-title class="pa-3 cursor-pointer feature-header" @click="toggleClassFeature(index)"
+                  :class="{ 'feature-expanded': expandedClassFeatures[index] }">
+                  <v-icon class="mr-2">{{ expandedClassFeatures[index] ? 'mdi-chevron-down' : 'mdi-chevron-right'
+                  }}</v-icon>
+                  {{ feature.name || 'Unknown Feature' }}
+                </v-card-title>
+                <v-expand-transition>
+                  <v-card-text v-if="expandedClassFeatures[index]" class="pt-0">
+                    <v-divider class="mb-3"></v-divider>
+                    <div v-if="Array.isArray(feature.desc) && feature.desc.length">
+                      <p v-for="(desc, descIndex) in feature.desc" :key="descIndex" class="mb-2">
+                        {{ desc }}
+                      </p>
+                    </div>
+                    <div v-else-if="feature.desc">
+                      <p>{{ typeof feature.desc === 'string' ? feature.desc : feature.desc.join(' ') }}</p>
+                    </div>
+                    <div v-else class="text-caption text-grey">
+                      This feature provides special abilities for your {{ character.classDetails.name }}.
+                    </div>
+                  </v-card-text>
+                </v-expand-transition>
+              </v-card>
+            </div>
+          </div>
+
+          <!-- Fallback if no features loaded -->
+          <div v-else class="mb-4">
+            <h4 class="mb-3">✨ 1st Level Features</h4>
+            <v-alert type="info" variant="tonal" class="text-body-2">
+              Class features are loading... Each {{ character.classDetails.name }} gets unique abilities at 1st level
+              that
+              define how the class plays.
+            </v-alert>
+          </div>
+
+          <!-- Class Skills Selection -->
+          <div v-if="availableClassSkills.length" class="mb-4">
+            <div class="d-flex align-center mb-2">
+              <h4 class="me-2">📚 Class Skills</h4>
+              <v-chip color="info" size="x-small" variant="outlined">
+                Choose {{ getClassSkillChoices }}
+              </v-chip>
+            </div>
+            <v-chip-group v-model="selectedClassSkills" multiple class="skill-selection">
+              <v-tooltip v-for="skill in availableClassSkills" :key="skill"
+                :text="`Click to select ${skill} as one of your class skills`" location="top">
+                <template v-slot:activator="{ props }">
+                  <v-chip v-bind="props" :value="skill" filter color="blue" size="small">
                     {{ skill }}
                   </v-chip>
-                </v-chip-group>
-              </div>
-            </v-col>
-          </v-row>
+                </template>
+              </v-tooltip>
+            </v-chip-group>
+          </div>
         </v-card-text>
       </v-card>
 
@@ -203,20 +343,29 @@
               <div v-if="character.backgroundDetails.skill_proficiencies?.length" class="mb-4">
                 <h4>🎯 Background Skills</h4>
                 <v-chip-group>
-                  <v-chip v-for="skill in character.backgroundDetails.skill_proficiencies" :key="skill.name"
-                    color="purple" size="small">
-                    {{ skill.name }}
-                  </v-chip>
+                  <v-tooltip v-for="skill in character.backgroundDetails.skill_proficiencies" :key="skill.name"
+                    :text="`Your background grants proficiency in ${skill.name}`" location="top">
+                    <template v-slot:activator="{ props }">
+                      <v-chip v-bind="props" color="purple" size="small">
+                        {{ skill.name }}
+                      </v-chip>
+                    </template>
+                  </v-tooltip>
                 </v-chip-group>
               </div>
 
               <div v-if="character.backgroundDetails.languages?.length" class="mb-4">
                 <h4>🗣️ Additional Languages</h4>
                 <v-chip-group>
-                  <v-chip v-for="lang in character.backgroundDetails.languages" :key="lang.index || lang.name"
-                    color="info" size="small">
-                    {{ typeof lang === 'string' ? lang : lang.name }}
-                  </v-chip>
+                  <v-tooltip v-for="lang in character.backgroundDetails.languages" :key="lang.index || lang.name"
+                    :text="`Your background grants knowledge of ${typeof lang === 'string' ? lang : lang.name}`"
+                    location="top">
+                    <template v-slot:activator="{ props }">
+                      <v-chip v-bind="props" color="info" size="small">
+                        {{ typeof lang === 'string' ? lang : lang.name }}
+                      </v-chip>
+                    </template>
+                  </v-tooltip>
                 </v-chip-group>
               </div>
 
@@ -268,96 +417,334 @@
         <v-card-subtitle>Make choices that customize your character's abilities</v-card-subtitle>
         <v-card-text>
 
-          <!-- Debug info (temporary) -->
-          <div v-if="false" class="mb-4 pa-2 bg-grey-lighten-4">
-            <small>Debug - Class: {{ character.class }} | Class Details: {{ character.classDetails?.name }} | Index: {{
-              character.classDetails?.index }}</small>
-          </div>
-
           <!-- Show message if no choices available -->
           <div v-if="!hasFightingStyle && !hasExpertise && !isWarlock && !isDruid && !isCleric"
-            class="text-center py-4">
-            <v-icon size="48" color="grey">mdi-cog-outline</v-icon>
-            <p class="text-h6 mt-2">No Feature Choices Available</p>
-            <p class="text-body-2 text-grey">
+            class="text-center py-6">
+            <v-icon size="64" color="grey-lighten-2">mdi-cog-outline</v-icon>
+            <div class="text-h6 mt-3 mb-2">No Feature Choices Available</div>
+            <div class="text-body-2 text-medium-emphasis mb-2">
               Select a class to see available feature customization options.
-              <br>
-              <small>Current class: {{ character.class || character.classDetails?.name || 'None selected' }}</small>
-            </p>
+            </div>
+            <v-chip color="info" size="small" variant="outlined">
+              Current class: {{ character.classDetails?.name || character.class || 'None selected' }}
+            </v-chip>
           </div>
 
-          <!-- Fighting Style (for Fighters, Rangers, Paladins) -->
-          <div v-if="hasFightingStyle" class="mb-4">
-            <h4>⚔️ Fighting Style</h4>
-            <p class="text-caption mb-2">Choose a fighting style that defines your combat approach:</p>
-            <v-radio-group v-model="selectedFightingStyle" inline>
-              <v-radio v-for="style in fightingStyles" :key="style.value" :label="style.title" :value="style.value">
-                <template #label>
-                  <div>
-                    <strong>{{ style.title }}</strong>
-                    <div class="text-caption">{{ style.description }}</div>
+          <!-- Feature Choices Grid -->
+          <v-row v-else>
+            <!-- Fighting Style -->
+            <v-col v-if="hasFightingStyle" cols="12">
+              <v-card class="feature-choice-card" color="red-lighten-5" variant="tonal">
+                <v-card-title class="d-flex align-center text-h6">
+                  <v-icon class="me-2" color="red-darken-2">mdi-sword-cross</v-icon>
+                  Fighting Style
+                  <v-spacer />
+                  <v-chip :color="hasFightingStyle && !selectedFightingStyle ? 'error' : 'red'" size="small"
+                    variant="outlined">
+                    {{ hasFightingStyle && !selectedFightingStyle ? 'Required!' : 'Required' }}
+                  </v-chip>
+                </v-card-title>
+                <v-card-text>
+                  <div class="text-body-2 mb-3 text-medium-emphasis">
+                    Choose a fighting style that defines your combat approach
                   </div>
-                </template>
-              </v-radio>
-            </v-radio-group>
-          </div>
+                  <v-radio-group v-model="selectedFightingStyle" density="compact">
+                    <v-row>
+                      <v-col v-for="style in fightingStyles" :key="style.value" cols="12" md="6">
+                        <v-card class="fighting-style-option" variant="outlined"
+                          :class="{ 'fighting-style-selected': selectedFightingStyle === style.value }"
+                          @click="selectedFightingStyle = style.value">
+                          <v-card-text class="d-flex pa-3" style="min-height: 80px;">
+                            <div class="radio-container">
+                              <v-radio :value="style.value" hide-details />
+                            </div>
+                            <div class="text-content flex-grow-1">
+                              <div class="text-subtitle-2 font-weight-medium text-left">{{ style.title }}</div>
+                              <div class="text-caption text-medium-emphasis text-left">{{ style.description }}</div>
+                            </div>
+                          </v-card-text>
+                        </v-card>
+                      </v-col>
+                    </v-row>
+                  </v-radio-group>
+                </v-card-text>
+              </v-card>
+            </v-col>
 
-          <!-- Expertise (for Rogues, Bards) -->
-          <div v-if="hasExpertise" class="mb-4">
-            <h4>🎯 Expertise</h4>
-            <p class="text-caption mb-2">Choose {{ expertiseChoices }} skills to double your proficiency bonus:</p>
-            <v-chip-group v-model="selectedExpertiseSkills" multiple>
-              <v-chip v-for="skill in availableExpertiseSkills" :key="skill" :value="skill" filter
-                color="yellow-darken-2" size="small">
-                {{ skill }}
-              </v-chip>
-            </v-chip-group>
-          </div>
+            <!-- Expertise -->
+            <v-col v-if="hasExpertise" cols="12">
+              <v-card class="feature-choice-card" color="yellow-lighten-5" variant="tonal">
+                <v-card-title class="d-flex align-center text-h6">
+                  <v-icon class="me-2" color="yellow-darken-3">mdi-target</v-icon>
+                  Expertise
+                  <v-spacer />
+                  <v-chip :color="selectedExpertiseSkills.length < expertiseChoices ? 'error' : 'yellow-darken-2'"
+                    size="small" variant="outlined">
+                    {{ selectedExpertiseSkills.length < expertiseChoices ? `Required:
+                      ${selectedExpertiseSkills.length}/${expertiseChoices}` : `Choose ${expertiseChoices}` }} </v-chip>
+                </v-card-title>
+                <v-card-text>
+                  <div class="text-body-2 mb-3 text-medium-emphasis">
+                    Choose {{ expertiseChoices }} skills to double your proficiency bonus
+                  </div>
 
-          <!-- Warlock Patron (for Warlocks) -->
-          <div v-if="isWarlock" class="mb-4">
-            <h4>👁️ Otherworldly Patron</h4>
-            <p class="text-caption mb-2">Choose the entity that grants you power:</p>
-            <v-select v-model="selectedPatron" :items="warlockPatrons" item-title="name" item-value="value"
-              label="Select your patron">
-              <template #item="{ props, item }">
-                <v-list-item v-bind="props">
-                  <v-list-item-title>{{ item.raw.name }}</v-list-item-title>
-                  <v-list-item-subtitle>{{ item.raw.description }}</v-list-item-subtitle>
-                </v-list-item>
-              </template>
-            </v-select>
-          </div>
+                  <!-- Selected Skills Display -->
+                  <div v-if="selectedExpertiseSkills.length" class="mb-3">
+                    <div class="text-subtitle-2 mb-2">Selected Skills:</div>
+                    <div class="d-flex flex-wrap ga-2">
+                      <v-chip v-for="skill in selectedExpertiseSkills" :key="`selected-${skill}`"
+                        color="yellow-darken-2" size="small" variant="outlined" closable
+                        @click:close="removeExpertiseSkill(skill)">
+                        {{ skill }}
+                      </v-chip>
+                    </div>
+                  </div>
 
-          <!-- Druid Circle (for Druids) -->
-          <div v-if="isDruid" class="mb-4">
-            <h4>🌿 Druidic Circle</h4>
-            <p class="text-caption mb-2">Choose your connection to nature:</p>
-            <v-select v-model="selectedCircle" :items="druidCircles" item-title="name" item-value="value"
-              label="Select your circle">
-              <template #item="{ props, item }">
-                <v-list-item v-bind="props">
-                  <v-list-item-title>{{ item.raw.name }}</v-list-item-title>
-                  <v-list-item-subtitle>{{ item.raw.description }}</v-list-item-subtitle>
-                </v-list-item>
-              </template>
-            </v-select>
-          </div>
+                  <!-- Skill Categories by Ability -->
+                  <div class="expertise-skills-grid">
+                    <!-- Strength Skills -->
+                    <div v-if="strengthSkills.length > 0" class="skill-category"
+                      :class="{ 'primary-ability': isImportantAbility('Strength') }">
+                      <div class="skill-category-header">
+                        <v-icon size="small" :color="isImportantAbility('Strength') ? 'red-darken-1' : 'red-darken-3'"
+                          class="me-2">mdi-arm-flex</v-icon>
+                        <span class="text-subtitle-2 font-weight-bold">Strength</span>
+                        <v-chip v-if="isImportantAbility('Strength')" color="primary" size="x-small" variant="outlined"
+                          class="ml-2">Key Ability</v-chip>
+                        <v-spacer />
+                        <span class="text-caption">{{ getAbilityModifier('strength') >= 0 ? '+' : '' }}{{
+                          getAbilityModifier('strength') }}</span>
+                      </div>
+                      <div class="skill-chips">
+                        <v-tooltip v-for="skill in strengthSkills" :key="skill"
+                          :text="`Double your proficiency bonus for ${skill} checks (uses Strength)`" location="top">
+                          <template v-slot:activator="{ props }">
+                            <v-chip v-bind="props" :value="skill" variant="outlined" :color="selectedExpertiseSkills.includes(skill)
+                              ? (isImportantAbility('Strength') ? 'red-darken-1' : 'red-lighten-1')
+                              : 'grey-lighten-1'" size="small"
+                              :disabled="!selectedExpertiseSkills.includes(skill) && selectedExpertiseSkills.length >= expertiseChoices"
+                              @click="toggleExpertiseSkill(skill)">
+                              {{ skill }}
+                            </v-chip>
+                          </template>
+                        </v-tooltip>
+                      </div>
+                    </div>
 
-          <!-- Cleric Domain (for Clerics) -->
-          <div v-if="isCleric" class="mb-4">
-            <h4>✨ Divine Domain</h4>
-            <p class="text-caption mb-2">Choose your deity's sphere of influence:</p>
-            <v-select v-model="selectedDomain" :items="clericDomains" item-title="name" item-value="value"
-              label="Select your domain">
-              <template #item="{ props, item }">
-                <v-list-item v-bind="props">
-                  <v-list-item-title>{{ item.raw.name }}</v-list-item-title>
-                  <v-list-item-subtitle>{{ item.raw.description }}</v-list-item-subtitle>
-                </v-list-item>
-              </template>
-            </v-select>
-          </div>
+                    <!-- Dexterity Skills -->
+                    <div v-if="dexteritySkills.length > 0" class="skill-category"
+                      :class="{ 'primary-ability': isImportantAbility('Dexterity') }">
+                      <div class="skill-category-header">
+                        <v-icon size="small"
+                          :color="isImportantAbility('Dexterity') ? 'green-darken-1' : 'green-darken-3'"
+                          class="me-2">mdi-run-fast</v-icon>
+                        <span class="text-subtitle-2 font-weight-bold">Dexterity</span>
+                        <v-chip v-if="isImportantAbility('Dexterity')" color="primary" size="x-small" variant="outlined"
+                          class="ml-2">Key Ability</v-chip>
+                        <v-spacer />
+                        <span class="text-caption">{{ getAbilityModifier('dexterity') >= 0 ? '+' : '' }}{{
+                          getAbilityModifier('dexterity') }}</span>
+                      </div>
+                      <div class="skill-chips">
+                        <v-tooltip v-for="skill in dexteritySkills" :key="skill"
+                          :text="`Double your proficiency bonus for ${skill} checks (uses Dexterity)`" location="top">
+                          <template v-slot:activator="{ props }">
+                            <v-chip v-bind="props" :value="skill" variant="outlined" :color="selectedExpertiseSkills.includes(skill)
+                              ? (isImportantAbility('Dexterity') ? 'green-darken-1' : 'green-lighten-1')
+                              : 'grey-lighten-1'" size="small"
+                              :disabled="!selectedExpertiseSkills.includes(skill) && selectedExpertiseSkills.length >= expertiseChoices"
+                              @click="toggleExpertiseSkill(skill)">
+                              {{ skill }}
+                            </v-chip>
+                          </template>
+                        </v-tooltip>
+                      </div>
+                    </div>
+
+                    <!-- Intelligence Skills -->
+                    <div v-if="intelligenceSkills.length > 0" class="skill-category"
+                      :class="{ 'primary-ability': isImportantAbility('Intelligence') }">
+                      <div class="skill-category-header">
+                        <v-icon size="small"
+                          :color="isImportantAbility('Intelligence') ? 'blue-darken-1' : 'blue-darken-3'"
+                          class="me-2">mdi-brain</v-icon>
+                        <span class="text-subtitle-2 font-weight-bold">Intelligence</span>
+                        <v-chip v-if="isImportantAbility('Intelligence')" color="primary" size="x-small"
+                          variant="outlined" class="ml-2">Key Ability</v-chip>
+                        <v-spacer />
+                        <span class="text-caption">{{ getAbilityModifier('intelligence') >= 0 ? '+' : '' }}{{
+                          getAbilityModifier('intelligence') }}</span>
+                      </div>
+                      <div class="skill-chips">
+                        <v-tooltip v-for="skill in intelligenceSkills" :key="skill"
+                          :text="`Double your proficiency bonus for ${skill} checks (uses Intelligence)`"
+                          location="top">
+                          <template v-slot:activator="{ props }">
+                            <v-chip v-bind="props" :value="skill" variant="outlined" :color="selectedExpertiseSkills.includes(skill)
+                              ? (isImportantAbility('Intelligence') ? 'blue-darken-1' : 'blue-lighten-1')
+                              : 'grey-lighten-1'" size="small"
+                              :disabled="!selectedExpertiseSkills.includes(skill) && selectedExpertiseSkills.length >= expertiseChoices"
+                              @click="toggleExpertiseSkill(skill)">
+                              {{ skill }}
+                            </v-chip>
+                          </template>
+                        </v-tooltip>
+                      </div>
+                    </div>
+
+                    <!-- Wisdom Skills -->
+                    <div v-if="wisdomSkills.length > 0" class="skill-category"
+                      :class="{ 'primary-ability': isImportantAbility('Wisdom') }">
+                      <div class="skill-category-header">
+                        <v-icon size="small" :color="isImportantAbility('Wisdom') ? 'teal-darken-1' : 'teal-darken-3'"
+                          class="me-2">mdi-eye</v-icon>
+                        <span class="text-subtitle-2 font-weight-bold">Wisdom</span>
+                        <v-chip v-if="isImportantAbility('Wisdom')" color="primary" size="x-small" variant="outlined"
+                          class="ml-2">Key Ability</v-chip>
+                        <v-spacer />
+                        <span class="text-caption">{{ getAbilityModifier('wisdom') >= 0 ? '+' : '' }}{{
+                          getAbilityModifier('wisdom') }}</span>
+                      </div>
+                      <div class="skill-chips">
+                        <v-tooltip v-for="skill in wisdomSkills" :key="skill"
+                          :text="`Double your proficiency bonus for ${skill} checks (uses Wisdom)`" location="top">
+                          <template v-slot:activator="{ props }">
+                            <v-chip v-bind="props" :value="skill" variant="outlined" :color="selectedExpertiseSkills.includes(skill)
+                              ? (isImportantAbility('Wisdom') ? 'teal-darken-1' : 'teal-lighten-1')
+                              : 'grey-lighten-1'" size="small"
+                              :disabled="!selectedExpertiseSkills.includes(skill) && selectedExpertiseSkills.length >= expertiseChoices"
+                              @click="toggleExpertiseSkill(skill)">
+                              {{ skill }}
+                            </v-chip>
+                          </template>
+                        </v-tooltip>
+                      </div>
+                    </div>
+
+                    <!-- Charisma Skills -->
+                    <!-- Charisma Skills -->
+                    <div v-if="charismaSkills.length > 0" class="skill-category"
+                      :class="{ 'primary-ability': isImportantAbility('Charisma') }">
+                      <div class="skill-category-header">
+                        <v-icon size="small"
+                          :color="isImportantAbility('Charisma') ? 'purple-darken-1' : 'purple-darken-3'"
+                          class="me-2">mdi-account-group</v-icon>
+                        <span class="text-subtitle-2 font-weight-bold">Charisma</span>
+                        <v-chip v-if="isImportantAbility('Charisma')" color="primary" size="x-small" variant="outlined"
+                          class="ml-2">Key Ability</v-chip>
+                        <v-spacer />
+                        <span class="text-caption">{{ getAbilityModifier('charisma') >= 0 ? '+' : '' }}{{
+                          getAbilityModifier('charisma') }}</span>
+                      </div>
+                      <div class="skill-chips">
+                        <v-tooltip v-for="skill in charismaSkills" :key="skill"
+                          :text="`Double your proficiency bonus for ${skill} checks (uses Charisma)`" location="top">
+                          <template v-slot:activator="{ props }">
+                            <v-chip v-bind="props" :value="skill" variant="outlined" :color="selectedExpertiseSkills.includes(skill)
+                              ? (isImportantAbility('Charisma') ? 'purple-darken-1' : 'purple-lighten-1')
+                              : 'grey-lighten-1'" size="small"
+                              :disabled="!selectedExpertiseSkills.includes(skill) && selectedExpertiseSkills.length >= expertiseChoices"
+                              @click="toggleExpertiseSkill(skill)">
+                              {{ skill }}
+                            </v-chip>
+                          </template>
+                        </v-tooltip>
+                      </div>
+                    </div>
+                  </div>
+                </v-card-text>
+              </v-card>
+            </v-col>
+
+            <!-- Subclass Choices Row -->
+            <v-col cols="12">
+              <v-row>
+                <!-- Warlock Patron -->
+                <v-col v-if="isWarlock" cols="12" md="4">
+                  <v-card class="feature-choice-card h-100" color="purple-lighten-5" variant="tonal">
+                    <v-card-title class="d-flex align-center text-subtitle-1">
+                      <v-icon class="me-2" color="purple-darken-2">mdi-eye</v-icon>
+                      Otherworldly Patron
+                      <v-spacer />
+                      <v-chip :color="!selectedPatron ? 'error' : 'purple-darken-2'" size="x-small" variant="outlined">
+                        {{ !selectedPatron ? 'Required!' : 'Required' }}
+                      </v-chip>
+                    </v-card-title>
+                    <v-card-text>
+                      <div class="text-caption mb-3 text-medium-emphasis">
+                        Choose the entity that grants you power
+                      </div>
+                      <v-select v-model="selectedPatron" :items="warlockPatrons" item-title="name" item-value="value"
+                        label="Select your patron" density="compact" variant="outlined">
+                        <template #item="{ props, item }">
+                          <v-list-item v-bind="props">
+                            <v-list-item-title>{{ item.raw.name }}</v-list-item-title>
+                            <v-list-item-subtitle class="text-caption">{{ item.raw.description }}</v-list-item-subtitle>
+                          </v-list-item>
+                        </template>
+                      </v-select>
+                    </v-card-text>
+                  </v-card>
+                </v-col>
+
+                <!-- Druid Circle -->
+                <v-col v-if="isDruid" cols="12" md="4">
+                  <v-card class="feature-choice-card h-100" color="green-lighten-5" variant="tonal">
+                    <v-card-title class="d-flex align-center text-subtitle-1">
+                      <v-icon class="me-2" color="green-darken-2">mdi-tree</v-icon>
+                      Druidic Circle
+                      <v-spacer />
+                      <v-chip :color="!selectedCircle ? 'error' : 'green-darken-2'" size="x-small" variant="outlined">
+                        {{ !selectedCircle ? 'Required!' : 'Required' }}
+                      </v-chip>
+                    </v-card-title>
+                    <v-card-text>
+                      <div class="text-caption mb-3 text-medium-emphasis">
+                        Choose your connection to nature
+                      </div>
+                      <v-select v-model="selectedCircle" :items="druidCircles" item-title="name" item-value="value"
+                        label="Select your circle" density="compact" variant="outlined">
+                        <template #item="{ props, item }">
+                          <v-list-item v-bind="props">
+                            <v-list-item-title>{{ item.raw.name }}</v-list-item-title>
+                            <v-list-item-subtitle class="text-caption">{{ item.raw.description }}</v-list-item-subtitle>
+                          </v-list-item>
+                        </template>
+                      </v-select>
+                    </v-card-text>
+                  </v-card>
+                </v-col>
+
+                <!-- Cleric Domain -->
+                <v-col v-if="isCleric" cols="12" md="4">
+                  <v-card class="feature-choice-card h-100" color="blue-lighten-5" variant="tonal">
+                    <v-card-title class="d-flex align-center text-subtitle-1">
+                      <v-icon class="me-2" color="blue-darken-2">mdi-star-four-points</v-icon>
+                      Divine Domain
+                      <v-spacer />
+                      <v-chip :color="!selectedDomain ? 'error' : 'blue-darken-2'" size="x-small" variant="outlined">
+                        {{ !selectedDomain ? 'Required!' : 'Required' }}
+                      </v-chip>
+                    </v-card-title>
+                    <v-card-text>
+                      <div class="text-caption mb-3 text-medium-emphasis">
+                        Choose your deity's sphere of influence
+                      </div>
+                      <v-select v-model="selectedDomain" :items="clericDomains" item-title="name" item-value="value"
+                        label="Select your domain" density="compact" variant="outlined">
+                        <template #item="{ props, item }">
+                          <v-list-item v-bind="props">
+                            <v-list-item-title>{{ item.raw.name }}</v-list-item-title>
+                            <v-list-item-subtitle class="text-caption">{{ item.raw.description }}</v-list-item-subtitle>
+                          </v-list-item>
+                        </template>
+                      </v-select>
+                    </v-card-text>
+                  </v-card>
+                </v-col>
+              </v-row>
+            </v-col>
+          </v-row>
 
         </v-card-text>
       </v-card>
@@ -373,12 +760,20 @@
                   <div class="d-flex align-center">
                     <strong>{{ skill.name }}</strong>
                     <v-spacer />
-                    <v-chip color="primary" size="x-small">
-                      {{ skill.ability }}
-                    </v-chip>
-                    <v-chip class="ml-1" color="success" size="x-small">
-                      +{{ calculateSkillBonus(skill) }}
-                    </v-chip>
+                    <v-tooltip :text="`Based on ${skill.ability} modifier`" location="top">
+                      <template v-slot:activator="{ props }">
+                        <v-chip v-bind="props" color="primary" size="x-small">
+                          {{ skill.ability }}
+                        </v-chip>
+                      </template>
+                    </v-tooltip>
+                    <v-tooltip :text="`Total bonus: ability modifier + proficiency bonus`" location="top">
+                      <template v-slot:activator="{ props }">
+                        <v-chip v-bind="props" class="ml-1" color="success" size="x-small">
+                          +{{ calculateSkillBonus(skill) }}
+                        </v-chip>
+                      </template>
+                    </v-tooltip>
                   </div>
                   <div class="text-caption text-grey-darken-1">
                     {{ skill.source }}
@@ -474,6 +869,8 @@ const props = defineProps({
   },
 })
 
+const emit = defineEmits(['validation-changed'])
+
 // Destructure for template access while maintaining reactivity
 const { character, characterData } = toRefs(props)
 
@@ -494,10 +891,16 @@ const selectedCantripDetail = ref(null)
 const selectedSpellDetail = ref(null)
 const traitDetails = ref({})
 const expandedTraits = ref({})
+const expandedClassFeatures = ref({})
 
 // Toggle function for custom trait accordion
 const toggleTrait = (index) => {
   expandedTraits.value[index] = !expandedTraits.value[index]
+}
+
+// Toggle function for class features accordion
+const toggleClassFeature = (index) => {
+  expandedClassFeatures.value[index] = !expandedClassFeatures.value[index]
 }
 
 // Ability score modifiers
@@ -587,35 +990,65 @@ const getAllSkillProficiencies = computed(() => {
     }
   })
 
-  // Add background skills
+  // Add background skills - try multiple formats
+  const backgroundSkills = []
+
+  // Format 1: skill_proficiencies array
   if (character.value.backgroundDetails?.skill_proficiencies) {
     character.value.backgroundDetails.skill_proficiencies.forEach(prof => {
       const skillName = prof.name?.replace('Skill: ', '') || prof
-      if (!skills.find(s => s.name === skillName)) {
-        const skillData = allSkills.find(s => s.name === skillName)
-        if (skillData) {
-          skills.push({
-            ...skillData,
-            source: 'Background'
-          })
-        }
-      }
+      backgroundSkills.push(skillName)
     })
   }
 
-  // Add background skills from skillProficiencies array (fallback format)
+  // Format 2: skillProficiencies array
   if (character.value.backgroundDetails?.skillProficiencies) {
     character.value.backgroundDetails.skillProficiencies.forEach(skillName => {
-      if (!skills.find(s => s.name === skillName)) {
-        const skillData = allSkills.find(s => s.name === skillName)
-        if (skillData) {
-          skills.push({
-            ...skillData,
-            source: 'Background'
-          })
-        }
-      }
+      backgroundSkills.push(skillName)
     })
+  }
+
+  // Format 3: Direct skills array
+  if (character.value.backgroundDetails?.skills) {
+    character.value.backgroundDetails.skills.forEach(skill => {
+      const skillName = typeof skill === 'string' ? skill : skill.name
+      backgroundSkills.push(skillName)
+    })
+  }
+
+  // Format 4: For Soldier background specifically
+  if (character.value.backgroundDetails?.name?.toLowerCase().includes('soldier') ||
+    character.value.background?.toLowerCase().includes('soldier')) {
+    backgroundSkills.push('Athletics', 'Intimidation')
+  }
+
+  // Add background skills to main list
+  backgroundSkills.forEach(skillName => {
+    if (!skills.find(s => s.name === skillName)) {
+      const skillData = allSkills.find(s => s.name === skillName)
+      if (skillData) {
+        skills.push({
+          ...skillData,
+          source: 'Background'
+        })
+      }
+    }
+  })
+
+  // Add species/racial skills (Wood Elf gets Perception)
+  if (character.value.speciesDetails) {
+    const speciesName = character.value.speciesDetails.name || character.value.species
+
+    // Wood Elf specific skills
+    if (speciesName?.toLowerCase().includes('elf') || speciesName?.toLowerCase() === 'wood elf') {
+      const perceptionSkill = allSkills.find(s => s.name === 'Perception')
+      if (perceptionSkill && !skills.find(s => s.name === 'Perception')) {
+        skills.push({
+          ...perceptionSkill,
+          source: 'Species (Wood Elf)'
+        })
+      }
+    }
   }
 
   // Add some default skills if none are found (for testing/fallback)
@@ -824,8 +1257,88 @@ const fightingStyles = [
 
 // Available skills for expertise
 const availableExpertiseSkills = computed(() => {
-  return getAllSkillProficiencies.value.map(skill => skill.name)
+  // Official D&D 5e Rule: Expertise can only be chosen from skills you're already proficient in
+  const currentProficiencies = getAllSkillProficiencies.value.map(skill => skill.name)
+
+  // Return only skills the character is actually proficient in
+  return currentProficiencies.sort()
+})// Categorized skills by ability score (D&D 5e accurate)
+const strengthSkills = computed(() => {
+  const strength = ['Athletics']
+  return availableExpertiseSkills.value.filter(skill => strength.includes(skill))
 })
+
+const dexteritySkills = computed(() => {
+  const dexterity = ['Acrobatics', 'Sleight of Hand', 'Stealth']
+  return availableExpertiseSkills.value.filter(skill => dexterity.includes(skill))
+})
+
+const intelligenceSkills = computed(() => {
+  const intelligence = ['Arcana', 'History', 'Investigation', 'Nature', 'Religion']
+  return availableExpertiseSkills.value.filter(skill => intelligence.includes(skill))
+})
+
+const constitutionSkills = computed(() => {
+  // Constitution has no associated skills in D&D 5e
+  return []
+})
+
+const wisdomSkills = computed(() => {
+  const wisdom = ['Animal Handling', 'Insight', 'Medicine', 'Perception', 'Survival']
+  return availableExpertiseSkills.value.filter(skill => wisdom.includes(skill))
+})
+
+const charismaSkills = computed(() => {
+  const charisma = ['Deception', 'Intimidation', 'Performance', 'Persuasion']
+  return availableExpertiseSkills.value.filter(skill => charisma.includes(skill))
+})
+
+// Check if an ability is important for the character's class
+const isImportantAbility = (abilityName) => {
+  if (!character.value.classDetails) return false
+
+  // Get primary abilities for the class
+  const primaryAbilities = character.value.classDetails.primary_ability ||
+    character.value.classDetails.primaryAbility ||
+    []
+
+  // Handle both array and string formats
+  const abilities = Array.isArray(primaryAbilities) ? primaryAbilities : [primaryAbilities]
+
+  // Check if this ability is listed as primary
+  return abilities.some(ability => {
+    if (typeof ability === 'string') {
+      return ability.toLowerCase() === abilityName.toLowerCase()
+    }
+    if (ability && ability.name) {
+      return ability.name.toLowerCase() === abilityName.toLowerCase()
+    }
+    return false
+  })
+}
+
+// Function to remove expertise skill
+const removeExpertiseSkill = (skillToRemove) => {
+  const index = selectedExpertiseSkills.value.indexOf(skillToRemove)
+  if (index > -1) {
+    selectedExpertiseSkills.value.splice(index, 1)
+  }
+}
+
+// Function to toggle expertise skill selection
+const toggleExpertiseSkill = (skill) => {
+  const isSelected = selectedExpertiseSkills.value.includes(skill)
+
+  if (isSelected) {
+    // Remove the skill
+    removeExpertiseSkill(skill)
+  } else {
+    // Add the skill if we haven't reached the limit
+    if (selectedExpertiseSkills.value.length < expertiseChoices.value) {
+      selectedExpertiseSkills.value.push(skill)
+    }
+  }
+}
 
 // Warlock patrons
 const warlockPatrons = [
@@ -1099,9 +1612,80 @@ const getProficientSkills = computed(() => {
   // This is now replaced by getAllSkillProficiencies
   return getAllSkillProficiencies.value
 })
+
+// Validation for required choices
+const isValid = computed(() => {
+  const errors = []
+
+  // Fighting Style validation
+  if (hasFightingStyle.value && !selectedFightingStyle.value) {
+    errors.push('Fighting Style is required')
+  }
+
+  // Expertise validation
+  if (hasExpertise.value && selectedExpertiseSkills.value.length < expertiseChoices.value) {
+    errors.push(`Choose ${expertiseChoices.value} skills for Expertise`)
+  }
+
+  // Warlock Patron validation
+  if (isWarlock.value && !selectedPatron.value) {
+    errors.push('Warlock Patron is required')
+  }
+
+  // Druid Circle validation
+  if (isDruid.value && !selectedCircle.value) {
+    errors.push('Druid Circle is required')
+  }
+
+  // Cleric Domain validation
+  if (isCleric.value && !selectedDomain.value) {
+    errors.push('Cleric Domain is required')
+  }
+
+  return errors
+})
+
+const isStepValid = computed(() => isValid.value.length === 0)
+
+// Watch for validation changes and emit to parent
+watch(isStepValid, (newVal) => {
+  emit('validation-changed', {
+    step: 3,
+    isValid: newVal,
+    errors: isValid.value
+  })
+}, { immediate: true })
+
+// Also watch individual selections to trigger validation updates
+watch([selectedFightingStyle, selectedExpertiseSkills, selectedPatron, selectedCircle, selectedDomain], () => {
+  // Force validation re-computation
+}, { deep: true })
 </script>
 
 <style scoped>
+.combat-stat-card {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.combat-card-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 140px;
+}
+
+.list-item-spacer {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.skill-selection {
+  max-width: 100%;
+}
+
 .skill-card {
   transition: all 0.3s ease;
 }
@@ -1118,8 +1702,177 @@ const getProficientSkills = computed(() => {
   background-color: rgba(var(--v-theme-primary), 0.05);
 }
 
+.feature-header {
+  transition: background-color 0.2s ease;
+}
+
+.feature-header:hover {
+  background-color: rgba(var(--v-theme-primary), 0.1);
+}
+
+.feature-expanded {
+  background-color: rgba(var(--v-theme-primary), 0.05);
+}
+
+.class-features-accordion {
+  border-radius: 4px;
+}
+
 .cursor-pointer {
   cursor: pointer;
+}
+
+.feature-choice-card {
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.feature-choice-card:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.fighting-style-option {
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+}
+
+.fighting-style-option .v-card-text {
+  text-align: left !important;
+  justify-content: flex-start !important;
+}
+
+.fighting-style-option .v-card-text>div {
+  text-align: left !important;
+}
+
+.fighting-style-option .text-subtitle-2,
+.fighting-style-option .text-caption {
+  text-align: left !important;
+}
+
+.fighting-style-option .v-radio {
+  margin: 0 !important;
+  padding: 0 !important;
+  min-width: auto !important;
+  width: auto !important;
+}
+
+.fighting-style-option :deep(.v-selection-control) {
+  margin: 0 !important;
+  padding: 0 !important;
+  min-height: auto !important;
+  align-items: flex-start !important;
+}
+
+.fighting-style-option :deep(.v-selection-control__wrapper) {
+  margin: 0 !important;
+  padding: 0 !important;
+  height: 20px !important;
+  width: 20px !important;
+}
+
+.fighting-style-option .radio-container {
+  width: 40px;
+  flex-shrink: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  align-self: stretch;
+}
+
+.fighting-style-option .text-content {
+  text-align: left;
+  padding-left: 8px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.fighting-style-option:hover {
+  border-color: rgba(var(--v-theme-primary), 0.3);
+  background-color: rgba(var(--v-theme-primary), 0.02);
+}
+
+.fighting-style-selected {
+  border-color: var(--v-theme-primary) !important;
+  background-color: rgba(var(--v-theme-primary), 0.05) !important;
+}
+
+.fighting-style-radios :deep(.v-selection-control-group) {
+  flex-direction: column;
+}
+
+.expertise-skills-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.25rem;
+  width: 100%;
+}
+
+.skill-category {
+  padding: 16px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  background-color: rgba(255, 255, 255, 0.3);
+  transition: all 0.3s ease;
+  overflow: hidden;
+  min-width: 0;
+  width: 100%;
+}
+
+.skill-category.primary-ability {
+  border: 2px solid rgba(var(--v-theme-primary), 0.4);
+  background-color: rgba(var(--v-theme-primary), 0.08);
+  box-shadow: 0 2px 8px rgba(var(--v-theme-primary), 0.15);
+  transform: translateY(-1px);
+}
+
+.skill-category-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.skill-chips :deep(.v-chip-group) {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 8px;
+  flex-direction: row !important;
+}
+
+.skill-chips :deep(.v-chip) {
+  margin: 0 6px 0 0 !important;
+  margin-bottom: 6px !important;
+  flex-shrink: 0;
+}
+
+.skill-chips :deep(.v-selection-control-group) {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 8px;
+  flex-direction: row !important;
+}
+
+/* Prevent horizontal scrolling */
+.skill-chips {
+  overflow: hidden;
+  width: 100%;
+}
+
+/* Override Vuetify's default column behavior */
+.skill-chips :deep(.v-chip-group--column) {
+  flex-direction: row !important;
+  flex-wrap: wrap !important;
+}
+
+@media (max-width: 960px) {
+  .expertise-skills-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 .trait-accordion {
