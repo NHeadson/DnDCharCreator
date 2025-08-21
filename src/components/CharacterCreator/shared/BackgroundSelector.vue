@@ -128,7 +128,7 @@
                 <span class="text-caption font-weight-bold text-grey-darken-2">Languages</span>
               </div>
               <div class="ms-3">
-                <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+                <div style="display: flex; gap: 6px; flex-wrap: wrap; align-items: center;">
                   <v-tooltip v-for="language in selectedBackgroundInfo.languages || []" :key="'lang-' + language"
                     text="A language your character learned through their background" location="top">
                     <template v-slot:activator="{ props }">
@@ -147,9 +147,10 @@
                       </v-chip>
                     </template>
                   </v-tooltip>
-                </div>
-                <div v-if="selectedBackgroundInfo.languageOptions" class="text-caption mt-1">
-                  Choose {{ selectedBackgroundInfo.languageOptions.choose }} additional languages
+                  <span v-if="selectedBackgroundInfo.languageOptions" class="text-caption text-grey-darken-1 ml-2">
+                    (choose {{ selectedBackgroundInfo.languageOptions.choose }} additional language{{
+                      selectedBackgroundInfo.languageOptions.choose > 1 ? 's' : '' }})
+                  </span>
                 </div>
               </div>
             </div>

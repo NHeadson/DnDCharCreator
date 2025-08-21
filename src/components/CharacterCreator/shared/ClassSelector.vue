@@ -81,93 +81,131 @@
           <v-card-text class="pt-3 pb-2">
 
             <!-- Quick Stats -->
-            <div class="d-flex align-center mb-1">
-              <span class="ms-5 text-subtitle-2 text-grey-darken-1">Quick Stats</span>
-            </div>
-            <div class="d-flex flex-wrap ms-5 class-details-chip-row class-details-chip-row-gap">
-              <v-tooltip text="The type of hit dice used to determine hit points when leveling up" location="top">
-                <template v-slot:activator="{ props }">
-                  <v-chip v-bind="props" color="green" size="small" variant="tonal"
-                    class="class-details-chip me-3 ms-5">
-                    <v-icon start size="small">mdi-dice-d20</v-icon>
-                    <span class="chip-label">Hit Die</span>
-                    <span class="chip-value">: d{{ selectedClassInfo.hitDie ? selectedClassInfo.hitDie.replace('D', '')
-                      : '-' }}</span>
+            <div class="mb-3 ms-6">
+              <div class="d-flex align-center mb-1">
+                <v-icon class="me-1" color="primary" size="small">mdi-speedometer</v-icon>
+                <span class="text-caption font-weight-bold text-grey-darken-2">Quick Stats</span>
+              </div>
+              <div class="ms-3">
+                <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+                  <v-tooltip text="The type of hit dice used to determine hit points when leveling up" location="top">
+                    <template v-slot:activator="{ props }">
+                      <v-chip v-bind="props" color="green" size="small" variant="tonal">
+                        <v-icon start size="small">mdi-dice-d20</v-icon>
+                        <span class="chip-label">Hit Die</span>
+                        <span class="chip-value">: d{{ selectedClassInfo.hitDie ? selectedClassInfo.hitDie.replace('D',
+                          '') : '-' }}</span>
+                      </v-chip>
+                    </template>
+                  </v-tooltip>
+                  <v-tooltip v-if="selectedClassInfo.savingThrows && selectedClassInfo.savingThrows.length"
+                    text="Ability scores this class is proficient in for saving throws" location="top">
+                    <template v-slot:activator="{ props }">
+                      <v-chip v-bind="props" color="blue" size="small" variant="tonal">
+                        <v-icon start size="small">mdi-shield</v-icon>
+                        <span class="chip-label">Saves</span>
+                        <span class="chip-value">: {{ selectedClassInfo.savingThrows.join(', ') }}</span>
+                      </v-chip>
+                    </template>
+                  </v-tooltip>
+                  <v-chip
+                    v-if="selectedClassInfo.armorTraining && (selectedClassInfo.armorTraining.light || selectedClassInfo.armorTraining.medium || selectedClassInfo.armorTraining.heavy || selectedClassInfo.armorTraining.shields)"
+                    color="blue" size="small" variant="tonal">
+                    <v-icon start size="small">mdi-shield-half-full</v-icon>
+                    <span class="chip-label">Armor</span>
+                    <span class="chip-value">
+                      : {{ [
+                        selectedClassInfo.armorTraining.light ? 'Light' : null,
+                        selectedClassInfo.armorTraining.medium ? 'Medium' : null,
+                        selectedClassInfo.armorTraining.heavy ? 'Heavy' : null,
+                        selectedClassInfo.armorTraining.shields ? 'Shields' : null
+                      ].filter(Boolean).join(', ') }}
+                    </span>
                   </v-chip>
-                </template>
-              </v-tooltip>
-              <v-tooltip v-if="selectedClassInfo.savingThrows && selectedClassInfo.savingThrows.length"
-                text="Ability scores this class is proficient in for saving throws" location="top">
-                <template v-slot:activator="{ props }">
-                  <v-chip v-bind="props" color="blue" size="small" variant="tonal" class="class-details-chip me-3">
-                    <v-icon start size="small">mdi-shield</v-icon>
-                    <span class="chip-label">Saves</span>
-                    <span class="chip-value">: {{ selectedClassInfo.savingThrows.join(', ') }}</span>
-                  </v-chip>
-                </template>
-              </v-tooltip>
-              <v-chip
-                v-if="selectedClassInfo.armorTraining && (selectedClassInfo.armorTraining.light || selectedClassInfo.armorTraining.medium || selectedClassInfo.armorTraining.heavy || selectedClassInfo.armorTraining.shields)"
-                color="blue" size="small" variant="tonal" class="class-details-chip me-3">
-                <v-icon start size="small">mdi-shield-half-full</v-icon>
-                <span class="chip-label">Armor</span>
-                <span class="chip-value">
-                  : {{ [
-                    selectedClassInfo.armorTraining.light ? 'Light' : null,
-                    selectedClassInfo.armorTraining.medium ? 'Medium' : null,
-                    selectedClassInfo.armorTraining.heavy ? 'Heavy' : null,
-                    selectedClassInfo.armorTraining.shields ? 'Shields' : null
-                  ].filter(Boolean).join(', ') }}
-                </span>
-              </v-chip>
+                </div>
+              </div>
             </div>
 
-            <!-- Proficiencies Section -->
-            <div class="proficiencies-section mb-3">
-              <div class="ms-3 mb-2 text-caption font-weight-bold text-grey-darken-1">Proficiencies</div>
-              <div class="ms-5 mb-2">
-                <span class="chip-label">Weapons:</span>
-                <template v-if="selectedClassInfo.weaponProficiencies && selectedClassInfo.weaponProficiencies.length">
-                  <div style="display: flex; gap: 6px; flex-wrap: wrap; margin: 4px 0;">
-                    <v-chip v-for="wp in selectedClassInfo.weaponProficiencies" :key="'wp-' + wp" size="small"
-                      variant="tonal" color="orange">
-                      {{ wp }}
-                    </v-chip>
-                  </div>
-                </template>
-                <template v-else>
-                  <span class="text-grey ms-2">None</span>
-                </template>
+            <!-- Weapon Proficiencies -->
+            <div v-if="selectedClassInfo.weaponProficiencies?.length" class="mb-3 ms-6">
+              <div class="d-flex align-center mb-1">
+                <v-icon class="me-1" color="orange" size="small">mdi-sword</v-icon>
+                <span class="text-caption font-weight-bold text-grey-darken-2">Weapon Proficiencies</span>
               </div>
-              <div class="ms-5 mb-2">
-                <span class="chip-label">Tools:</span>
-                <template v-if="selectedClassInfo.toolProficiencies && selectedClassInfo.toolProficiencies.length">
-                  <div style="display: flex; gap: 6px; flex-wrap: wrap; margin: 4px 0;">
-                    <v-chip v-for="tp in selectedClassInfo.toolProficiencies" :key="'tp-' + tp" size="small"
-                      variant="tonal" color="pink">
-                      {{ tp }}
-                    </v-chip>
-                  </div>
-                </template>
-                <template v-else>
-                  <span class="text-grey ms-2">None</span>
-                </template>
+              <div class="ms-3">
+                <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+                  <v-tooltip v-for="wp in selectedClassInfo.weaponProficiencies" :key="'wp-' + wp"
+                    text="A weapon your character is trained to use effectively" location="top">
+                    <template v-slot:activator="{ props }">
+                      <v-chip v-bind="props" color="orange" size="small" variant="tonal">
+                        {{ wp }}
+                      </v-chip>
+                    </template>
+                  </v-tooltip>
+                </div>
               </div>
-              <div class="ms-5 mb-2">
-                <span class="chip-label">Skills:</span>
-                <template
-                  v-if="selectedClassInfo && selectedClassInfo.skillProficiencies && selectedClassInfo.skillProficiencies.from && selectedClassInfo.skillProficiencies.from.length">
-                  <span class="text-caption text-grey-darken-1"
-                    style="font-size: 0.85em; font-weight: 400; margin-left: 12px;">(Choice of {{
-                      selectedClassInfo.skillProficiencies.count }})</span>
-                  <div style="display: flex; gap: 6px; flex-wrap: wrap; margin: 4px 0;">
-                    <v-chip v-for="sk in selectedClassInfo.skillProficiencies.from" :key="'sk-' + sk" size="small"
-                      variant="tonal" color="purple">
-                      {{ sk }}
-                    </v-chip>
-                  </div>
-                </template>
-                <span v-else class="text-grey ms-2">None</span>
+            </div>
+
+            <!-- Armor Proficiencies -->
+            <div v-if="selectedClassInfo.armorProficiencies?.length" class="mb-3 ms-6">
+              <div class="d-flex align-center mb-1">
+                <v-icon class="me-1" color="blue-grey" size="small">mdi-shield</v-icon>
+                <span class="text-caption font-weight-bold text-grey-darken-2">Armor Proficiencies</span>
+              </div>
+              <div class="ms-3">
+                <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+                  <v-tooltip v-for="ap in selectedClassInfo.armorProficiencies" :key="'ap-' + ap"
+                    text="Armor your character can wear without penalty" location="top">
+                    <template v-slot:activator="{ props }">
+                      <v-chip v-bind="props" color="blue-grey" size="small" variant="tonal">
+                        {{ ap }}
+                      </v-chip>
+                    </template>
+                  </v-tooltip>
+                </div>
+              </div>
+            </div>
+
+            <!-- Tool Proficiencies -->
+            <div v-if="selectedClassInfo.toolProficiencies?.length" class="mb-3 ms-6">
+              <div class="d-flex align-center mb-1">
+                <v-icon class="me-1" color="info" size="small">mdi-tools</v-icon>
+                <span class="text-caption font-weight-bold text-grey-darken-2">Tool Proficiencies</span>
+              </div>
+              <div class="ms-3">
+                <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+                  <v-tooltip v-for="tp in selectedClassInfo.toolProficiencies" :key="'tp-' + tp"
+                    text="Tools your character can use proficiently" location="top">
+                    <template v-slot:activator="{ props }">
+                      <v-chip v-bind="props" color="info" size="small" variant="tonal">
+                        {{ tp }}
+                      </v-chip>
+                    </template>
+                  </v-tooltip>
+                </div>
+              </div>
+            </div>
+
+            <!-- Skill Proficiencies -->
+            <div v-if="selectedClassInfo?.skillProficiencies?.from?.length" class="mb-3 ms-6">
+              <div class="d-flex align-center mb-1">
+                <v-icon class="me-1" color="success" size="small">mdi-star</v-icon>
+                <span class="text-caption font-weight-bold text-grey-darken-2">Skill Proficiencies</span>
+                <span class="text-caption text-grey-darken-1 ms-2">(Choice of {{
+                  selectedClassInfo.skillProficiencies.count
+                }})</span>
+              </div>
+              <div class="ms-3">
+                <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+                  <v-tooltip v-for="sk in selectedClassInfo.skillProficiencies.from" :key="'sk-' + sk"
+                    text="Skills your character can choose to be trained in" location="top">
+                    <template v-slot:activator="{ props }">
+                      <v-chip v-bind="props" color="success" size="small" variant="tonal">
+                        {{ sk }}
+                      </v-chip>
+                    </template>
+                  </v-tooltip>
+                </div>
               </div>
             </div>
 
@@ -178,7 +216,7 @@
                 (selectedClassInfo.spellcasting.spellSlots > 0) ||
                 (selectedClassInfo.spellcasting.cantripsKnown > 0)
               ) && (selectedClassInfo.spellcasting.ability || (selectedClassInfo.spellcasting.info && selectedClassInfo.spellcasting.info.length))"
-              class="ms-3 mb-3">
+              class="mb-3 ms-3">
               <div class="d-flex align-center mb-1">
                 <v-icon class="me-1" color="deep-purple" size="small">mdi-auto-fix</v-icon>
                 <span class="text-caption font-weight-bold text-grey-darken-2">Spellcasting</span>
@@ -218,8 +256,9 @@
             </div>
 
             <!-- Features: Only show if there are features to display -->
+            <!-- Level 1 Features -->
             <div v-if="selectedClassInfo && selectedClassInfo.features && selectedClassInfo.features.length"
-              class="ms-3 mb-3">
+              class="mb-3 ms-6">
               <div class="d-flex align-center mb-1">
                 <v-icon class="me-1" color="amber" size="small">mdi-star-circle-outline</v-icon>
                 <span class="text-caption font-weight-bold text-grey-darken-2">Level 1 Features</span>
@@ -266,45 +305,45 @@
 
             <!-- Starting Equipment -->
             <div v-if="selectedClassInfo.startingEquipment && selectedClassInfo.startingEquipment.length"
-              class="ms-3 mb-3">
+              class="mb-3 ms-6">
               <div class="d-flex align-center mb-1">
                 <v-icon class="me-1" color="blue-grey" size="small">mdi-backpack</v-icon>
                 <span class="text-caption font-weight-bold text-grey-darken-2">Starting Equipment</span>
               </div>
-              <div class="ms-10">
+              <div class="ms-3">
                 <v-chip v-for="item in selectedClassInfo.startingEquipment" :key="'equip-' + (item.name || item)"
-                  size="small" variant="tonal" color="error" class="ms-2 me-1 mb-1">
+                  size="small" variant="tonal" color="error" class="me-1 mb-1">
                   {{ typeof item === 'object' && item.name ? item.name + (item.quantity && item.quantity > 1 ? ' x' +
                     item.quantity : '') : item }}
                 </v-chip>
               </div>
             </div>
 
-            <!-- Starting Equipment Options -->
+            <!-- Equipment Choices -->
             <div v-if="selectedClassInfo.startingEquipmentOptions && selectedClassInfo.startingEquipmentOptions.length"
-              class="ms-3 mb-3">
+              class="mb-3 ms-6">
               <div class="d-flex align-center mb-1">
                 <v-icon class="me-1" color="blue-grey" size="small">mdi-tune-variant</v-icon>
                 <span class="text-caption font-weight-bold text-grey-darken-2">Equipment Choices</span>
               </div>
-              <div class="ms-10">
+              <div class="ms-3">
                 <div v-for="opt in selectedClassInfo.startingEquipmentOptions"
                   :key="'eqopt-' + (opt.desc || opt.choose || Math.random())" class="mb-2">
                   <template v-if="opt.from && Array.isArray(opt.from.options)">
                     <span v-for="(choice, choiceIdx) in opt.from.options"
                       :key="'choice-' + getEquipmentChoiceLabel(choice)">
-                      <v-chip size="small" color="blue-grey" variant="tonal" class="me-1 mb-1">
+                      <v-chip size="small" color="blue-grey" variant="tonal" class="mb-1">
                         {{ getEquipmentChoiceLabel(choice) }}
                       </v-chip>
-                      <span v-if="choiceIdx < opt.from.options.length - 1" class="mx-1 text-grey-darken-1">or</span>
+                      <span v-if="choiceIdx < opt.from.options.length - 1" class="mx-2 text-grey-darken-1">or</span>
                     </span>
                   </template>
                   <template v-else-if="opt.options && Array.isArray(opt.options)">
                     <span v-for="(choice, choiceIdx) in opt.options" :key="'choice-' + getEquipmentChoiceLabel(choice)">
-                      <v-chip size="small" color="blue-grey" variant="tonal" class="me-1 mb-1">
+                      <v-chip size="small" color="blue-grey" variant="tonal" class="mb-1">
                         {{ getEquipmentChoiceLabel(choice) }}
                       </v-chip>
-                      <span v-if="choiceIdx < opt.options.length - 1" class="mx-1 text-grey-darken-1">or</span>
+                      <span v-if="choiceIdx < opt.options.length - 1" class="mx-2 text-grey-darken-1">or</span>
                     </span>
                   </template>
                   <template v-else>
@@ -360,11 +399,39 @@ const featureMessage = computed(() => {
   return 'None found for this class.';
 });
 // Helper for robust equipment choice label
+function singularize(word) {
+  // Naive singularization: remove trailing 's' if present and not 'ss'
+  if (typeof word === 'string' && word.endsWith('s') && !word.endsWith('ss')) {
+    return word.slice(0, -1);
+  }
+  return word;
+}
+
+function formatDndItemName(name) {
+  // If name is in the form 'X, Y', convert to 'Y X' and title-case
+  if (typeof name === 'string' && name.includes(',')) {
+    const parts = name.split(',').map(s => s.trim());
+    if (parts.length === 2) {
+      return formatDndItemName(parts[1] + ' ' + parts[0]);
+    }
+  }
+  // Title-case all words, but always lowercase the 's in possessives
+  return name.split(' ').map(word => {
+    if (/^\w+'s$/i.test(word)) {
+      // Possessive: capitalize base, always 's' lowercase
+      const base = word.slice(0, -2);
+      return base.charAt(0).toUpperCase() + base.slice(1).toLowerCase() + "'s";
+    }
+    // Otherwise, title-case
+    return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+  }).join(' ');
+}
+
 function getEquipmentChoiceLabel(choice) {
   if (typeof choice === 'string') return choice;
   // D&D 5e API: counted_reference
   if (choice && choice.option_type === 'counted_reference' && choice.of && choice.of.name) {
-    return (choice.of.name || '') + (choice.count && choice.count > 1 ? ' x' + choice.count : '');
+    return (choice.of.name ? formatDndItemName(choice.of.name) : '') + (choice.count && choice.count > 1 ? ' x' + choice.count : '');
   }
   // D&D 5e API: multiple (array of items)
   if (choice && choice.option_type === 'multiple' && Array.isArray(choice.items)) {
@@ -372,32 +439,35 @@ function getEquipmentChoiceLabel(choice) {
   }
   // D&D 5e API: choice (nested choice)
   if (choice && choice.option_type === 'choice' && choice.choice) {
-    // Prefer formatted: '2 Simple Melee Weapons'
+    // Prefer formatted: '2 Simple Melee Weapons' or '1 Martial Weapon'
     if (
       choice.choice.choose &&
       choice.choice.from &&
       choice.choice.from.equipment_category &&
       choice.choice.from.equipment_category.name
     ) {
-      return `${choice.choice.choose} ${choice.choice.from.equipment_category.name}`;
+      const count = choice.choice.choose;
+      let cat = choice.choice.from.equipment_category.name;
+      if (count === 1) cat = singularize(cat);
+      return `${count} ${formatDndItemName(cat)}`;
     }
     if (choice.choice.desc) return choice.choice.desc;
     if (choice.choice.name) return choice.choice.name;
     // If options array exists, join recursively
     if (Array.isArray(choice.choice.options)) {
-      return choice.choice.options.map(getEquipmentChoiceLabel).join(' or ');
+      return choice.choice.options.map(opt => getEquipmentChoiceLabel(opt).trim()).join(' or ');
     }
   }
   // D&D 5e API: reference
   if (choice && choice.option_type === 'reference' && choice.item && choice.item.name) {
-    return choice.item.name;
+    return formatDndItemName(choice.item.name);
   }
   // fallback to previous logic
   if (choice && choice.item && choice.item.name) {
     return choice.item.name + (choice.quantity && choice.quantity > 1 ? ' x' + choice.quantity : '');
   }
   if (choice && choice.name) {
-    return choice.name + (choice.quantity && choice.quantity > 1 ? ' x' + choice.quantity : '');
+    return formatDndItemName(choice.name) + (choice.quantity && choice.quantity > 1 ? ' x' + choice.quantity : '');
   }
   if (choice && choice.desc) return choice.desc;
   if (choice && typeof choice.item === 'string') return choice.item;

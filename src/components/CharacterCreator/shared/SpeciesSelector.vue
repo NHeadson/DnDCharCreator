@@ -20,7 +20,7 @@
             <!-- Subspecies/Lineage Selection -->
             <v-select v-if="character.species && availableLineages.length > 0" v-model="character.speciesLineage"
               class="mt-3" :density="$vuetify.display.smAndDown ? 'comfortable' : 'compact'" item-title="name"
-              item-value="name" :items="availableLineages" label="Choose Your Lineage/Subrace" variant="outlined"
+              item-value="id" :items="availableLineages" label="Choose Your Lineage/Subrace" variant="outlined"
               @update:model-value="onLineageChange">
               <template #prepend>
                 <v-icon color="secondary" size="small">mdi-family-tree</v-icon>
@@ -50,97 +50,140 @@
             </v-fade-transition>
           </v-card-text>
         </v-card>
-        <v-card v-else-if="selectedSpeciesInfo" class="species-preview-card" variant="tonal">
+        <v-card v-else-if="selectedSpeciesInfo" class="text-blue-grey-lighten-5 species-preview-card" variant="tonal"
+          style="padding-right: 24px;">
           <v-card-title class="d-flex align-center justify-space-between py-2">
             <div class="d-flex align-center">
-              <v-icon class="me-2" color="primary" size="small">mdi-dna</v-icon>
+              <v-icon class="text-blue-grey-darken-2 me-2" size="small">mdi-dna</v-icon>
               <span class="text-subtitle-1 font-weight-bold">{{ selectedSpeciesInfo.name }}</span>
             </div>
-            <v-chip v-for="bonus in selectedSpeciesInfo.abilityBonus" :key="bonus.ability" color="blue" size="small"
-              variant="tonal">
-              +{{ bonus.bonus }} {{ bonus.ability.slice(0, 3) }}
-            </v-chip>
+            <div v-if="selectedSpeciesInfo.abilityBonus && selectedSpeciesInfo.abilityBonus.length"
+              class="d-flex flex-column align-end">
+              <span class="text-caption text-grey-darken-1 mb-1" style="font-size: 0.85em;">Ability Bonuses</span>
+              <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+                <v-tooltip v-for="bonus in selectedSpeciesInfo.abilityBonus" :key="'bonus-' + bonus.ability"
+                  :text="'Bonus to ' + bonus.ability" location="top">
+                  <template v-slot:activator="{ props }">
+                    <v-chip v-bind="props" color="blue" size="small" variant="tonal">
+                      +{{ bonus.bonus }} {{ bonus.ability.slice(0, 3) }}
+                    </v-chip>
+                  </template>
+                </v-tooltip>
+              </div>
+            </div>
           </v-card-title>
           <v-divider />
           <v-card-text class="pt-3 pb-2">
+            <!-- Description -->
+            <div class="mb-3 ms-3">
+              <span class="text-caption text-grey-darken-1">{{ selectedSpeciesInfo.description }}</span>
+            </div>
+
             <!-- Quick Stats -->
-            <div class="d-flex flex-wrap gap-2 mb-3">
-              <v-chip color="green" size="small" variant="tonal">
-                <v-icon start size="small">mdi-resize</v-icon>
-                {{ selectedSpeciesInfo.size }}
-              </v-chip>
-              <v-chip color="green" size="small" variant="tonal">
-                <v-icon start size="small">mdi-run</v-icon>
-                {{ selectedSpeciesInfo.speed }}ft
-              </v-chip>
-              <v-chip v-if="selectedSpeciesInfo.darkvision" color="purple" size="small" variant="tonal">
-                <v-icon start size="small">mdi-eye</v-icon>
-                {{ selectedSpeciesInfo.darkvision }}ft vision
-              </v-chip>
-              <v-chip v-if="selectedSpeciesInfo.damageResistance" color="orange" size="small" variant="tonal">
-                <v-icon start size="small">mdi-shield</v-icon>
-                Resistances
-              </v-chip>
+            <div class="mb-3 ms-3">
+              <div class="d-flex align-center mb-1">
+                <v-icon class="me-1" color="primary" size="small">mdi-speedometer</v-icon>
+                <span class="text-caption font-weight-bold text-grey-darken-2">Quick Stats</span>
+              </div>
+              <div class="ms-3">
+                <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+                  <v-chip color="green" size="small" variant="tonal">
+                    <v-icon start size="small">mdi-resize</v-icon>
+                    {{ selectedSpeciesInfo.size }}
+                  </v-chip>
+                  <v-chip color="green" size="small" variant="tonal">
+                    <v-icon start size="small">mdi-run</v-icon>
+                    {{ selectedSpeciesInfo.speed }}ft
+                  </v-chip>
+                  <v-chip v-if="effectiveDarkvision !== null && effectiveDarkvision !== undefined" color="purple"
+                    size="small" variant="tonal">
+                    <v-icon start size="small">mdi-eye</v-icon>
+                    {{ effectiveDarkvision }}ft vision
+                  </v-chip>
+                  <v-chip v-if="selectedSpeciesInfo.damageResistance" color="orange" size="small" variant="tonal">
+                    <v-icon start size="small">mdi-shield</v-icon>
+                    Resistances
+                  </v-chip>
+                </div>
+              </div>
             </div>
 
             <!-- Special Traits -->
-            <div v-if="selectedSpeciesInfo.traits?.length" class="mb-3">
+            <div v-if="selectedSpeciesInfo.traits?.length" class="mb-3 ms-3">
               <div class="d-flex align-center mb-1">
                 <v-icon class="me-1" color="amber" size="small">mdi-star-circle</v-icon>
                 <span class="text-caption font-weight-bold text-grey-darken-2">Special Traits</span>
               </div>
               <div class="ms-3">
-                <v-chip v-for="trait in selectedSpeciesInfo.traits" :key="trait.name" color="amber-lighten-4"
-                  size="small" variant="tonal" class="me-1 mb-1">
-                  {{ trait.name }}
-                </v-chip>
+                <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+                  <v-tooltip v-for="trait in selectedSpeciesInfo.traits" :key="'trait-' + trait.name"
+                    :text="trait.desc || 'A special trait of this species'" location="top">
+                    <template v-slot:activator="{ props }">
+                      <v-chip v-bind="props" color="amber-lighten-4" size="small" variant="tonal">
+                        {{ trait.name }}
+                      </v-chip>
+                    </template>
+                  </v-tooltip>
+                </div>
               </div>
             </div>
+
             <!-- Languages -->
-            <div v-if="selectedSpeciesInfo.languages?.length" class="mb-3">
+            <div class="mb-3 ms-3">
               <div class="d-flex align-center mb-1">
                 <v-icon class="me-1" color="indigo" size="small">mdi-translate</v-icon>
                 <span class="text-caption font-weight-bold text-grey-darken-2">Languages</span>
               </div>
               <div class="ms-3">
-                <v-chip v-for="lang in selectedSpeciesInfo.languages" :key="lang" color="indigo" size="small"
-                  variant="tonal" class="me-1">
-                  {{ lang }}
-                </v-chip>
+                <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+                  <v-tooltip v-for="lang in selectedSpeciesInfo.languages" :key="'lang-' + lang"
+                    :text="'A language your species can speak'" location="top">
+                    <template v-slot:activator="{ props }">
+                      <v-chip v-bind="props" color="indigo" size="small" variant="tonal">
+                        {{ lang }}
+                      </v-chip>
+                    </template>
+                  </v-tooltip>
+                </div>
               </div>
             </div>
 
             <!-- Lineage Options with Highlights -->
-            <div v-if="selectedSpeciesInfo.lineages?.length" class="mt-3">
-              <div class="d-flex align-center mb-2">
+            <div v-if="selectedSpeciesInfo.lineages?.length" class="mb-3 ms-3">
+              <div class="d-flex align-center mb-1">
                 <v-icon class="me-1" color="primary" size="small">mdi-family-tree</v-icon>
                 <span class="text-caption font-weight-bold text-grey-darken-2">
                   {{ selectedSpeciesInfo.lineages.length > 1 ? 'Lineage Options' : 'Available Lineage' }}
                 </span>
               </div>
-              <div v-if="selectedSpeciesInfo.lineages.length === 1" class="ms-3">
-                <v-chip color="primary" size="small" variant="tonal">
-                  {{ selectedSpeciesInfo.lineages[0].name }}
-                </v-chip>
-                <div v-if="selectedSpeciesInfo.lineages[0].desc" class="text-caption text-grey-darken-1 mt-1 ms-1">
-                  {{ selectedSpeciesInfo.lineages[0].desc }}
-                </div>
-              </div>
-              <div v-else class="ms-3">
-                <div class="lineage-options-row">
-                  <div v-for="lineage in selectedSpeciesInfo.lineages" :key="lineage.id"
-                    class="lineage-option-card compact">
-                    <div class="d-flex align-center justify-space-between">
-                      <span class="text-caption font-weight-bold text-grey">{{ lineage.name }}</span>
-                    </div>
-                    <div v-if="getLineageHighlights(lineage)" class="text-caption text-grey-darken-1 mt-1">
-                      {{ getLineageHighlights(lineage) }}
-                    </div>
-                    <div v-if="lineage.desc" class="text-caption text-grey-darken-1 mt-1">
-                      {{ lineage.desc }}
+              <div class="ms-3">
+                <template v-if="selectedSpeciesInfo.lineages.length === 1">
+                  <v-chip color="primary" size="small" variant="tonal">
+                    {{ selectedSpeciesInfo.lineages[0].name }}
+                  </v-chip>
+                  <div v-if="selectedSpeciesInfo.lineages[0].desc" class="text-caption text-grey-darken-1 mt-1 ms-1">
+                    {{ selectedSpeciesInfo.lineages[0].desc }}
+                  </div>
+                </template>
+                <template v-else>
+                  <div class="lineage-options-row"
+                    :style="selectedSpeciesInfo.lineages.length === 3 ? 'display: flex; gap: 6px; flex-wrap: nowrap; justify-content: space-between;' : ''">
+                    <div v-for="lineage in selectedSpeciesInfo.lineages" :key="lineage.id"
+                      class="lineage-option-card compact"
+                      :class="[character.speciesLineage === lineage.id ? 'selected-lineage' : '', 'lineage-option-card', 'compact']"
+                      :style="selectedSpeciesInfo.lineages.length === 3 ? 'flex: 1 1 0; min-width: 0; max-width: 33%;' : ''">
+                      <div class="d-flex align-center justify-space-between">
+                        <span class="text-caption font-weight-bold text-grey">{{ lineage.name }}</span>
+                      </div>
+                      <div v-if="getLineageHighlights(lineage)" class="text-caption text-grey-darken-1 mt-1">
+                        {{ getLineageHighlights(lineage) }}
+                      </div>
+                      <div v-if="lineage.desc" class="text-caption text-grey-darken-1 mt-1">
+                        {{ lineage.desc }}
+                      </div>
                     </div>
                   </div>
-                </div>
+                </template>
               </div>
             </div>
           </v-card-text>
@@ -195,6 +238,10 @@ const selectedSpeciesInfo = computed(() => {
     languages = ['Common', 'Elvish']
   } else if ((!languages || !languages.length) && info.id === 'half-elf') {
     languages = ['Common', 'Elvish']
+  } else if ((!languages || !languages.length) && info.id === 'half-orc') {
+    languages = ['Common', 'Orc']
+  } else if ((!languages || !languages.length) && info.id === 'gnome') {
+    languages = ['Common', 'Gnomish']
   } else if ((!languages || !languages.length) && info.id === 'halfling') {
     languages = ['Common', 'Halfling']
   } else if ((!languages || !languages.length) && info.id === 'tiefling') {
@@ -263,10 +310,22 @@ const onSpeciesChange = () => {
   }
 }
 
-const onLineageChange = () => {
-  console.log('Lineage changed to:', props.character.speciesLineage)
-  // Additional logic for lineage changes can be added here
-}
+
+const effectiveDarkvision = computed(() => {
+  if (!selectedSpeciesInfo.value) return null;
+  // If a lineage is selected and it's Drow/Dark Elf, override to 120ft
+  const drowNames = ["Drow", "Dark Elf (Drow)", "dark_elf_(drow)", "drow"];
+  const selectedLineage = selectedSpeciesInfo.value.lineages?.find(l => l.id === props.character.speciesLineage);
+  if (
+    selectedLineage &&
+    (drowNames.includes(selectedLineage.name) || drowNames.includes(selectedLineage.id))
+  ) {
+    return 120;
+  }
+  // Only return null if darkvision is truly missing or 0
+  const dv = selectedSpeciesInfo.value.darkvision;
+  return (typeof dv === 'number' && dv > 0) ? dv : null;
+});
 
 // Get key differentiators for each lineage/subrace
 const getLineageHighlights = (lineage) => {
@@ -484,5 +543,15 @@ const getLineageHighlights = (lineage) => {
   .trait-panel:hover {
     transform: none;
   }
+}
+
+/* Highlight selected lineage - high-contrast yellow for all themes */
+:deep(.selected-lineage) {
+  border: 3px solid #ffd600 !important;
+  background: none !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  transition: border 0.2s;
+  z-index: 2;
 }
 </style>
