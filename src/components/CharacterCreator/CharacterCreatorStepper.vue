@@ -56,17 +56,17 @@
           </div>
         </template>
 
-        <!-- Step 3: Features -->
+        <!-- Step 3: Skills & Proficiencies -->
         <template #item.3>
           <div>
-            <FeaturesAndTraits :character="character" :character-data="characterData" />
+            <SkillsProficiencies :character="character" :character-data="characterData" />
           </div>
         </template>
 
-        <!-- Step 4: Equipment -->
+        <!-- Step 4: Inventory & Equipment -->
         <template #item.4>
           <div>
-            <EquipmentAndGear :character="character" :character-data="characterData" />
+            <InventoryEquipment :character="character" :character-data="characterData" />
           </div>
         </template>
 
@@ -87,8 +87,8 @@ import { ref, watch } from 'vue'
 import AbilityScores from './steps/AbilityScores.vue'
 import CharacterInformation from './steps/CharacterInformation.vue'
 import CharacterSummary from './steps/CharacterSummary.vue'
-import EquipmentAndGear from './steps/EquipmentAndGear.vue'
-import FeaturesAndTraits from './steps/FeaturesAndTraits.vue'
+import InventoryEquipment from './steps/InventoryEquipment.vue'
+import SkillsProficiencies from './steps/SkillsProficiencies.vue'
 
 const props = defineProps({
   character: {
@@ -149,16 +149,16 @@ const stepItems = [
     icon: 'mdi-dice-6'
   },
   {
-    title: 'Features',
-    subtitle: 'Traits & Skills',
+    title: 'Skills & Proficiencies',
+    subtitle: 'What You Know',
     value: 3,
-    icon: 'mdi-star-circle'
+    icon: 'mdi-brain'
   },
   {
-    title: 'Equipment',
-    subtitle: 'Gear & Items',
+    title: 'Inventory & Equipment',
+    subtitle: 'What You Own',
     value: 4,
-    icon: 'mdi-sword'
+    icon: 'mdi-package-variant'
   },
   {
     title: 'Summary',

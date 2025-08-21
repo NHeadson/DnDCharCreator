@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0" />
+    <title>Entertainer Instrument Selection Test</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        padding: 20px;
+        line-height: 1.6;
+      }
+      .success {
+        color: green;
+        font-weight: bold;
+      }
+      .warning {
+        color: orange;
+        font-weight: bold;
+      }
+      .test-section {
+        margin: 20px 0;
+        padding: 15px;
+        border: 2px solid #ddd;
+        border-radius: 8px;
+      }
+      .test-section.complete {
+        border-color: green;
+        background: #f0f8f0;
+      }
+      .test-section.pending {
+        border-color: orange;
+        background: #fff8f0;
+      }
+      .character-combo {
+        background: #f5f5f5;
+        padding: 10px;
+        margin: 10px 0;
+        border-radius: 5px;
+      }
+      .navigation-link {
+        display: inline-block;
+        padding: 10px 15px;
+        background: #007acc;
+        color: white;
+        text-decoration: none;
+        border-radius: 5px;
+        margin: 5px;
+      }
+      .navigation-link:hover {
+        background: #005a99;
+      }
+      ul {
+        columns: 2;
+        column-gap: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>🎵 Entertainer Instrument Selection Test</h1>
+
+    <div class="test-section complete">
+      <h2>✅ IMPLEMENTED: Instrument Selection System</h2>
+      <div>
+        ✅ Added Entertainer background instrumentOptions with 10 choices
+      </div>
+      <div>
+        ✅ Enhanced getInstrumentProficiencies to filter generic "Musical
+        Instrument"
+      </div>
+      <div>
+        ✅ Added backgroundInstrumentOptions, backgroundInstrumentChoices,
+        hasBackgroundInstrumentChoices
+      </div>
+      <div>✅ Created toggleBackgroundInstrument method for selection</div>
+      <div>
+        ✅ Added instrument selection UI to "Other Proficiencies" section
+      </div>
+      <div>✅ Integration with existing gaming set selection interface</div>
+    </div>
+
+    <div class="test-section pending">
+      <h2>🔄 READY FOR TESTING: Wood Elf Entertainer Ranger</h2>
+      <p>
+        <strong>Navigation:</strong>
+        <a
+          href="http://localhost:3001"
+          class="navigation-link"
+          target="_blank"
+          >Open Character Creator</a
+        >
+      </p>
+
+      <div class="character-combo">
+        <strong>Test Character:</strong> Wood Elf Entertainer Ranger<br />
+        <strong>Expected Behavior:</strong>
+        <ol>
+          <li>Go to Skills & Proficiencies step → Other Proficiencies</li>
+          <li>Should see "Selections Required" section</li>
+          <li>
+            Should show "Choose Musical Instrument (0/1)" with instrument
+            options
+          </li>
+          <li>
+            Click any instrument - should turn purple and count should update
+          </li>
+          <li>Once selected, "Selections Required" should hide</li>
+          <li>
+            Selected instrument should appear in "Current Proficiencies →
+            Musical Instruments"
+          </li>
+          <li>No generic "Musical Instrument" should appear</li>
+        </ol>
+      </div>
+
+      <h3>Musical Instruments Available for Entertainer:</h3>
+      <ul>
+        <li>Bagpipes</li>
+        <li>Drum</li>
+        <li>Dulcimer</li>
+        <li>Flute</li>
+        <li>Lute</li>
+        <li>Lyre</li>
+        <li>Horn</li>
+        <li>Pan Flute</li>
+        <li>Shawm</li>
+        <li>Viol</li>
+      </ul>
+    </div>
+
+    <div class="test-section pending">
+      <h2>🎯 VALIDATION CHECKLIST</h2>
+      <ul style="columns: 1">
+        <li>
+          □ Generic "Musical Instrument" is NOT shown in Current Proficiencies
+        </li>
+        <li>□ "Selections Required" section appears for Entertainer</li>
+        <li>□ All 10 instrument options are available for selection</li>
+        <li>□ Clicking instrument updates selection count (0/1 → 1/1)</li>
+        <li>□ "Selections Required" section hides when instrument is chosen</li>
+        <li>□ Selected instrument appears in "Musical Instruments" section</li>
+        <li>□ Visual feedback: selected chip turns purple</li>
+        <li>□ Selection limit enforced (only 1 instrument allowed)</li>
+        <li>
+          □ Other proficiencies (like "Disguise Kit") still display correctly
+        </li>
+        <li>□ No console errors during selection process</li>
+      </ul>
+    </div>
+
+    <div class="test-section complete">
+      <h2>📋 QUICK TEST STEPS</h2>
+      <ol>
+        <li>
+          <strong>Create Character:</strong> Wood Elf → Entertainer → Ranger
+        </li>
+        <li><strong>Navigate:</strong> Go to Skills & Proficiencies step</li>
+        <li>
+          <strong>Check Current:</strong> Other Proficiencies should show
+          "Disguise Kit" only
+        </li>
+        <li>
+          <strong>Find Selection:</strong> Look for "Selections Required"
+          section
+        </li>
+        <li>
+          <strong>Select Instrument:</strong> Click any instrument (e.g.,
+          "Lute")
+        </li>
+        <li>
+          <strong>Verify:</strong> Selection interface disappears, Lute appears
+          in Musical Instruments
+        </li>
+      </ol>
+    </div>
+  </body>
+</html>

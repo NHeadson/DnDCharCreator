@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0" />
+    <title>Final Tool Proficiencies Test - Complete Validation</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        padding: 20px;
+        line-height: 1.6;
+      }
+      .success {
+        color: green;
+        font-weight: bold;
+      }
+      .warning {
+        color: orange;
+        font-weight: bold;
+      }
+      .error {
+        color: red;
+        font-weight: bold;
+      }
+      .test-section {
+        margin: 20px 0;
+        padding: 15px;
+        border: 2px solid #ddd;
+        border-radius: 8px;
+      }
+      .test-section.complete {
+        border-color: green;
+        background: #f0f8f0;
+      }
+      .test-section.pending {
+        border-color: orange;
+        background: #fff8f0;
+      }
+      .check-item {
+        margin: 8px 0;
+        padding: 5px 0;
+      }
+      .character-combo {
+        background: #f5f5f5;
+        padding: 10px;
+        margin: 10px 0;
+        border-radius: 5px;
+      }
+      ol,
+      ul {
+        margin: 10px 0;
+        padding-left: 30px;
+      }
+      .navigation-link {
+        display: inline-block;
+        padding: 10px 15px;
+        background: #007acc;
+        color: white;
+        text-decoration: none;
+        border-radius: 5px;
+        margin: 5px;
+      }
+      .navigation-link:hover {
+        background: #005a99;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>🛠️ Final Tool Proficiencies Test - Complete Validation</h1>
+
+    <div class="test-section complete">
+      <h2>✅ COMPLETED: Basic System Fixes</h2>
+      <div class="check-item">
+        ✅ Fixed compilation error - removed duplicate backgroundToolChoices
+        computed property
+      </div>
+      <div class="check-item">
+        ✅ Enhanced backgroundToolProficiencies to exclude vehicles (preventing
+        duplication)
+      </div>
+      <div class="check-item">
+        ✅ Added Folk Hero background with proper toolOptions structure
+      </div>
+      <div class="check-item">
+        ✅ Implemented backgroundToolOptions, backgroundToolChoices,
+        hasBackgroundToolChoices
+      </div>
+      <div class="check-item">
+        ✅ Added toggleBackgroundTool method for tool selection
+      </div>
+      <div class="check-item">
+        ✅ Created tool selection UI in Skills & Proficiencies step
+      </div>
+    </div>
+
+    <div class="test-section pending">
+      <h2>🔄 READY FOR TESTING: Tool Selection Interface</h2>
+      <p>
+        <strong>Navigation:</strong>
+        <a
+          href="http://localhost:3001"
+          class="navigation-link"
+          target="_blank"
+          >Open Character Creator</a
+        >
+      </p>
+
+      <h3>Test Folk Hero Artisan Tool Selection:</h3>
+      <div class="character-combo">
+        <strong>Test Character:</strong> Human Folk Hero Rogue (Example 1)<br />
+        <strong>Expected Behavior:</strong>
+        <ol>
+          <li>Go to Skills & Proficiencies step</li>
+          <li>Should see "Selections Required" section at top</li>
+          <li>
+            Should show "Choose Background Tools (0/1)" with artisan tool
+            options
+          </li>
+          <li>
+            Click any artisan tool - should turn orange and count should update
+          </li>
+          <li>
+            Only selected artisan tool should appear in Tool Proficiencies list
+          </li>
+          <li>
+            "Vehicles (Land)" should appear ONLY in Other Proficiencies (not
+            Tools)
+          </li>
+        </ol>
+      </div>
+
+      <h3>Artisan Tools Available for Folk Hero:</h3>
+      <ul style="columns: 2; column-gap: 20px">
+        <li>Alchemist's supplies</li>
+        <li>Brewer's supplies</li>
+        <li>Calligrapher's supplies</li>
+        <li>Carpenter's tools</li>
+        <li>Cartographer's tools</li>
+        <li>Cobbler's tools</li>
+        <li>Cook's utensils</li>
+        <li>Glassblower's tools</li>
+        <li>Jeweler's tools</li>
+        <li>Leatherworker's tools</li>
+        <li>Mason's tools</li>
+        <li>Painter's supplies</li>
+        <li>Potter's tools</li>
+        <li>Smith's tools</li>
+        <li>Tinker's tools</li>
+        <li>Weaver's tools</li>
+        <li>Woodcarver's tools</li>
+      </ul>
+    </div>
+
+    <div class="test-section pending">
+      <h2>🔄 COMPREHENSIVE VALIDATION: All Test Characters</h2>
+      <p>
+        Verify that tool proficiencies work correctly across all previously
+        tested characters:
+      </p>
+
+      <div class="character-combo">
+        <strong>Example 1:</strong> Human Folk Hero Rogue<br />
+        <strong>Expected:</strong> Thieves' Tools + chosen artisan tool +
+        Vehicles (Land) in Other
+      </div>
+
+      <div class="character-combo">
+        <strong>Example 2:</strong> Dwarf Soldier Fighter<br />
+        <strong>Expected:</strong> Gaming Set + Smith's Tools + Vehicles (Land)
+        in Other
+      </div>
+
+      <div class="character-combo">
+        <strong>Example 3:</strong> Elf Sage Wizard<br />
+        <strong>Expected:</strong> Calligrapher's Supplies + no vehicle
+        proficiencies
+      </div>
+
+      <div class="character-combo">
+        <strong>Example 4:</strong> Halfling Acolyte Cleric<br />
+        <strong>Expected:</strong> Herbalism Kit + no vehicle proficiencies
+      </div>
+
+      <div class="character-combo">
+        <strong>Example 5:</strong> Half-Elf Outlander Ranger<br />
+        <strong>Expected:</strong> Herbalism Kit + One musical instrument +
+        Vehicles (Land) in Other
+      </div>
+    </div>
+
+    <div class="test-section pending">
+      <h2>🎯 CRITICAL VALIDATION POINTS</h2>
+      <div class="check-item">
+        <strong>Duplication Fix:</strong> "Vehicles (Land)" should appear ONLY
+        in "Other Proficiencies", never in "Tool Proficiencies"
+      </div>
+      <div class="check-item">
+        <strong>Selection Interface:</strong> Folk Hero should show artisan tool
+        selection dropdown/chips
+      </div>
+      <div class="check-item">
+        <strong>Data Persistence:</strong> Selected tools should save and
+        display correctly
+      </div>
+      <div class="check-item">
+        <strong>Choice Limits:</strong> Should only allow selecting up to the
+        required number of tools
+      </div>
+      <div class="check-item">
+        <strong>Visual Feedback:</strong> Selected tools should be
+        highlighted/colored differently
+      </div>
+    </div>
+
+    <div class="test-section pending">
+      <h2>📋 TESTING CHECKLIST</h2>
+      <p>Test each character combination and check off:</p>
+      <ul>
+        <li>□ Folk Hero tool selection works correctly</li>
+        <li>□ No "Vehicles (Land)" duplication in Tool Proficiencies</li>
+        <li>□ All background tool proficiencies display properly</li>
+        <li>□ Class tool proficiencies display correctly</li>
+        <li>□ Tool selection saves and persists</li>
+        <li>□ UI is consistent and responsive</li>
+        <li>□ No console errors during tool selection</li>
+      </ul>
+    </div>
+
+    <div class="test-section complete">
+      <h2>📈 PROGRESS SUMMARY</h2>
+      <p>
+        <strong>Phase 1:</strong> ✅ Fixed armor/weapon proficiency display
+        issues
+      </p>
+      <p>
+        <strong>Phase 2:</strong> ✅ Implemented weapon/armor integration in
+        stat cards
+      </p>
+      <p>
+        <strong>Phase 3:</strong> ✅ Added consistent card heights and visual
+        improvements
+      </p>
+      <p>
+        <strong>Phase 4:</strong> ✅ Enhanced language system with racial
+        fallbacks
+      </p>
+      <p>
+        <strong>Phase 5:</strong> ✅ Fixed tool proficiency duplication and
+        selection interface
+      </p>
+      <p>
+        <strong>Current:</strong> 🔄 Final validation and comprehensive testing
+      </p>
+    </div>
+  </body>
+</html>

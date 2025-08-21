@@ -401,12 +401,18 @@
                                 <div class="d-flex flex-wrap ga-2 mb-3">
                                   <v-chip
                                     v-for="option in getSpecificOptionsForCategory(multiStageChoices[detectEquipmentChoices(weapon.name).type].category)"
-                                    :key="option" size="x-small" :color="(equipmentChoices[detectEquipmentChoices(weapon.name).type] || []).includes(option)
-                                      ? 'success'
-                                      : 'default'" :variant="(equipmentChoices[detectEquipmentChoices(weapon.name).type] || []).includes(option)
-                                        ? 'elevated'
-                                        : 'outlined'" clickable
-                                    @click="toggleEquipmentChoice(detectEquipmentChoices(weapon.name).type, option, detectEquipmentChoices(weapon.name).count)">
+                                    :key="option" size="x-small" :color="getEquipmentDuplicateState(option, detectEquipmentChoices(weapon.name).type)
+                                      ? 'error'
+                                      : (equipmentChoices[detectEquipmentChoices(weapon.name).type] || []).includes(option)
+                                        ? 'success'
+                                        : 'default'" :variant="getEquipmentDuplicateState(option, detectEquipmentChoices(weapon.name).type)
+                                          ? 'tonal'
+                                          : (equipmentChoices[detectEquipmentChoices(weapon.name).type] || []).includes(option)
+                                            ? 'elevated'
+                                            : 'outlined'"
+                                    :disabled="getEquipmentDuplicateState(option, detectEquipmentChoices(weapon.name).type)"
+                                    clickable
+                                    @click="!getEquipmentDuplicateState(option, detectEquipmentChoices(weapon.name).type) && toggleEquipmentChoice(detectEquipmentChoices(weapon.name).type, option, detectEquipmentChoices(weapon.name).count)">
                                     {{ option }}
                                   </v-chip>
                                 </div>
@@ -421,29 +427,28 @@
                             <div v-else>
                               <div class="text-caption text-medium-emphasis mb-2">
                                 Select {{ detectEquipmentChoices(weapon.name).count }}
-                                {{ detectEquipmentChoices(weapon.name).type === 'musicalInstruments' ? 'instrument' :
-                                  detectEquipmentChoices(weapon.name).type === 'gamingSets' ? 'gaming set' :
-                                    detectEquipmentChoices(weapon.name).type === 'artisanTools' ? 'tool' :
-                                      detectEquipmentChoices(weapon.name).type === 'vehicles' ? 'vehicle' :
-                                        detectEquipmentChoices(weapon.name).type.startsWith('choice_') ? 'option' : 'item' }}{{
-                                  detectEquipmentChoices(weapon.name).count > 1 ? 's' : '' }}:
+                                {{ detectEquipmentChoices(weapon.name).type === 'musicalInstruments' ? 'instrument proficiency'
+                                : detectEquipmentChoices(weapon.name).type === 'gamingSets' ? 'gaming set proficiency'
+                                : detectEquipmentChoices(weapon.name).type === 'artisanTools' ? 'tool proficiency'
+                                : detectEquipmentChoices(weapon.name).type === 'vehicles' ? 'vehicle proficiency'
+                                : detectEquipmentChoices(weapon.name).type.startsWith('choice_') ? 'option' : 'item' }}{{ detectEquipmentChoices(weapon.name).count > 1 ? 's' : '' }}:
                               </div>
 
                               <div class="d-flex flex-wrap ga-2 mb-3">
                                 <v-chip
                                   v-for="option in getAvailableChoicesForType(detectEquipmentChoices(weapon.name).type)"
-                                  :key="option" size="x-small" :color="getInstrumentDisabledState(option, detectEquipmentChoices(weapon.name).type)
+                                  :key="option" size="x-small" :color="getEquipmentDuplicateState(option, detectEquipmentChoices(weapon.name).type)
                                     ? 'error'
                                     : (equipmentChoices[detectEquipmentChoices(weapon.name).type] || []).includes(option)
                                       ? 'success'
-                                      : 'default'" :variant="getInstrumentDisabledState(option, detectEquipmentChoices(weapon.name).type)
+                                      : 'default'" :variant="getEquipmentDuplicateState(option, detectEquipmentChoices(weapon.name).type)
                                         ? 'tonal'
                                         : (equipmentChoices[detectEquipmentChoices(weapon.name).type] || []).includes(option)
                                           ? 'elevated'
                                           : 'outlined'"
-                                  :disabled="getInstrumentDisabledState(option, detectEquipmentChoices(weapon.name).type)"
+                                  :disabled="getEquipmentDuplicateState(option, detectEquipmentChoices(weapon.name).type)"
                                   clickable
-                                  @click="!getInstrumentDisabledState(option, detectEquipmentChoices(weapon.name).type) && toggleEquipmentChoice(detectEquipmentChoices(weapon.name).type, option, detectEquipmentChoices(weapon.name).count)">
+                                  @click="!getEquipmentDuplicateState(option, detectEquipmentChoices(weapon.name).type) && toggleEquipmentChoice(detectEquipmentChoices(weapon.name).type, option, detectEquipmentChoices(weapon.name).count)">
                                   {{ option }}
                                 </v-chip>
                               </div>
@@ -452,6 +457,18 @@
                             <div class="text-caption text-medium-emphasis">
                               {{ (equipmentChoices[detectEquipmentChoices(weapon.name).type] || []).length }} / {{
                                 detectEquipmentChoices(weapon.name).count }} selected
+                            </div>
+
+                            <!-- Vehicle proficiency clarification -->
+                            <div v-if="detectEquipmentChoices(weapon.name).type === 'vehicles'"
+                              class="text-caption text-medium-emphasis mt-2 pa-2"
+                              style="background: rgba(var(--v-theme-surface-variant), 0.3); border-radius: 4px;">
+                              <div class="font-weight-medium mb-1">Vehicle Proficiencies:</div>
+                              <div><strong>Land:</strong> Carts, carriages, chariots, sleds, wagons</div>
+                              <div><strong>Water:</strong> Boats, ships, sailing vessels</div>
+                              <div class="mt-1 text-xs">These represent your character's knowledge in operating
+                                vehicles, not
+                                ownership.</div>
                             </div>
                           </div>
                         </v-card>
@@ -541,31 +558,27 @@
                           <div v-else>
                             <div class="text-caption text-medium-emphasis mb-2">
                               Select {{ detectEquipmentChoices(armor.name).count }}
-                              {{ detectEquipmentChoices(armor.name).type === 'musicalInstruments' ? 'instrument' :
-                                detectEquipmentChoices(armor.name).type === 'gamingSets' ? 'gaming set' :
-                                  detectEquipmentChoices(armor.name).type === 'artisanTools' ? 'tool' :
-                                    detectEquipmentChoices(armor.name).type === 'vehicles' ? 'vehicle' :
-                                      detectEquipmentChoices(armor.name).type.startsWith('choice_') ? 'option' : 'item' }}{{
-                                detectEquipmentChoices(armor.name).count > 1 ? 's' : '' }}:
-                            </div>
-
-                            <div class="d-flex flex-wrap ga-2 mb-3">
+                              {{ detectEquipmentChoices(armor.name).type === 'musicalInstruments' ? 'instrument proficiency' :
+                              detectEquipmentChoices(armor.name).type === 'gamingSets' ? 'gaming set proficiency' :
+                              detectEquipmentChoices(armor.name).type === 'artisanTools' ? 'tool proficiency' :
+                              detectEquipmentChoices(armor.name).type === 'vehicles' ? 'vehicle proficiency'
+                              : detectEquipmentChoices(armor.name).type.startsWith('choice_') ? 'option' : 'item' }}{{ detectEquipmentChoices(armor.name).count > 1 ? 's' : '' }}:
                               <v-chip
                                 v-for="option in getAvailableChoicesForType(detectEquipmentChoices(armor.name).type)"
-                                :key="option" size="x-small" :color="getInstrumentDisabledState(option, detectEquipmentChoices(armor.name).type)
+                                :key="option" size="x-small" :color="getEquipmentDuplicateState(option, detectEquipmentChoices(armor.name).type)
                                   ? 'error'
                                   : (equipmentChoices[detectEquipmentChoices(armor.name).type] || []).includes(option)
                                     ? 'success'
                                     : 'default'
-                                  " :variant="getInstrumentDisabledState(option, detectEquipmentChoices(armor.name).type)
+                                  " :variant="getEquipmentDuplicateState(option, detectEquipmentChoices(armor.name).type)
                                     ? 'tonal'
                                     : (equipmentChoices[detectEquipmentChoices(armor.name).type] || []).includes(option)
                                       ? 'elevated'
                                       : 'outlined'
                                     "
-                                :disabled="getInstrumentDisabledState(option, detectEquipmentChoices(armor.name).type)"
+                                :disabled="getEquipmentDuplicateState(option, detectEquipmentChoices(armor.name).type)"
                                 clickable
-                                @click="!getInstrumentDisabledState(option, detectEquipmentChoices(armor.name).type) && toggleEquipmentChoice(detectEquipmentChoices(armor.name).type, option, detectEquipmentChoices(armor.name).count)">
+                                @click="!getEquipmentDuplicateState(option, detectEquipmentChoices(armor.name).type) && toggleEquipmentChoice(detectEquipmentChoices(armor.name).type, option, detectEquipmentChoices(armor.name).count)">
                                 {{ option }}
                               </v-chip>
                             </div>
@@ -573,6 +586,18 @@
                             <div class="text-caption text-medium-emphasis">
                               {{ (equipmentChoices[detectEquipmentChoices(armor.name).type] || []).length }} / {{
                                 detectEquipmentChoices(armor.name).count }} selected
+                            </div>
+
+                            <!-- Vehicle proficiency clarification -->
+                            <div v-if="detectEquipmentChoices(armor.name).type === 'vehicles'"
+                              class="text-caption text-medium-emphasis mt-2 pa-2"
+                              style="background: rgba(var(--v-theme-surface-variant), 0.3); border-radius: 4px;">
+                              <div class="font-weight-medium mb-1">Vehicle Proficiencies:</div>
+                              <div><strong>Land:</strong> Carts, carriages, chariots, sleds, wagons</div>
+                              <div><strong>Water:</strong> Boats, ships, sailing vessels</div>
+                              <div class="mt-1 text-xs">These represent your character's knowledge in operating
+                                vehicles, not
+                                ownership.</div>
                             </div>
                           </div>
                         </v-card>
@@ -693,12 +718,18 @@
                                 <div class="d-flex flex-wrap ga-2 mb-3">
                                   <v-chip
                                     v-for="option in getSpecificOptionsForCategory(multiStageChoices[detectEquipmentChoices(tool.name).type].category)"
-                                    :key="option" size="x-small" :color="(equipmentChoices[detectEquipmentChoices(tool.name).type] || []).includes(option)
-                                      ? 'success'
-                                      : 'default'" :variant="(equipmentChoices[detectEquipmentChoices(tool.name).type] || []).includes(option)
-                                        ? 'elevated'
-                                        : 'outlined'" clickable
-                                    @click="toggleEquipmentChoice(detectEquipmentChoices(tool.name).type, option, detectEquipmentChoices(tool.name).count)">
+                                    :key="option" size="x-small" :color="getEquipmentDuplicateState(option, detectEquipmentChoices(tool.name).type)
+                                      ? 'error'
+                                      : (equipmentChoices[detectEquipmentChoices(tool.name).type] || []).includes(option)
+                                        ? 'success'
+                                        : 'default'" :variant="getEquipmentDuplicateState(option, detectEquipmentChoices(tool.name).type)
+                                          ? 'tonal'
+                                          : (equipmentChoices[detectEquipmentChoices(tool.name).type] || []).includes(option)
+                                            ? 'elevated'
+                                            : 'outlined'"
+                                    :disabled="getEquipmentDuplicateState(option, detectEquipmentChoices(tool.name).type)"
+                                    clickable
+                                    @click="!getEquipmentDuplicateState(option, detectEquipmentChoices(tool.name).type) && toggleEquipmentChoice(detectEquipmentChoices(tool.name).type, option, detectEquipmentChoices(tool.name).count)">
                                     {{ option }}
                                   </v-chip>
                                 </div>
@@ -713,31 +744,38 @@
                             <div v-else>
                               <div class="text-caption text-medium-emphasis mb-2">
                                 Select {{ detectEquipmentChoices(tool.name).count }}
-                                {{ detectEquipmentChoices(tool.name).type === 'musicalInstruments' ? 'instrument' :
-                                  detectEquipmentChoices(tool.name).type === 'gamingSets' ? 'gaming set' :
-                                    detectEquipmentChoices(tool.name).type === 'artisanTools' ? 'tool' :
-                                      detectEquipmentChoices(tool.name).type === 'vehicles' ? 'vehicle' :
-                                        detectEquipmentChoices(tool.name).type.startsWith('choice_') ? 'option' : 'item' }}{{
-                                  detectEquipmentChoices(tool.name).count > 1 ? 's' : '' }}:
+                                {{
+                                  detectEquipmentChoices(tool.name).type === 'musicalInstruments'
+                                    ? 'instrument proficiency'
+                                    : detectEquipmentChoices(tool.name).type === 'gamingSets'
+                                      ? 'gaming set proficiency'
+                                      : detectEquipmentChoices(tool.name).type === 'artisanTools'
+                                        ? 'tool proficiency'
+                                        : detectEquipmentChoices(tool.name).type === 'vehicles'
+                                          ? 'vehicle proficiency'
+                                          : detectEquipmentChoices(tool.name).type.startsWith('choice_')
+                                            ? 'option'
+                                            : 'item'
+                                }}{{ detectEquipmentChoices(tool.name).count > 1 ? 's' : '' }}:
                               </div>
 
                               <div class="d-flex flex-wrap ga-2 mb-3">
                                 <v-chip
                                   v-for="option in getAvailableChoicesForType(detectEquipmentChoices(tool.name).type)"
-                                  :key="option" size="x-small" :color="getInstrumentDisabledState(option, detectEquipmentChoices(tool.name).type)
+                                  :key="option" size="x-small" :color="getEquipmentDuplicateState(option, detectEquipmentChoices(tool.name).type)
                                     ? 'error'
                                     : (equipmentChoices[detectEquipmentChoices(tool.name).type] || []).includes(option)
                                       ? 'success'
                                       : 'default'
-                                    " :variant="getInstrumentDisabledState(option, detectEquipmentChoices(tool.name).type)
+                                    " :variant="getEquipmentDuplicateState(option, detectEquipmentChoices(tool.name).type)
                                       ? 'tonal'
                                       : (equipmentChoices[detectEquipmentChoices(tool.name).type] || []).includes(option)
                                         ? 'elevated'
                                         : 'outlined'
                                       "
-                                  :disabled="getInstrumentDisabledState(option, detectEquipmentChoices(tool.name).type)"
+                                  :disabled="getEquipmentDuplicateState(option, detectEquipmentChoices(tool.name).type)"
                                   clickable
-                                  @click="!getInstrumentDisabledState(option, detectEquipmentChoices(tool.name).type) && toggleEquipmentChoice(detectEquipmentChoices(tool.name).type, option, detectEquipmentChoices(tool.name).count)">
+                                  @click="!getEquipmentDuplicateState(option, detectEquipmentChoices(tool.name).type) && toggleEquipmentChoice(detectEquipmentChoices(tool.name).type, option, detectEquipmentChoices(tool.name).count)">
                                   {{ option }}
                                 </v-chip>
                               </div>
@@ -745,6 +783,18 @@
                               <div class="text-caption text-medium-emphasis">
                                 {{ (equipmentChoices[detectEquipmentChoices(tool.name).type] || []).length }} / {{
                                   detectEquipmentChoices(tool.name).count }} selected
+                              </div>
+
+                              <!-- Vehicle proficiency clarification -->
+                              <div v-if="detectEquipmentChoices(tool.name).type === 'vehicles'"
+                                class="text-caption text-medium-emphasis mt-2 pa-2"
+                                style="background: rgba(var(--v-theme-surface-variant), 0.3); border-radius: 4px;">
+                                <div class="font-weight-medium mb-1">Vehicle Proficiencies:</div>
+                                <div><strong>Land:</strong> Carts, carriages, chariots, sleds, wagons</div>
+                                <div><strong>Water:</strong> Boats, ships, sailing vessels</div>
+                                <div class="mt-1 text-xs">These represent your character's knowledge in operating
+                                  vehicles, not
+                                  ownership.</div>
                               </div>
                             </div>
                           </div>
@@ -839,29 +889,25 @@
                           <div v-else>
                             <div class="text-caption text-medium-emphasis mb-2">
                               Select {{ detectEquipmentChoices(item.name).count }}
-                              {{ detectEquipmentChoices(item.name).type === 'musicalInstruments' ? 'instrument' :
-                                detectEquipmentChoices(item.name).type === 'gamingSets' ? 'gaming set' :
-                                  detectEquipmentChoices(item.name).type === 'artisanTools' ? 'tool' :
-                                    detectEquipmentChoices(item.name).type === 'vehicles' ? 'vehicle' :
-                                      detectEquipmentChoices(item.name).type.startsWith('choice_') ? 'option' : 'item' }}{{
-                                detectEquipmentChoices(item.name).count > 1 ? 's' : '' }}:
-                            </div>
-
-                            <div class="d-flex flex-wrap ga-2 mb-3">
+                              {{ detectEquipmentChoices(item.name).type === 'musicalInstruments' ? 'instrument proficiency'
+                              : detectEquipmentChoices(item.name).type === 'gamingSets' ? 'gaming set proficiency'
+                              : detectEquipmentChoices(item.name).type === 'artisanTools' ? 'tool proficiency'
+                              : detectEquipmentChoices(item.name).type === 'vehicles' ? 'vehicle proficiency'
+                              : detectEquipmentChoices(item.name).type.startsWith('choice_') ? 'option' : 'item' }}{{ detectEquipmentChoices(item.name).count > 1 ? 's' : '' }}:
                               <v-chip
                                 v-for="option in getAvailableChoicesForType(detectEquipmentChoices(item.name).type)"
-                                :key="option" size="x-small" :color="getInstrumentDisabledState(option, detectEquipmentChoices(item.name).type)
+                                :key="option" size="x-small" :color="getEquipmentDuplicateState(option, detectEquipmentChoices(item.name).type)
                                   ? 'error'
                                   : (equipmentChoices[detectEquipmentChoices(item.name).type] || []).includes(option)
                                     ? 'warning'
-                                    : 'default'" :variant="getInstrumentDisabledState(option, detectEquipmentChoices(item.name).type)
+                                    : 'default'" :variant="getEquipmentDuplicateState(option, detectEquipmentChoices(item.name).type)
                                       ? 'tonal'
                                       : (equipmentChoices[detectEquipmentChoices(item.name).type] || []).includes(option)
                                         ? 'elevated'
                                         : 'outlined'"
-                                :disabled="getInstrumentDisabledState(option, detectEquipmentChoices(item.name).type)"
+                                :disabled="getEquipmentDuplicateState(option, detectEquipmentChoices(item.name).type)"
                                 clickable
-                                @click="!getInstrumentDisabledState(option, detectEquipmentChoices(item.name).type) && toggleEquipmentChoice(detectEquipmentChoices(item.name).type, option, detectEquipmentChoices(item.name).count)">
+                                @click="!getEquipmentDuplicateState(option, detectEquipmentChoices(item.name).type) && toggleEquipmentChoice(detectEquipmentChoices(item.name).type, option, detectEquipmentChoices(item.name).count)">
                                 {{ option }}
                               </v-chip>
                             </div>
@@ -869,6 +915,18 @@
                             <div class="text-caption text-medium-emphasis">
                               {{ (equipmentChoices[detectEquipmentChoices(item.name).type] || []).length }} / {{
                                 detectEquipmentChoices(item.name).count }} selected
+                            </div>
+
+                            <!-- Vehicle proficiency clarification -->
+                            <div v-if="detectEquipmentChoices(item.name).type === 'vehicles'"
+                              class="text-caption text-medium-emphasis mt-2 pa-2"
+                              style="background: rgba(var(--v-theme-surface-variant), 0.3); border-radius: 4px;">
+                              <div class="font-weight-medium mb-1">Vehicle Proficiencies:</div>
+                              <div><strong>Land:</strong> Carts, carriages, chariots, sleds, wagons</div>
+                              <div><strong>Water:</strong> Boats, ships, sailing vessels</div>
+                              <div class="mt-1 text-xs">These represent your character's knowledge in operating
+                                vehicles, not
+                                ownership.</div>
                             </div>
                           </div>
                         </v-card>
@@ -1322,14 +1380,22 @@
         Choose Vehicle Proficiency
       </v-card-title>
       <v-card-text>
-        <div class="text-body-2 mb-4">Select a vehicle proficiency:</div>
+        <div class="text-body-2 mb-4">
+          Select a vehicle proficiency. This represents your character's knowledge and skill in operating vehicles,
+          not ownership of the actual vehicles themselves.
+        </div>
         <div class="d-flex flex-wrap ga-2">
-          <v-chip v-for="vehicle in availableChoices.vehicles" :key="vehicle"
-            :color="(equipmentChoices.vehicles || []).includes(vehicle) ? 'green' : 'default'"
-            :variant="(equipmentChoices.vehicles || []).includes(vehicle) ? 'elevated' : 'outlined'" clickable
-            @click="addEquipmentChoice('vehicles', vehicle)">
+          <v-chip v-for="vehicle in availableChoices.vehicles" :key="vehicle" :color="getEquipmentDuplicateState(vehicle).isDuplicate ? 'error' :
+            (equipmentChoices.vehicles || []).includes(vehicle) ? 'success' : 'default'" :variant="getEquipmentDuplicateState(vehicle).isDuplicate ? 'tonal' :
+              (equipmentChoices.vehicles || []).includes(vehicle) ? 'elevated' : 'outlined'"
+            :disabled="getEquipmentDuplicateState(vehicle).isDuplicate" clickable
+            @click="getEquipmentDuplicateState(vehicle).isDuplicate ? null : addEquipmentChoice('vehicles', vehicle)">
             {{ vehicle }}
           </v-chip>
+        </div>
+        <div class="text-caption text-medium-emphasis mt-3">
+          <strong>Vehicles (land):</strong> Carts, carriages, chariots, sleds, wagons<br>
+          <strong>Vehicles (water):</strong> Boats, ships, sailing vessels
         </div>
       </v-card-text>
       <v-card-actions>
@@ -1832,33 +1898,104 @@ const remainingGold = computed(() => {
   return remaining
 })
 
-// Computed function to check if an instrument choice should be disabled
-const getInstrumentDisabledState = computed(() => {
+// Computed function to check if an equipment choice should be disabled due to duplicates
+const getEquipmentDuplicateState = computed(() => {
   return (option, currentChoiceType) => {
-    // Check if this option is a musical instrument
-    const isInstrument = availableChoices.musicalInstruments?.includes(option)
-    if (!isInstrument) return false
+    try {
+      // Normalize the option string for comparison
+      const normalizeString = (str) => str.toLowerCase().replace(/['']/g, "'").trim()
+      const normalizedOption = normalizeString(option)
 
-    // Get all equipment choice types and check each one
-    for (const [choiceType, selections] of Object.entries(equipmentChoices.value)) {
-      // Skip the current choice type
-      if (choiceType === currentChoiceType) continue
+      // Comprehensive duplicate check across all equipment sources
 
-      // Check if this choice type could contain musical instruments
-      const couldContainInstruments =
-        choiceType === 'musicalInstruments' ||
-        (availableChoices[choiceType] && availableChoices[choiceType].includes(option))
+      // 1. Check other equipment choice selections (different choice types)
+      if (equipmentChoices.value) {
+        for (const [choiceType, selections] of Object.entries(equipmentChoices.value)) {
+          // Skip the current choice type
+          if (choiceType === currentChoiceType) continue
 
-      if (couldContainInstruments && selections.includes(option)) {
-        return true
+          // Check if this option is selected in another choice type
+          if (Array.isArray(selections) && selections.some(item => normalizeString(item) === normalizedOption)) {
+            return true
+          }
+        }
       }
+
+      // 2. Check multi-stage choices for specific items already selected
+      if (multiStageChoices.value) {
+        for (const [choiceType, stageChoice] of Object.entries(multiStageChoices.value)) {
+          // Skip the current choice type
+          if (choiceType === currentChoiceType) continue
+
+          // Check if this option is selected as a specific item in a multi-stage choice
+          if (stageChoice && stageChoice.specificItem && normalizeString(stageChoice.specificItem) === normalizedOption) {
+            return true
+          }
+        }
+      }
+
+      // 2b. NEW: Check if this option conflicts with multi-stage category choices
+      // For example, if "Artisan's Tools" is selected as a category, individual artisan tools should be disabled
+      if (multiStageChoices.value) {
+        for (const [choiceType, stageChoice] of Object.entries(multiStageChoices.value)) {
+          // Skip the current choice type
+          if (choiceType === currentChoiceType) continue
+
+          if (stageChoice && stageChoice.category) {
+            // Only prevent conflicts between different choice types
+            // Check if this option falls under the selected category
+            if (stageChoice.category === 'Artisan\'s Tools' && availableChoices.artisanTools && availableChoices.artisanTools.includes(option)) {
+              // Only block if this is preventing cross-choice conflicts
+              // Don't block legitimate artisan tool choices from each other
+              const isCurrentChoiceArtisanToolsOnly = currentChoiceType === 'artisanTools'
+              if (!isCurrentChoiceArtisanToolsOnly) {
+                return true
+              }
+            }
+
+            if (stageChoice.category === 'Musical Instrument' && availableChoices.musicalInstruments && availableChoices.musicalInstruments.includes(option)) {
+              const isCurrentChoiceMusicalInstrumentsOnly = currentChoiceType === 'musicalInstruments'
+              if (!isCurrentChoiceMusicalInstrumentsOnly) {
+                return true
+              }
+            }
+          }
+        }
+      }      // 3. Check all currently equipped gear (includes background + class + custom)
+      if (allGear.value && Array.isArray(allGear.value)) {
+        if (allGear.value.some(item => normalizeString(item.name || '') === normalizedOption)) {
+          return true
+        }
+      }
+
+      // 4. Check all currently equipped tools (includes background + class + custom)  
+      if (allTools.value && Array.isArray(allTools.value)) {
+        if (allTools.value.some(item => normalizeString(item.name || '') === normalizedOption)) {
+          return true
+        }
+      }
+
+      // 5. Check all currently equipped weapons (includes background + class + custom)
+      if (allWeapons.value && Array.isArray(allWeapons.value)) {
+        if (allWeapons.value.some(item => normalizeString(item.name || '') === normalizedOption)) {
+          return true
+        }
+      }
+
+      // 6. Check all currently equipped armor (includes background + class + custom)
+      if (allArmor.value && Array.isArray(allArmor.value)) {
+        if (allArmor.value.some(item => normalizeString(item.name || '') === normalizedOption)) {
+          return true
+        }
+      }
+
+      return false
+    } catch (error) {
+      console.warn('Error in getEquipmentDuplicateState:', error)
+      return false
     }
-
-    return false
   }
-})
-
-// Load equipment from API
+})// Load equipment from API
 const loadEquipment = async () => {
   if (loadingEquipment.value || allEquipment.value.length > 0) return
 

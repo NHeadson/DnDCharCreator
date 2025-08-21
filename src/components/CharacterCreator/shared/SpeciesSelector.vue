@@ -193,8 +193,12 @@ const selectedSpeciesInfo = computed(() => {
     languages = ['Common', 'Dwarvish']
   } else if ((!languages || !languages.length) && info.id === 'elf') {
     languages = ['Common', 'Elvish']
+  } else if ((!languages || !languages.length) && info.id === 'half-elf') {
+    languages = ['Common', 'Elvish']
   } else if ((!languages || !languages.length) && info.id === 'halfling') {
     languages = ['Common', 'Halfling']
+  } else if ((!languages || !languages.length) && info.id === 'tiefling') {
+    languages = ['Common', 'Infernal']
   } else if ((!languages || !languages.length) && info.id === 'human') {
     languages = ['Common']
   }

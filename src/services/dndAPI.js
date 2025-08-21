@@ -1011,16 +1011,101 @@ export class DnDAPI {
   extractWeaponProficiencies(classData) {
     // Extract weapon proficiencies from the class data
     const proficiencies = classData.proficiencies || [];
-    // Filter for weapon proficiencies (usually contain 'Weapon' in the name)
-    return proficiencies
+
+    // Common individual weapon names (for classes like Wizard)
+    const individualWeapons = [
+      "Dagger",
+      "Daggers",
+      "Dart",
+      "Darts",
+      "Sling",
+      "Slings",
+      "Quarterstaff",
+      "Quarterstaffs",
+      "Light Crossbow",
+      "Light Crossbows",
+      "Crossbows, light", // API format for light crossbow
+      "Shortbow",
+      "Shortbows",
+      "Longsword",
+      "Longswords",
+      "Rapier",
+      "Rapiers",
+      "Shortsword",
+      "Shortswords",
+      "Hand Crossbow",
+      "Hand Crossbows",
+      "Scimitar",
+      "Scimitars",
+    ];
+
+    // Filter for weapon proficiencies
+    const weapons = proficiencies
       .filter(
         (p) =>
           p.name &&
           (p.name.includes("Weapon") ||
             p.name.match(/^(Simple|Martial) Weapons?$/i) ||
-            p.name.match(/\bWeapons?\b/i))
+            p.name.match(/\bWeapons?\b/i) ||
+            individualWeapons.includes(p.name))
       )
       .map((p) => p.name);
+
+    // Group individual weapons into categories for cleaner display
+    const individualWeaponsFound = weapons.filter((w) =>
+      individualWeapons.includes(w)
+    );
+    const categoryWeapons = weapons.filter(
+      (w) => !individualWeapons.includes(w)
+    );
+
+    // If we have individual weapons, group them by category
+    if (individualWeaponsFound.length > 0) {
+      const result = [...categoryWeapons];
+
+      // Simple weapons (daggers, darts, slings, quarterstaffs)
+      const simpleWeapons = ["Daggers", "Darts", "Slings", "Quarterstaffs"];
+      if (individualWeaponsFound.some((w) => simpleWeapons.includes(w))) {
+        result.push("Simple Weapons (select)");
+      }
+
+      // Crossbows
+      const crossbows = [
+        "Light Crossbow",
+        "Light Crossbows",
+        "Crossbows, light",
+        "Hand Crossbow",
+        "Hand Crossbows",
+      ];
+      if (individualWeaponsFound.some((w) => crossbows.includes(w))) {
+        result.push("Crossbows");
+      }
+
+      // Rogue-specific weapons (swords)
+      const finesse = [
+        "Longsword",
+        "Longswords",
+        "Rapier",
+        "Rapiers",
+        "Shortsword",
+        "Shortswords",
+        "Scimitar",
+        "Scimitars",
+      ];
+      if (individualWeaponsFound.some((w) => finesse.includes(w))) {
+        result.push("Finesse Weapons");
+      }
+
+      // Bows
+      const bows = ["Shortbow", "Shortbows"];
+      if (individualWeaponsFound.some((w) => bows.includes(w))) {
+        result.push("Shortbows");
+      }
+
+      return result.length > 0 ? result : weapons;
+    }
+
+    return weapons;
   }
 
   extractToolProficiencies(classData) {

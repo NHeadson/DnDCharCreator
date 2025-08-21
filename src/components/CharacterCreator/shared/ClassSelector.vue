@@ -91,7 +91,8 @@
                     class="class-details-chip me-3 ms-5">
                     <v-icon start size="small">mdi-dice-d20</v-icon>
                     <span class="chip-label">Hit Die</span>
-                    <span class="chip-value">: d{{ selectedClassInfo.hitDie || '-' }}</span>
+                    <span class="chip-value">: d{{ selectedClassInfo.hitDie ? selectedClassInfo.hitDie.replace('D', '')
+                      : '-' }}</span>
                   </v-chip>
                 </template>
               </v-tooltip>

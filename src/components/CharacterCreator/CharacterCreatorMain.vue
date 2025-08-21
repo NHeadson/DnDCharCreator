@@ -91,6 +91,16 @@ const showSuccessDialog = ref(false)
 const isEditing = ref(false)
 const editingCharacterId = ref(null)
 
+// Watch for class details changes and update class traits
+watch(
+  () => character.classDetails,
+  (newDetails) => {
+    if (newDetails) {
+      characterStore.updateClassTraits();
+    }
+  }
+)
+
 // Load existing character for editing
 const loadExistingCharacter = async characterId => {
   try {

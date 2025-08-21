@@ -12,6 +12,7 @@ import { useAdminStore } from "@/stores/adminStore";
 import CharacterForm from "@/pages/character-form.vue";
 import Characters from "@/pages/characters.vue";
 import Theme from "@/pages/theme.vue";
+import MockupViewer from "@/pages/mockup-viewer.vue";
 
 const routes = [
   {
@@ -33,6 +34,11 @@ const routes = [
     path: "/theme",
     name: "Theme",
     component: Theme,
+  },
+  {
+    path: "/mockups",
+    name: "MockupViewer",
+    component: MockupViewer,
   },
 ];
 

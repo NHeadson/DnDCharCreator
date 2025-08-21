@@ -150,6 +150,7 @@ const fallbackClassData = [
       "Survival",
     ],
     armorTraining: { light: true, medium: true, heavy: false, shields: true },
+    weaponProficiencies: ["Simple Weapons", "Martial Weapons"],
     startingEquipment: [
       { name: "Greataxe", cost: 30, weight: 7 },
       { name: "Handaxes", cost: 5, weight: 2, quantity: 4 },
@@ -209,6 +210,7 @@ const fallbackClassData = [
       "Survival",
     ],
     armorTraining: { light: true, medium: true, heavy: true, shields: true },
+    weaponProficiencies: ["Simple Weapons", "Martial Weapons"],
     startingEquipment: [],
     startingMoney: { rolls: "5d4", multiplier: 10, average: 125 }, // 5d4 × 10 gp
     weaponMasteryChoices: 3,
@@ -234,6 +236,13 @@ const fallbackClassData = [
       "Stealth",
     ],
     armorTraining: { light: true, medium: false, heavy: false, shields: false },
+    weaponProficiencies: [
+      "Simple Weapons",
+      "Hand Crossbows",
+      "Longswords",
+      "Rapiers",
+      "Shortswords",
+    ],
     startingEquipment: [],
     startingMoney: { rolls: "4d4", multiplier: 10, average: 100 }, // 4d4 × 10 gp
     toolProficiencies: ["Thieves' Tools"],
@@ -1084,7 +1093,16 @@ export function useCharacterData() {
 
   const updateClassTraits = () => {
     const selectedClass = classData.value.find((c) => c.id === character.class);
-    console.log("Updating class traits for:", selectedClass?.name);
+    console.log("DEBUG - updateClassTraits called for:", character.class);
+    console.log("DEBUG - Found selectedClass:", selectedClass?.name);
+    console.log(
+      "DEBUG - selectedClass.armorTraining:",
+      selectedClass?.armorTraining
+    );
+    console.log(
+      "DEBUG - selectedClass.weaponProficiencies:",
+      selectedClass?.weaponProficiencies
+    );
 
     if (selectedClass) {
       // Set basic class details immediately
@@ -1092,6 +1110,18 @@ export function useCharacterData() {
 
       // Set armor training from fallback data immediately
       character.armorTraining = { ...selectedClass.armorTraining };
+
+      // Set weapon proficiencies from fallback data immediately
+      character.weaponProficiencies = [
+        ...(selectedClass.weaponProficiencies || []),
+      ];
+
+      console.log("DEBUG - After assignment:");
+      console.log("DEBUG - character.armorTraining:", character.armorTraining);
+      console.log(
+        "DEBUG - character.weaponProficiencies:",
+        character.weaponProficiencies
+      );
 
       // If we have an index, fetch detailed data asynchronously
       if (selectedClass.index) {
@@ -1113,21 +1143,33 @@ export function useCharacterData() {
                   shields: false,
                 };
 
+              // Preserve weapon proficiencies from API data, fallback to class data
+              const weaponProficiencies =
+                detailedClass.weaponProficiencies ||
+                selectedClass.weaponProficiencies ||
+                [];
+
               // Merge the detailed data with the existing basic data
               character.classDetails = {
                 ...character.classDetails,
                 ...detailedClass,
                 armorTraining, // Ensure armor training is preserved
+                weaponProficiencies, // Ensure weapon proficiencies are preserved
               };
 
-              // Update character armor training
+              // Update character armor training and weapon proficiencies
               character.armorTraining = { ...armorTraining };
+              character.weaponProficiencies = [...weaponProficiencies];
 
               console.log(
                 "Updated character.classDetails:",
                 character.classDetails
               );
               console.log("Updated armor training:", character.armorTraining);
+              console.log(
+                "Updated weapon proficiencies:",
+                character.weaponProficiencies
+              );
             }
           })
           .catch((error) => {
@@ -1203,6 +1245,7 @@ export function useCharacterData() {
         heavy: false,
         shields: false,
       };
+      character.weaponProficiencies = [];
       character.equipment = [];
       character.skillProficiencies = {};
       character.savingThrowProficiencies = {};

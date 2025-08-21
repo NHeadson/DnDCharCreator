@@ -311,26 +311,6 @@
               define how the class plays.
             </v-alert>
           </div>
-
-          <!-- Class Skills Selection -->
-          <div v-if="availableClassSkills.length" class="mb-4">
-            <div class="d-flex align-center mb-2">
-              <h4 class="me-2">📚 Class Skills</h4>
-              <v-chip color="info" size="x-small" variant="outlined">
-                Choose {{ getClassSkillChoices }}
-              </v-chip>
-            </div>
-            <v-chip-group v-model="selectedClassSkills" multiple class="skill-selection">
-              <v-tooltip v-for="skill in availableClassSkills" :key="skill"
-                :text="`Click to select ${skill} as one of your class skills`" location="top">
-                <template v-slot:activator="{ props }">
-                  <v-chip v-bind="props" :value="skill" filter color="blue" size="small">
-                    {{ skill }}
-                  </v-chip>
-                </template>
-              </v-tooltip>
-            </v-chip-group>
-          </div>
         </v-card-text>
       </v-card>
 
@@ -878,11 +858,13 @@ const characterStore = useCharacterStore()
 
 const selectedCantrips = ref([])
 const selectedSpells = ref([])
-const selectedClassSkills = ref([])
 const selectedLanguages = ref([])
 const selectedTools = ref([])
 const selectedFightingStyle = ref(null)
 const selectedExpertiseSkills = ref([])
+
+// Use character's selectedClassSkills instead of local ref
+const selectedClassSkills = computed(() => character.value.selectedClassSkills || [])
 const selectedPatron = ref(null)
 const selectedCircle = ref(null)
 const selectedDomain = ref(null)
@@ -1550,11 +1532,6 @@ watch(selectedCantrips, (val) => {
 })
 watch(selectedSpells, (val) => {
   character.value.preparedSpells = val
-})
-
-// Save selected class skills
-watch(selectedClassSkills, (val) => {
-  character.value.selectedClassSkills = val
 })
 
 // Save feature choices

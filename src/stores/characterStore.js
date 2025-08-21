@@ -148,10 +148,23 @@ export const useCharacterStore = defineStore("character", {
             "You have spent your life in the service of a temple to a specific god or pantheon of gods.",
           skillProficiencies: ["Insight", "Religion"],
           toolProficiencies: ["Calligrapher's Supplies"],
-          languages: [],
+          languages: ["Common", "Celestial", "Abyssal"],
           languageOptions: {
             choose: 2,
-            from: ["Common", "Celestial", "Abyssal"],
+            from: [
+              "Draconic",
+              "Dwarvish",
+              "Elvish",
+              "Giant",
+              "Gnomish",
+              "Goblin",
+              "Halfling",
+              "Orc",
+              "Deep Speech",
+              "Primordial",
+              "Sylvan",
+              "Undercommon",
+            ],
           },
           startingEquipment: [
             { name: "Holy Symbol", quantity: 1 },
@@ -278,6 +291,21 @@ export const useCharacterStore = defineStore("character", {
           toolProficiencies: ["Disguise Kit", "Musical Instrument"],
           languages: [],
           languageOptions: null,
+          instrumentOptions: {
+            choose: 1,
+            from: [
+              "Bagpipes",
+              "Drum",
+              "Dulcimer",
+              "Flute",
+              "Lute",
+              "Lyre",
+              "Horn",
+              "Pan Flute",
+              "Shawm",
+              "Viol",
+            ],
+          },
           startingEquipment: [
             { name: "Musical Instrument", quantity: 1 },
             { name: "Costume", quantity: 1 },
@@ -299,7 +327,19 @@ export const useCharacterStore = defineStore("character", {
           description:
             "You come from a humble social rank, but you are destined for so much more.",
           skillProficiencies: ["Animal Handling", "Survival"],
-          toolProficiencies: ["Artisan's Tools", "Vehicles (Land)"],
+          toolProficiencies: ["Vehicles (Land)"],
+          toolOptions: {
+            choose: 1,
+            from: [
+              "Smith's Tools",
+              "Carpenter's Tools",
+              "Mason's Tools",
+              "Weaver's Tools",
+              "Leatherworker's Tools",
+              "Potter's Tools",
+              "Woodcarver's Tools",
+            ],
+          },
           languages: [],
           languageOptions: null,
           startingEquipment: [
@@ -466,12 +506,47 @@ export const useCharacterStore = defineStore("character", {
 
     // Update class traits when class changes
     updateClassTraits() {
-      const selectedClass = this.classData.find(
-        (c) => c.id === this.character.class
+      console.log("DEBUG - updateClassTraits called");
+      console.log("DEBUG - character.class:", this.character.class);
+      console.log(
+        "DEBUG - character.classDetails available:",
+        !!this.character.classDetails
       );
-      if (selectedClass) {
-        this.character.classDetails = selectedClass;
-        this.character.armorTraining = { ...selectedClass.armorTraining };
+
+      // Use classDetails (detailed data) instead of classData (basic list)
+      if (this.character.classDetails) {
+        const selectedClass = this.character.classDetails;
+        console.log("DEBUG - found classDetails:", selectedClass.name);
+        console.log(
+          "DEBUG - classDetails.armorTraining:",
+          selectedClass.armorTraining
+        );
+        console.log(
+          "DEBUG - classDetails.weaponProficiencies:",
+          selectedClass.weaponProficiencies
+        );
+
+        // Update armor training
+        if (selectedClass.armorTraining) {
+          this.character.armorTraining = { ...selectedClass.armorTraining };
+        }
+
+        // Update weapon proficiencies
+        if (selectedClass.weaponProficiencies) {
+          this.character.weaponProficiencies = [
+            ...selectedClass.weaponProficiencies,
+          ];
+        }
+
+        console.log("DEBUG - After assignment:");
+        console.log(
+          "DEBUG - character.armorTraining:",
+          this.character.armorTraining
+        );
+        console.log(
+          "DEBUG - character.weaponProficiencies:",
+          this.character.weaponProficiencies
+        );
 
         // Initialize skill proficiencies
         this.character.skillProficiencies = {};
@@ -494,18 +569,23 @@ export const useCharacterStore = defineStore("character", {
           };
         }
       } else {
-        this.character.classDetails = null;
         this.character.armorTraining = {
           light: false,
           medium: false,
           heavy: false,
           shields: false,
         };
+        this.character.weaponProficiencies = [];
       }
     },
 
     // Update background traits when background changes
     updateBackgroundTraits() {
+      // First, remove any existing background feats
+      this.character.feats = this.character.feats.filter(
+        (feat) => feat.source !== "Background"
+      );
+
       const selectedBackground = this.backgroundData.find(
         (b) => b.id === this.character.background
       );
@@ -535,6 +615,15 @@ export const useCharacterStore = defineStore("character", {
           ) {
             this.character.toolProficiencies.push(toolProf);
           }
+        }
+
+        // Handle background feat
+        if (selectedBackground.feat) {
+          this.character.feats.push({
+            name: selectedBackground.feat,
+            source: "Background",
+            description: `Feat granted by ${selectedBackground.name} background`,
+          });
         }
       } else {
         this.character.backgroundDetails = null;

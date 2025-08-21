@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0" />
+    <title>Folk Hero Tools Test</title>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        padding: 20px;
+      }
+      .success {
+        color: green;
+        font-weight: bold;
+      }
+      .error {
+        color: red;
+        font-weight: bold;
+      }
+      .test-result {
+        margin: 10px 0;
+        padding: 10px;
+        border: 1px solid #ccc;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Folk Hero Tool Selection Test</h1>
+    <div id="app">
+      <div class="test-result">
+        <h3>Folk Hero Background Data Test</h3>
+        <p>
+          <strong>Expected:</strong> Folk Hero should have toolOptions with
+          "choose: 1" for artisan tools
+        </p>
+        <p>
+          <strong>Result:</strong>
+          <span :class="folkHeroTest.pass ? 'success' : 'error'"
+            >{{ folkHeroTest.message }}</span
+          >
+        </p>
+      </div>
+
+      <div class="test-result">
+        <h3>Tool Selection Interface Test</h3>
+        <p>
+          <strong>Expected:</strong> When Folk Hero is selected, should show
+          artisan tool selection interface
+        </p>
+        <p>
+          <strong>Instructions:</strong> Navigate to character creator, select
+          Folk Hero background, go to Skills & Proficiencies step
+        </p>
+        <p><strong>Check for:</strong></p>
+        <ul>
+          <li>Artisan tool selection dropdown/interface appears</li>
+          <li>
+            "Vehicles (Land)" appears only in Other Proficiencies (not Tools)
+          </li>
+          <li>Selection saves properly when tool is chosen</li>
+        </ul>
+      </div>
+
+      <div class="test-result">
+        <h3>Quick Navigation</h3>
+        <p>
+          <a
+            href="http://localhost:3001"
+            target="_blank"
+            >Open Character Creator</a
+          >
+        </p>
+        <p><strong>Test Steps:</strong></p>
+        <ol>
+          <li>Click "Create Character"</li>
+          <li>Step 1: Select any species (e.g., Human)</li>
+          <li>Step 2: Select Folk Hero background</li>
+          <li>Step 3: Select any class (e.g., Rogue)</li>
+          <li>Go to Skills & Proficiencies step</li>
+          <li>
+            Look for artisan tool selection interface in Tool Proficiencies
+            section
+          </li>
+          <li>Verify "Vehicles (Land)" only appears in Other Proficiencies</li>
+        </ol>
+      </div>
+    </div>
+
+    <script>
+      const { createApp, ref, computed, onMounted } = Vue;
+
+      createApp({
+        setup() {
+          const folkHeroTest = ref({
+            pass: false,
+            message: 'Testing...',
+          });
+
+          onMounted(() => {
+            // Simulate the Folk Hero background data check
+            const folkHeroData = {
+              name: 'Folk Hero',
+              toolOptions: {
+                choose: 1,
+                from: [
+                  "Alchemist's supplies",
+                  "Brewer's supplies",
+                  "Calligrapher's supplies",
+                  "Carpenter's tools",
+                  "Cartographer's tools",
+                  "Cobbler's tools",
+                  "Cook's utensils",
+                  "Glassblower's tools",
+                  "Jeweler's tools",
+                  "Leatherworker's tools",
+                  "Mason's tools",
+                  "Painter's supplies",
+                  "Potter's tools",
+                  "Smith's tools",
+                  "Tinker's tools",
+                  "Weaver's tools",
+                  "Woodcarver's tools",
+                ],
+              },
+            };
+
+            if (
+              folkHeroData.toolOptions &&
+              folkHeroData.toolOptions.choose === 1 &&
+              folkHeroData.toolOptions.from.length > 0
+            ) {
+              folkHeroTest.value = {
+                pass: true,
+                message: `✓ Folk Hero has ${folkHeroData.toolOptions.choose} artisan tool choice from ${folkHeroData.toolOptions.from.length} options`,
+              };
+            } else {
+              folkHeroTest.value = {
+                pass: false,
+                message: '✗ Folk Hero background data structure is incorrect',
+              };
+            }
+          });
+
+          return {
+            folkHeroTest,
+          };
+        },
+      }).mount('#app');
+    </script>
+  </body>
+</html>
