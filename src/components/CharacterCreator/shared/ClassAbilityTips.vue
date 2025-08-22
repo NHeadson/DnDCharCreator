@@ -6,11 +6,11 @@
     </v-card-title>
     <v-card-text class="pa-3">
       <div class="tips-content">
-        <div class="text-caption mb-2">
+        <div class="text-caption mb-2 indent-1">
           <strong>Recommended Abilities</strong>
         </div>
         <div v-if="character.class" class="text-body-2">
-          <div v-for="(ability, index) in getRecommendedAbilities(character.class)" :key="index" class="mb-1">
+          <div v-for="(ability, index) in getRecommendedAbilities(character.class)" :key="index" class="mb-1 indent-2">
             <v-chip class="me-2" color="secondary" size="x-small">{{ index + 1 }}</v-chip>
             {{ ability }}
           </div>
@@ -58,5 +58,13 @@ function getRecommendedAbilities(characterClass) {
 
 .tips-content {
   min-height: 120px;
+}
+
+.indent-1 {
+  margin-left: 2em;
+}
+
+.indent-2 {
+  margin-left: 3em;
 }
 </style>

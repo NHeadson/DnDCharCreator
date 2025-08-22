@@ -37,17 +37,17 @@
           </v-card-title>
           <v-divider />
           <v-card-text class="d-flex align-center justify-center text-center py-4">
-            <v-fade-transition>
-              <div v-if="characterData?.isLoadingSpecies">
+            <div>
+              <template v-if="characterData?.isLoadingSpecies">
                 <v-progress-circular class="mb-2" color="primary" indeterminate :size="32" />
                 <div class="text-subtitle-2 text-primary">Loading Species Data...</div>
-              </div>
-              <div v-else>
+              </template>
+              <template v-else>
                 <v-icon class="mb-2 text-grey-darken-1" size="32">mdi-help-circle-outline</v-icon>
                 <div class="text-subtitle-2 text-grey-darken-1">Select a Species</div>
                 <div class="text-caption text-grey mt-1">Choose your character's species to view details</div>
-              </div>
-            </v-fade-transition>
+              </template>
+            </div>
           </v-card-text>
         </v-card>
         <v-card v-else-if="selectedSpeciesInfo" class="text-blue-grey-lighten-5 species-preview-card" variant="tonal"

@@ -14,22 +14,22 @@
       </div>
 
       <div v-if="isAssigningScores && availableScores.length" class="mb-4 d-flex justify-center">
-        <v-card class="rolled-array-card pa-3" variant="tonal" elevation="2">
+        <v-card class="rolled-array-card pa-3 wide-array-card" variant="tonal" elevation="2">
           <div class="mb-2 text-center">
-            <span class="text-subtitle-1 font-weight-bold">Rolled Array</span>
-            <span class="text-caption text-grey-darken-1 ms-2" v-if="!$vuetify.display.mdAndDown">(Drag a number onto an
-              ability)</span>
+            <span class="text-subtitle-1 font-weight-bold">{{ arrayLabel }}</span>
+            <span class="text-caption text-grey-darken-1 ms-2" v-if="!isNarrow">(Drag a number onto an ability)</span>
             <div class="text-caption text-grey-darken-1 mt-1" v-else>(Tap a number, then tap an ability)</div>
+            <div class="text-caption text-primary mt-1" style="font-size: 0.98em;">
+              Tip: You can also just click an attribute card to assign the highest available value.
+            </div>
           </div>
-          <div class="d-flex flex-wrap justify-center align-center"
-            :class="{ 'mobile-chips': $vuetify.display.mdAndDown }">
-            <v-chip v-for="(score, idx) in availableScores" :key="score + '-' + idx" color="primary"
-              class="ma-2 px-6 py-3 rolled-chip" :class="{ 'mobile-chip': $vuetify.display.mdAndDown }"
-              :draggable="!$vuetify.display.mdAndDown" @dragstart="onDragStart(score, idx)"
+          <div class="available-scores-row">
+            <v-card v-for="(score, idx) in availableScores" :key="score + '-' + idx" class="array-value-card"
+              variant="elevated" elevation="2" draggable="true" @dragstart="onDragStart(score, idx)"
               @click="onChipClick(score, idx)"
-              :style="$vuetify.display.mdAndDown ? 'font-size:1.5rem;font-weight:600;cursor:pointer;' : 'font-size:2rem;font-weight:600;cursor:grab;box-shadow:0 2px 8px rgba(0,0,0,0.10);'">
-              {{ score }}
-            </v-chip>
+              :class="{ 'selected-array-value': selectedScore === score && selectedIdx === idx }">
+              <span class="array-value-text">{{ score }}</span>
+            </v-card>
           </div>
         </v-card>
       </div>
@@ -109,10 +109,32 @@
 </template>
 
 
+
 <script setup>
-import { ref, toRefs } from 'vue'
+import { ref, toRefs, computed, onMounted, onBeforeUnmount } from 'vue'
 import AbilityScoreGrid from '../shared/AbilityScoreGrid.vue'
 import AbilityScoreHeader from '../shared/AbilityScoreHeader.vue'
+// Computed label for array type
+const arrayLabel = computed(() => {
+  const arr = availableScores.value
+  // Standard array, allow any order
+  const std = [15, 14, 13, 12, 10, 8]
+  if (arr.length === 6 && arr.slice().sort((a, b) => b - a).join(',') === std.join(',')) {
+    return 'Standard Array'
+  }
+  return 'Rolled Array'
+})
+// Custom breakpoint for tap/drag message
+const isNarrow = ref(window.innerWidth <= 1117)
+function handleResize() {
+  isNarrow.value = window.innerWidth <= 1117
+}
+onMounted(() => {
+  window.addEventListener('resize', handleResize)
+})
+onBeforeUnmount(() => {
+  window.removeEventListener('resize', handleResize)
+})
 
 const props = defineProps({
   character: {
@@ -200,6 +222,11 @@ const onChipClick = (score, idx) => {
 const assignScore = statName => {
   if (!isAssigningScores.value) return
 
+  // Prevent assigning to a stat that already has a value
+  if (character.value.abilityScores[statName]?.score !== null && character.value.abilityScores[statName]?.score !== undefined) {
+    return
+  }
+
   // Handle mobile selection first
   if (selectedScore !== null && selectedIdx !== null) {
     if (!character.value.abilityScores[statName]) {
@@ -235,17 +262,15 @@ const assignScore = statName => {
     }
     return
   }
-  // Fallback: assign next available score (for click)
-  const alreadyAssigned = statKeys.map(key => character.value.abilityScores[key]?.score).filter(v => v !== null && v !== undefined)
-  const nextScore = availableScores.value.find(score => !alreadyAssigned.includes(score))
-  if (nextScore !== undefined) {
+  // Fallback: assign the first available score (works with duplicates)
+  if (availableScores.value.length > 0) {
+    const nextScore = availableScores.value[0]
     if (!character.value.abilityScores[statName]) {
       character.value.abilityScores[statName] = { score: 0, modifier: 0 }
     }
     character.value.abilityScores[statName].score = nextScore
     character.value.abilityScores[statName].modifier = Math.floor((nextScore - 10) / 2)
-    const idx = availableScores.value.indexOf(nextScore)
-    if (idx !== -1) availableScores.value.splice(idx, 1)
+    availableScores.value.splice(0, 1)
   }
   const allAssigned = statKeys.every(key => character.value.abilityScores[key]?.score !== null && character.value.abilityScores[key]?.score !== undefined)
   if (allAssigned) {
@@ -296,19 +321,82 @@ const assignScore = statName => {
   margin: 0 auto;
 }
 
+
 .rolled-chip {
-  font-size: 2rem;
+  font-size: 1.5rem;
   font-weight: 600;
   letter-spacing: 0.5px;
   cursor: grab;
   border-radius: 16px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.10);
-  width: 96px;
-  height: 96px;
+  min-width: 48px;
+  height: 48px;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 12px;
+  padding: 6px 12px;
+}
+
+
+/* Center the cards in the row */
+.available-scores-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  justify-content: center;
+  align-items: center;
+}
+
+.wide-array-card {
+  min-width: 540px;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+/* Fixed-size square for all value cards */
+/* Visually distinct, centered, draggable card */
+/* Use v-card for elevation and background */
+.array-value-card {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  font-size: 1.4rem;
+  font-weight: 600;
+  margin: 0 6px 8px 6px;
+  cursor: grab;
+  user-select: none;
+  border-radius: 12px;
+  transition: background 0.2s, box-shadow 0.2s;
+  /* No manual box-shadow or background, let v-card handle it */
+}
+
+@media (max-width: 700px) {
+  .wide-array-card {
+    min-width: 0;
+    max-width: 100vw;
+  }
+
+  .available-scores-row {
+    max-width: 100vw;
+    padding: 0 4px;
+  }
+
+  .array-value-card {
+    width: 44px;
+    height: 44px;
+    font-size: 1.1rem;
+  }
+}
+
+.array-value-text {
+  color: var(--v-theme-primary-darken-2);
+  font-size: 1.4rem;
+  font-weight: 600;
 }
 
 /* Mobile responsive styles */

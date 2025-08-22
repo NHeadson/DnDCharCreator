@@ -39,23 +39,19 @@
           </v-card-title>
           <v-divider />
           <v-card-text class="d-flex align-center justify-center text-center py-4">
-            <v-fade-transition>
-              <div v-if="props.characterData?.isLoadingClasses">
+            <div>
+              <template v-if="props.characterData?.isLoadingClasses">
                 <v-progress-circular class="mb-2" color="primary" indeterminate :size="32" />
                 <div class="text-subtitle-2 text-primary">
                   Loading Class Data...
                 </div>
-              </div>
+              </template>
               <div v-else>
                 <v-icon class="mb-2 text-grey-darken-1" size="32">mdi-sword-cross</v-icon>
-                <div class="text-subtitle-2 text-grey-darken-1">
-                  Select a Class
-                </div>
-                <div class="text-caption text-grey mt-1">
-                  Choose your character's class to view details
-                </div>
+                <div class="text-subtitle-2 text-grey-darken-1">Select a Class</div>
+                <div class="text-caption text-grey mt-1">Choose your character's class to view details</div>
               </div>
-            </v-fade-transition>
+            </div>
           </v-card-text>
         </v-card>
 
@@ -599,7 +595,7 @@ function formatFeatureDesc(desc) {
 }
 
 .class-preview-card :deep(.v-card-text) {
-  padding: 18px 22px 18px 0;
+  padding: 18px 22px 18px 22px;
 }
 
 .class-attributes-grid :deep(.v-card) {

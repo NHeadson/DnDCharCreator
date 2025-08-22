@@ -11,7 +11,7 @@ mb-lg-0 pe-1 pe-lg-0" cols="6" lg="3" md="3" order="1" order-lg="1" order-md="1"
           </v-card-title>
           <v-card-text class="pa-3">
             <div class="tips-content">
-              <div class="text-caption mb-4">
+              <div class="text-caption mb-4 indent-1">
                 <strong>Quick Setup Options</strong>
               </div>
               <div class="d-flex justify-center mb-2">
@@ -73,5 +73,10 @@ defineEmits(['set-standard-array', 'roll-ability-scores'])
 
 .quick-start-btn {
   width: 80%;
+}
+
+/* Indent utility for headings */
+.indent-1 {
+  margin-left: 2em;
 }
 </style>

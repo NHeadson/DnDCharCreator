@@ -2,7 +2,8 @@
   <v-container class="ability-score-grid-container" fluid>
     <v-row class="justify-center">
       <v-col v-for="stat in stats" :key="stat.name" cols="6" sm="4" md="4" lg="4" class="d-flex justify-center">
-        <v-card :class="['ability-card-enhanced', 'd-flex', 'flex-column', 'align-center']" variant="outlined">
+        <v-card :class="['ability-card-enhanced', 'd-flex', 'flex-column', 'align-center']" variant="outlined"
+          :ripple="isAssigningScores" @click="isAssigningScores ? $emit('assign-score', stat.key) : undefined">
           <v-card-title class="d-flex justify-space-between align-center mb-2"
             :class="{ 'mobile-title': $vuetify.display.smAndDown }">
             <span class="stat-title" :class="{ 'mobile-stat-title': $vuetify.display.smAndDown }">{{
@@ -39,8 +40,8 @@
               }" />
             <v-btn v-else :color="isAssigningScores ? 'primary' : undefined" :disabled="!isAssigningScores"
               :size="$vuetify.display.smAndDown ? 'default' : 'large'" variant="flat" class="ability-score-btn mx-2"
-              :class="{ 'mobile-btn': $vuetify.display.smAndDown }" @click="$emit('assign-score', stat.key)"
-              @dragover.prevent @drop="$emit('assign-score', stat.key)">
+              :class="{ 'mobile-btn': $vuetify.display.smAndDown }" @dragover.prevent
+              @drop="$emit('assign-score', stat.key)">
               {{ character.abilityScores[stat.key]?.score || '—' }}
             </v-btn>
           </v-card-text>
