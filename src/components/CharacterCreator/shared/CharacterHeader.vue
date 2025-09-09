@@ -5,7 +5,13 @@
       <v-col class="px-6 py-4" cols="12" sm="2">
         <div class="character-portrait-container">
           <div class="character-portrait" @click="uploadPortrait">
-            <v-img class="portrait-image" cover height="100" width="100" :src="character.portrait">
+            <v-img
+              class="portrait-image"
+              cover
+              height="100"
+              :src="character.portrait"
+              width="100"
+            >
               <template #placeholder>
                 <div class="portrait-placeholder d-flex align-center justify-center fill-height">
                   <v-icon color="grey-lighten-2" size="36">mdi-account-circle</v-icon>
@@ -22,11 +28,23 @@
       <!-- Character Name (Prominent) -->
       <v-col class="px-6 py-4" cols="12" sm="4">
         <div class="character-name-section">
-          <v-text-field v-model="character.name" class="character-name-input" hide-details
-            placeholder="Enter Character Name" density="compact" variant="outlined">
+          <v-text-field
+            v-model="character.name"
+            class="character-name-input"
+            density="compact"
+            hide-details
+            placeholder="Enter Character Name"
+            variant="outlined"
+          >
             <template #append-inner>
-              <v-btn color="primary" icon :loading="isGeneratingName" size="small" variant="text"
-                @click="generateRandomName">
+              <v-btn
+                color="primary"
+                icon
+                :loading="isGeneratingName"
+                size="small"
+                variant="text"
+                @click="generateRandomName"
+              >
                 <v-icon size="24">mdi-dice-6</v-icon>
                 <v-tooltip activator="parent" location="top">Generate random name</v-tooltip>
               </v-btn>
@@ -37,8 +55,13 @@
 
       <!-- Player Name -->
       <v-col class="px-6 py-4" cols="12" sm="3">
-        <v-text-field v-model="character.playerName" density="compact" hide-details label="Player Name"
-          variant="outlined" />
+        <v-text-field
+          v-model="character.playerName"
+          density="compact"
+          hide-details
+          label="Player Name"
+          variant="outlined"
+        />
       </v-col>
 
       <!-- Level & XP (Display Only) -->
@@ -63,81 +86,81 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+  import { ref } from 'vue'
 
-const props = defineProps({
-  character: {
-    type: Object,
-    required: true,
-  },
-  characterData: {
-    type: Object,
-    required: true,
-  },
-})
+  const props = defineProps({
+    character: {
+      type: Object,
+      required: true,
+    },
+    characterData: {
+      type: Object,
+      required: true,
+    },
+  })
 
-const isGeneratingName = ref(false)
+  const isGeneratingName = ref(false)
 
-const alignmentOptions = [
-  'Lawful Good',
-  'Neutral Good',
-  'Chaotic Good',
-  'Lawful Neutral',
-  'True Neutral',
-  'Chaotic Neutral',
-  'Lawful Evil',
-  'Neutral Evil',
-  'Chaotic Evil',
-]
-
-// Initialize character properties if they don't exist
-if (!props.character.playerName) props.character.playerName = ''
-
-const generateRandomName = async () => {
-  if (!props.characterData?.generateName) {
-    // Fallback if no name generator available
-    generateFallbackName()
-    return
-  }
-
-  isGeneratingName.value = true
-  try {
-    // Use the species for name generation, fallback to 'human'
-    const race = props.character.species || 'human'
-    const generatedName = await props.characterData.generateName(race)
-    props.character.name = generatedName
-  } catch (error) {
-    console.error('Error generating name:', error)
-    generateFallbackName()
-  } finally {
-    isGeneratingName.value = false
-  }
-}
-
-const generateFallbackName = () => {
-  const firstNames = [
-    'Aeliana', 'Bran', 'Cora', 'Dain', 'Elen', 'Finn', 'Gwen', 'Hal',
-    'Ivy', 'Jace', 'Kira', 'Liam', 'Maya', 'Nox', 'Ora', 'Pike',
-    'Quinn', 'Rae', 'Sage', 'Tara', 'Uma', 'Vale', 'Wren', 'Zara'
+  const alignmentOptions = [
+    'Lawful Good',
+    'Neutral Good',
+    'Chaotic Good',
+    'Lawful Neutral',
+    'True Neutral',
+    'Chaotic Neutral',
+    'Lawful Evil',
+    'Neutral Evil',
+    'Chaotic Evil',
   ]
 
-  const lastNames = [
-    'Brightblade', 'Stormwind', 'Ironforge', 'Goldleaf', 'Shadowmere',
-    'Flameheart', 'Frostborn', 'Starweaver', 'Moonwhisper', 'Thornfield',
-    'Dragonbane', 'Swiftarrow', 'Battlehammer', 'Silverbough', 'Nightfall',
-    'Dawnbreaker', 'Riverstone', 'Wildmane', 'Emberfall', 'Crystalvein',
-    'Ashwood', 'Blackthorn', 'Greycloak', 'Redbeard', 'Silverhand'
-  ]
+  // Initialize character properties if they don't exist
+  if (!props.character.playerName) props.character.playerName = ''
 
-  const firstName = firstNames[Math.floor(Math.random() * firstNames.length)]
-  const lastName = lastNames[Math.floor(Math.random() * lastNames.length)]
-  props.character.name = `${firstName} ${lastName}`
-}
+  const generateRandomName = async () => {
+    if (!props.characterData?.generateName) {
+      // Fallback if no name generator available
+      generateFallbackName()
+      return
+    }
 
-const uploadPortrait = () => {
-  // TODO: Implement portrait upload functionality
-  console.log('Portrait upload clicked')
-}
+    isGeneratingName.value = true
+    try {
+      // Use the species for name generation, fallback to 'human'
+      const race = props.character.species || 'human'
+      const generatedName = await props.characterData.generateName(race)
+      props.character.name = generatedName
+    } catch (error) {
+      console.error('Error generating name:', error)
+      generateFallbackName()
+    } finally {
+      isGeneratingName.value = false
+    }
+  }
+
+  const generateFallbackName = () => {
+    const firstNames = [
+      'Aeliana', 'Bran', 'Cora', 'Dain', 'Elen', 'Finn', 'Gwen', 'Hal',
+      'Ivy', 'Jace', 'Kira', 'Liam', 'Maya', 'Nox', 'Ora', 'Pike',
+      'Quinn', 'Rae', 'Sage', 'Tara', 'Uma', 'Vale', 'Wren', 'Zara',
+    ]
+
+    const lastNames = [
+      'Brightblade', 'Stormwind', 'Ironforge', 'Goldleaf', 'Shadowmere',
+      'Flameheart', 'Frostborn', 'Starweaver', 'Moonwhisper', 'Thornfield',
+      'Dragonbane', 'Swiftarrow', 'Battlehammer', 'Silverbough', 'Nightfall',
+      'Dawnbreaker', 'Riverstone', 'Wildmane', 'Emberfall', 'Crystalvein',
+      'Ashwood', 'Blackthorn', 'Greycloak', 'Redbeard', 'Silverhand',
+    ]
+
+    const firstName = firstNames[Math.floor(Math.random() * firstNames.length)]
+    const lastName = lastNames[Math.floor(Math.random() * lastNames.length)]
+    props.character.name = `${firstName} ${lastName}`
+  }
+
+  const uploadPortrait = () => {
+    // TODO: Implement portrait upload functionality
+    console.log('Portrait upload clicked')
+  }
 </script>
 
 <style scoped>

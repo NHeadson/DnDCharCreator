@@ -12,8 +12,8 @@
         <br>Using fallback data instead.
       </v-alert>
 
-      <v-stepper v-model="localCurrentStep" elevation="2" :items="stepItems" :mobile="$vuetify.display.mdAndDown"
-        editable>
+      <v-stepper v-model="localCurrentStep" editable elevation="2" :items="stepItems"
+        :mobile="$vuetify.display.mdAndDown">
         <template #next-text="{ next }">
           <!-- Current step: {{ localCurrentStep }} -->
           <v-btn v-if="localCurrentStep < 5" color="primary" variant="elevated" @click="next">
@@ -23,21 +23,21 @@
 
         <template #actions="{ next, prev }">
           <div class="navigation-buttons" :class="{ 'mobile-nav': $vuetify.display.smAndDown }">
-            <v-btn v-if="localCurrentStep > 1" variant="text" @click="prev"
-              :size="$vuetify.display.smAndDown ? 'small' : 'default'">
+            <v-btn v-if="localCurrentStep > 1" :size="$vuetify.display.smAndDown ? 'small' : 'default'" variant="text"
+              @click="prev">
               <v-icon v-if="$vuetify.display.smAndDown" icon="mdi-chevron-left" />
               <span v-else>Previous</span>
             </v-btn>
             <v-spacer />
-            <v-btn v-if="localCurrentStep < 5" color="primary" variant="elevated" @click="next"
-              :size="$vuetify.display.smAndDown ? 'small' : 'default'">
+            <v-btn v-if="localCurrentStep < 5" color="primary" :size="$vuetify.display.smAndDown ? 'small' : 'default'"
+              variant="elevated" @click="next">
               <span v-if="!$vuetify.display.smAndDown">Next</span>
               <v-icon v-else icon="mdi-chevron-right" />
             </v-btn>
             <v-btn v-else-if="localCurrentStep === 5" class="save-character-btn-centered" color="success"
-              variant="elevated" :size="$vuetify.display.smAndDown ? 'default' : 'x-large'"
-              :prepend-icon="$vuetify.display.smAndDown ? undefined : 'mdi-content-save'" @click="saveCharacter">
-              <v-icon v-if="$vuetify.display.smAndDown" icon="mdi-content-save" class="me-2" />
+              :prepend-icon="$vuetify.display.smAndDown ? undefined : 'mdi-content-save'"
+              :size="$vuetify.display.smAndDown ? 'default' : 'x-large'" variant="elevated" @click="saveCharacter">
+              <v-icon v-if="$vuetify.display.smAndDown" class="me-2" icon="mdi-content-save" />
               Save Character
             </v-btn>
           </div>
@@ -116,19 +116,19 @@ const saveCharacter = () => {
 }
 
 // Watch for external currentStep changes
-watch(() => props.currentStep, (newStep) => {
+watch(() => props.currentStep, newStep => {
   console.log('External step change:', newStep)
   localCurrentStep.value = newStep
 })
 
 // Watch for local step changes and emit them
-watch(localCurrentStep, (newStep) => {
+watch(localCurrentStep, newStep => {
   console.log('Local step change to:', newStep)
   emit('update:current-step', newStep)
 })
 
 // Function to determine if a step should be enabled (optional validation)
-const isStepEnabled = (stepValue) => {
+const isStepEnabled = stepValue => {
   // Allow clicking on any step for now - you can add validation later
   // For example: return stepValue <= maxAllowedStep.value
   return true
@@ -140,31 +140,31 @@ const stepItems = [
     title: 'Character Info',
     subtitle: 'Species, Class, Background',
     value: 1,
-    icon: 'mdi-account-edit'
+    icon: 'mdi-account-edit',
   },
   {
     title: 'Abilities',
     subtitle: 'Ability Scores',
     value: 2,
-    icon: 'mdi-dice-6'
+    icon: 'mdi-dice-6',
   },
   {
     title: 'Skills & Proficiencies',
     subtitle: 'What You Know',
     value: 3,
-    icon: 'mdi-brain'
+    icon: 'mdi-brain',
   },
   {
     title: 'Inventory & Equipment',
     subtitle: 'What You Own',
     value: 4,
-    icon: 'mdi-package-variant'
+    icon: 'mdi-package-variant',
   },
   {
     title: 'Summary',
     subtitle: 'Review & Save',
     value: 5,
-    icon: 'mdi-check-circle'
+    icon: 'mdi-check-circle',
   },
 ]
 </script>
@@ -207,7 +207,7 @@ const stepItems = [
   padding: 16px 48px !important;
   border-radius: 16px;
   box-shadow:
-    0 8px 25px rgba(21, 128, 61, 0.4),
+    0 4px 12px rgba(21, 128, 61, 0.2),
     0 0 0 1px rgba(255, 255, 255, 0.1) inset !important;
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   text-transform: none;
@@ -234,8 +234,8 @@ const stepItems = [
 .save-character-btn-centered:hover {
   transform: translateY(-4px) scale(1.03);
   box-shadow:
-    0 15px 35px rgba(21, 128, 61, 0.5),
-    0 5px 15px rgba(21, 128, 61, 0.3),
+    0 8px 20px rgba(21, 128, 61, 0.3),
+    0 3px 10px rgba(21, 128, 61, 0.2),
     0 0 0 1px rgba(255, 255, 255, 0.2) inset !important;
   background: linear-gradient(135deg, #22c55e, #16a34a, #15803d) !important;
 }
@@ -247,7 +247,7 @@ const stepItems = [
 .save-character-btn-centered:active {
   transform: translateY(-2px) scale(1.02);
   box-shadow:
-    0 10px 30px rgba(21, 128, 61, 0.45),
+    0 6px 18px rgba(21, 128, 61, 0.25),
     0 0 0 1px rgba(255, 255, 255, 0.15) inset !important;
 }
 

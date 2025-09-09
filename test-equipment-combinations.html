@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0" />
+    <title>Equipment System Test - All Class/Background Combinations</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+      }
+      .test-section {
+        margin: 20px 0;
+        padding: 15px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+      }
+      .pass {
+        background-color: #d4edda;
+        border-color: #c3e6cb;
+      }
+      .fail {
+        background-color: #f8d7da;
+        border-color: #f5c6cb;
+      }
+      .warning {
+        background-color: #fff3cd;
+        border-color: #ffeaa7;
+      }
+      .test-result {
+        margin: 10px 0;
+        padding: 10px;
+        border-radius: 3px;
+      }
+      .equipment-list {
+        margin: 10px 0;
+      }
+      .equipment-item {
+        display: inline-block;
+        background: #e9ecef;
+        padding: 3px 8px;
+        margin: 2px;
+        border-radius: 3px;
+        font-size: 12px;
+      }
+      h2 {
+        color: #495057;
+      }
+      h3 {
+        color: #6c757d;
+      }
+      .summary {
+        background: #f8f9fa;
+        padding: 15px;
+        border-radius: 5px;
+        margin: 20px 0;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>🧪 Equipment System Comprehensive Test</h1>
+    <p>
+      This test validates that the equipment system works correctly for all
+      class and background combinations.
+    </p>
+
+    <div class="summary">
+      <h2>Test Coverage</h2>
+      <p>
+        <strong>Classes to test:</strong> Fighter, Ranger, Rogue, Wizard,
+        Cleric, Barbarian, Bard, Druid, Monk, Paladin, Sorcerer, Warlock
+      </p>
+      <p>
+        <strong>Backgrounds to test:</strong> Entertainer, Folk Hero, Noble,
+        Criminal, Acolyte, Soldier, Sage, Hermit
+      </p>
+      <p>
+        <strong>Species to test:</strong> Human, Elf (Wood/High), Dwarf
+        (Mountain/Hill), Halfling, Dragonborn, Tiefling
+      </p>
+      <p><strong>Total combinations:</strong> 12 × 8 × 6 = 576 combinations</p>
+    </div>
+
+    <div class="test-section">
+      <h2>🔧 Equipment System Components Test</h2>
+
+      <div
+        class="test-result"
+        id="api-data-test">
+        <h3>1. API Data Loading</h3>
+        <p>Testing if equipment choices load from D&D 5e API...</p>
+      </div>
+
+      <div
+        class="test-result"
+        id="fallback-data-test">
+        <h3>2. Fallback Equipment Data</h3>
+        <p>Testing fallback equipment for classes without API data...</p>
+      </div>
+
+      <div
+        class="test-result"
+        id="background-equipment-test">
+        <h3>3. Background Equipment</h3>
+        <p>
+          Testing background equipment loading and musical instrument
+          selection...
+        </p>
+      </div>
+
+      <div
+        class="test-result"
+        id="weapon-selection-test">
+        <h3>4. Weapon Category Selection</h3>
+        <p>Testing "Choose X from Simple/Martial Weapons" functionality...</p>
+      </div>
+
+      <div
+        class="test-result"
+        id="inventory-display-test">
+        <h3>5. Inventory Display</h3>
+        <p>
+          Testing that selected weapons show individually, not as categories...
+        </p>
+      </div>
+    </div>
+
+    <div class="test-section">
+      <h2>🎯 Critical Test Cases</h2>
+
+      <div class="test-result">
+        <h3>High Priority Combinations</h3>
+        <ul>
+          <li>
+            <strong>Fighter + Entertainer:</strong> Multiple weapon choices +
+            musical instrument
+          </li>
+          <li>
+            <strong>Ranger + Folk Hero:</strong> Class weapons + artisan tools
+            choice
+          </li>
+          <li>
+            <strong>Rogue + Criminal:</strong> Finesse weapons + thieves' tools
+          </li>
+          <li><strong>Wizard + Sage:</strong> Simple weapons + book/scrolls</li>
+          <li>
+            <strong>Cleric + Acolyte:</strong> Armor choices + holy symbol
+          </li>
+          <li>
+            <strong>Bard + Entertainer:</strong> Multiple instrument choices
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="test-section">
+      <h2>✅ Manual Testing Checklist</h2>
+
+      <div class="test-result">
+        <h3>For Each Class Test:</h3>
+        <ol>
+          <li>✓ Equipment choices appear (API or fallback)</li>
+          <li>✓ Can select from weapon categories (if applicable)</li>
+          <li>✓ Default equipment loads correctly</li>
+          <li>✓ Inventory shows specific items, not categories</li>
+          <li>✓ No duplicate equipment</li>
+          <li>✓ Gold calculation is accurate</li>
+        </ol>
+      </div>
+
+      <div class="test-result">
+        <h3>For Each Background Test:</h3>
+        <ol>
+          <li>✓ Background equipment loads</li>
+          <li>✓ Musical instruments can be selected (if applicable)</li>
+          <li>✓ Artisan tools work correctly (if applicable)</li>
+          <li>✓ Starting gold is included</li>
+          <li>✓ Equipment chips display correctly</li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="test-section">
+      <h2>🔍 Automated Testing Recommendations</h2>
+
+      <div class="test-result">
+        <h3>Jest/Vitest Unit Tests Needed:</h3>
+        <ul>
+          <li>
+            <code>parseEquipmentChoice()</code> - handles all API response
+            formats
+          </li>
+          <li>
+            <code>getFallbackEquipmentChoices()</code> - returns valid equipment
+            for all classes
+          </li>
+          <li>
+            <code>getSimpleMeleeWeapons()</code> - returns complete weapon list
+          </li>
+          <li>
+            <code>allInventory computed</code> - correctly merges all equipment
+            sources
+          </li>
+          <li>
+            <code>selectMusicalInstrument()</code> - replaces instruments
+            correctly
+          </li>
+          <li>
+            <code>confirmWeaponSelection()</code> - stores weapons with
+            choiceIndex
+          </li>
+        </ul>
+      </div>
+
+      <div class="test-result">
+        <h3>Integration Tests Needed:</h3>
+        <ul>
+          <li>Character store equipment management</li>
+          <li>Equipment choice persistence across navigation</li>
+          <li>Equipment display consistency across all views</li>
+          <li>Price hiding in standard vs gold methods</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="test-section">
+      <h2>🚨 Known Risk Areas</h2>
+
+      <div class="test-result warning">
+        <h3>Potential Issues to Watch For:</h3>
+        <ul>
+          <li>
+            <strong>API Failures:</strong> What happens if D&D 5e API is down?
+          </li>
+          <li>
+            <strong>Missing Fallback Data:</strong> New classes without fallback
+            equipment
+          </li>
+          <li>
+            <strong>Background Equipment Conflicts:</strong> Multiple sources of
+            truth
+          </li>
+          <li>
+            <strong>Custom Weapon Storage:</strong> choiceIndex tracking across
+            saves/loads
+          </li>
+          <li>
+            <strong>Musical Instrument Edge Cases:</strong> Multiple instruments
+            in one background
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="test-section">
+      <h2>📊 Test Results Dashboard</h2>
+      <p>
+        Execute tests by navigating through different character combinations in
+        the app and checking each component:
+      </p>
+
+      <div id="test-results">
+        <!-- Results will be populated during manual testing -->
+        <div class="test-result">
+          <input
+            type="checkbox"
+            id="fighter-test" />
+          <label for="fighter-test">Fighter class equipment works</label><br />
+          <input
+            type="checkbox"
+            id="ranger-test" />
+          <label for="ranger-test">Ranger class equipment works</label><br />
+          <input
+            type="checkbox"
+            id="rogue-test" />
+          <label for="rogue-test">Rogue class equipment works</label><br />
+          <input
+            type="checkbox"
+            id="wizard-test" />
+          <label for="wizard-test">Wizard class equipment works</label><br />
+          <input
+            type="checkbox"
+            id="cleric-test" />
+          <label for="cleric-test">Cleric class equipment works</label><br />
+          <input
+            type="checkbox"
+            id="barbarian-test" />
+          <label for="barbarian-test">Barbarian class equipment works</label
+          ><br />
+          <input
+            type="checkbox"
+            id="bard-test" />
+          <label for="bard-test">Bard class equipment works</label><br />
+          <input
+            type="checkbox"
+            id="druid-test" />
+          <label for="druid-test">Druid class equipment works</label><br />
+          <input
+            type="checkbox"
+            id="monk-test" />
+          <label for="monk-test">Monk class equipment works</label><br />
+          <input
+            type="checkbox"
+            id="paladin-test" />
+          <label for="paladin-test">Paladin class equipment works</label><br />
+          <input
+            type="checkbox"
+            id="sorcerer-test" />
+          <label for="sorcerer-test">Sorcerer class equipment works</label
+          ><br />
+          <input
+            type="checkbox"
+            id="warlock-test" />
+          <label for="warlock-test">Warlock class equipment works</label><br />
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Add interactive testing functionality
+      document.addEventListener('DOMContentLoaded', function () {
+        console.log('Equipment System Test Suite Loaded');
+
+        // You can add automated tests here that interact with the character creator
+        // For now, this serves as a comprehensive testing guide
+
+        const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+        checkboxes.forEach((checkbox) => {
+          checkbox.addEventListener('change', function () {
+            const checked = Array.from(checkboxes).filter(
+              (cb) => cb.checked
+            ).length;
+            const total = checkboxes.length;
+            console.log(`Progress: ${checked}/${total} tests completed`);
+          });
+        });
+      });
+    </script>
+  </body>
+</html>

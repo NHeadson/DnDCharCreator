@@ -1,51 +1,51 @@
-import { defineStore } from "pinia";
-import { ref, computed } from "vue";
+import { defineStore } from 'pinia';
+import { computed, ref } from 'vue';
 
-export const useUserStore = defineStore("user", {
+export const useUserStore = defineStore('user', {
   state: () => ({
     user: null,
     isAuthenticated: false,
     showAuthDialog: false,
-    passwordInput: "",
-    authError: "",
+    passwordInput: '',
+    authError: '',
     pendingAction: null,
     authExpiresAt: null,
     loading: false,
     error: null,
   }),
   actions: {
-    authenticate(password) {
+    authenticate (password) {
       const ADMIN_PASSWORD = import.meta.env.VITE_ADMIN_PASSWORD;
       const SESSION_TIMEOUT = 30 * 60 * 1000;
       if (!ADMIN_PASSWORD) {
-        this.authError = "Admin authentication is not properly configured.";
+        this.authError = 'Admin authentication is not properly configured.';
         return false;
       }
       if (password === ADMIN_PASSWORD) {
         this.isAuthenticated = true;
         this.authExpiresAt = Date.now() + SESSION_TIMEOUT;
-        this.authError = "";
+        this.authError = '';
         this.showAuthDialog = false;
-        this.passwordInput = "";
+        this.passwordInput = '';
         if (this.pendingAction) {
           this.pendingAction();
           this.pendingAction = null;
         }
         return true;
       } else {
-        this.authError = "Invalid password.";
+        this.authError = 'Invalid password.';
         return false;
       }
     },
-    logout() {
+    logout () {
       this.isAuthenticated = false;
       this.authExpiresAt = null;
       this.showAuthDialog = false;
-      this.passwordInput = "";
-      this.authError = "";
+      this.passwordInput = '';
+      this.authError = '';
       this.pendingAction = null;
     },
-    checkAdminAccess() {
+    checkAdminAccess () {
       if (this.isSessionValid) return true;
       if (
         this.isAuthenticated &&
@@ -56,7 +56,7 @@ export const useUserStore = defineStore("user", {
       }
       return false;
     },
-    requireAuth(action) {
+    requireAuth (action) {
       if (this.checkAdminAccess()) {
         action();
       } else {
@@ -64,41 +64,41 @@ export const useUserStore = defineStore("user", {
         this.showAuthDialog = true;
       }
     },
-    handleAuthSubmit() {
+    handleAuthSubmit () {
       if (!this.passwordInput.trim()) {
-        this.authError = "Please enter a password";
+        this.authError = 'Please enter a password';
         return;
       }
       this.authenticate(this.passwordInput);
     },
-    closeAuthDialog() {
+    closeAuthDialog () {
       this.showAuthDialog = false;
-      this.passwordInput = "";
-      this.authError = "";
+      this.passwordInput = '';
+      this.authError = '';
       this.pendingAction = null;
     },
-    extendSession() {
+    extendSession () {
       const SESSION_TIMEOUT = 30 * 60 * 1000;
       if (this.isAuthenticated) {
         this.authExpiresAt = Date.now() + SESSION_TIMEOUT;
       }
     },
-    setUser(user) {
+    setUser (user) {
       this.user = user;
       this.isAuthenticated = !!user;
     },
-    setLoading(val) {
+    setLoading (val) {
       this.loading = val;
     },
-    setError(err) {
+    setError (err) {
       this.error = err;
     },
   },
   getters: {
-    isSessionValid: (state) =>
+    isSessionValid: state =>
       state.isAuthenticated &&
       state.authExpiresAt &&
       Date.now() < state.authExpiresAt,
-    isAdmin: (state) => state.isSessionValid,
+    isAdmin: state => state.isSessionValid,
   },
 });

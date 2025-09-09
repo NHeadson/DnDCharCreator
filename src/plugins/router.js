@@ -5,39 +5,39 @@
  */
 
 // Composables
-import { createRouter, createWebHistory } from "vue-router";
-import { useAdminStore } from "@/stores/adminStore";
+import { createRouter, createWebHistory } from 'vue-router';
+import { useAdminStore } from '@/stores/adminStore';
 
 // Pages
-import CharacterForm from "@/pages/character-form.vue";
-import Characters from "@/pages/characters.vue";
-import Theme from "@/pages/theme.vue";
-import MockupViewer from "@/pages/mockup-viewer.vue";
+import CharacterForm from '@/pages/character-form.vue';
+import Characters from '@/pages/characters.vue';
+import Theme from '@/pages/theme.vue';
+import MockupViewer from '@/pages/mockup-viewer.vue';
 
 const routes = [
   {
-    path: "/",
-    name: "Home",
+    path: '/',
+    name: 'Home',
     component: Characters,
   },
   {
-    path: "/character-form",
-    name: "CharacterForm",
+    path: '/character-form',
+    name: 'CharacterForm',
     component: CharacterForm,
   },
   {
-    path: "/characters",
-    name: "Characters",
+    path: '/characters',
+    name: 'Characters',
     component: Characters,
   },
   {
-    path: "/theme",
-    name: "Theme",
+    path: '/theme',
+    name: 'Theme',
     component: Theme,
   },
   {
-    path: "/mockups",
-    name: "MockupViewer",
+    path: '/mockups',
+    name: 'MockupViewer',
     component: MockupViewer,
   },
 ];

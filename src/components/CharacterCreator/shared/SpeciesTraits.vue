@@ -1,5 +1,5 @@
 <template>
-  <v-card variant="outlined" class="mb-6">
+  <v-card class="mb-6" variant="outlined">
     <v-card-title class="d-flex align-center py-2">
       <v-icon class="me-2" color="green">mdi-leaf</v-icon>
       Species Traits
@@ -10,55 +10,44 @@
       <div class="d-flex align-center justify-space-between mb-3">
         <div class="d-flex align-center">
           <h5 class="text-h6 me-2">{{ character.speciesDetails.name }}</h5>
-          <v-chip v-if="character.speciesLineage" color="primary" size="small" variant="elevated">
-          </v-chip>
+          <v-chip v-if="character.speciesLineage" color="primary" size="small" variant="elevated" />
         </div>
         <v-chip-group v-if="character.speciesDetails.abilityBonus?.length" class="ma-0">
-          <v-chip v-for="bonus in character.speciesDetails.abilityBonus" :key="bonus.ability" color="blue" </v-chip>
-        </v-chip-group>
+          <v-chip v-for="bonus in character.speciesDetails.abilityBonus" :key="bonus.ability" v-chip <
+            color="blue" /></v-chip-group>
       </div>
 
       <!-- Quick Stats Row -->
-      <v-row dense class="mb-3">
+      <v-row class="mb-3" dense>
         <v-col cols="auto">
-          <v-chip color="green" size="small" variant="flat">
-          </v-chip>
+          <v-chip color="green" size="small" variant="flat" />
         </v-col>
         <v-col cols="auto">
-          <v-chip color="green" size="small" variant="flat">
-          </v-chip>
+          <v-chip color="green" size="small" variant="flat" />
         </v-col>
         <v-col v-if="character.speciesDetails.darkvision" cols="auto">
-          <v-chip color="purple" size="small" variant="flat">
-          </v-chip>
+          <v-chip color="purple" size="small" variant="flat" />
         </v-col>
-        <v-col v-if="character.speciesDetails.damageResistance?.length" cols="auto">
-        </v-col>
+        <v-col v-if="character.speciesDetails.damageResistance?.length" cols="auto" />
       </v-row>
 
       <!-- Special Traits -->
       <div v-if="character.speciesDetails.traits?.length" class="mb-3">
-        <div class="d-flex align-center mb-2">
-        </div>
-        <div class="traits-compact">
-        </div>
+        <div class="d-flex align-center mb-2" />
+        <div class="traits-compact" />
       </div>
 
       <!-- Lineage Comparison -->
       <div v-if="character.speciesDetails.lineages?.length > 1" class="mb-3">
-        <div class="d-flex align-center mb-2">
-        </div>
-        <v-row dense>
-        </v-row>
+        <div class="d-flex align-center mb-2" />
+        <v-row dense />
       </div>
 
       <!-- Languages & Other Info -->
       <v-row v-if="character.speciesDetails.languages?.length || character.speciesDetails.damageResistance?.length"
         dense>
-        <v-col v-if="character.speciesDetails.languages?.length" cols="12" sm="6">
-        </v-col>
-        <v-col v-if="character.speciesDetails.damageResistance?.length" cols="12" sm="6">
-        </v-col>
+        <v-col v-if="character.speciesDetails.languages?.length" cols="12" sm="6" />
+        <v-col v-if="character.speciesDetails.damageResistance?.length" cols="12" sm="6" />
       </v-row>
     </v-card-text>
 
@@ -83,7 +72,7 @@ const props = defineProps({
   characterData: {
     type: Object,
     required: true,
-  }
+  },
 })
 
 // Computed property for lineage-specific traits
@@ -100,33 +89,33 @@ const lineageTraits = computed(() => {
 })
 
 // Get key differentiators for each lineage/subrace
-const getLineageHighlights = (lineage) => {
+const getLineageHighlights = lineage => {
   const highlights = {
     // Elf lineages
-    'High Elf': '+1 INT, Cantrip, Extra Language',
-    'Wood Elf': '+1 WIS, Elf Weapon Training, Stealth',
-    'Dark Elf (Drow)': '+1 CHA, Superior Darkvision, Drow Magic',
-    'Drow': '+1 CHA, Superior Darkvision, Drow Magic',
+    'High Elf': 'Extra cantrip, weapon training, bonus language',
+    'Wood Elf': 'Keen senses, mask of the wild, elf weapon training',
+    'Dark Elf (Drow)': 'Superior darkvision, drow magic, sunlight sensitivity',
+    'Drow': 'Superior darkvision, drow magic, sunlight sensitivity',
 
     // Dwarf lineages
-    'Hill Dwarf': '+1 WIS, +1 HP per level, Wisdom bonus',
-    'Mountain Dwarf': '+2 STR, Armor Proficiency, More robust',
+    'Hill Dwarf': 'Dwarven toughness, extra hit points per level',
+    'Mountain Dwarf': 'Armor proficiency, more robust and hardy',
 
     // Halfling lineages
-    'Lightfoot': '+1 CHA, Naturally Stealthy, Social',
-    'Lightfoot Halfling': '+1 CHA, Naturally Stealthy, Social',
-    'Stout': '+1 CON, Poison Resistance, Hardy',
-    'Stout Halfling': '+1 CON, Poison Resistance, Hardy',
+    'Lightfoot': 'Naturally stealthy, social and charming',
+    'Lightfoot Halfling': 'Naturally stealthy, social and charming',
+    'Stout': 'Poison resistance, hardy constitution',
+    'Stout Halfling': 'Poison resistance, hardy constitution',
 
     // Gnome lineages
-    'Forest Gnome': '+1 DEX, Speak with Animals, Nature magic',
-    'Rock Gnome': '+1 CON, Tinker abilities, Tool expertise',
+    'Forest Gnome': 'Speak with animals, natural illusionist',
+    'Rock Gnome': 'Tinker abilities, tool expertise',
 
     // Human variants
-    'Variant Human': 'Extra Feat, Extra Skill, Flexible stats',
+    'Variant Human': 'Extra feat, extra skill, flexible and adaptable',
 
     // Default fallback
-    'default': 'Unique traits and abilities'
+    'default': 'Unique traits and abilities',
   }
 
   return highlights[lineage.name] || highlights['default']
@@ -147,7 +136,6 @@ const getLineageHighlights = (lineage) => {
   padding: 10px 14px !important;
   box-sizing: border-box;
 }
-
 
 
 .lineage-selected {

@@ -24,31 +24,31 @@
 </template>
 
 <script setup>
-defineProps({
-  character: {
-    type: Object,
-    required: true,
-  },
-})
+  defineProps({
+    character: {
+      type: Object,
+      required: true,
+    },
+  })
 
-function getRecommendedAbilities(characterClass) {
-  const recommendations = {
-    barbarian: ['Strength', 'Constitution', 'Dexterity'],
-    bard: ['Charisma', 'Dexterity', 'Constitution'],
-    cleric: ['Wisdom', 'Constitution', 'Strength'],
-    druid: ['Wisdom', 'Constitution', 'Dexterity'],
-    fighter: ['Strength/Dexterity', 'Constitution', 'Intelligence/Wisdom'],
-    monk: ['Dexterity', 'Wisdom', 'Constitution'],
-    paladin: ['Strength', 'Charisma', 'Constitution'],
-    ranger: ['Dexterity', 'Wisdom', 'Constitution'],
-    rogue: ['Dexterity', 'Intelligence/Charisma', 'Constitution'],
-    sorcerer: ['Charisma', 'Constitution', 'Dexterity'],
-    warlock: ['Charisma', 'Constitution', 'Dexterity'],
-    wizard: ['Intelligence', 'Constitution', 'Dexterity'],
+  function getRecommendedAbilities (characterClass) {
+    const recommendations = {
+      barbarian: ['Strength', 'Constitution', 'Dexterity'],
+      bard: ['Charisma', 'Dexterity', 'Constitution'],
+      cleric: ['Wisdom', 'Constitution', 'Strength'],
+      druid: ['Wisdom', 'Constitution', 'Dexterity'],
+      fighter: ['Strength/Dexterity', 'Constitution', 'Intelligence/Wisdom'],
+      monk: ['Dexterity', 'Wisdom', 'Constitution'],
+      paladin: ['Strength', 'Charisma', 'Constitution'],
+      ranger: ['Dexterity', 'Wisdom', 'Constitution'],
+      rogue: ['Dexterity', 'Intelligence/Charisma', 'Constitution'],
+      sorcerer: ['Charisma', 'Constitution', 'Dexterity'],
+      warlock: ['Charisma', 'Constitution', 'Dexterity'],
+      wizard: ['Intelligence', 'Constitution', 'Dexterity'],
+    }
+
+    return recommendations[characterClass] || []
   }
-
-  return recommendations[characterClass] || []
-}
 </script>
 
 <style scoped>

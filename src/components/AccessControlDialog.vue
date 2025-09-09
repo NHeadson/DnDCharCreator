@@ -9,9 +9,8 @@
       <v-divider />
 
       <v-card-text class="pa-6">
-        <v-alert class="mb-4" type="info" variant="tonal">
-          <v-alert-title class="d-flex align-center">
-            <v-icon class="me-2">mdi-account-group</v-icon>
+        <v-alert class="mb-4" variant="tonal" color="info" icon="mdi-account-group">
+          <v-alert-title>
             Private D&D Group
           </v-alert-title>
           This character creator is private and intended for a specific D&D group. Please enter the access code provided
@@ -26,8 +25,8 @@
           <!-- Native password input for better browser recognition -->
           <div class="mb-3">
             <label class="text-body-2 text-grey mb-2 d-block" for="access-password">Access Code</label>
-            <input id="access-password" v-model="accessPasswordInput" autocomplete="current-password"
-              class="v-input native-password-input" autofocus :class="{ 'error': accessError }" name="password"
+            <input id="access-password" v-model="accessPasswordInput" autocomplete="current-password" autofocus
+              class="v-input native-password-input" :class="{ 'error': accessError }" name="password"
               placeholder="Enter access code" type="password">
             <div v-if="accessError" class="text-error text-caption mt-1">{{ accessError }}</div>
             <div class="text-caption text-grey mt-1">Get this code from your DM</div>
@@ -48,8 +47,8 @@
       </v-card-text>
 
       <v-card-actions class="pa-6 pt-0">
-        <v-btn color="primary" form="access-form" prepend-icon="mdi-check" class="flex-grow-1" type="submit"
-          :disabled="!accessPasswordInput.trim()" variant="elevated">
+        <v-btn class="flex-grow-1" color="primary" :disabled="!accessPasswordInput.trim()" form="access-form"
+          prepend-icon="mdi-check" type="submit" variant="elevated">
           Enter
         </v-btn>
       </v-card-actions>
@@ -60,7 +59,7 @@
 <script setup>
 
 
-import { watch, computed } from 'vue'
+import { computed, watch } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useAdminStore } from '@/stores/adminStore'
 

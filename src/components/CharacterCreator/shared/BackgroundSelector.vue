@@ -9,7 +9,7 @@
           </v-card-title>
           <v-card-text class="pt-2 pb-3">
             <v-select v-model="character.background" density="compact" :error="!!characterData?.backgroundError"
-              item-title="name" :error-messages="characterData?.backgroundError" item-value="id"
+              :error-messages="characterData?.backgroundError" item-title="name" item-value="id"
               :items="characterData?.backgroundData || []" label="Choose Your Background"
               :loading="characterData?.isLoadingBackgrounds" variant="outlined">
               <template #prepend>
@@ -45,9 +45,9 @@
               <span class="text-caption text-grey-darken-1 mb-1" style="font-size: 0.85em;">Key Abilities</span>
               <div style="display: flex; gap: 6px; flex-wrap: wrap;">
                 <v-tooltip v-for="score in selectedBackgroundInfo.abilityScores || []" :key="'score-' + score"
-                  text="An ability score that's important for characters with this background" location="top">
-                  <template v-slot:activator="{ props }">
-                    <v-chip v-bind="props" size="small" variant="tonal" color="accent">
+                  location="top" text="An ability score that's important for characters with this background">
+                  <template #activator="{ props }">
+                    <v-chip v-bind="props" color="accent" size="small" variant="tonal">
                       {{ score }}
                     </v-chip>
                   </template>
@@ -69,9 +69,9 @@
                 <span class="text-caption font-weight-bold text-grey-darken-2">Background Feature</span>
               </div>
               <div class="ms-3">
-                <v-tooltip text="A special benefit that comes with your character's background" location="top">
-                  <template v-slot:activator="{ props }">
-                    <v-chip v-bind="props" color="amber" size="small" variant="tonal" class="me-2 mb-1">
+                <v-tooltip location="top" text="A special benefit that comes with your character's background">
+                  <template #activator="{ props }">
+                    <v-chip v-bind="props" class="me-2 mb-1" color="amber" size="small" variant="tonal">
                       {{ selectedBackgroundInfo.feature.name }}
                     </v-chip>
                   </template>
@@ -89,8 +89,8 @@
               <div class="ms-3">
                 <div style="display: flex; gap: 6px; flex-wrap: wrap;">
                   <v-tooltip v-for="skill in selectedBackgroundInfo.skillProficiencies" :key="'skill-' + skill"
-                    text="A skill your character is trained in due to their background" location="top">
-                    <template v-slot:activator="{ props }">
+                    location="top" text="A skill your character is trained in due to their background">
+                    <template #activator="{ props }">
                       <v-chip v-bind="props" color="success" size="small" variant="tonal">
                         {{ skill }}
                       </v-chip>
@@ -109,8 +109,8 @@
               <div class="ms-3">
                 <div style="display: flex; gap: 6px; flex-wrap: wrap;">
                   <v-tooltip v-for="tool in selectedBackgroundInfo.toolProficiencies" :key="'tool-' + tool"
-                    text="A tool or instrument your character learned to use in their background" location="top">
-                    <template v-slot:activator="{ props }">
+                    location="top" text="A tool or instrument your character learned to use in their background">
+                    <template #activator="{ props }">
                       <v-chip v-bind="props" color="info" size="small" variant="tonal">
                         {{ tool }}
                       </v-chip>
@@ -130,18 +130,18 @@
               <div class="ms-3">
                 <div style="display: flex; gap: 6px; flex-wrap: wrap; align-items: center;">
                   <v-tooltip v-for="language in selectedBackgroundInfo.languages || []" :key="'lang-' + language"
-                    text="A language your character learned through their background" location="top">
-                    <template v-slot:activator="{ props }">
+                    location="top" text="A language your character learned through their background">
+                    <template #activator="{ props }">
                       <v-chip v-bind="props" color="purple" size="small" variant="tonal">
                         {{ language }}
                       </v-chip>
                     </template>
                   </v-tooltip>
-                  <v-tooltip
+                  <v-tooltip v-for="option in selectedBackgroundInfo.languageOptions.from"
                     v-if="selectedBackgroundInfo.languageOptions && selectedBackgroundInfo.languageOptions.from && Array.isArray(selectedBackgroundInfo.languageOptions.from)"
-                    v-for="option in selectedBackgroundInfo.languageOptions.from" :key="'langopt-' + option"
-                    text="A language option available to choose from for this background" location="top">
-                    <template v-slot:activator="{ props }">
+                    :key="'langopt-' + option" location="top"
+                    text="A language option available to choose from for this background">
+                    <template #activator="{ props }">
                       <v-chip v-bind="props" color="purple" size="small" variant="tonal">
                         {{ option }}
                       </v-chip>
@@ -164,10 +164,10 @@
               </div>
               <div class="ms-3">
                 <v-tooltip v-for="item in selectedBackgroundInfo.startingEquipment"
-                  :key="'equip-' + (item.name || item)"
-                  text="Equipment provided by your background that helps tell your character's story" location="top">
-                  <template v-slot:activator="{ props }">
-                    <v-chip v-bind="props" size="small" variant="tonal" color="accent" class="me-2 mb-1">
+                  :key="'equip-' + (item.name || item)" location="top"
+                  text="Equipment provided by your background that helps tell your character's story">
+                  <template #activator="{ props }">
+                    <v-chip v-bind="props" class="me-2 mb-1" color="accent" size="small" variant="tonal">
                       {{ typeof item === 'object' && item.name ? item.name + (item.quantity && item.quantity > 1 ? ' x'
                         +
                         item.quantity : '') : item }}
@@ -184,9 +184,9 @@
                 <span class="text-caption font-weight-bold text-grey-darken-2">Bonus Feat</span>
               </div>
               <div class="ms-3">
-                <v-tooltip text="An additional feat granted by this background" location="top">
-                  <template v-slot:activator="{ props }">
-                    <v-chip v-bind="props" color="deep-purple" size="small" variant="tonal" class="me-2 mb-1">
+                <v-tooltip location="top" text="An additional feat granted by this background">
+                  <template #activator="{ props }">
+                    <v-chip v-bind="props" class="me-2 mb-1" color="deep-purple" size="small" variant="tonal">
                       {{ selectedBackgroundInfo.feat }}
                     </v-chip>
                   </template>
@@ -201,7 +201,8 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { computed, watch } from 'vue'
+import { dndAPI } from '@/services/dndAPI.js'
 
 const props = defineProps({
   character: {
@@ -214,7 +215,25 @@ const props = defineProps({
   },
 })
 
+// Watch for background selection and fetch details
+watch(() => props.character.background, async (newBackground, oldBackground) => {
+  if (newBackground && newBackground !== oldBackground) {
+    props.character.backgroundDetails = null;
+    // Fetch detailed background data from API
+    const details = await dndAPI.getBackgroundDetails(newBackground);
+    if (details) {
+      props.character.backgroundDetails = { ...details, id: newBackground };
+    }
+  }
+})
+
 const selectedBackgroundInfo = computed(() => {
+  // Prefer backgroundDetails if available
+  if (props.character.backgroundDetails &&
+    props.character.backgroundDetails.id === props.character.background) {
+    return props.character.backgroundDetails;
+  }
+  // Fallback to backgroundData (basic info)
   if (!props.character.background || !props.characterData?.backgroundData) return null
   return props.characterData.backgroundData.find(
     background => background.id === props.character.background,

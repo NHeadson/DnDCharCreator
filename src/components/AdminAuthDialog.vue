@@ -10,8 +10,7 @@
 
       <v-card-text class="pa-6">
         <v-alert class="mb-4" type="info" variant="tonal">
-          <v-alert-title class="d-flex align-center">
-            <v-icon class="me-2">mdi-information</v-icon>
+          <v-alert-title>
             Restricted Access
           </v-alert-title>
           Enter your group access code or admin password to continue.<br>
@@ -20,7 +19,7 @@
         </v-alert>
 
         <v-form @submit.prevent="handleAccessSubmit">
-          <v-text-field v-model="accessPasswordInput" autofocus :error-messages="accessError" class="mb-3"
+          <v-text-field v-model="accessPasswordInput" autofocus class="mb-3" :error-messages="accessError"
             label="Access Code or Admin Password" prepend-inner-icon="mdi-lock" type="password" variant="outlined"
             @keyup.enter="handleAccessSubmit" />
 
@@ -50,7 +49,7 @@ const {
   showAccessDialog,
   accessPasswordInput,
   accessError,
-  accessType
+  accessType,
 } = storeToRefs(adminStore)
 
 const handleAccessSubmit = () => {

@@ -1,27 +1,44 @@
 <template>
   <v-container class="ability-score-grid-container" fluid>
     <v-row class="justify-center">
-      <v-col v-for="stat in stats" :key="stat.name" cols="6" sm="4" md="4" lg="4" class="d-flex justify-center">
-        <v-card :class="['ability-card-enhanced', 'd-flex', 'flex-column', 'align-center']" variant="outlined"
-          :ripple="isAssigningScores" @click="isAssigningScores ? $emit('assign-score', stat.key) : undefined">
-          <v-card-title class="d-flex justify-space-between align-center mb-2"
-            :class="{ 'mobile-title': $vuetify.display.smAndDown }">
+      <v-col
+        v-for="stat in stats"
+        :key="stat.name"
+        class="d-flex justify-center"
+        cols="6"
+        lg="4"
+        md="4"
+        sm="4"
+      >
+        <v-card
+          :class="['ability-card-enhanced', 'd-flex', 'flex-column', 'align-center']"
+          :ripple="isAssigningScores"
+          variant="outlined"
+          @click="isAssigningScores ? $emit('assign-score', stat.key) : undefined"
+        >
+          <v-card-title
+            class="d-flex justify-space-between align-center mb-2"
+            :class="{ 'mobile-title': $vuetify.display.smAndDown }"
+          >
             <span class="stat-title" :class="{ 'mobile-stat-title': $vuetify.display.smAndDown }">{{
               $vuetify.display.smAndDown ? stat.name.slice(0, 3).toUpperCase() : stat.name }}</span>
-            <v-chip class="ml-2" :color="getModifierColor(character.abilityScores[stat.key]?.score)"
-              :size="$vuetify.display.smAndDown ? 'x-small' : 'small'">
+            <v-chip
+              class="ml-2"
+              :color="getModifierColor(character.abilityScores[stat.key]?.score)"
+              :size="$vuetify.display.smAndDown ? 'x-small' : 'small'"
+            >
               {{ getAbilityModifier(character.abilityScores[stat.key]?.score) }}
             </v-chip>
           </v-card-title>
           <v-card-text class="text-center px-0" :class="{ 'mobile-card-text': $vuetify.display.smAndDown }">
-            <v-text-field v-if="!isAssigningScores" :model-value="character.abilityScores[stat.key]?.score || ''"
-              @update:model-value="(val) => {
-                // Ensure the ability score object exists
-                if (!character.abilityScores[stat.key]) {
-                  character.abilityScores[stat.key] = { score: 10, modifier: 0 };
-                }
-                character.abilityScores[stat.key].score = val;
-              }" type="text" class="ability-score-input" hide-details inputmode="numeric" pattern="^(1[0-9]|20|[1-9])$"
+            <v-text-field
+              v-if="!isAssigningScores"
+              class="ability-score-input"
+              hide-details
+              inputmode="numeric"
+              :model-value="character.abilityScores[stat.key]?.score || ''"
+              pattern="^(1[0-9]|20|[1-9])$"
+              type="text"
               @input="(e) => {
                 // Ensure the ability score object exists
                 if (!character.abilityScores[stat.key]) {
@@ -37,11 +54,26 @@
                   character.abilityScores[stat.key].score = val;
                   character.abilityScores[stat.key].modifier = Math.floor((val - 10) / 2);
                 }
-              }" />
-            <v-btn v-else :color="isAssigningScores ? 'primary' : undefined" :disabled="!isAssigningScores"
-              :size="$vuetify.display.smAndDown ? 'default' : 'large'" variant="flat" class="ability-score-btn mx-2"
-              :class="{ 'mobile-btn': $vuetify.display.smAndDown }" @dragover.prevent
-              @drop="$emit('assign-score', stat.key)">
+              }"
+              @update:model-value="(val) => {
+                // Ensure the ability score object exists
+                if (!character.abilityScores[stat.key]) {
+                  character.abilityScores[stat.key] = { score: 10, modifier: 0 };
+                }
+                character.abilityScores[stat.key].score = val;
+              }"
+            />
+            <v-btn
+              v-else
+              class="ability-score-btn mx-2"
+              :class="{ 'mobile-btn': $vuetify.display.smAndDown }"
+              :color="isAssigningScores ? 'primary' : undefined"
+              :disabled="!isAssigningScores"
+              :size="$vuetify.display.smAndDown ? 'default' : 'large'"
+              variant="flat"
+              @dragover.prevent
+              @drop="$emit('assign-score', stat.key)"
+            >
               {{ character.abilityScores[stat.key]?.score || '—' }}
             </v-btn>
           </v-card-text>
@@ -52,59 +84,59 @@
 </template>
 
 <script setup>
-const props = defineProps({
-  character: {
-    type: Object,
-    required: true,
-  },
-  characterData: {
-    type: Object,
-    required: true,
-  },
-  isAssigningScores: {
-    type: Boolean,
-    default: false,
-  },
-  selectedScore: {
-    type: Number,
-    default: null,
-  },
-  availableScores: {
-    type: Array,
-    default: () => [],
-  },
-})
+  const props = defineProps({
+    character: {
+      type: Object,
+      required: true,
+    },
+    characterData: {
+      type: Object,
+      required: true,
+    },
+    isAssigningScores: {
+      type: Boolean,
+      default: false,
+    },
+    selectedScore: {
+      type: Number,
+      default: null,
+    },
+    availableScores: {
+      type: Array,
+      default: () => [],
+    },
+  })
 
-defineEmits(['assign-score'])
+  defineEmits(['assign-score'])
 
-const stats = [
-  { name: 'Strength', key: 'strength' },
-  { name: 'Dexterity', key: 'dexterity' },
-  { name: 'Constitution', key: 'constitution' },
-  { name: 'Intelligence', key: 'intelligence' },
-  { name: 'Wisdom', key: 'wisdom' },
-  { name: 'Charisma', key: 'charisma' },
-]
+  const stats = [
+    { name: 'Strength', key: 'strength' },
+    { name: 'Dexterity', key: 'dexterity' },
+    { name: 'Constitution', key: 'constitution' },
+    { name: 'Intelligence', key: 'intelligence' },
+    { name: 'Wisdom', key: 'wisdom' },
+    { name: 'Charisma', key: 'charisma' },
+  ]
 
-// Always treat ability score as a number for calculations
-const getNumericScore = (score) => {
-  if (score === '' || score === null || score === undefined) return null;
-  return typeof score === 'number' ? score : Number(score);
-}
+  // Always treat ability score as a number for calculations
+  const getNumericScore = score => {
+    if (score === '' || score === null || score === undefined) return null;
+    return typeof score === 'number' ? score : Number(score);
+  }
 
-const getAbilityModifier = score => {
-  const num = getNumericScore(score);
-  if (num === null || isNaN(num)) return '—';
-  const modifier = Math.floor((num - 10) / 2);
-  return modifier >= 0 ? `+${modifier}` : modifier.toString();
-}
+  const getAbilityModifier = score => {
+    const num = getNumericScore(score);
+    if (num === null || isNaN(num)) return '—';
+    const modifier = Math.floor((num - 10) / 2);
+    return modifier >= 0 ? `+${modifier}` : modifier.toString();
+  }
 
-const getModifierColor = score => {
-  const num = getNumericScore(score);
-  if (num === null || isNaN(num)) return 'grey';
-  const modifier = Math.floor((num - 10) / 2);
-  return modifier >= 0 ? 'success' : 'error';
-}
+  const getModifierColor = score => {
+    const num = getNumericScore(score);
+    if (num === null || isNaN(num)) return 'grey';
+    const modifier = Math.floor((num - 10) / 2);
+    return modifier >= 0 ? 'success' : 'error';
+  }
 </script>
 
 <style scoped>

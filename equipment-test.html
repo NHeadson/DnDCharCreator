@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0" />
+    <title>Equipment Integration Test</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+      }
+      .test-section {
+        margin: 20px 0;
+        padding: 15px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+      }
+      .success {
+        background-color: #d4edda;
+        border-color: #c3e6cb;
+      }
+      .error {
+        background-color: #f8d7da;
+        border-color: #f5c6cb;
+      }
+      .info {
+        background-color: #d1ecf1;
+        border-color: #bee5eb;
+      }
+      pre {
+        background: #f8f9fa;
+        padding: 10px;
+        border-radius: 3px;
+        overflow-x: auto;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Equipment Integration Test</h1>
+
+    <div class="test-section info">
+      <h3>Instructions</h3>
+      <p>
+        Open your browser to <strong>http://localhost:3001</strong> and navigate
+        to the character creator.
+      </p>
+      <p>
+        Select a class (e.g., Fighter) and background (e.g., Soldier), then go
+        to step 4 (Inventory & Equipment).
+      </p>
+      <p>
+        Check if the equipment from your class and background appears in the
+        inventory.
+      </p>
+    </div>
+
+    <div class="test-section">
+      <h3>Expected Results</h3>
+      <ul>
+        <li>
+          <strong>Class Equipment:</strong> Fighter should show weapons like
+          "Longsword" or "Martial Weapons"
+        </li>
+        <li>
+          <strong>Background Equipment:</strong> Soldier should show items like
+          "Uniform", "Belt Pouch", etc.
+        </li>
+        <li>
+          <strong>Equipment Source:</strong> Items should be marked with their
+          source (class/background)
+        </li>
+      </ul>
+    </div>
+
+    <div class="test-section">
+      <h3>Debug Information</h3>
+      <p>
+        If equipment doesn't appear, check the browser console for errors and
+        verify:
+      </p>
+      <ul>
+        <li>Class details are being loaded (check character.classDetails)</li>
+        <li>
+          Background details are being loaded (check
+          character.backgroundDetails)
+        </li>
+        <li>
+          Store methods updateClassTraits() and updateBackgroundTraits() are
+          called
+        </li>
+        <li>Character.equipment array is populated with items</li>
+      </ul>
+    </div>
+
+    <div class="test-section">
+      <h3>Manual Console Test</h3>
+      <p>You can also test in the browser console:</p>
+      <pre>
+// Check if character store is available
+const characterStore = window.characterStore || /* get from your app */;
+console.log('Character:', characterStore.character);
+console.log('Class Details:', characterStore.character.classDetails);
+console.log('Background Details:', characterStore.character.backgroundDetails);
+console.log('Equipment:', characterStore.character.equipment);
+        </pre
+      >
+    </div>
+
+    <script>
+      // Simple test to check if the dev server is running
+      fetch('http://localhost:3001')
+        .then((response) => {
+          if (response.ok) {
+            document.querySelector('.test-section.info').innerHTML +=
+              '<p style="color: green;">✓ Development server is running at http://localhost:3001</p>';
+          }
+        })
+        .catch((error) => {
+          document.querySelector('.test-section.info').innerHTML +=
+            '<p style="color: red;">✗ Development server not accessible. Make sure to run "npm run dev" first.</p>';
+        });
+    </script>
+  </body>
+</html>

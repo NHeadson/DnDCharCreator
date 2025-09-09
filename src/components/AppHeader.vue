@@ -14,21 +14,40 @@
 
     <!-- Desktop Navigation Buttons (hidden at 1117px and below) -->
     <div class="nav-buttons d-none nav-buttons-desktop">
-      <v-btn class="nav-btn" :class="{ 'nav-btn--active': $route.path === '/' }"
-        :size="$vuetify.display.mobile ? 'small' : 'default'" rounded="lg" to="/" variant="flat">
+      <v-btn
+        class="nav-btn"
+        :class="{ 'nav-btn--active': $route.path === '/' }"
+        rounded="lg"
+        :size="$vuetify.display.mobile ? 'small' : 'default'"
+        to="/"
+        variant="flat"
+      >
         <v-icon :class="$vuetify.display.mobile ? '' : 'me-2'" icon="mdi-home" />
         <span class="d-none d-md-inline nav-text">Home</span>
       </v-btn>
-      <v-btn class="nav-btn" :class="{ 'nav-btn--active': $route.path.startsWith('/characters') }"
-        :size="$vuetify.display.mobile ? 'small' : 'default'" rounded="lg" to="/character-form" variant="flat">
+      <v-btn
+        class="nav-btn"
+        :class="{ 'nav-btn--active': $route.path.startsWith('/characters') }"
+        rounded="lg"
+        :size="$vuetify.display.mobile ? 'small' : 'default'"
+        to="/character-form"
+        variant="flat"
+      >
         <v-icon :class="$vuetify.display.mobile ? '' : 'me-2'" icon="mdi-account-group" />
         <span class="d-none d-md-inline nav-text">Create</span>
         <span class="d-none d-lg-inline nav-text"> Character</span>
       </v-btn>
-      <v-btn v-if="adminStore.isAdminUser" class="nav-btn"
+      <v-btn
+        v-if="adminStore.isAdminUser"
+        class="nav-btn"
         :class="{ 'nav-btn--active': $route.path.startsWith('/theme') }"
-        :size="$vuetify.display.mobile ? 'small' : 'default'" rounded="lg" to="/theme" variant="flat" color="accent"
-        title="Theme Settings">
+        color="accent"
+        rounded="lg"
+        :size="$vuetify.display.mobile ? 'small' : 'default'"
+        title="Theme Settings"
+        to="/theme"
+        variant="flat"
+      >
         <v-icon :class="$vuetify.display.mobile ? '' : 'me-2'" icon="mdi-palette" />
         <span class="d-none d-md-inline nav-text">Theme</span>
       </v-btn>
@@ -41,43 +60,64 @@
   </v-app-bar>
 
   <!-- Navigation Drawer for Mobile/Tablet -->
-  <v-navigation-drawer v-model="drawer" app temporary location="right" class="theme-primary-bg">
+  <v-navigation-drawer
+    v-model="drawer"
+    app
+    class="theme-primary-bg"
+    location="right"
+    temporary
+  >
     <v-list class="nav-drawer-list">
-      <v-list-item class="nav-drawer-item" :class="{ 'nav-drawer-item--active': $route.path === '/' }"
-        prepend-icon="mdi-home" title="Home" to="/" @click="drawer = false">
-      </v-list-item>
+      <v-list-item
+        class="nav-drawer-item"
+        :class="{ 'nav-drawer-item--active': $route.path === '/' }"
+        prepend-icon="mdi-home"
+        title="Home"
+        to="/"
+        @click="drawer = false"
+      />
 
-      <v-list-item class="nav-drawer-item" :class="{ 'nav-drawer-item--active': $route.path.startsWith('/characters') }"
-        prepend-icon="mdi-account-group" title="Create Character" to="/character-form" @click="drawer = false">
-      </v-list-item>
+      <v-list-item
+        class="nav-drawer-item"
+        :class="{ 'nav-drawer-item--active': $route.path.startsWith('/characters') }"
+        prepend-icon="mdi-account-group"
+        title="Create Character"
+        to="/character-form"
+        @click="drawer = false"
+      />
 
-      <v-list-item v-if="adminStore.isAdminUser" class="nav-drawer-item"
-        :class="{ 'nav-drawer-item--active': $route.path.startsWith('/theme') }" prepend-icon="mdi-palette"
-        title="Theme Settings" to="/theme" @click="drawer = false">
-      </v-list-item>
+      <v-list-item
+        v-if="adminStore.isAdminUser"
+        class="nav-drawer-item"
+        :class="{ 'nav-drawer-item--active': $route.path.startsWith('/theme') }"
+        prepend-icon="mdi-palette"
+        title="Theme Settings"
+        to="/theme"
+        @click="drawer = false"
+      />
     </v-list>
   </v-navigation-drawer>
 </template>
 
 <script setup>
-import { computed, ref } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
-import { useAdminStore } from '@/stores/adminStore'
+  import { computed, ref } from 'vue'
+  import { useRoute, useRouter } from 'vue-router'
+  import { useAdminStore } from '@/stores/adminStore'
 
-const router = useRouter()
-const $route = useRoute()
-const adminStore = useAdminStore()
+  const router = useRouter()
+  const $route = useRoute()
+  const adminStore = useAdminStore()
 
-// Drawer state for hamburger menu
-const drawer = ref(false)
+  // Drawer state for hamburger menu
+  const drawer = ref(false)
 
-// Use isAuthenticated for admin-only UI
-const hasAccess = computed(() => adminStore.hasAccess)
-const requireAccessForCreation = () => {
-  adminStore.requireAccess(() => {
-    router.push('/character-form')
-  }, 'create a new character')
-}
+  // Use isAuthenticated for admin-only UI
+  const hasAccess = computed(() => adminStore.hasAccess)
+  const requireAccessForCreation = () => {
+    adminStore.requireAccess(() => {
+      router.push('/character-form')
+    }, 'create a new character')
+  }
 </script>
 
 <style scoped>

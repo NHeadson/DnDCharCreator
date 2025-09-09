@@ -48,12 +48,12 @@
     </v-row>
 
     <!-- Skills Section -->
-    <v-card variant="outlined" class="mb-6">
+    <v-card class="mb-6" variant="outlined">
       <v-card-title class="d-flex align-center">
-        <v-icon color="green" class="mr-2">mdi-brain</v-icon>
+        <v-icon class="mr-2" color="green">mdi-brain</v-icon>
         Skill Proficiencies
         <v-spacer />
-        <v-chip color="green" variant="tonal" size="small">
+        <v-chip color="green" size="small" variant="tonal">
           6 Skills
         </v-chip>
       </v-card-title>
@@ -65,16 +65,16 @@
         <!-- Background Skills -->
         <div class="mb-4">
           <h4 class="text-subtitle-1 mb-2">
-            <v-icon size="small" color="orange">mdi-briefcase</v-icon>
+            <v-icon color="orange" size="small">mdi-briefcase</v-icon>
             From Your Background (Folk Hero)
           </h4>
           <div class="d-flex flex-wrap ga-2">
-            <v-chip color="orange" variant="tonal" size="small">
-              <v-icon start size="x-small">mdi-brain</v-icon>
+            <v-chip color="orange" size="small" variant="tonal">
+              <v-icon size="x-small" start>mdi-brain</v-icon>
               Animal Handling
             </v-chip>
-            <v-chip color="orange" variant="tonal" size="small">
-              <v-icon start size="x-small">mdi-brain</v-icon>
+            <v-chip color="orange" size="small" variant="tonal">
+              <v-icon size="x-small" start>mdi-brain</v-icon>
               Survival
             </v-chip>
           </div>
@@ -83,20 +83,20 @@
         <!-- Class Skills -->
         <div class="mb-4">
           <h4 class="text-subtitle-1 mb-2">
-            <v-icon size="small" color="primary">mdi-school</v-icon>
+            <v-icon color="primary" size="small">mdi-school</v-icon>
             From Your Class (Fighter)
           </h4>
           <div class="d-flex flex-wrap ga-2">
-            <v-chip color="primary" variant="tonal" size="small">
-              <v-icon start size="x-small">mdi-brain</v-icon>
+            <v-chip color="primary" size="small" variant="tonal">
+              <v-icon size="x-small" start>mdi-brain</v-icon>
               Athletics
             </v-chip>
-            <v-chip color="primary" variant="tonal" size="small">
-              <v-icon start size="x-small">mdi-brain</v-icon>
+            <v-chip color="primary" size="small" variant="tonal">
+              <v-icon size="x-small" start>mdi-brain</v-icon>
               Intimidation
             </v-chip>
-            <v-chip color="primary" variant="tonal" size="small">
-              <v-icon start size="x-small">mdi-brain</v-icon>
+            <v-chip color="primary" size="small" variant="tonal">
+              <v-icon size="x-small" start>mdi-brain</v-icon>
               Perception
             </v-chip>
           </div>
@@ -108,7 +108,7 @@
             <v-expansion-panel-text>
               <v-row>
                 <v-col cols="12" md="4" sm="6">
-                  <v-card variant="tonal" class="skill-card">
+                  <v-card class="skill-card" variant="tonal">
                     <v-card-text class="pa-3">
                       <div class="d-flex justify-space-between align-center">
                         <div>
@@ -121,7 +121,7 @@
                   </v-card>
                 </v-col>
                 <v-col cols="12" md="4" sm="6">
-                  <v-card variant="tonal" class="skill-card">
+                  <v-card class="skill-card" variant="tonal">
                     <v-card-text class="pa-3">
                       <div class="d-flex justify-space-between align-center">
                         <div>
@@ -134,7 +134,7 @@
                   </v-card>
                 </v-col>
                 <v-col cols="12" md="4" sm="6">
-                  <v-card variant="tonal" class="skill-card">
+                  <v-card class="skill-card" variant="tonal">
                     <v-card-text class="pa-3">
                       <div class="d-flex justify-space-between align-center">
                         <div>
@@ -154,12 +154,12 @@
     </v-card>
 
     <!-- Tool Proficiencies Section -->
-    <v-card variant="outlined" class="mb-6">
+    <v-card class="mb-6" variant="outlined">
       <v-card-title class="d-flex align-center">
-        <v-icon color="amber" class="mr-2">mdi-tools</v-icon>
+        <v-icon class="mr-2" color="amber">mdi-tools</v-icon>
         Tool Proficiencies
         <v-spacer />
-        <v-chip color="info" variant="tonal" size="small">Knowledge</v-chip>
+        <v-chip color="info" size="small" variant="tonal">Knowledge</v-chip>
       </v-card-title>
       <v-card-subtitle class="text-body-2">
         Tools and equipment your character knows how to use effectively
@@ -169,22 +169,22 @@
         <!-- Background Tool Proficiencies -->
         <div class="mb-4">
           <h4 class="text-subtitle-1 mb-2">
-            <v-icon size="small" color="orange">mdi-briefcase</v-icon>
+            <v-icon color="orange" size="small">mdi-briefcase</v-icon>
             From Your Background
           </h4>
           <div class="d-flex flex-wrap ga-2">
-            <v-chip color="orange" variant="tonal" size="small">
-              <v-icon start size="x-small">mdi-brain</v-icon>
+            <v-chip color="orange" size="small" variant="tonal">
+              <v-icon size="x-small" start>mdi-brain</v-icon>
               Smith's tools
             </v-chip>
-            <v-chip color="orange" variant="tonal" size="small">
-              <v-icon start size="x-small">mdi-brain</v-icon>
+            <v-chip color="orange" size="small" variant="tonal">
+              <v-icon size="x-small" start>mdi-brain</v-icon>
               Vehicles (land)
             </v-chip>
           </div>
         </div>
 
-        <v-alert type="info" variant="tonal" class="mt-4">
+        <v-alert class="mt-4" type="info" variant="tonal">
           <v-icon>mdi-information</v-icon>
           <strong>What this means:</strong> You know how to use these tools effectively,
           adding your proficiency bonus to relevant checks. You'll need to acquire the
@@ -194,19 +194,19 @@
     </v-card>
 
     <!-- Other Proficiencies Section -->
-    <v-card variant="outlined" class="mb-6">
+    <v-card class="mb-6" variant="outlined">
       <v-card-title class="d-flex align-center">
-        <v-icon color="indigo" class="mr-2">mdi-music</v-icon>
+        <v-icon class="mr-2" color="indigo">mdi-music</v-icon>
         Other Proficiencies
         <v-spacer />
-        <v-chip color="info" variant="tonal" size="small">Knowledge</v-chip>
+        <v-chip color="info" size="small" variant="tonal">Knowledge</v-chip>
       </v-card-title>
 
       <v-card-text>
         <v-row>
           <!-- Musical Instruments -->
           <v-col cols="12" md="6">
-            <v-card variant="tonal" color="purple">
+            <v-card color="purple" variant="tonal">
               <v-card-title class="text-subtitle-1">
                 <v-icon class="mr-2">mdi-music</v-icon>
                 Musical Instruments
@@ -215,8 +215,8 @@
                 <div class="text-body-2 text-medium-emphasis mb-3">
                   You can play these instruments skillfully
                 </div>
-                <v-chip color="purple" variant="elevated" size="small" class="mr-2">
-                  <v-icon start size="x-small">mdi-brain</v-icon>
+                <v-chip class="mr-2" color="purple" size="small" variant="elevated">
+                  <v-icon size="x-small" start>mdi-brain</v-icon>
                   Lute
                 </v-chip>
               </v-card-text>
@@ -225,7 +225,7 @@
 
           <!-- Gaming Sets -->
           <v-col cols="12" md="6">
-            <v-card variant="tonal" color="green">
+            <v-card color="green" variant="tonal">
               <v-card-title class="text-subtitle-1">
                 <v-icon class="mr-2">mdi-dice-multiple</v-icon>
                 Gaming Sets
@@ -234,8 +234,8 @@
                 <div class="text-body-2 text-medium-emphasis mb-3">
                   Games you know how to play well
                 </div>
-                <v-chip color="green" variant="elevated" size="small">
-                  <v-icon start size="x-small">mdi-brain</v-icon>
+                <v-chip color="green" size="small" variant="elevated">
+                  <v-icon size="x-small" start>mdi-brain</v-icon>
                   Dice set
                 </v-chip>
               </v-card-text>
@@ -244,7 +244,7 @@
         </v-row>
 
         <!-- Vehicles -->
-        <v-card variant="tonal" color="blue" class="mt-4">
+        <v-card class="mt-4" color="blue" variant="tonal">
           <v-card-title class="text-subtitle-1">
             <v-icon class="mr-2">mdi-car</v-icon>
             Vehicle Proficiencies
@@ -253,8 +253,8 @@
             <div class="text-body-2 text-medium-emphasis mb-3">
               Types of vehicles you can operate effectively
             </div>
-            <v-chip color="blue" variant="elevated" size="small">
-              <v-icon start size="x-small">mdi-brain</v-icon>
+            <v-chip color="blue" size="small" variant="elevated">
+              <v-icon size="x-small" start>mdi-brain</v-icon>
               Vehicles (land)
             </v-chip>
             <div class="text-caption mt-2 text-medium-emphasis">
@@ -266,12 +266,12 @@
     </v-card>
 
     <!-- Languages Section -->
-    <v-card variant="outlined" class="mb-6">
+    <v-card class="mb-6" variant="outlined">
       <v-card-title class="d-flex align-center">
-        <v-icon color="teal" class="mr-2">mdi-translate</v-icon>
+        <v-icon class="mr-2" color="teal">mdi-translate</v-icon>
         Languages
         <v-spacer />
-        <v-chip color="teal" variant="tonal" size="small">Communication</v-chip>
+        <v-chip color="teal" size="small" variant="tonal">Communication</v-chip>
       </v-card-title>
       <v-card-subtitle class="text-body-2">
         Languages your character can speak and understand
@@ -279,12 +279,12 @@
 
       <v-card-text>
         <div class="d-flex flex-wrap ga-2">
-          <v-chip color="teal" variant="tonal" size="small">
-            <v-icon start size="x-small">mdi-translate</v-icon>
+          <v-chip color="teal" size="small" variant="tonal">
+            <v-icon size="x-small" start>mdi-translate</v-icon>
             Common
           </v-chip>
-          <v-chip color="teal" variant="tonal" size="small">
-            <v-icon start size="x-small">mdi-translate</v-icon>
+          <v-chip color="teal" size="small" variant="tonal">
+            <v-icon size="x-small" start>mdi-translate</v-icon>
             Dwarvish
           </v-chip>
         </div>

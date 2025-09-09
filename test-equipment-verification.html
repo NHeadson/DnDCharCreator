@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0" />
+    <title>Equipment System Verification Test</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #f5f5f5;
+      }
+      .test-section {
+        background: white;
+        margin: 20px 0;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+      .test-passed {
+        color: green;
+        font-weight: bold;
+      }
+      .test-failed {
+        color: red;
+        font-weight: bold;
+      }
+      .test-pending {
+        color: orange;
+        font-weight: bold;
+      }
+      .test-case {
+        margin: 10px 0;
+        padding: 10px;
+        border-left: 4px solid #ddd;
+      }
+      .checklist {
+        list-style-type: none;
+      }
+      .checklist li {
+        margin: 5px 0;
+      }
+      .status-indicator {
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        margin-right: 10px;
+        text-align: center;
+        line-height: 20px;
+        color: white;
+        font-weight: bold;
+      }
+      .pass {
+        background-color: #4caf50;
+      }
+      .fail {
+        background-color: #f44336;
+      }
+      .pending {
+        background-color: #ff9800;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>D&D Equipment System Verification</h1>
+
+    <div class="test-section">
+      <h2>🎯 Core Functionality Tests</h2>
+      <p>
+        These tests verify the essential equipment system functionality works
+        correctly.
+      </p>
+
+      <div class="test-case">
+        <h3>1. Class Equipment Choices Display</h3>
+        <ul class="checklist">
+          <li>
+            <span class="status-indicator pending">?</span>Fighter shows
+            "Chainmail or Leather Armor" choice
+          </li>
+          <li>
+            <span class="status-indicator pending">?</span>Rogue shows "Rapier
+            or Shortsword" choice
+          </li>
+          <li>
+            <span class="status-indicator pending">?</span>Wizard shows "Dagger
+            or Dart" choice
+          </li>
+          <li>
+            <span class="status-indicator pending">?</span>All 12 classes show
+            appropriate equipment choices
+          </li>
+        </ul>
+      </div>
+
+      <div class="test-case">
+        <h3>2. Background Equipment Integration</h3>
+        <ul class="checklist">
+          <li>
+            <span class="status-indicator pending">?</span>Entertainer shows
+            musical instrument selection
+          </li>
+          <li>
+            <span class="status-indicator pending">?</span>Guild Artisan shows
+            artisan tools selection
+          </li>
+          <li>
+            <span class="status-indicator pending">?</span>Folk Hero shows smith
+            tools and vehicles
+          </li>
+          <li>
+            <span class="status-indicator pending">?</span>Background equipment
+            doesn't override class choices
+          </li>
+        </ul>
+      </div>
+
+      <div class="test-case">
+        <h3>3. Weapon Category Selection Dialogs</h3>
+        <ul class="checklist">
+          <li>
+            <span class="status-indicator pending">?</span>"Choose 2 from Simple
+            Melee Weapons" opens dialog
+          </li>
+          <li>
+            <span class="status-indicator pending">?</span>Dialog shows all
+            appropriate weapons (club, dagger, dart, etc.)
+          </li>
+          <li>
+            <span class="status-indicator pending">?</span>Selection count limit
+            enforced (can't select more than 2)
+          </li>
+          <li>
+            <span class="status-indicator pending">?</span>Selected weapons
+            appear in inventory as individual items
+          </li>
+        </ul>
+      </div>
+
+      <div class="test-case">
+        <h3>4. Musical Instrument Replacement Logic</h3>
+        <ul class="checklist">
+          <li>
+            <span class="status-indicator pending">?</span>Entertainer
+            background + Bard class doesn't show duplicate instruments
+          </li>
+          <li>
+            <span class="status-indicator pending">?</span>Original instrument
+            is replaced, not added
+          </li>
+          <li>
+            <span class="status-indicator pending">?</span>Instrument selection
+            dialog shows all available instruments
+          </li>
+          <li>
+            <span class="status-indicator pending">?</span>Selection persists
+            when navigating between pages
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="test-section">
+      <h2>🔍 Edge Case Tests</h2>
+      <p>
+        These tests verify the system handles unusual or complex scenarios
+        correctly.
+      </p>
+
+      <div class="test-case">
+        <h3>5. Starting Gold Display</h3>
+        <ul class="checklist">
+          <li>
+            <span class="status-indicator pending">?</span>Fighter shows "5d4 ×
+            10 gp (125 gp average)"
+          </li>
+          <li>
+            <span class="status-indicator pending">?</span>Monk shows "2d4 × 10
+            gp (50 gp average)"
+          </li>
+          <li>
+            <span class="status-indicator pending">?</span>Sorcerer shows "3d4 ×
+            10 gp (75 gp average)"
+          </li>
+          <li>
+            <span class="status-indicator pending">?</span>All classes show
+            correct starting gold amounts
+          </li>
+        </ul>
+      </div>
+
+      <div class="test-case">
+        <h3>6. Equipment Persistence</h3>
+        <ul class="checklist">
+          <li>
+            <span class="status-indicator pending">?</span>Selections persist
+            when navigating to other pages
+          </li>
+          <li>
+            <span class="status-indicator pending">?</span>Selections persist
+            when returning to equipment page
+          </li>
+          <li>
+            <span class="status-indicator pending">?</span>Changing class
+            updates equipment choices appropriately
+          </li>
+          <li>
+            <span class="status-indicator pending">?</span>Changing background
+            updates equipment choices appropriately
+          </li>
+        </ul>
+      </div>
+
+      <div class="test-case">
+        <h3>7. Inventory Display Accuracy</h3>
+        <ul class="checklist">
+          <li>
+            <span class="status-indicator pending">?</span>Selected weapons
+            appear as individual items, not categories
+          </li>
+          <li>
+            <span class="status-indicator pending">?</span>Equipment quantities
+            are correct (e.g., "2 Javelins" not just "Javelin")
+          </li>
+          <li>
+            <span class="status-indicator pending">?</span>No duplicate items in
+            inventory
+          </li>
+          <li>
+            <span class="status-indicator pending">?</span>Custom selections
+            override default choices
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="test-section">
+      <h2>📝 Manual Testing Checklist</h2>
+      <p>
+        <strong>Instructions:</strong> Open the main application and follow
+        these steps to verify functionality.
+      </p>
+
+      <h3>Test Scenario 1: Fighter + Entertainer</h3>
+      <ol>
+        <li>Create a new character</li>
+        <li>Select <strong>Fighter</strong> class</li>
+        <li>Select <strong>Entertainer</strong> background</li>
+        <li>Navigate to Equipment page</li>
+        <li>
+          Verify you see:
+          <ul>
+            <li>Choice between "Chainmail" and "Leather Armor"</li>
+            <li>Choice between "Light Crossbow" and "2 Javelins"</li>
+            <li>Musical instrument selection from background</li>
+            <li>Starting gold: "5d4 × 10 gp (125 gp average)"</li>
+          </ul>
+        </li>
+        <li>Make selections and verify they appear in inventory</li>
+      </ol>
+
+      <h3>Test Scenario 2: Weapon Category Selection</h3>
+      <ol>
+        <li>Find a choice that says "Choose 2 from Simple Melee Weapons"</li>
+        <li>Click on the chip</li>
+        <li>Verify dialog opens with weapon list</li>
+        <li>Select 2 weapons (e.g., Club and Dagger)</li>
+        <li>Verify selections appear in inventory as individual items</li>
+      </ol>
+
+      <h3>Test Scenario 3: Musical Instrument Replacement</h3>
+      <ol>
+        <li>Create character with Entertainer background</li>
+        <li>Note the musical instrument choice</li>
+        <li>Change to Bard class (which also has musical instruments)</li>
+        <li>Verify no duplicate instruments in the list</li>
+        <li>Verify replacement logic works correctly</li>
+      </ol>
+    </div>
+
+    <div class="test-section">
+      <h2>🚀 Quick Validation Test</h2>
+      <p>
+        Run this quick test to verify core functionality in under 2 minutes:
+      </p>
+
+      <ol>
+        <li>
+          <strong>Open Application:</strong> Navigate to the character creator
+        </li>
+        <li>
+          <strong>Create Fighter:</strong> Select Fighter class, any background
+        </li>
+        <li>
+          <strong>Check Equipment Page:</strong> Navigate to Equipment & Gear
+          step
+        </li>
+        <li>
+          <strong>Verify Choices:</strong> Confirm you see equipment choice
+          chips
+        </li>
+        <li>
+          <strong>Make Selection:</strong> Click on armor choice (Chainmail vs
+          Leather)
+        </li>
+        <li>
+          <strong>Check Inventory:</strong> Verify selected item appears in
+          "Your Inventory"
+        </li>
+        <li>
+          <strong>Test Category Dialog:</strong> Find and click "Choose 2
+          from..." option
+        </li>
+        <li>
+          <strong>Verify Dialog:</strong> Confirm weapon selection dialog opens
+        </li>
+        <li>
+          <strong>Complete Selection:</strong> Select weapons and confirm they
+          appear individually
+        </li>
+        <li>
+          <strong>Final Check:</strong> Verify starting gold displays correctly
+        </li>
+      </ol>
+
+      <p>
+        <strong>Expected Result:</strong> All functionality works smoothly with
+        no errors or missing features.
+      </p>
+    </div>
+
+    <div class="test-section">
+      <h2>📊 Test Results Summary</h2>
+      <div id="results-summary">
+        <p>
+          <span class="test-pending">PENDING:</span> Manual testing required to
+          validate all functionality.
+        </p>
+        <p><strong>Next Steps:</strong></p>
+        <ul>
+          <li>Run the Quick Validation Test above</li>
+          <li>Test at least 3 different class/background combinations</li>
+          <li>Verify weapon category selection dialogs</li>
+          <li>Check musical instrument replacement logic</li>
+          <li>Confirm inventory display accuracy</li>
+        </ul>
+      </div>
+    </div>
+
+    <script>
+      // This script could be enhanced to track test results
+      console.log('Equipment System Verification Test loaded');
+      console.log('Run manual tests and update status indicators as needed');
+    </script>
+  </body>
+</html>

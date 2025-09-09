@@ -9,7 +9,7 @@
           </v-card-title>
           <v-card-text class="pt-2 pb-3">
             <v-select v-model="character.species" :density="$vuetify.display.smAndDown ? 'comfortable' : 'compact'"
-              :error="!!characterData?.speciesError" item-title="name" :error-messages="characterData?.speciesError"
+              :error="!!characterData?.speciesError" :error-messages="characterData?.speciesError" item-title="name"
               item-value="id" :items="characterData?.speciesData || []" label="Choose Your Species"
               :loading="characterData?.isLoadingSpecies" variant="outlined" @update:model-value="onSpeciesChange">
               <template #prepend>
@@ -50,8 +50,8 @@
             </div>
           </v-card-text>
         </v-card>
-        <v-card v-else-if="selectedSpeciesInfo" class="text-blue-grey-lighten-5 species-preview-card" variant="tonal"
-          style="padding-right: 24px;">
+        <v-card v-else-if="selectedSpeciesInfo" class="text-blue-grey-lighten-5 species-preview-card"
+          style="padding-right: 24px;" variant="tonal">
           <v-card-title class="d-flex align-center justify-space-between py-2">
             <div class="d-flex align-center">
               <v-icon class="text-blue-grey-darken-2 me-2" size="small">mdi-dna</v-icon>
@@ -62,8 +62,8 @@
               <span class="text-caption text-grey-darken-1 mb-1" style="font-size: 0.85em;">Ability Bonuses</span>
               <div style="display: flex; gap: 6px; flex-wrap: wrap;">
                 <v-tooltip v-for="bonus in selectedSpeciesInfo.abilityBonus" :key="'bonus-' + bonus.ability"
-                  :text="'Bonus to ' + bonus.ability" location="top">
-                  <template v-slot:activator="{ props }">
+                  location="top" :text="'Bonus to ' + bonus.ability">
+                  <template #activator="{ props }">
                     <v-chip v-bind="props" color="blue" size="small" variant="tonal">
                       +{{ bonus.bonus }} {{ bonus.ability.slice(0, 3) }}
                     </v-chip>
@@ -88,20 +88,20 @@
               <div class="ms-3">
                 <div style="display: flex; gap: 6px; flex-wrap: wrap;">
                   <v-chip color="green" size="small" variant="tonal">
-                    <v-icon start size="small">mdi-resize</v-icon>
+                    <v-icon size="small" start>mdi-resize</v-icon>
                     {{ selectedSpeciesInfo.size }}
                   </v-chip>
                   <v-chip color="green" size="small" variant="tonal">
-                    <v-icon start size="small">mdi-run</v-icon>
+                    <v-icon size="small" start>mdi-run</v-icon>
                     {{ selectedSpeciesInfo.speed }}ft
                   </v-chip>
                   <v-chip v-if="effectiveDarkvision !== null && effectiveDarkvision !== undefined" color="purple"
                     size="small" variant="tonal">
-                    <v-icon start size="small">mdi-eye</v-icon>
+                    <v-icon size="small" start>mdi-eye</v-icon>
                     {{ effectiveDarkvision }}ft vision
                   </v-chip>
                   <v-chip v-if="selectedSpeciesInfo.damageResistance" color="orange" size="small" variant="tonal">
-                    <v-icon start size="small">mdi-shield</v-icon>
+                    <v-icon size="small" start>mdi-shield</v-icon>
                     Resistances
                   </v-chip>
                 </div>
@@ -116,9 +116,9 @@
               </div>
               <div class="ms-3">
                 <div style="display: flex; gap: 6px; flex-wrap: wrap;">
-                  <v-tooltip v-for="trait in selectedSpeciesInfo.traits" :key="'trait-' + trait.name"
-                    :text="trait.desc || 'A special trait of this species'" location="top">
-                    <template v-slot:activator="{ props }">
+                  <v-tooltip v-for="trait in selectedSpeciesInfo.traits" :key="'trait-' + trait.name" location="top"
+                    :text="trait.desc || 'A special trait of this species'">
+                    <template #activator="{ props }">
                       <v-chip v-bind="props" color="amber-lighten-4" size="small" variant="tonal">
                         {{ trait.name }}
                       </v-chip>
@@ -136,9 +136,9 @@
               </div>
               <div class="ms-3">
                 <div style="display: flex; gap: 6px; flex-wrap: wrap;">
-                  <v-tooltip v-for="lang in selectedSpeciesInfo.languages" :key="'lang-' + lang"
-                    :text="'A language your species can speak'" location="top">
-                    <template v-slot:activator="{ props }">
+                  <v-tooltip v-for="lang in selectedSpeciesInfo.languages" :key="'lang-' + lang" location="top"
+                    :text="'A language your species can speak'">
+                    <template #activator="{ props }">
                       <v-chip v-bind="props" color="indigo" size="small" variant="tonal">
                         {{ lang }}
                       </v-chip>
@@ -255,16 +255,16 @@ const selectedSpeciesInfo = computed(() => {
   let lineages = [];
   if (Array.isArray(info.lineages) && info.lineages.length > 0) {
     lineages = info.lineages.map(sub => ({
-      id: sub.id || sub.index || sub.name?.toLowerCase().replace(/\s+/g, "_"),
+      id: sub.id || sub.index || sub.name?.toLowerCase().replace(/\s+/g, '_'),
       name: sub.name || sub.index,
-      desc: sub.desc || sub.description || ''
+      desc: sub.desc || sub.description || '',
     }));
   } else if (Array.isArray(info.subraces) && info.subraces.length > 0) {
     // Some API data may use 'subraces' instead of 'lineages'
     lineages = info.subraces.map(sub => ({
-      id: sub.index || sub.name?.toLowerCase().replace(/\s+/g, "_"),
+      id: sub.index || sub.name?.toLowerCase().replace(/\s+/g, '_'),
       name: sub.name || sub.index,
-      desc: sub.desc || sub.description || ''
+      desc: sub.desc || sub.description || '',
     }));
   }
 
@@ -276,9 +276,8 @@ const selectedSpeciesInfo = computed(() => {
 })
 
 
-
 // Watch for species changes to load lineages
-watch(() => props.character.species, (newSpeciesId) => {
+watch(() => props.character.species, newSpeciesId => {
   const info = props.characterData.speciesData.find(
     species => species.id === newSpeciesId,
   );
@@ -288,8 +287,8 @@ watch(() => props.character.species, (newSpeciesId) => {
       lineages = info.lineages;
     } else if (Array.isArray(info.subraces) && info.subraces.length > 0) {
       lineages = info.subraces.map(sub => ({
-        id: sub.index || sub.name?.toLowerCase().replace(/\s+/g, "_"),
-        name: sub.name || sub.index
+        id: sub.index || sub.name?.toLowerCase().replace(/\s+/g, '_'),
+        name: sub.name || sub.index,
       }));
     }
   }
@@ -310,11 +309,18 @@ const onSpeciesChange = () => {
   }
 }
 
+// Get key differentiators for each lineage/subrace
+const onLineageChange = () => {
+  // Update lineage traits when lineage changes
+  if (props.characterData?.updateLineageTraits) {
+    props.characterData.updateLineageTraits(props.character.speciesLineage)
+  }
+}
 
 const effectiveDarkvision = computed(() => {
   if (!selectedSpeciesInfo.value) return null;
   // If a lineage is selected and it's Drow/Dark Elf, override to 120ft
-  const drowNames = ["Drow", "Dark Elf (Drow)", "dark_elf_(drow)", "drow"];
+  const drowNames = ['Drow', 'Dark Elf (Drow)', 'dark_elf_(drow)', 'drow'];
   const selectedLineage = selectedSpeciesInfo.value.lineages?.find(l => l.id === props.character.speciesLineage);
   if (
     selectedLineage &&
@@ -327,34 +333,33 @@ const effectiveDarkvision = computed(() => {
   return (typeof dv === 'number' && dv > 0) ? dv : null;
 });
 
-// Get key differentiators for each lineage/subrace
-const getLineageHighlights = (lineage) => {
+const getLineageHighlights = lineage => {
   const highlights = {
     // Elf lineages
-    'High Elf': '+1 INT, Cantrip, Extra Language',
-    'Wood Elf': '+1 WIS, Elf Weapon Training, Stealth',
-    'Dark Elf (Drow)': '+1 CHA, Superior Darkvision, Drow Magic',
-    'Drow': '+1 CHA, Superior Darkvision, Drow Magic',
+    'High Elf': 'Extra cantrip, weapon training, bonus language',
+    'Wood Elf': 'Keen senses, mask of the wild, elf weapon training',
+    'Dark Elf (Drow)': 'Superior darkvision, drow magic, sunlight sensitivity',
+    'Drow': 'Superior darkvision, drow magic, sunlight sensitivity',
 
     // Dwarf lineages
-    'Hill Dwarf': '+1 WIS, +1 HP per level, Wisdom bonus',
-    'Mountain Dwarf': '+2 STR, Armor Proficiency, More robust',
+    'Hill Dwarf': 'Dwarven toughness, extra hit points per level',
+    'Mountain Dwarf': 'Armor proficiency, more robust and hardy',
 
     // Halfling lineages
-    'Lightfoot': '+1 CHA, Naturally Stealthy, Social',
-    'Lightfoot Halfling': '+1 CHA, Naturally Stealthy, Social',
-    'Stout': '+1 CON, Poison Resistance, Hardy',
-    'Stout Halfling': '+1 CON, Poison Resistance, Hardy',
+    'Lightfoot': 'Naturally stealthy, social and charming',
+    'Lightfoot Halfling': 'Naturally stealthy, social and charming',
+    'Stout': 'Poison resistance, hardy constitution',
+    'Stout Halfling': 'Poison resistance, hardy constitution',
 
     // Gnome lineages
-    'Forest Gnome': '+1 DEX, Speak with Animals, Nature magic',
-    'Rock Gnome': '+1 CON, Tinker abilities, Tool expertise',
+    'Forest Gnome': 'Speak with animals, natural illusionist',
+    'Rock Gnome': 'Tinker abilities, tool expertise',
 
     // Human variants
-    'Variant Human': 'Extra Feat, Extra Skill, Flexible stats',
+    'Variant Human': 'Extra feat, extra skill, flexible and adaptable',
 
     // Default fallback
-    'default': 'Unique traits and abilities'
+    'default': 'Unique traits and abilities',
   }
 
   return highlights[lineage.name] || highlights['default']
@@ -371,8 +376,6 @@ const getLineageHighlights = (lineage) => {
 .species-preview-card :deep(.v-card-text) {
   padding: 12px 16px;
 }
-
-
 
 
 .lineage-options-row {

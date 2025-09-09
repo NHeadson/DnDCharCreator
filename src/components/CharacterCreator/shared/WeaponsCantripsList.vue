@@ -1,5 +1,5 @@
 <template>
-  <v-card variant="outlined" class="mb-6">
+  <v-card class="mb-6" variant="outlined">
     <v-card-title class="d-flex align-center py-2">
       <v-icon class="me-2" color="accent">mdi-sword</v-icon>
       Weapons & Damage Cantrips
@@ -19,7 +19,13 @@
               <v-card-text class="pa-3">
                 <div class="d-flex justify-between align-center mb-2">
                   <div class="text-subtitle-2 font-weight-bold">{{ weapon.name || 'Weapon ' + (index + 1) }}</div>
-                  <v-btn @click="removeWeapon(index)" color="error" icon size="x-small" variant="text">
+                  <v-btn
+                    color="error"
+                    icon
+                    size="x-small"
+                    variant="text"
+                    @click="removeWeapon(index)"
+                  >
                     <v-icon size="small">mdi-close</v-icon>
                   </v-btn>
                 </div>
@@ -29,16 +35,32 @@
                     <v-text-field v-model="weapon.name" density="compact" label="Weapon Name" variant="outlined" />
                   </v-col>
                   <v-col cols="6">
-                    <v-text-field v-model="weapon.damage" density="compact" label="Damage (e.g., 1d8)"
-                      variant="outlined" />
+                    <v-text-field
+                      v-model="weapon.damage"
+                      density="compact"
+                      label="Damage (e.g., 1d8)"
+                      variant="outlined"
+                    />
                   </v-col>
                   <v-col cols="6">
-                    <v-select v-model="weapon.damageType" density="compact" :items="damageTypes" label="Damage Type"
-                      variant="outlined" />
+                    <v-select
+                      v-model="weapon.damageType"
+                      density="compact"
+                      :items="damageTypes"
+                      label="Damage Type"
+                      variant="outlined"
+                    />
                   </v-col>
                   <v-col cols="6">
-                    <v-select v-model="weapon.attackBonus" density="compact" :items="abilityScores" item-title="label"
-                      item-value="value" label="Attack Bonus" variant="outlined" />
+                    <v-select
+                      v-model="weapon.attackBonus"
+                      density="compact"
+                      item-title="label"
+                      item-value="value"
+                      :items="abilityScores"
+                      label="Attack Bonus"
+                      variant="outlined"
+                    />
                   </v-col>
                   <v-col cols="6">
                     <v-text-field v-model="weapon.range" density="compact" label="Range/Reach" variant="outlined" />
@@ -49,7 +71,13 @@
           </v-col>
         </v-row>
 
-        <v-btn @click="addWeapon" class="mt-2" color="accent" prepend-icon="mdi-plus" variant="outlined">
+        <v-btn
+          class="mt-2"
+          color="accent"
+          prepend-icon="mdi-plus"
+          variant="outlined"
+          @click="addWeapon"
+        >
           Add Weapon
         </v-btn>
       </div>
@@ -67,7 +95,13 @@
               <v-card-text class="pa-3">
                 <div class="d-flex justify-between align-center mb-2">
                   <div class="text-subtitle-2 font-weight-bold">{{ cantrip.name || 'Cantrip ' + (index + 1) }}</div>
-                  <v-btn @click="removeCantrip(index)" color="purple" icon size="x-small" variant="text">
+                  <v-btn
+                    color="purple"
+                    icon
+                    size="x-small"
+                    variant="text"
+                    @click="removeCantrip(index)"
+                  >
                     <v-icon size="small">mdi-close</v-icon>
                   </v-btn>
                 </div>
@@ -77,19 +111,33 @@
                     <v-text-field v-model="cantrip.name" density="compact" label="Cantrip Name" variant="outlined" />
                   </v-col>
                   <v-col cols="6">
-                    <v-text-field v-model="cantrip.damage" density="compact" label="Damage (e.g., 1d10)"
-                      variant="outlined" />
+                    <v-text-field
+                      v-model="cantrip.damage"
+                      density="compact"
+                      label="Damage (e.g., 1d10)"
+                      variant="outlined"
+                    />
                   </v-col>
                   <v-col cols="6">
-                    <v-select v-model="cantrip.damageType" density="compact" :items="damageTypes" label="Damage Type"
-                      variant="outlined" />
+                    <v-select
+                      v-model="cantrip.damageType"
+                      density="compact"
+                      :items="damageTypes"
+                      label="Damage Type"
+                      variant="outlined"
+                    />
                   </v-col>
                   <v-col cols="6">
                     <v-text-field v-model="cantrip.range" density="compact" label="Range" variant="outlined" />
                   </v-col>
                   <v-col cols="6">
-                    <v-select v-model="cantrip.savingThrow" density="compact" :items="savingThrows" label="Saving Throw"
-                      variant="outlined" />
+                    <v-select
+                      v-model="cantrip.savingThrow"
+                      density="compact"
+                      :items="savingThrows"
+                      label="Saving Throw"
+                      variant="outlined"
+                    />
                   </v-col>
                 </v-row>
               </v-card-text>
@@ -97,7 +145,13 @@
           </v-col>
         </v-row>
 
-        <v-btn @click="addCantrip" class="mt-2" color="purple" prepend-icon="mdi-plus" variant="outlined">
+        <v-btn
+          class="mt-2"
+          color="purple"
+          prepend-icon="mdi-plus"
+          variant="outlined"
+          @click="addCantrip"
+        >
           Add Damage Cantrip
         </v-btn>
       </div>
@@ -106,77 +160,77 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
+  import { computed } from 'vue'
 
-const props = defineProps({
-  character: {
-    type: Object,
-    required: true,
-  },
-  characterData: {
-    type: Object,
-    required: true,
+  const props = defineProps({
+    character: {
+      type: Object,
+      required: true,
+    },
+    characterData: {
+      type: Object,
+      required: true,
+    },
+  })
+
+  // Damage types from D&D 5e
+  const damageTypes = [
+    'Acid', 'Bludgeoning', 'Cold', 'Fire', 'Force',
+    'Lightning', 'Necrotic', 'Piercing', 'Poison',
+    'Psychic', 'Radiant', 'Slashing', 'Thunder',
+  ]
+
+  // Saving throws
+  const savingThrows = [
+    'None', 'Strength', 'Dexterity', 'Constitution',
+    'Intelligence', 'Wisdom', 'Charisma',
+  ]
+
+  // Ability scores for attack bonus
+  const abilityScores = [
+    { label: 'Strength', value: 'strength' },
+    { label: 'Dexterity', value: 'dexterity' },
+    { label: 'Constitution', value: 'constitution' },
+    { label: 'Intelligence', value: 'intelligence' },
+    { label: 'Wisdom', value: 'wisdom' },
+    { label: 'Charisma', value: 'charisma' },
+  ]
+
+  // Initialize arrays if they don't exist
+  if (!props.character.weapons) {
+    props.character.weapons = []
   }
-})
+  if (!props.character.damagingCantrips) {
+    props.character.damagingCantrips = []
+  }
 
-// Damage types from D&D 5e
-const damageTypes = [
-  'Acid', 'Bludgeoning', 'Cold', 'Fire', 'Force',
-  'Lightning', 'Necrotic', 'Piercing', 'Poison',
-  'Psychic', 'Radiant', 'Slashing', 'Thunder'
-]
+  const addWeapon = () => {
+    props.character.weapons.push({
+      name: '',
+      damage: '',
+      damageType: '',
+      attackBonus: 'strength',
+      range: '',
+    })
+  }
 
-// Saving throws
-const savingThrows = [
-  'None', 'Strength', 'Dexterity', 'Constitution',
-  'Intelligence', 'Wisdom', 'Charisma'
-]
+  const removeWeapon = index => {
+    props.character.weapons.splice(index, 1)
+  }
 
-// Ability scores for attack bonus
-const abilityScores = [
-  { label: 'Strength', value: 'strength' },
-  { label: 'Dexterity', value: 'dexterity' },
-  { label: 'Constitution', value: 'constitution' },
-  { label: 'Intelligence', value: 'intelligence' },
-  { label: 'Wisdom', value: 'wisdom' },
-  { label: 'Charisma', value: 'charisma' }
-]
+  const addCantrip = () => {
+    props.character.damagingCantrips.push({
+      name: '',
+      damage: '',
+      damageType: '',
+      range: '',
+      savingThrow: 'None',
+    })
+  }
 
-// Initialize arrays if they don't exist
-if (!props.character.weapons) {
-  props.character.weapons = []
-}
-if (!props.character.damagingCantrips) {
-  props.character.damagingCantrips = []
-}
-
-const addWeapon = () => {
-  props.character.weapons.push({
-    name: '',
-    damage: '',
-    damageType: '',
-    attackBonus: 'strength',
-    range: ''
-  })
-}
-
-const removeWeapon = (index) => {
-  props.character.weapons.splice(index, 1)
-}
-
-const addCantrip = () => {
-  props.character.damagingCantrips.push({
-    name: '',
-    damage: '',
-    damageType: '',
-    range: '',
-    savingThrow: 'None'
-  })
-}
-
-const removeCantrip = (index) => {
-  props.character.damagingCantrips.splice(index, 1)
-}
+  const removeCantrip = index => {
+    props.character.damagingCantrips.splice(index, 1)
+  }
 </script>
 
 <style scoped>

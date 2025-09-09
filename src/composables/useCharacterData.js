@@ -96,7 +96,17 @@ const fallbackSpeciesData = [
     damageResistance: null,
     lineages: [
       { id: "lightfoot", name: "Lightfoot Halfling" },
-      { id: "stout", name: "Stout Halfling" },
+      {
+        id: "stout",
+        name: "Stout Halfling",
+        traits: [
+          {
+            name: "Stout Resilience",
+            description:
+              "You have advantage on saving throws against poison, and you have resistance against poison damage.",
+          },
+        ],
+      },
     ],
     bonusLanguage: "Halfling",
   },

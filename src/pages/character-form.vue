@@ -8,15 +8,15 @@
 </template>
 
 <script setup>
-import { useRouter } from 'vue-router'
-import CharacterCreatorMain from '@/components/CharacterCreator/CharacterCreatorMain.vue'
-import AdminAuthDialog from '@/components/AdminAuthDialog.vue'
-import { useAdminStore } from '@/stores/adminStore'
-import { storeToRefs } from 'pinia'
+  import { useRouter } from 'vue-router'
+  import CharacterCreatorMain from '@/components/CharacterCreator/CharacterCreatorMain.vue'
+  import AdminAuthDialog from '@/components/AdminAuthDialog.vue'
+  import { useAdminStore } from '@/stores/adminStore'
+  import { storeToRefs } from 'pinia'
 
-const router = useRouter()
-const adminStore = useAdminStore()
-const { isAccessValid } = storeToRefs(adminStore)
+  const router = useRouter()
+  const adminStore = useAdminStore()
+  const { isAccessValid } = storeToRefs(adminStore)
 </script>
 
 <style scoped>

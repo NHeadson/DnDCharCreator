@@ -6,9 +6,9 @@
     </v-card-subtitle>
 
     <!-- Equipment Method Selection -->
-    <v-card variant="outlined" class="mb-6">
+    <v-card class="mb-6" variant="outlined">
       <v-card-title class="d-flex align-center">
-        <v-icon color="primary" class="mr-2">mdi-package-variant</v-icon>
+        <v-icon class="mr-2" color="primary">mdi-package-variant</v-icon>
         Equipment Method
       </v-card-title>
       <v-card-subtitle class="text-body-2">
@@ -19,8 +19,12 @@
         <v-radio-group v-model="equipmentMethod">
           <v-row>
             <v-col cols="12" md="6">
-              <v-card :color="equipmentMethod === 'class' ? 'primary' : 'default'" variant="outlined"
-                class="pa-4 cursor-pointer h-100" @click="equipmentMethod = 'class'">
+              <v-card
+                class="pa-4 cursor-pointer h-100"
+                :color="equipmentMethod === 'class' ? 'primary' : 'default'"
+                variant="outlined"
+                @click="equipmentMethod = 'class'"
+              >
                 <div class="d-flex align-center mb-2">
                   <v-radio value="class" />
                   <v-icon class="ml-2 mr-2">mdi-package-variant</v-icon>
@@ -34,8 +38,12 @@
             </v-col>
 
             <v-col cols="12" md="6">
-              <v-card :color="equipmentMethod === 'gold' ? 'primary' : 'default'" variant="outlined"
-                class="pa-4 cursor-pointer h-100" @click="equipmentMethod = 'gold'">
+              <v-card
+                class="pa-4 cursor-pointer h-100"
+                :color="equipmentMethod === 'gold' ? 'primary' : 'default'"
+                variant="outlined"
+                @click="equipmentMethod = 'gold'"
+              >
                 <div class="d-flex align-center mb-2">
                   <v-radio value="gold" />
                   <v-icon class="ml-2 mr-2">mdi-gold</v-icon>
@@ -51,7 +59,7 @@
         </v-radio-group>
 
         <!-- Starting Gold Display -->
-        <v-alert v-if="equipmentMethod === 'gold'" type="success" variant="tonal" class="mt-4">
+        <v-alert v-if="equipmentMethod === 'gold'" class="mt-4" type="success" variant="tonal">
           <v-icon>mdi-gold</v-icon>
           <strong>Starting Gold:</strong> 175 gp
           <div class="text-body-2 mt-1">
@@ -64,13 +72,13 @@
     <v-row>
       <!-- Weapons Section -->
       <v-col cols="12" lg="6">
-        <v-card variant="outlined" class="h-100">
+        <v-card class="h-100" variant="outlined">
           <v-card-title class="d-flex align-center">
-            <v-icon color="red" class="mr-2">mdi-sword</v-icon>
+            <v-icon class="mr-2" color="red">mdi-sword</v-icon>
             Weapons
             <v-spacer />
-            <v-chip color="red" variant="tonal" size="small">
-              <v-icon start size="x-small">mdi-package</v-icon>
+            <v-chip color="red" size="small" variant="tonal">
+              <v-icon size="x-small" start>mdi-package</v-icon>
               3 Owned
             </v-chip>
           </v-card-title>
@@ -90,7 +98,7 @@
                 <v-list-item-title>Longsword</v-list-item-title>
                 <v-list-item-subtitle>
                   <div class="d-flex align-center ga-2">
-                    <v-chip size="x-small" color="orange">1d8</v-chip>
+                    <v-chip color="orange" size="x-small">1d8</v-chip>
                     <span class="text-caption">Versatile</span>
                   </div>
                 </v-list-item-subtitle>
@@ -113,7 +121,7 @@
                 <v-list-item-title>Light Crossbow</v-list-item-title>
                 <v-list-item-subtitle>
                   <div class="d-flex align-center ga-2">
-                    <v-chip size="x-small" color="orange">1d8</v-chip>
+                    <v-chip color="orange" size="x-small">1d8</v-chip>
                     <span class="text-caption">Ammunition, Loading, Two-handed</span>
                   </div>
                 </v-list-item-subtitle>
@@ -128,7 +136,7 @@
             </v-list>
 
             <!-- Add Weapon Button -->
-            <v-btn variant="outlined" color="red" class="mt-2" block>
+            <v-btn block class="mt-2" color="red" variant="outlined">
               <v-icon start>mdi-plus</v-icon>
               Add Weapon
             </v-btn>
@@ -138,13 +146,13 @@
 
       <!-- Armor Section -->
       <v-col cols="12" lg="6">
-        <v-card variant="outlined" class="h-100">
+        <v-card class="h-100" variant="outlined">
           <v-card-title class="d-flex align-center">
-            <v-icon color="blue" class="mr-2">mdi-shield</v-icon>
+            <v-icon class="mr-2" color="blue">mdi-shield</v-icon>
             Armor & Protection
             <v-spacer />
-            <v-chip color="blue" variant="tonal" size="small">
-              <v-icon start size="x-small">mdi-package</v-icon>
+            <v-chip color="blue" size="small" variant="tonal">
+              <v-icon size="x-small" start>mdi-package</v-icon>
               2 Pieces
             </v-chip>
           </v-card-title>
@@ -164,7 +172,7 @@
                 <v-list-item-title>Chain Mail</v-list-item-title>
                 <v-list-item-subtitle>
                   <div class="d-flex align-center ga-2">
-                    <v-chip size="x-small" color="green">AC 16</v-chip>
+                    <v-chip color="green" size="x-small">AC 16</v-chip>
                     <span class="text-caption">Heavy Armor</span>
                   </div>
                 </v-list-item-subtitle>
@@ -187,7 +195,7 @@
                 <v-list-item-title>Shield</v-list-item-title>
                 <v-list-item-subtitle>
                   <div class="d-flex align-center ga-2">
-                    <v-chip size="x-small" color="green">+2 AC</v-chip>
+                    <v-chip color="green" size="x-small">+2 AC</v-chip>
                     <span class="text-caption">Shield</span>
                   </div>
                 </v-list-item-subtitle>
@@ -206,13 +214,13 @@
     </v-row>
 
     <!-- Adventuring Gear Section -->
-    <v-card variant="outlined" class="mt-6">
+    <v-card class="mt-6" variant="outlined">
       <v-card-title class="d-flex align-center">
-        <v-icon color="orange" class="mr-2">mdi-bag-personal</v-icon>
+        <v-icon class="mr-2" color="orange">mdi-bag-personal</v-icon>
         Adventuring Gear
         <v-spacer />
-        <v-chip color="orange" variant="tonal" size="small">
-          <v-icon start size="x-small">mdi-package</v-icon>
+        <v-chip color="orange" size="small" variant="tonal">
+          <v-icon size="x-small" start>mdi-package</v-icon>
           12 Items
         </v-chip>
       </v-card-title>
@@ -225,7 +233,7 @@
         <v-row>
           <!-- Physical Tools (that you own) -->
           <v-col cols="12" md="6">
-            <v-card variant="tonal" color="purple">
+            <v-card color="purple" variant="tonal">
               <v-card-title class="text-subtitle-1">
                 <v-icon class="mr-2">mdi-tools</v-icon>
                 Physical Tools
@@ -238,17 +246,23 @@
                 </div>
 
                 <!-- List of owned physical tools -->
-                <v-chip class="mr-2 mb-2" color="purple" variant="tonal" size="small">
-                  <v-icon start size="x-small">mdi-package</v-icon>
+                <v-chip class="mr-2 mb-2" color="purple" size="small" variant="tonal">
+                  <v-icon size="x-small" start>mdi-package</v-icon>
                   Smith's Tools
                 </v-chip>
 
-                <v-btn variant="outlined" color="purple" size="small" class="mt-2" block>
+                <v-btn
+                  block
+                  class="mt-2"
+                  color="purple"
+                  size="small"
+                  variant="outlined"
+                >
                   <v-icon start>mdi-plus</v-icon>
                   Buy Tools
                 </v-btn>
 
-                <v-alert type="info" variant="tonal" class="mt-3" density="compact">
+                <v-alert class="mt-3" density="compact" type="info" variant="tonal">
                   <div class="text-caption">
                     <strong>Note:</strong> Having proficiency ≠ owning the tool.
                     You need both proficiency (from Page 3) and the physical tool to get bonuses.
@@ -260,7 +274,7 @@
 
           <!-- Instruments (that you own) -->
           <v-col cols="12" md="6">
-            <v-card variant="tonal" color="indigo">
+            <v-card color="indigo" variant="tonal">
               <v-card-title class="text-subtitle-1">
                 <v-icon class="mr-2">mdi-music</v-icon>
                 Musical Instruments
@@ -272,12 +286,12 @@
                   Instruments you physically carry
                 </div>
 
-                <v-chip class="mr-2 mb-2" color="indigo" variant="tonal" size="small">
-                  <v-icon start size="x-small">mdi-package</v-icon>
+                <v-chip class="mr-2 mb-2" color="indigo" size="small" variant="tonal">
+                  <v-icon size="x-small" start>mdi-package</v-icon>
                   Lute
                 </v-chip>
 
-                <v-alert type="info" variant="tonal" class="mt-3" density="compact">
+                <v-alert class="mt-3" density="compact" type="info" variant="tonal">
                   <div class="text-caption">
                     <strong>Note:</strong> Instrument proficiency (Page 3) + owning the instrument = performance
                     bonuses.
@@ -289,7 +303,7 @@
         </v-row>
 
         <!-- General Adventuring Gear -->
-        <v-card variant="tonal" color="orange" class="mt-4">
+        <v-card class="mt-4" color="orange" variant="tonal">
           <v-card-title class="text-subtitle-1">
             <v-icon class="mr-2">mdi-bag-personal</v-icon>
             General Equipment
@@ -301,8 +315,8 @@
 
             <!-- Grid of general gear items -->
             <v-row>
-              <v-col cols="12" sm="6" md="4">
-                <v-card variant="outlined" class="gear-item">
+              <v-col cols="12" md="4" sm="6">
+                <v-card class="gear-item" variant="outlined">
                   <v-card-text class="pa-3">
                     <div class="d-flex justify-space-between align-center">
                       <div>
@@ -318,8 +332,8 @@
                 </v-card>
               </v-col>
 
-              <v-col cols="12" sm="6" md="4">
-                <v-card variant="outlined" class="gear-item">
+              <v-col cols="12" md="4" sm="6">
+                <v-card class="gear-item" variant="outlined">
                   <v-card-text class="pa-3">
                     <div class="d-flex justify-space-between align-center">
                       <div>
@@ -335,8 +349,8 @@
                 </v-card>
               </v-col>
 
-              <v-col cols="12" sm="6" md="4">
-                <v-card variant="outlined" class="gear-item">
+              <v-col cols="12" md="4" sm="6">
+                <v-card class="gear-item" variant="outlined">
                   <v-card-text class="pa-3">
                     <div class="d-flex justify-space-between align-center">
                       <div>
@@ -358,15 +372,15 @@
     </v-card>
 
     <!-- Encumbrance & Weight Summary -->
-    <v-card variant="outlined" class="mt-6" color="warning-lighten-4">
+    <v-card class="mt-6" color="warning-lighten-4" variant="outlined">
       <v-card-title class="d-flex align-center">
-        <v-icon color="warning" class="mr-2">mdi-weight</v-icon>
+        <v-icon class="mr-2" color="warning">mdi-weight</v-icon>
         Carrying Capacity
       </v-card-title>
       <v-card-text>
         <v-row align="center">
           <v-col cols="12" md="8">
-            <v-progress-linear :model-value="(120 / 225) * 100" color="success" height="20" class="mb-2">
+            <v-progress-linear class="mb-2" color="success" height="20" :model-value="(120 / 225) * 100">
               <strong>120 / 225 lb</strong>
             </v-progress-linear>
             <div class="text-body-2">
@@ -374,7 +388,7 @@
               <strong>Capacity:</strong> 225 lb (15 Str × 15)
             </div>
           </v-col>
-          <v-col cols="12" md="4" class="text-center">
+          <v-col class="text-center" cols="12" md="4">
             <v-chip color="success" size="large">
               <v-icon start>mdi-check</v-icon>
               Good
@@ -387,10 +401,10 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+  import { ref } from 'vue'
 
-// Mock data for the demo
-const equipmentMethod = ref('class')
+  // Mock data for the demo
+  const equipmentMethod = ref('class')
 </script>
 
 <style scoped>

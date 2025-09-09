@@ -1,17 +1,17 @@
-import { defineStore } from "pinia";
+import { defineStore } from 'pinia';
 
-export const useNotificationStore = defineStore("notification", {
+export const useNotificationStore = defineStore('notification', {
   state: () => ({
     notifications: [],
   }),
   actions: {
-    addNotification(notification) {
+    addNotification (notification) {
       this.notifications.push(notification);
     },
-    removeNotification(index) {
+    removeNotification (index) {
       this.notifications.splice(index, 1);
     },
-    clearAll() {
+    clearAll () {
       this.notifications = [];
     },
   },

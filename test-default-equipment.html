@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0" />
+    <title>Test Default Equipment and Starting Gold</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+      }
+      .test-section {
+        margin-bottom: 30px;
+        padding: 15px;
+        border: 1px solid #ccc;
+      }
+      .pass {
+        color: green;
+        font-weight: bold;
+      }
+      .fail {
+        color: red;
+        font-weight: bold;
+      }
+      ul {
+        margin: 10px 0;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Test Default Equipment and Starting Gold</h1>
+
+    <div class="test-section">
+      <h2>Manual Testing Instructions</h2>
+      <ol>
+        <li>Go to the Character Creator</li>
+        <li>Select different classes (Ranger, Rogue, Wizard, Cleric, etc.)</li>
+        <li>Navigate to the Inventory & Equipment page (Page 4)</li>
+        <li>
+          Check if the Standard Package shows:
+          <ul>
+            <li>Equipment choices (Option A vs Option B)</li>
+            <li>Default equipment specific to each class (see list below)</li>
+            <li>Starting gold (instead of 0)</li>
+          </ul>
+        </li>
+        <li>
+          Verify that making equipment choices updates the All Inventory section
+        </li>
+        <li>Confirm default equipment appears alongside chosen equipment</li>
+        <li>Test multiple classes to see different default equipment</li>
+      </ol>
+    </div>
+
+    <div class="test-section">
+      <h2>Expected Default Equipment by Class</h2>
+
+      <h3>🏹 Ranger (Original Implementation)</h3>
+      <ul>
+        <li>Longbow (1) - Always included</li>
+        <li>Arrow (20) - Ammunition for longbow</li>
+        <li>
+          <em>Plus equipment choices: Scale mail OR leather armor, etc.</em>
+        </li>
+      </ul>
+
+      <h3>🗡️ Rogue</h3>
+      <ul>
+        <li>Dagger (2) - Always included</li>
+        <li><em>Plus equipment choices: Rapier OR shortsword, etc.</em></li>
+      </ul>
+
+      <h3>📚 Wizard</h3>
+      <ul>
+        <li>Spellbook (1) - Contains known spells</li>
+        <li><em>Plus equipment choices: Quarterstaff OR dagger, etc.</em></li>
+      </ul>
+
+      <h3>⚡ Cleric</h3>
+      <ul>
+        <li>Holy Symbol (1) - Divine spellcasting focus</li>
+        <li><em>Plus equipment choices: Mace OR warhammer, etc.</em></li>
+      </ul>
+
+      <h3>🛡️ Paladin</h3>
+      <ul>
+        <li>Holy Symbol (1) - Divine spellcasting focus</li>
+        <li>
+          <em>Plus equipment choices: Martial weapon and shield, etc.</em>
+        </li>
+      </ul>
+
+      <h3>👹 Warlock</h3>
+      <ul>
+        <li>Arcane Focus (1) - Eldritch magic focus</li>
+        <li>
+          <em>Plus equipment choices: Light crossbow OR simple weapon, etc.</em>
+        </li>
+      </ul>
+
+      <h3>🔮 Sorcerer</h3>
+      <ul>
+        <li>Arcane Focus (1) - Sorcerous magic focus</li>
+        <li>
+          <em>Plus equipment choices: Light crossbow OR simple weapon, etc.</em>
+        </li>
+      </ul>
+
+      <h3>🎵 Bard</h3>
+      <ul>
+        <li>Musical Instrument (1) - Bardic magic focus</li>
+        <li><em>Plus equipment choices: Rapier OR longsword, etc.</em></li>
+      </ul>
+
+      <h3>🌿 Druid</h3>
+      <ul>
+        <li>Druidcraft Focus (1) - Natural spell focus</li>
+        <li>
+          <em>Plus equipment choices: Scimitar OR simple melee weapon, etc.</em>
+        </li>
+      </ul>
+
+      <h3>👊 Monk</h3>
+      <ul>
+        <li>Dart (10) - Simple ranged weapons</li>
+        <li>
+          <em>Plus equipment choices: Shortsword OR simple weapon, etc.</em>
+        </li>
+      </ul>
+
+      <h3>⚔️ Barbarian</h3>
+      <ul>
+        <li>Javelin (4) - Simple ranged weapons</li>
+        <li>
+          <em>Plus equipment choices: Greataxe OR martial weapon, etc.</em>
+        </li>
+      </ul>
+
+      <h3>🛡️ Fighter</h3>
+      <ul>
+        <li>No default equipment - everything through choices</li>
+        <li><em>Equipment choices: Longsword OR martial weapon, etc.</em></li>
+      </ul>
+    </div>
+    <div class="test-section">
+      <h2>Implementation Summary</h2>
+      <p>The following components were implemented:</p>
+      <ul>
+        <li>
+          <strong>Equipment Choices:</strong> Interactive Option A/B selection
+          for class equipment
+        </li>
+        <li>
+          <strong>Default Class Equipment:</strong> Automatic inclusion of
+          class-specific gear (Longbow + arrows for Rangers)
+        </li>
+        <li>
+          <strong>Starting Gold Display:</strong> Shows actual starting money
+          from class/background instead of 0
+        </li>
+        <li>
+          <strong>All Inventory Integration:</strong> Combines chosen equipment,
+          default equipment, and background items
+        </li>
+      </ul>
+    </div>
+
+    <script>
+      console.log(
+        'Test page loaded. Navigate to Character Creator to test functionality.'
+      );
+    </script>
+  </body>
+</html>

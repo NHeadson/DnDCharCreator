@@ -9,10 +9,9 @@
           </v-card-title>
           <v-card-text class="pt-2 pb-3">
             <v-select v-model="props.character.class" :density="$vuetify.display.smAndDown ? 'comfortable' : 'compact'"
-              :error="!!props.characterData?.classError" item-title="name"
-              :error-messages="props.characterData?.classError" item-value="index"
-              :items="props.characterData?.classData || []" label="Choose Your Class"
-              :loading="props.characterData?.isLoadingClasses" variant="outlined">
+              :error="!!props.characterData?.classError" :error-messages="props.characterData?.classError"
+              item-title="name" item-value="index" :items="props.characterData?.classData || []"
+              label="Choose Your Class" :loading="props.characterData?.isLoadingClasses" variant="outlined">
               <template #prepend>
                 <v-icon color="primary" size="small">mdi-shield-sword</v-icon>
               </template>
@@ -64,10 +63,10 @@
 
             <v-tooltip
               v-for="ability in (Array.isArray(selectedClassInfo.primaryAbility) ? selectedClassInfo.primaryAbility : [selectedClassInfo.primaryAbility])"
-              :key="'ability-' + ability" text="Primary ability score that's most important for this class"
-              location="top">
-              <template v-slot:activator="{ props }">
-                <v-chip v-bind="props" size="small" variant="tonal" color="accent">
+              :key="'ability-' + ability" location="top"
+              text="Primary ability score that's most important for this class">
+              <template #activator="{ props }">
+                <v-chip v-bind="props" color="accent" size="small" variant="tonal">
                   {{ ability }}
                 </v-chip>
               </template>
@@ -84,10 +83,10 @@
               </div>
               <div class="ms-3">
                 <div style="display: flex; gap: 6px; flex-wrap: wrap;">
-                  <v-tooltip text="The type of hit dice used to determine hit points when leveling up" location="top">
-                    <template v-slot:activator="{ props }">
+                  <v-tooltip location="top" text="The type of hit dice used to determine hit points when leveling up">
+                    <template #activator="{ props }">
                       <v-chip v-bind="props" color="green" size="small" variant="tonal">
-                        <v-icon start size="small">mdi-dice-d20</v-icon>
+                        <v-icon size="small" start>mdi-dice-d20</v-icon>
                         <span class="chip-label">Hit Die</span>
                         <span class="chip-value">: d{{ selectedClassInfo.hitDie ? selectedClassInfo.hitDie.replace('D',
                           '') : '-' }}</span>
@@ -95,10 +94,10 @@
                     </template>
                   </v-tooltip>
                   <v-tooltip v-if="selectedClassInfo.savingThrows && selectedClassInfo.savingThrows.length"
-                    text="Ability scores this class is proficient in for saving throws" location="top">
-                    <template v-slot:activator="{ props }">
+                    location="top" text="Ability scores this class is proficient in for saving throws">
+                    <template #activator="{ props }">
                       <v-chip v-bind="props" color="blue" size="small" variant="tonal">
-                        <v-icon start size="small">mdi-shield</v-icon>
+                        <v-icon size="small" start>mdi-shield</v-icon>
                         <span class="chip-label">Saves</span>
                         <span class="chip-value">: {{ selectedClassInfo.savingThrows.join(', ') }}</span>
                       </v-chip>
@@ -107,7 +106,7 @@
                   <v-chip
                     v-if="selectedClassInfo.armorTraining && (selectedClassInfo.armorTraining.light || selectedClassInfo.armorTraining.medium || selectedClassInfo.armorTraining.heavy || selectedClassInfo.armorTraining.shields)"
                     color="blue" size="small" variant="tonal">
-                    <v-icon start size="small">mdi-shield-half-full</v-icon>
+                    <v-icon size="small" start>mdi-shield-half-full</v-icon>
                     <span class="chip-label">Armor</span>
                     <span class="chip-value">
                       : {{ [
@@ -130,9 +129,9 @@
               </div>
               <div class="ms-3">
                 <div style="display: flex; gap: 6px; flex-wrap: wrap;">
-                  <v-tooltip v-for="wp in selectedClassInfo.weaponProficiencies" :key="'wp-' + wp"
-                    text="A weapon your character is trained to use effectively" location="top">
-                    <template v-slot:activator="{ props }">
+                  <v-tooltip v-for="wp in selectedClassInfo.weaponProficiencies" :key="'wp-' + wp" location="top"
+                    text="A weapon your character is trained to use effectively">
+                    <template #activator="{ props }">
                       <v-chip v-bind="props" color="orange" size="small" variant="tonal">
                         {{ wp }}
                       </v-chip>
@@ -150,9 +149,9 @@
               </div>
               <div class="ms-3">
                 <div style="display: flex; gap: 6px; flex-wrap: wrap;">
-                  <v-tooltip v-for="ap in selectedClassInfo.armorProficiencies" :key="'ap-' + ap"
-                    text="Armor your character can wear without penalty" location="top">
-                    <template v-slot:activator="{ props }">
+                  <v-tooltip v-for="ap in selectedClassInfo.armorProficiencies" :key="'ap-' + ap" location="top"
+                    text="Armor your character can wear without penalty">
+                    <template #activator="{ props }">
                       <v-chip v-bind="props" color="blue-grey" size="small" variant="tonal">
                         {{ ap }}
                       </v-chip>
@@ -170,9 +169,9 @@
               </div>
               <div class="ms-3">
                 <div style="display: flex; gap: 6px; flex-wrap: wrap;">
-                  <v-tooltip v-for="tp in selectedClassInfo.toolProficiencies" :key="'tp-' + tp"
-                    text="Tools your character can use proficiently" location="top">
-                    <template v-slot:activator="{ props }">
+                  <v-tooltip v-for="tp in selectedClassInfo.toolProficiencies" :key="'tp-' + tp" location="top"
+                    text="Tools your character can use proficiently">
+                    <template #activator="{ props }">
                       <v-chip v-bind="props" color="info" size="small" variant="tonal">
                         {{ tp }}
                       </v-chip>
@@ -193,9 +192,9 @@
               </div>
               <div class="ms-3">
                 <div style="display: flex; gap: 6px; flex-wrap: wrap;">
-                  <v-tooltip v-for="sk in selectedClassInfo.skillProficiencies.from" :key="'sk-' + sk"
-                    text="Skills your character can choose to be trained in" location="top">
-                    <template v-slot:activator="{ props }">
+                  <v-tooltip v-for="sk in selectedClassInfo.skillProficiencies.from" :key="'sk-' + sk" location="top"
+                    text="Skills your character can choose to be trained in">
+                    <template #activator="{ props }">
                       <v-chip v-bind="props" color="success" size="small" variant="tonal">
                         {{ sk }}
                       </v-chip>
@@ -218,29 +217,29 @@
                 <span class="text-caption font-weight-bold text-grey-darken-2">Spellcasting</span>
               </div>
               <div class="ms-3">
-                <v-chip v-if="selectedClassInfo.spellcasting.ability" color="deep-purple" size="x-small" variant="flat"
-                  class="me-2 mb-1">
-                  <v-icon size="x-small" class="me-1">mdi-star-four-points</v-icon>
+                <v-chip v-if="selectedClassInfo.spellcasting.ability" class="me-2 mb-1" color="deep-purple"
+                  size="x-small" variant="flat">
+                  <v-icon class="me-1" size="x-small">mdi-star-four-points</v-icon>
                   Ability: {{ selectedClassInfo.spellcasting.ability }}
                 </v-chip>
-                <v-chip v-if="selectedClassInfo.spellcasting.cantripsKnown" color="deep-purple" size="x-small"
-                  variant="flat" class="me-2 mb-1">
-                  <v-icon size="x-small" class="me-1">mdi-flash</v-icon>
+                <v-chip v-if="selectedClassInfo.spellcasting.cantripsKnown" class="me-2 mb-1" color="deep-purple"
+                  size="x-small" variant="flat">
+                  <v-icon class="me-1" size="x-small">mdi-flash</v-icon>
                   Cantrips: {{ selectedClassInfo.spellcasting.cantripsKnown }}
                 </v-chip>
-                <v-chip v-if="selectedClassInfo.spellcasting.spellsKnown" color="deep-purple" size="x-small"
-                  variant="flat" class="me-2 mb-1">
-                  <v-icon size="x-small" class="me-1">mdi-book-open-variant</v-icon>
+                <v-chip v-if="selectedClassInfo.spellcasting.spellsKnown" class="me-2 mb-1" color="deep-purple"
+                  size="x-small" variant="flat">
+                  <v-icon class="me-1" size="x-small">mdi-book-open-variant</v-icon>
                   Spells: {{ selectedClassInfo.spellcasting.spellsKnown }}
                 </v-chip>
-                <v-chip v-if="selectedClassInfo.spellcasting.spellSlots" color="deep-purple" size="x-small"
-                  variant="flat" class="me-2 mb-1">
-                  <v-icon size="x-small" class="me-1">mdi-cube-outline</v-icon>
+                <v-chip v-if="selectedClassInfo.spellcasting.spellSlots" class="me-2 mb-1" color="deep-purple"
+                  size="x-small" variant="flat">
+                  <v-icon class="me-1" size="x-small">mdi-cube-outline</v-icon>
                   Spell Slots: {{ selectedClassInfo.spellcasting.spellSlots }}
                 </v-chip>
                 <div v-if="selectedClassInfo.spellcasting.info && selectedClassInfo.spellcasting.info.length"
                   class="mt-2">
-                  <v-expansion-panels multiple elevation="0" class="spellcasting-info-panels">
+                  <v-expansion-panels class="spellcasting-info-panels" elevation="0" multiple>
                     <v-expansion-panel v-for="(info, idx) in selectedClassInfo.spellcasting.info"
                       :key="'spellinfo-' + idx">
                       <v-expansion-panel-title>{{ info.name }}</v-expansion-panel-title>
@@ -260,7 +259,7 @@
                 <span class="text-caption font-weight-bold text-grey-darken-2">Level 1 Features</span>
               </div>
               <div class="ms-3">
-                <v-expansion-panels multiple elevation="0" class="feature-panel">
+                <v-expansion-panels class="feature-panel" elevation="0" multiple>
                   <v-expansion-panel v-for="feature in selectedClassInfo.features" :key="'feature-' + feature.name">
                     <v-expansion-panel-title>{{ feature.name }}</v-expansion-panel-title>
                     <v-expansion-panel-text>
@@ -270,7 +269,7 @@
                         </ul>
                       </div>
                       <div v-else>
-                        <span v-html="formatFeatureDesc(feature.desc)"></span>
+                        <span v-html="formatFeatureDesc(feature.desc)" />
                       </div>
                       <!-- Emphasize feature choices if present -->
                       <div
@@ -281,14 +280,14 @@
                         <div v-if="feature.feature_specific.enemy_type_options">
                           <div class="feature-choice-chips">
                             <v-chip v-for="type in feature.feature_specific.enemy_type_options.from.options"
-                              :key="'enemy-' + type" color="amber" size="small" class="ms-3 me-1 mb-1">{{ type
+                              :key="'enemy-' + type" class="ms-3 me-1 mb-1" color="amber" size="small">{{ type
                               }}</v-chip>
                           </div>
                         </div>
                         <div v-if="feature.feature_specific.terrain_type_options">
                           <div class="feature-choice-chips">
                             <v-chip v-for="type in feature.feature_specific.terrain_type_options.from.options"
-                              :key="'terrain-' + type" color="teal" size="small" class="ms-3 me-1 mb-1">{{ type
+                              :key="'terrain-' + type" class="ms-3 me-1 mb-1" color="teal" size="small">{{ type
                               }}</v-chip>
                           </div>
                         </div>
@@ -303,12 +302,12 @@
             <div v-if="selectedClassInfo.startingEquipment && selectedClassInfo.startingEquipment.length"
               class="mb-3 ms-6">
               <div class="d-flex align-center mb-1">
-                <v-icon class="me-1" color="blue-grey" size="small">mdi-backpack</v-icon>
+                <v-icon class="me-1" color="brown-darken-1" size="small">mdi-bag-personal</v-icon>
                 <span class="text-caption font-weight-bold text-grey-darken-2">Starting Equipment</span>
               </div>
               <div class="ms-3">
                 <v-chip v-for="item in selectedClassInfo.startingEquipment" :key="'equip-' + (item.name || item)"
-                  size="small" variant="tonal" color="error" class="me-1 mb-1">
+                  class="me-1 mb-1" color="error" size="small" variant="tonal">
                   {{ typeof item === 'object' && item.name ? item.name + (item.quantity && item.quantity > 1 ? ' x' +
                     item.quantity : '') : item }}
                 </v-chip>
@@ -328,7 +327,7 @@
                   <template v-if="opt.from && Array.isArray(opt.from.options)">
                     <span v-for="(choice, choiceIdx) in opt.from.options"
                       :key="'choice-' + getEquipmentChoiceLabel(choice)">
-                      <v-chip size="small" color="blue-grey" variant="tonal" class="mb-1">
+                      <v-chip class="mb-1" color="blue-grey" size="small" variant="tonal">
                         {{ getEquipmentChoiceLabel(choice) }}
                       </v-chip>
                       <span v-if="choiceIdx < opt.from.options.length - 1" class="mx-2 text-grey-darken-1">or</span>
@@ -336,14 +335,14 @@
                   </template>
                   <template v-else-if="opt.options && Array.isArray(opt.options)">
                     <span v-for="(choice, choiceIdx) in opt.options" :key="'choice-' + getEquipmentChoiceLabel(choice)">
-                      <v-chip size="small" color="blue-grey" variant="tonal" class="mb-1">
+                      <v-chip class="mb-1" color="blue-grey" size="small" variant="tonal">
                         {{ getEquipmentChoiceLabel(choice) }}
                       </v-chip>
                       <span v-if="choiceIdx < opt.options.length - 1" class="mx-2 text-grey-darken-1">or</span>
                     </span>
                   </template>
                   <template v-else>
-                    <v-chip size="small" color="blue-grey" variant="tonal" class="me-1 mb-1">
+                    <v-chip class="me-1 mb-1" color="blue-grey" size="small" variant="tonal">
                       {{ capitalizeWords(opt.desc || ('Choose ' + opt.choose + ' from options')) }}
                     </v-chip>
                   </template>
@@ -369,10 +368,10 @@ const shouldShowSubclassSelector = computed(() => {
   // Otherwise, only show if character.level >= 2 (Ranger, etc. at level 2 or 3)
   return props.character.level && props.character.level >= 2;
 });
-import { ref, computed, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 const props = defineProps({
   character: { type: Object, required: true },
-  characterData: { type: Object, required: true }
+  characterData: { type: Object, required: true },
 });
 import { dndAPI } from '@/services/dndAPI.js'
 
@@ -389,7 +388,7 @@ watch(() => props.character.class, async (newClass, oldClass) => {
 })
 
 const featureMessage = computed(() => {
-  if (selectedClassInfo && selectedClassInfo.features === null) {
+  if (selectedClassInfo.value && selectedClassInfo.value.features === null) {
     return 'No features at level 1.';
   }
   return 'None found for this class.';
@@ -480,7 +479,7 @@ function capitalizeWords(str) {
   if (!str) return '';
   return str
     .toLowerCase()
-    .replace(/\b\w/g, (char) => char.toUpperCase());
+    .replace(/\b\w/g, char => char.toUpperCase());
 }
 
 // Reactive data for subclasses
@@ -510,22 +509,22 @@ const mockSubclasses = {
   'ranger': [
     { index: 'hunter', name: 'Hunter' },
     { index: 'beast-master', name: 'Beast Master' },
-    { index: 'gloom-stalker', name: 'Gloom Stalker' }
+    { index: 'gloom-stalker', name: 'Gloom Stalker' },
   ],
   'fighter': [
     { index: 'champion', name: 'Champion' },
     { index: 'battle-master', name: 'Battle Master' },
-    { index: 'eldritch-knight', name: 'Eldritch Knight' }
+    { index: 'eldritch-knight', name: 'Eldritch Knight' },
   ],
   'wizard': [
     { index: 'abjuration', name: 'School of Abjuration' },
     { index: 'divination', name: 'School of Divination' },
-    { index: 'evocation', name: 'School of Evocation' }
-  ]
+    { index: 'evocation', name: 'School of Evocation' },
+  ],
 }
 
 // Watch for class changes to load subclasses
-watch(() => props.character.class, async (newClassId) => {
+watch(() => props.character.class, async newClassId => {
   if (newClassId) {
     // For now, use mock data. Later we'll implement API calls
     availableSubclasses.value = mockSubclasses[newClassId] || []
@@ -539,7 +538,7 @@ watch(() => props.character.class, async (newClassId) => {
 }, { immediate: true })
 
 // Watch for subclass changes
-watch(() => props.character.subclass, async (newSubclassId) => {
+watch(() => props.character.subclass, async newSubclassId => {
   if (newSubclassId) {
     // Mock subclass details for now
     selectedSubclassInfo.value = {
@@ -547,9 +546,9 @@ watch(() => props.character.subclass, async (newSubclassId) => {
       features: [
         {
           name: 'Subclass Feature',
-          description: 'This is a placeholder for subclass features that will be loaded from the API.'
-        }
-      ]
+          description: 'This is a placeholder for subclass features that will be loaded from the API.',
+        },
+      ],
     }
     props.character.subclassDetails = selectedSubclassInfo.value
   } else {
@@ -651,7 +650,7 @@ function formatFeatureDesc(desc) {
 }
 
 .feature-panel :deep(.v-expansion-panel-text__wrapper) {
-  padding: 12px 16px;
+  padding: 12px 32px;
 }
 
 .spellcasting-section :deep(.v-card) {

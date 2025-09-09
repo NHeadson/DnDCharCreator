@@ -1,16 +1,16 @@
-import { initializeApp } from "firebase/app";
-import { getAuth, signInAnonymously, onAuthStateChanged } from "firebase/auth";
-import { getFirestore } from "firebase/firestore";
-import { createApp } from "vue";
-import { createPinia } from "pinia";
-import router from "@/plugins/router.js";
-import vuetify from "@/plugins/vuetify.js";
+import { initializeApp } from 'firebase/app';
+import { getAuth, onAuthStateChanged, signInAnonymously } from 'firebase/auth';
+import { getFirestore } from 'firebase/firestore';
+import { createApp } from 'vue';
+import { createPinia } from 'pinia';
+import router from '@/plugins/router.js';
+import vuetify from '@/plugins/vuetify.js';
 // Import the D&D API singleton
-import { dndAPI } from "@/services/dndAPI.js";
-import App from "./App.vue";
-import "unfonts.css";
+import { dndAPI } from '@/services/dndAPI.js';
+import App from './App.vue';
+import 'unfonts.css';
 
-import "@/styles/theme.css";
+import '@/styles/theme.css';
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -25,7 +25,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth();
-onAuthStateChanged(auth, (user) => {
+onAuthStateChanged(auth, user => {
   if (!user) {
     signInAnonymously(auth);
   }
@@ -42,5 +42,5 @@ vueApp.use(vuetify).use(router);
 // Make dndAPI available globally
 vueApp.config.globalProperties.$dndAPI = dndAPI;
 
-vueApp.mount("#app");
-export { dndAPI } from "@/services/dndAPI.js";
+vueApp.mount('#app');
+export { dndAPI } from '@/services/dndAPI.js';

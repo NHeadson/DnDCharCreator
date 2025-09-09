@@ -1,5 +1,5 @@
 <template>
-  <v-footer app height="40" class="theme-surface-bg">
+  <v-footer app class="theme-surface-bg" height="40">
     <div class="d-none d-sm-inline-block mx-auto theme-secondary">
       Nick Headson &copy; {{ (new Date()).getFullYear() }}
     </div>

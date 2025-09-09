@@ -1,5 +1,5 @@
 <template>
-  <v-card variant="outlined" class="mb-6">
+  <v-card class="mb-6" variant="outlined">
     <v-card-title class="d-flex align-center py-2">
       <v-icon class="me-2" color="teal">mdi-medal</v-icon>
       Feats
@@ -19,24 +19,52 @@
             <v-card-text class="pa-3">
               <div class="d-flex justify-between align-center mb-2">
                 <div class="text-subtitle-2 font-weight-bold">{{ feat.name || 'Feat ' + (index + 1) }}</div>
-                <v-btn @click="removeFeat(index)" color="teal" icon size="x-small" variant="text">
+                <v-btn
+                  color="teal"
+                  icon
+                  size="x-small"
+                  variant="text"
+                  @click="removeFeat(index)"
+                >
                   <v-icon size="small">mdi-close</v-icon>
                 </v-btn>
               </div>
 
-              <v-text-field v-model="feat.name" density="compact" label="Feat Name" variant="outlined" class="mb-2" />
+              <v-text-field
+                v-model="feat.name"
+                class="mb-2"
+                density="compact"
+                label="Feat Name"
+                variant="outlined"
+              />
 
-              <v-textarea v-model="feat.description" density="compact" label="Feat Description" rows="3"
-                variant="outlined" class="mb-2" />
+              <v-textarea
+                v-model="feat.description"
+                class="mb-2"
+                density="compact"
+                label="Feat Description"
+                rows="3"
+                variant="outlined"
+              />
 
-              <v-text-field v-model="feat.source" density="compact" label="Source (e.g., PHB, XGE)"
-                variant="outlined" />
+              <v-text-field
+                v-model="feat.source"
+                density="compact"
+                label="Source (e.g., PHB, XGE)"
+                variant="outlined"
+              />
             </v-card-text>
           </v-card>
         </v-col>
       </v-row>
 
-      <v-btn @click="addFeat" class="mt-2" color="teal" prepend-icon="mdi-plus" variant="outlined">
+      <v-btn
+        class="mt-2"
+        color="teal"
+        prepend-icon="mdi-plus"
+        variant="outlined"
+        @click="addFeat"
+      >
         Add Feat
       </v-btn>
 
@@ -49,7 +77,13 @@
           </v-expansion-panel-title>
           <v-expansion-panel-text>
             <v-row>
-              <v-col v-for="feat in popularFeats" :key="feat.name" cols="12" sm="6" md="4">
+              <v-col
+                v-for="feat in popularFeats"
+                :key="feat.name"
+                cols="12"
+                md="4"
+                sm="6"
+              >
                 <v-card class="pa-2" color="grey-lighten-5" flat @click="addPopularFeat(feat)">
                   <div class="text-subtitle-2 font-weight-bold text-teal">{{ feat.name }}</div>
                   <div class="text-caption text-grey-darken-2">{{ feat.shortDesc }}</div>
@@ -65,85 +99,85 @@
 </template>
 
 <script setup>
-const props = defineProps({
-  character: {
-    type: Object,
-    required: true,
-  },
-  characterData: {
-    type: Object,
-    required: true,
-  }
-})
-
-// Initialize feats array if it doesn't exist
-if (!props.character.feats) {
-  props.character.feats = []
-}
-
-// Popular D&D 5e feats
-const popularFeats = [
-  {
-    name: 'Alert',
-    shortDesc: '+5 initiative, can\'t be surprised',
-    description: 'You gain a +5 bonus to initiative. You can\'t be surprised while you are conscious. Other creatures don\'t gain advantage on attack rolls against you as a result of being unseen by you.'
-  },
-  {
-    name: 'Great Weapon Master',
-    shortDesc: 'Heavy weapon expertise',
-    description: 'You\'ve learned to put the weight of a weapon to your advantage. You can choose to take a -5 penalty to your attack roll. If you do so and the attack hits, you add +10 to the attack\'s damage.'
-  },
-  {
-    name: 'Sharpshooter',
-    shortDesc: 'Ranged weapon expertise',
-    description: 'You have mastered ranged weapons and can make shots that others find impossible. You can choose to take a -5 penalty to your attack roll. If you do so and the attack hits, you add +10 to the attack\'s damage.'
-  },
-  {
-    name: 'War Caster',
-    shortDesc: 'Spellcasting in combat',
-    description: 'You have advantage on Constitution saving throws that you make to maintain your concentration on a spell when you take damage. You can perform the somatic components of spells even when you have weapons or a shield in one or both hands.'
-  },
-  {
-    name: 'Lucky',
-    shortDesc: 'Reroll dice 3 times per day',
-    description: 'You have inexplicable luck that seems to kick in at just the right moment. You have 3 luck points. Whenever you make an attack roll, ability check, or saving throw, you can spend one luck point to roll an additional d20.'
-  },
-  {
-    name: 'Tough',
-    shortDesc: '+2 HP per level',
-    description: 'Your hit point maximum increases by an amount equal to twice your level when you gain this feat. Whenever you gain a level thereafter, your hit point maximum increases by an additional 2 hit points.'
-  },
-  {
-    name: 'Fey Touched',
-    shortDesc: 'Misty step + enchantment/divination spell',
-    description: 'You learn the misty step spell and one 1st-level spell of your choice from the divination or enchantment school of magic. You can cast each of these spells without expending a spell slot once per long rest.'
-  },
-  {
-    name: 'Telekinetic',
-    shortDesc: 'Mage hand + bonus action shove',
-    description: 'You learn the mage hand cantrip if you don\'t already know it. As a bonus action, you can try to shove one creature within 30 feet of you that you can see or sense with mage hand.'
-  }
-]
-
-const addFeat = () => {
-  props.character.feats.push({
-    name: '',
-    description: '',
-    source: ''
+  const props = defineProps({
+    character: {
+      type: Object,
+      required: true,
+    },
+    characterData: {
+      type: Object,
+      required: true,
+    },
   })
-}
 
-const removeFeat = (index) => {
-  props.character.feats.splice(index, 1)
-}
+  // Initialize feats array if it doesn't exist
+  if (!props.character.feats) {
+    props.character.feats = []
+  }
 
-const addPopularFeat = (feat) => {
-  props.character.feats.push({
-    name: feat.name,
-    description: feat.description,
-    source: 'PHB'
-  })
-}
+  // Popular D&D 5e feats
+  const popularFeats = [
+    {
+      name: 'Alert',
+      shortDesc: '+5 initiative, can\'t be surprised',
+      description: 'You gain a +5 bonus to initiative. You can\'t be surprised while you are conscious. Other creatures don\'t gain advantage on attack rolls against you as a result of being unseen by you.',
+    },
+    {
+      name: 'Great Weapon Master',
+      shortDesc: 'Heavy weapon expertise',
+      description: 'You\'ve learned to put the weight of a weapon to your advantage. You can choose to take a -5 penalty to your attack roll. If you do so and the attack hits, you add +10 to the attack\'s damage.',
+    },
+    {
+      name: 'Sharpshooter',
+      shortDesc: 'Ranged weapon expertise',
+      description: 'You have mastered ranged weapons and can make shots that others find impossible. You can choose to take a -5 penalty to your attack roll. If you do so and the attack hits, you add +10 to the attack\'s damage.',
+    },
+    {
+      name: 'War Caster',
+      shortDesc: 'Spellcasting in combat',
+      description: 'You have advantage on Constitution saving throws that you make to maintain your concentration on a spell when you take damage. You can perform the somatic components of spells even when you have weapons or a shield in one or both hands.',
+    },
+    {
+      name: 'Lucky',
+      shortDesc: 'Reroll dice 3 times per day',
+      description: 'You have inexplicable luck that seems to kick in at just the right moment. You have 3 luck points. Whenever you make an attack roll, ability check, or saving throw, you can spend one luck point to roll an additional d20.',
+    },
+    {
+      name: 'Tough',
+      shortDesc: '+2 HP per level',
+      description: 'Your hit point maximum increases by an amount equal to twice your level when you gain this feat. Whenever you gain a level thereafter, your hit point maximum increases by an additional 2 hit points.',
+    },
+    {
+      name: 'Fey Touched',
+      shortDesc: 'Misty step + enchantment/divination spell',
+      description: 'You learn the misty step spell and one 1st-level spell of your choice from the divination or enchantment school of magic. You can cast each of these spells without expending a spell slot once per long rest.',
+    },
+    {
+      name: 'Telekinetic',
+      shortDesc: 'Mage hand + bonus action shove',
+      description: 'You learn the mage hand cantrip if you don\'t already know it. As a bonus action, you can try to shove one creature within 30 feet of you that you can see or sense with mage hand.',
+    },
+  ]
+
+  const addFeat = () => {
+    props.character.feats.push({
+      name: '',
+      description: '',
+      source: '',
+    })
+  }
+
+  const removeFeat = index => {
+    props.character.feats.splice(index, 1)
+  }
+
+  const addPopularFeat = feat => {
+    props.character.feats.push({
+      name: feat.name,
+      description: feat.description,
+      source: 'PHB',
+    })
+  }
 </script>
 
 <style scoped>

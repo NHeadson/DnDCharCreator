@@ -7,43 +7,77 @@
         <v-form @submit.prevent="createTheme">
           <v-row>
             <v-col cols="6">
-              <v-text-field v-model="customTheme.name" label="Theme Name" required dense />
+              <v-text-field v-model="customTheme.name" dense label="Theme Name" required />
             </v-col>
             <v-col cols="3">
               <div style="position:relative;">
-                <v-text-field v-model="customTheme.primary" label="Primary" prepend-inner-icon="mdi-eyedropper"
-                  :append-inner-icon="''" :style="{ cursor: 'pointer' }" dense required readonly
-                  @click="pickers.primary = true">
+                <v-text-field
+                  v-model="customTheme.primary"
+                  :append-inner-icon="''"
+                  dense
+                  label="Primary"
+                  prepend-inner-icon="mdi-eyedropper"
+                  readonly
+                  required
+                  :style="{ cursor: 'pointer' }"
+                  @click="pickers.primary = true"
+                >
                   <template #append-inner>
                     <span
                       :style="{ display: 'inline-block', width: '32px', height: '32px', borderRadius: '8px', background: customTheme.primary, border: '1px solid #ccc', marginRight: '8px', cursor: 'pointer' }"
-                      @click.stop="pickers.primary = true"></span>
+                      @click.stop="pickers.primary = true"
+                    />
                   </template>
                 </v-text-field>
-                <v-menu v-model="pickers.primary" :close-on-content-click="false" transition="scale-transition"
-                  activator="parent">
-                  <v-color-picker :model-value="customTheme.primary"
-                    @update:model-value="val => customTheme.primary = val" mode="hexa" show-swatches
-                    swatches-max-height="150" />
+                <v-menu
+                  v-model="pickers.primary"
+                  activator="parent"
+                  :close-on-content-click="false"
+                  transition="scale-transition"
+                >
+                  <v-color-picker
+                    mode="hexa"
+                    :model-value="customTheme.primary"
+                    show-swatches
+                    swatches-max-height="150"
+                    @update:model-value="val => customTheme.primary = val"
+                  />
                 </v-menu>
               </div>
             </v-col>
             <v-col cols="3">
               <div style="position:relative;">
-                <v-text-field v-model="customTheme.secondary" label="Secondary" prepend-inner-icon="mdi-eyedropper"
-                  :append-inner-icon="''" :style="{ cursor: 'pointer' }" dense required readonly
-                  @click="pickers.secondary = true">
+                <v-text-field
+                  v-model="customTheme.secondary"
+                  :append-inner-icon="''"
+                  dense
+                  label="Secondary"
+                  prepend-inner-icon="mdi-eyedropper"
+                  readonly
+                  required
+                  :style="{ cursor: 'pointer' }"
+                  @click="pickers.secondary = true"
+                >
                   <template #append-inner>
                     <span
                       :style="{ display: 'inline-block', width: '32px', height: '32px', borderRadius: '8px', background: customTheme.secondary, border: '1px solid #ccc', marginRight: '8px', cursor: 'pointer' }"
-                      @click.stop="pickers.secondary = true"></span>
+                      @click.stop="pickers.secondary = true"
+                    />
                   </template>
                 </v-text-field>
-                <v-menu v-model="pickers.secondary" :close-on-content-click="false" transition="scale-transition"
-                  activator="parent">
-                  <v-color-picker :model-value="customTheme.secondary"
-                    @update:model-value="val => customTheme.secondary = val" mode="hexa" show-swatches
-                    swatches-max-height="150" />
+                <v-menu
+                  v-model="pickers.secondary"
+                  activator="parent"
+                  :close-on-content-click="false"
+                  transition="scale-transition"
+                >
+                  <v-color-picker
+                    mode="hexa"
+                    :model-value="customTheme.secondary"
+                    show-swatches
+                    swatches-max-height="150"
+                    @update:model-value="val => customTheme.secondary = val"
+                  />
                 </v-menu>
               </div>
             </v-col>
@@ -51,69 +85,126 @@
           <v-row>
             <v-col cols="4">
               <div style="position:relative;">
-                <v-text-field v-model="customTheme.accent" label="Accent" prepend-inner-icon="mdi-eyedropper"
-                  :append-inner-icon="''" :style="{ cursor: 'pointer' }" dense required readonly
-                  @click="pickers.accent = true">
+                <v-text-field
+                  v-model="customTheme.accent"
+                  :append-inner-icon="''"
+                  dense
+                  label="Accent"
+                  prepend-inner-icon="mdi-eyedropper"
+                  readonly
+                  required
+                  :style="{ cursor: 'pointer' }"
+                  @click="pickers.accent = true"
+                >
                   <template #append-inner>
                     <span
                       :style="{ display: 'inline-block', width: '32px', height: '32px', borderRadius: '8px', background: customTheme.accent, border: '1px solid #ccc', marginRight: '8px', cursor: 'pointer' }"
-                      @click.stop="pickers.accent = true"></span>
+                      @click.stop="pickers.accent = true"
+                    />
                   </template>
                 </v-text-field>
-                <v-menu v-model="pickers.accent" :close-on-content-click="false" transition="scale-transition"
-                  activator="parent">
-                  <v-color-picker :model-value="customTheme.accent"
-                    @update:model-value="val => customTheme.accent = val" mode="hexa" show-swatches
-                    swatches-max-height="150" />
+                <v-menu
+                  v-model="pickers.accent"
+                  activator="parent"
+                  :close-on-content-click="false"
+                  transition="scale-transition"
+                >
+                  <v-color-picker
+                    mode="hexa"
+                    :model-value="customTheme.accent"
+                    show-swatches
+                    swatches-max-height="150"
+                    @update:model-value="val => customTheme.accent = val"
+                  />
                 </v-menu>
               </div>
             </v-col>
             <v-col cols="4">
               <div style="position:relative;">
-                <v-text-field v-model="customTheme.background" label="Background" prepend-inner-icon="mdi-eyedropper"
-                  :append-inner-icon="''" :style="{ cursor: 'pointer' }" dense required readonly
-                  @click="pickers.background = true">
+                <v-text-field
+                  v-model="customTheme.background"
+                  :append-inner-icon="''"
+                  dense
+                  label="Background"
+                  prepend-inner-icon="mdi-eyedropper"
+                  readonly
+                  required
+                  :style="{ cursor: 'pointer' }"
+                  @click="pickers.background = true"
+                >
                   <template #append-inner>
                     <span
                       :style="{ display: 'inline-block', width: '32px', height: '32px', borderRadius: '8px', background: customTheme.background, border: '1px solid #ccc', marginRight: '8px', cursor: 'pointer' }"
-                      @click.stop="pickers.background = true"></span>
+                      @click.stop="pickers.background = true"
+                    />
                   </template>
                 </v-text-field>
-                <v-menu v-model="pickers.background" :close-on-content-click="false" transition="scale-transition"
-                  activator="parent">
-                  <v-color-picker :model-value="customTheme.background"
-                    @update:model-value="val => customTheme.background = val" mode="hexa" show-swatches
-                    swatches-max-height="150" />
+                <v-menu
+                  v-model="pickers.background"
+                  activator="parent"
+                  :close-on-content-click="false"
+                  transition="scale-transition"
+                >
+                  <v-color-picker
+                    mode="hexa"
+                    :model-value="customTheme.background"
+                    show-swatches
+                    swatches-max-height="150"
+                    @update:model-value="val => customTheme.background = val"
+                  />
                 </v-menu>
               </div>
             </v-col>
             <v-col cols="4">
               <div style="position:relative;">
-                <v-text-field v-model="customTheme.surface" label="Surface" prepend-inner-icon="mdi-eyedropper"
-                  :append-inner-icon="''" :style="{ cursor: 'pointer' }" dense required readonly
-                  @click="pickers.surface = true">
+                <v-text-field
+                  v-model="customTheme.surface"
+                  :append-inner-icon="''"
+                  dense
+                  label="Surface"
+                  prepend-inner-icon="mdi-eyedropper"
+                  readonly
+                  required
+                  :style="{ cursor: 'pointer' }"
+                  @click="pickers.surface = true"
+                >
                   <template #append-inner>
                     <span
                       :style="{ display: 'inline-block', width: '32px', height: '32px', borderRadius: '8px', background: customTheme.surface, border: '1px solid #ccc', marginRight: '8px', cursor: 'pointer' }"
-                      @click.stop="pickers.surface = true"></span>
+                      @click.stop="pickers.surface = true"
+                    />
                   </template>
                 </v-text-field>
-                <v-menu v-model="pickers.surface" :close-on-content-click="false" transition="scale-transition"
-                  activator="parent">
-                  <v-color-picker :model-value="customTheme.surface"
-                    @update:model-value="val => customTheme.surface = val" mode="hexa" show-swatches
-                    swatches-max-height="150" />
+                <v-menu
+                  v-model="pickers.surface"
+                  activator="parent"
+                  :close-on-content-click="false"
+                  transition="scale-transition"
+                >
+                  <v-color-picker
+                    mode="hexa"
+                    :model-value="customTheme.surface"
+                    show-swatches
+                    swatches-max-height="150"
+                    @update:model-value="val => customTheme.surface = val"
+                  />
                 </v-menu>
               </div>
             </v-col>
           </v-row>
           <v-row>
-            <v-col cols="3" class="d-flex align-center ms-auto">
-              <v-switch v-model="customTheme.isDark" label="Dark Mode" color="primary" hide-details />
+            <v-col class="d-flex align-center ms-auto" cols="3">
+              <v-switch v-model="customTheme.isDark" color="primary" hide-details label="Dark Mode" />
             </v-col>
-            <v-col cols="3" class="d-flex justify-center me-auto">
-              <v-btn type="submit" color="accent" variant="flat" :disabled="!isThemeValid"
-                class="mt-2 px-8 d-flex text-center create-theme-btn" style="max-width: 320px;">
+            <v-col class="d-flex justify-center me-auto" cols="3">
+              <v-btn
+                class="mt-2 px-8 d-flex text-center create-theme-btn"
+                color="accent"
+                :disabled="!isThemeValid"
+                style="max-width: 320px;"
+                type="submit"
+                variant="flat"
+              >
                 Create Theme
               </v-btn>
             </v-col>
@@ -208,7 +299,7 @@
                 </v-card-title>
                 <v-card-text>
                   <div class="mb-2">
-                    <v-chip color="accent" text-color="white" class="me-2">Rare</v-chip>
+                    <v-chip class="me-2" color="accent" text-color="white">Rare</v-chip>
                     <v-chip color="secondary" text-color="white">Wand</v-chip>
                   </div>
                   <div class="text-body-1 font-weight-medium mb-2">Wand of the Storm</div>
@@ -216,16 +307,16 @@
                     rolls
                     and deals 1d8 extra lightning damage.</div>
                   <div class="d-flex align-center mb-2">
-                    <v-icon color="primary" class="me-1">mdi-flash</v-icon>
+                    <v-icon class="me-1" color="primary">mdi-flash</v-icon>
                     <span class="theme-primary font-weight-bold">Lightning</span>
                   </div>
                   <div class="d-flex align-center">
-                    <v-icon color="secondary" class="me-1">mdi-star</v-icon>
+                    <v-icon class="me-1" color="secondary">mdi-star</v-icon>
                     <span class="theme-secondary font-weight-bold">Attunement Required</span>
                   </div>
                 </v-card-text>
                 <v-card-actions class="pa-4 pt-0">
-                  <v-btn color="accent" variant="elevated" block>
+                  <v-btn block color="accent" variant="elevated">
                     <template #prepend>
                       <v-icon>mdi-eye</v-icon>
                     </template>
@@ -236,8 +327,12 @@
             </v-col>
             <!-- Third Preview Object -->
             <v-col cols="12" lg="4" md="6">
-              <v-card class="h-100" elevation="4" hover
-                :style="{ background: 'var(--theme-background)', border: '2px solid var(--theme-accent)' }">
+              <v-card
+                class="h-100"
+                elevation="4"
+                hover
+                :style="{ background: 'var(--theme-background)', border: '2px solid var(--theme-accent)' }"
+              >
                 <v-card-title class="d-flex align-center" style="gap: 12px;">
                   <v-avatar color="secondary" size="44">
                     <v-icon color="white" size="28">mdi-account-group</v-icon>
@@ -246,7 +341,7 @@
                 </v-card-title>
                 <v-card-text>
                   <div class="mb-2">
-                    <v-chip color="primary" text-color="white" class="me-2">Adventurers</v-chip>
+                    <v-chip class="me-2" color="primary" text-color="white">Adventurers</v-chip>
                     <v-chip color="accent" text-color="white">Level 5</v-chip>
                   </div>
                   <div class="text-body-1 font-weight-medium mb-2">The Stormwalkers</div>
@@ -254,16 +349,16 @@
                     united
                     by fate and a common quest.</div>
                   <div class="d-flex align-center mb-2">
-                    <v-icon color="secondary" class="me-1">mdi-account</v-icon>
+                    <v-icon class="me-1" color="secondary">mdi-account</v-icon>
                     <span class="theme-secondary font-weight-bold">5 Members</span>
                   </div>
                   <div class="d-flex align-center">
-                    <v-icon color="accent" class="me-1">mdi-map-marker</v-icon>
+                    <v-icon class="me-1" color="accent">mdi-map-marker</v-icon>
                     <span class="theme-accent font-weight-bold">Currently: Neverwinter</span>
                   </div>
                 </v-card-text>
                 <v-card-actions class="pa-4 pt-0">
-                  <v-btn color="secondary" variant="elevated" block>
+                  <v-btn block color="secondary" variant="elevated">
                     <template #prepend>
                       <v-icon>mdi-eye</v-icon>
                     </template>
@@ -281,56 +376,56 @@
 
 <script setup>
 
-import { ref, computed } from 'vue'
+  import { computed, ref } from 'vue'
 
-import { useTheme } from '@/composables/useTheme.js'
-const { createCustomTheme, setTheme } = useTheme()
+  import { useTheme } from '@/composables/useTheme.js'
+  const { createCustomTheme, setTheme } = useTheme()
 
-const customTheme = ref({
-  name: '',
-  primary: '#1976d2',
-  secondary: '#9c27b0',
-  accent: '#2196f3',
-  background: '#121212',
-  surface: '#23272f',
-  isDark: true
-})
-
-const pickers = ref({
-  primary: false,
-  secondary: false,
-  accent: false,
-  background: false,
-  surface: false
-})
-
-const isThemeValid = computed(() => {
-  return customTheme.value.name && customTheme.value.primary && customTheme.value.secondary && customTheme.value.accent && customTheme.value.background && customTheme.value.surface
-})
-
-function createTheme() {
-  if (!isThemeValid.value) return
-  const colors = {
-    primary: customTheme.value.primary,
-    secondary: customTheme.value.secondary,
-    accent: customTheme.value.accent,
-    background: customTheme.value.background,
-    surface: customTheme.value.surface,
-    isDark: customTheme.value.isDark
-  }
-  const key = createCustomTheme(customTheme.value.name, colors)
-  setTheme(key)
-  // Reset form
-  customTheme.value = {
+  const customTheme = ref({
     name: '',
     primary: '#1976d2',
     secondary: '#9c27b0',
     accent: '#2196f3',
     background: '#121212',
     surface: '#23272f',
-    isDark: true
+    isDark: true,
+  })
+
+  const pickers = ref({
+    primary: false,
+    secondary: false,
+    accent: false,
+    background: false,
+    surface: false,
+  })
+
+  const isThemeValid = computed(() => {
+    return customTheme.value.name && customTheme.value.primary && customTheme.value.secondary && customTheme.value.accent && customTheme.value.background && customTheme.value.surface
+  })
+
+  function createTheme () {
+    if (!isThemeValid.value) return
+    const colors = {
+      primary: customTheme.value.primary,
+      secondary: customTheme.value.secondary,
+      accent: customTheme.value.accent,
+      background: customTheme.value.background,
+      surface: customTheme.value.surface,
+      isDark: customTheme.value.isDark,
+    }
+    const key = createCustomTheme(customTheme.value.name, colors)
+    setTheme(key)
+    // Reset form
+    customTheme.value = {
+      name: '',
+      primary: '#1976d2',
+      secondary: '#9c27b0',
+      accent: '#2196f3',
+      background: '#121212',
+      surface: '#23272f',
+      isDark: true,
+    }
   }
-}
 </script>
 
 <style scoped>

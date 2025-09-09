@@ -6,9 +6,9 @@
     </v-card-subtitle>
 
     <!-- Equipment Method Selection -->
-    <v-card variant="outlined" class="mb-6">
+    <v-card class="mb-6" variant="outlined">
       <v-card-title class="d-flex align-center">
-        <v-icon color="primary" class="mr-2">mdi-package-variant</v-icon>
+        <v-icon class="mr-2" color="primary">mdi-package-variant</v-icon>
         Equipment Method
       </v-card-title>
       <v-card-subtitle class="text-body-2">
@@ -19,8 +19,12 @@
         <v-radio-group v-model="equipmentMethod">
           <v-row>
             <v-col cols="12" md="6">
-              <v-card :color="equipmentMethod === 'class' ? 'primary' : 'default'" variant="outlined"
-                class="pa-4 cursor-pointer h-100" @click="equipmentMethod = 'class'">
+              <v-card
+                class="pa-4 cursor-pointer h-100"
+                :color="equipmentMethod === 'class' ? 'primary' : 'default'"
+                variant="outlined"
+                @click="equipmentMethod = 'class'"
+              >
                 <div class="d-flex align-center mb-2">
                   <v-radio value="class" />
                   <v-icon class="ml-2 mr-2">mdi-package-variant</v-icon>
@@ -34,8 +38,12 @@
             </v-col>
 
             <v-col cols="12" md="6">
-              <v-card :color="equipmentMethod === 'gold' ? 'primary' : 'default'" variant="outlined"
-                class="pa-4 cursor-pointer h-100" @click="equipmentMethod = 'gold'">
+              <v-card
+                class="pa-4 cursor-pointer h-100"
+                :color="equipmentMethod === 'gold' ? 'primary' : 'default'"
+                variant="outlined"
+                @click="equipmentMethod = 'gold'"
+              >
                 <div class="d-flex align-center mb-2">
                   <v-radio value="gold" />
                   <v-icon class="ml-2 mr-2">mdi-gold</v-icon>
@@ -51,7 +59,7 @@
         </v-radio-group>
 
         <!-- Starting Gold Display -->
-        <v-alert v-if="equipmentMethod === 'gold'" type="success" variant="tonal" class="mt-4">
+        <v-alert v-if="equipmentMethod === 'gold'" class="mt-4" type="success" variant="tonal">
           <v-icon>mdi-gold</v-icon>
           <strong>Starting Gold:</strong> {{ startingGold }} gp
           <div class="text-body-2 mt-1">
@@ -64,13 +72,13 @@
     <v-row>
       <!-- Weapons Section -->
       <v-col cols="12" lg="6">
-        <v-card variant="outlined" class="h-100">
+        <v-card class="h-100" variant="outlined">
           <v-card-title class="d-flex align-center">
-            <v-icon color="red" class="mr-2">mdi-sword</v-icon>
+            <v-icon class="mr-2" color="red">mdi-sword</v-icon>
             Weapons
             <v-spacer />
-            <v-chip color="red" variant="tonal" size="small">
-              <v-icon start size="x-small">mdi-package</v-icon>
+            <v-chip color="red" size="small" variant="tonal">
+              <v-icon size="x-small" start>mdi-package</v-icon>
               {{ allWeapons.length }} Owned
             </v-chip>
           </v-card-title>
@@ -91,7 +99,7 @@
                   <v-list-item-title>{{ weapon.name }}</v-list-item-title>
                   <v-list-item-subtitle>
                     <div class="d-flex align-center ga-2">
-                      <v-chip size="x-small" color="orange">{{ weapon.damage }}</v-chip>
+                      <v-chip color="orange" size="x-small">{{ weapon.damage }}</v-chip>
                       <span class="text-caption">{{ weapon.properties }}</span>
                     </div>
                   </v-list-item-subtitle>
@@ -106,18 +114,29 @@
               </v-list>
 
               <!-- Add Weapon Button -->
-              <v-btn v-if="equipmentMethod !== 'class'" variant="outlined" color="red" class="mt-2" block
-                @click="openWeaponShop">
+              <v-btn
+                v-if="equipmentMethod !== 'class'"
+                block
+                class="mt-2"
+                color="red"
+                variant="outlined"
+                @click="openWeaponShop"
+              >
                 <v-icon start>mdi-plus</v-icon>
                 Add Weapon
               </v-btn>
             </template>
 
             <div v-else class="text-center pa-6">
-              <v-icon size="large" color="medium-emphasis">mdi-sword-cross</v-icon>
+              <v-icon color="medium-emphasis" size="large">mdi-sword-cross</v-icon>
               <div class="text-body-2 text-medium-emphasis mt-2">No weapons equipped</div>
-              <v-btn v-if="equipmentMethod !== 'class'" variant="outlined" color="red" class="mt-3"
-                @click="openWeaponShop">
+              <v-btn
+                v-if="equipmentMethod !== 'class'"
+                class="mt-3"
+                color="red"
+                variant="outlined"
+                @click="openWeaponShop"
+              >
                 <v-icon start>mdi-plus</v-icon>
                 Add Your First Weapon
               </v-btn>
@@ -128,13 +147,13 @@
 
       <!-- Armor Section -->
       <v-col cols="12" lg="6">
-        <v-card variant="outlined" class="h-100">
+        <v-card class="h-100" variant="outlined">
           <v-card-title class="d-flex align-center">
-            <v-icon color="blue" class="mr-2">mdi-shield</v-icon>
+            <v-icon class="mr-2" color="blue">mdi-shield</v-icon>
             Armor & Protection
             <v-spacer />
-            <v-chip color="blue" variant="tonal" size="small">
-              <v-icon start size="x-small">mdi-package</v-icon>
+            <v-chip color="blue" size="small" variant="tonal">
+              <v-icon size="x-small" start>mdi-package</v-icon>
               {{ allArmor.length }} Pieces
             </v-chip>
           </v-card-title>
@@ -156,7 +175,7 @@
                   <v-list-item-title>{{ armor.name }}</v-list-item-title>
                   <v-list-item-subtitle>
                     <div class="d-flex align-center ga-2">
-                      <v-chip size="x-small" color="green">AC {{ armor.ac }}</v-chip>
+                      <v-chip color="green" size="x-small">AC {{ armor.ac }}</v-chip>
                       <span class="text-caption">{{ armor.type }}</span>
                     </div>
                   </v-list-item-subtitle>
@@ -172,7 +191,7 @@
             </template>
 
             <div v-else class="text-center pa-6">
-              <v-icon size="large" color="medium-emphasis">mdi-shield-off</v-icon>
+              <v-icon color="medium-emphasis" size="large">mdi-shield-off</v-icon>
               <div class="text-body-2 text-medium-emphasis mt-2">No armor equipped</div>
             </div>
           </v-card-text>
@@ -181,13 +200,13 @@
     </v-row>
 
     <!-- Adventuring Gear Section -->
-    <v-card variant="outlined" class="mt-6">
+    <v-card class="mt-6" variant="outlined">
       <v-card-title class="d-flex align-center">
-        <v-icon color="orange" class="mr-2">mdi-bag-personal</v-icon>
+        <v-icon class="mr-2" color="orange">mdi-bag-personal</v-icon>
         Adventuring Gear
         <v-spacer />
-        <v-chip color="orange" variant="tonal" size="small">
-          <v-icon start size="x-small">mdi-package</v-icon>
+        <v-chip color="orange" size="small" variant="tonal">
+          <v-icon size="x-small" start>mdi-package</v-icon>
           {{ allGear.length }} Items
         </v-chip>
       </v-card-title>
@@ -200,7 +219,7 @@
         <v-row>
           <!-- Physical Tools (that you own) -->
           <v-col cols="12" md="6">
-            <v-card variant="tonal" color="purple">
+            <v-card color="purple" variant="tonal">
               <v-card-title class="text-subtitle-1">
                 <v-icon class="mr-2">mdi-tools</v-icon>
                 Physical Tools
@@ -214,9 +233,15 @@
 
                 <!-- List of owned physical tools -->
                 <div v-if="physicalTools.length">
-                  <v-chip v-for="tool in physicalTools" :key="tool.name" class="mr-2 mb-2" color="purple"
-                    variant="tonal" size="small">
-                    <v-icon start size="x-small">mdi-package</v-icon>
+                  <v-chip
+                    v-for="tool in physicalTools"
+                    :key="tool.name"
+                    class="mr-2 mb-2"
+                    color="purple"
+                    size="small"
+                    variant="tonal"
+                  >
+                    <v-icon size="x-small" start>mdi-package</v-icon>
                     {{ tool.name }}
                   </v-chip>
                 </div>
@@ -225,13 +250,20 @@
                   <div class="text-body-2 text-medium-emphasis">No tools owned</div>
                 </div>
 
-                <v-btn v-if="equipmentMethod !== 'class'" variant="outlined" color="purple" size="small" class="mt-2"
-                  block @click="openToolShop">
+                <v-btn
+                  v-if="equipmentMethod !== 'class'"
+                  block
+                  class="mt-2"
+                  color="purple"
+                  size="small"
+                  variant="outlined"
+                  @click="openToolShop"
+                >
                   <v-icon start>mdi-plus</v-icon>
                   Buy Tools
                 </v-btn>
 
-                <v-alert type="info" variant="tonal" class="mt-3" density="compact">
+                <v-alert class="mt-3" density="compact" type="info" variant="tonal">
                   <div class="text-caption">
                     <strong>Note:</strong> Having proficiency ≠ owning the tool.
                     You need both proficiency (from Page 3) and the physical tool to get bonuses.
@@ -243,7 +275,7 @@
 
           <!-- Instruments (that you own) -->
           <v-col cols="12" md="6">
-            <v-card variant="tonal" color="indigo">
+            <v-card color="indigo" variant="tonal">
               <v-card-title class="text-subtitle-1">
                 <v-icon class="mr-2">mdi-music</v-icon>
                 Musical Instruments
@@ -256,7 +288,7 @@
                 </div>
 
                 <!-- Similar structure for owned instruments -->
-                <v-alert type="info" variant="tonal" class="mt-3" density="compact">
+                <v-alert class="mt-3" density="compact" type="info" variant="tonal">
                   <div class="text-caption">
                     <strong>Note:</strong> Instrument proficiency (Page 3) + owning the instrument = performance
                     bonuses.
@@ -268,7 +300,7 @@
         </v-row>
 
         <!-- General Adventuring Gear -->
-        <v-card variant="tonal" color="orange" class="mt-4">
+        <v-card class="mt-4" color="orange" variant="tonal">
           <v-card-title class="text-subtitle-1">
             <v-icon class="mr-2">mdi-bag-personal</v-icon>
             General Equipment
@@ -280,8 +312,14 @@
 
             <!-- Grid of general gear items -->
             <v-row v-if="generalGear.length">
-              <v-col v-for="item in generalGear" :key="item.name" cols="12" sm="6" md="4">
-                <v-card variant="outlined" class="gear-item">
+              <v-col
+                v-for="item in generalGear"
+                :key="item.name"
+                cols="12"
+                md="4"
+                sm="6"
+              >
+                <v-card class="gear-item" variant="outlined">
                   <v-card-text class="pa-3">
                     <div class="d-flex justify-space-between align-center">
                       <div>
@@ -303,16 +341,20 @@
     </v-card>
 
     <!-- Encumbrance & Weight Summary -->
-    <v-card variant="outlined" class="mt-6" color="warning-lighten-4">
+    <v-card class="mt-6" color="warning-lighten-4" variant="outlined">
       <v-card-title class="d-flex align-center">
-        <v-icon color="warning" class="mr-2">mdi-weight</v-icon>
+        <v-icon class="mr-2" color="warning">mdi-weight</v-icon>
         Carrying Capacity
       </v-card-title>
       <v-card-text>
         <v-row align="center">
           <v-col cols="12" md="8">
-            <v-progress-linear :model-value="(totalWeight / carryingCapacity) * 100"
-              :color="totalWeight > carryingCapacity ? 'error' : 'success'" height="20" class="mb-2">
+            <v-progress-linear
+              class="mb-2"
+              :color="totalWeight > carryingCapacity ? 'error' : 'success'"
+              height="20"
+              :model-value="(totalWeight / carryingCapacity) * 100"
+            >
               <strong>{{ totalWeight }} / {{ carryingCapacity }} lb</strong>
             </v-progress-linear>
             <div class="text-body-2">
@@ -320,7 +362,7 @@
               <strong>Capacity:</strong> {{ carryingCapacity }} lb ({{ character.strength }} Str × 15)
             </div>
           </v-col>
-          <v-col cols="12" md="4" class="text-center">
+          <v-col class="text-center" cols="12" md="4">
             <v-chip :color="totalWeight > carryingCapacity ? 'error' : 'success'" size="large">
               <v-icon start>
                 {{ totalWeight > carryingCapacity ? 'mdi-alert' : 'mdi-check' }}

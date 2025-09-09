@@ -1,29 +1,29 @@
-import { defineStore } from "pinia";
-import { ref, computed } from "vue";
-import { doc, getDoc } from "firebase/firestore";
-import { db } from "@/main.js";
+import { defineStore } from 'pinia';
+import { computed, ref } from 'vue';
+import { doc, getDoc } from 'firebase/firestore';
+import { db } from '@/main.js';
 
-export const useAdminStore = defineStore("admin", {
+export const useAdminStore = defineStore('admin', {
   state: () => ({
     isAdmin: false,
     hasAccess: false,
     accessType: null, // 'admin' or 'user'
     accessExpiresAt: null,
     showAccessDialog: false,
-    accessPasswordInput: "",
-    accessError: "",
+    accessPasswordInput: '',
+    accessError: '',
     pendingAccessAction: null,
     pendingAdminAction: false, // Flag to indicate if pending action requires admin privileges
     loading: false,
     error: null,
   }),
   actions: {
-    loadAccessState() {
+    loadAccessState () {
       try {
-        const savedAccess = sessionStorage.getItem("dnd_access_state");
-        const savedExpires = sessionStorage.getItem("dnd_access_expires");
-        const savedType = sessionStorage.getItem("dnd_access_type");
-        if (savedAccess === "true" && savedExpires) {
+        const savedAccess = sessionStorage.getItem('dnd_access_state');
+        const savedExpires = sessionStorage.getItem('dnd_access_expires');
+        const savedType = sessionStorage.getItem('dnd_access_type');
+        if (savedAccess === 'true' && savedExpires) {
           const expiresTime = Number.parseInt(savedExpires);
           if (Date.now() < expiresTime) {
             this.hasAccess = true;
@@ -39,74 +39,94 @@ export const useAdminStore = defineStore("admin", {
       }
       return false;
     },
-    saveAccessState() {
+    saveAccessState () {
       try {
-        sessionStorage.setItem("dnd_access_state", this.hasAccess.toString());
+        sessionStorage.setItem('dnd_access_state', this.hasAccess.toString());
         if (this.accessExpiresAt) {
           sessionStorage.setItem(
-            "dnd_access_expires",
+            'dnd_access_expires',
             this.accessExpiresAt.toString()
           );
         }
         if (this.accessType) {
-          sessionStorage.setItem("dnd_access_type", this.accessType);
+          sessionStorage.setItem('dnd_access_type', this.accessType);
         } else {
-          sessionStorage.removeItem("dnd_access_type");
+          sessionStorage.removeItem('dnd_access_type');
         }
       } catch (error) {}
     },
-    clearAccessStorage() {
+    clearAccessStorage () {
       try {
-        sessionStorage.removeItem("dnd_access_state");
-        sessionStorage.removeItem("dnd_access_expires");
-        sessionStorage.removeItem("dnd_access_type");
+        sessionStorage.removeItem('dnd_access_state');
+        sessionStorage.removeItem('dnd_access_expires');
+        sessionStorage.removeItem('dnd_access_type');
       } catch (error) {}
     },
-    async fetchAdminPassword() {
+    async fetchAdminPassword () {
       try {
-        const docRef = doc(db, "config", "adminPassword");
+        const docRef = doc(db, 'config', 'adminPassword');
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
           return docSnap.data().value;
         }
-        return null;
       } catch (e) {
-        return null;
+        // ignore
       }
+      // Fallback to env var
+      if (import.meta.env && import.meta.env.VITE_ADMIN_PASSWORD) {
+        return import.meta.env.VITE_ADMIN_PASSWORD;
+      }
+      return null;
     },
-    async fetchAccessPassword() {
+    async fetchAccessPassword () {
       try {
-        const docRef = doc(db, "config", "accessPassword");
+        const docRef = doc(db, 'config', 'accessPassword');
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
           return docSnap.data().value;
         }
-        return null;
       } catch (e) {
-        return null;
+        // ignore
       }
+      // Fallback to env var
+      if (import.meta.env && import.meta.env.VITE_ACCESS_PASSWORD) {
+        return import.meta.env.VITE_ACCESS_PASSWORD;
+      }
+      return null;
     },
-    async authenticateAccess(password) {
+    async authenticateAccess (password) {
       const ACCESS_SESSION_TIMEOUT = 2 * 60 * 60 * 1000;
       const adminPassword = await this.fetchAdminPassword();
       const accessPassword = await this.fetchAccessPassword();
+      // Debug logging for troubleshooting
+      if (typeof window !== 'undefined') {
+        console.log('[DnD] Entered:', password);
+        console.log('[DnD] AccessPassword (Firestore/env):', accessPassword);
+        console.log('[DnD] AdminPassword (Firestore/env):', adminPassword);
+      }
       if (!adminPassword || !accessPassword) {
-        this.accessError = "Access control is not properly configured.";
+        this.accessError = 'Access control is not properly configured.';
         return false;
       }
-      if (password === accessPassword || password === adminPassword) {
+      // Trim and compare (case sensitive, but trims accidental spaces)
+      const entered = password.trim();
+      if (
+        entered === String(accessPassword).trim() ||
+        entered === String(adminPassword).trim()
+      ) {
         this.hasAccess = true;
         this.accessExpiresAt = Date.now() + ACCESS_SESSION_TIMEOUT;
-        this.accessError = "";
+        this.accessError = '';
         this.showAccessDialog = false;
-        this.accessPasswordInput = "";
-        this.accessType = password === adminPassword ? "admin" : "user";
+        this.accessPasswordInput = '';
+        this.accessType =
+          entered === String(adminPassword).trim() ? 'admin' : 'user';
         this.saveAccessState();
 
         // Execute pending action only if user has required privileges
         if (this.pendingAccessAction) {
           // If this was an admin-only action, only execute if user has admin privileges
-          if (this.pendingAdminAction && this.accessType === "admin") {
+          if (this.pendingAdminAction && this.accessType === 'admin') {
             this.pendingAccessAction();
             this.pendingAdminAction = false;
           } else if (!this.pendingAdminAction) {
@@ -118,21 +138,21 @@ export const useAdminStore = defineStore("admin", {
 
         return true;
       } else {
-        this.accessError = "Invalid access code.";
+        this.accessError = 'Invalid access code.';
         return false;
       }
     },
-    clearAccess() {
+    clearAccess () {
       this.hasAccess = false;
       this.accessExpiresAt = null;
       this.showAccessDialog = false;
-      this.accessPasswordInput = "";
-      this.accessError = "";
+      this.accessPasswordInput = '';
+      this.accessError = '';
       this.pendingAccessAction = null;
       this.accessType = null;
       this.clearAccessStorage();
     },
-    checkAccess() {
+    checkAccess () {
       if (this.isAccessValid) return true;
       if (
         this.hasAccess &&
@@ -143,14 +163,14 @@ export const useAdminStore = defineStore("admin", {
       }
       return false;
     },
-    extendAccessSession() {
+    extendAccessSession () {
       const ACCESS_SESSION_TIMEOUT = 2 * 60 * 60 * 1000;
       if (this.hasAccess) {
         this.accessExpiresAt = Date.now() + ACCESS_SESSION_TIMEOUT;
         this.saveAccessState();
       }
     },
-    requireAccess(action) {
+    requireAccess (action) {
       if (this.checkAccess()) {
         action();
       } else {
@@ -159,7 +179,7 @@ export const useAdminStore = defineStore("admin", {
         this.showAccessDialog = true;
       }
     },
-    requireAdminAccess(action) {
+    requireAdminAccess (action) {
       if (this.isAdminUser) {
         action();
       } else {
@@ -168,38 +188,38 @@ export const useAdminStore = defineStore("admin", {
         this.showAccessDialog = true;
       }
     },
-    handleAccessSubmit() {
+    handleAccessSubmit () {
       if (!this.accessPasswordInput.trim()) {
-        this.accessError = "Please enter an access code";
+        this.accessError = 'Please enter an access code';
         return false;
       }
       return this.authenticateAccess(this.accessPasswordInput);
     },
-    closeAccessDialog() {
+    closeAccessDialog () {
       this.showAccessDialog = false;
-      this.accessPasswordInput = "";
-      this.accessError = "";
+      this.accessPasswordInput = '';
+      this.accessError = '';
       this.pendingAccessAction = null;
       this.pendingAdminAction = false;
     },
-    initializeAccess() {
+    initializeAccess () {
       this.loadAccessState();
     },
-    reset() {
+    reset () {
       this.clearAccess();
     },
   },
   getters: {
-    isAccessValid: (state) =>
+    isAccessValid: state =>
       state.hasAccess &&
       state.accessExpiresAt &&
       Date.now() < state.accessExpiresAt,
-    getRemainingAccessTime: (state) => {
+    getRemainingAccessTime: state => {
       if (!state.hasAccess || !state.accessExpiresAt) return 0;
       const remaining = state.accessExpiresAt - Date.now();
       return Math.max(0, Math.floor(remaining / (60 * 1000)));
     },
-    isAdminUser: (state) => state.accessType === "admin",
-    accessTypeValue: (state) => state.accessType,
+    isAdminUser: state => state.accessType === 'admin',
+    accessTypeValue: state => state.accessType,
   },
 });

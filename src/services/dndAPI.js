@@ -344,24 +344,60 @@ export class DnDAPI {
 
   extractSubraces(race) {
     try {
-      // Fallback subrace data for common races
+      // Enhanced fallback subrace data with ability bonuses
       const fallbackSubraces = {
         dwarf: [
-          { id: "hill-dwarf", name: "Hill Dwarf" },
-          { id: "mountain-dwarf", name: "Mountain Dwarf" },
+          {
+            id: "hill-dwarf",
+            name: "Hill Dwarf",
+            abilityBonus: [{ ability: "wisdom", bonus: 1 }],
+          },
+          {
+            id: "mountain-dwarf",
+            name: "Mountain Dwarf",
+            abilityBonus: [{ ability: "strength", bonus: 2 }],
+          },
         ],
         elf: [
-          { id: "high-elf", name: "High Elf" },
-          { id: "wood-elf", name: "Wood Elf" },
-          { id: "dark-elf", name: "Dark Elf (Drow)" },
+          {
+            id: "high-elf",
+            name: "High Elf",
+            abilityBonus: [{ ability: "intelligence", bonus: 1 }],
+          },
+          {
+            id: "wood-elf",
+            name: "Wood Elf",
+            abilityBonus: [{ ability: "wisdom", bonus: 1 }],
+          },
+          {
+            id: "dark-elf",
+            name: "Dark Elf (Drow)",
+            abilityBonus: [{ ability: "charisma", bonus: 1 }],
+          },
         ],
         halfling: [
-          { id: "lightfoot", name: "Lightfoot" },
-          { id: "stout", name: "Stout" },
+          {
+            id: "lightfoot",
+            name: "Lightfoot",
+            abilityBonus: [{ ability: "charisma", bonus: 1 }],
+          },
+          {
+            id: "stout",
+            name: "Stout",
+            abilityBonus: [{ ability: "constitution", bonus: 1 }],
+          },
         ],
         gnome: [
-          { id: "forest-gnome", name: "Forest Gnome" },
-          { id: "rock-gnome", name: "Rock Gnome" },
+          {
+            id: "forest-gnome",
+            name: "Forest Gnome",
+            abilityBonus: [{ ability: "dexterity", bonus: 1 }],
+          },
+          {
+            id: "rock-gnome",
+            name: "Rock Gnome",
+            abilityBonus: [{ ability: "constitution", bonus: 1 }],
+          },
         ],
       };
 
@@ -381,6 +417,14 @@ export class DnDAPI {
                 ?.split("-")
                 .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
                 .join(" "),
+            abilityBonus:
+              sub.ability_bonuses?.map((bonus) => ({
+                ability:
+                  bonus.ability_score?.name?.toLowerCase() ||
+                  bonus.ability_score?.index?.toLowerCase() ||
+                  "unknown",
+                bonus: bonus.bonus || 0,
+              })) || [],
           }));
       }
 
@@ -1454,13 +1498,27 @@ export class DnDAPI {
         description:
           "You come from humble beginnings, but you are destined for greatness.",
         skillProficiencies: ["Animal Handling", "Survival"],
-        toolProficiencies: ["Smith's Tools", "Vehicles (Land)"],
+        toolProficiencies: ["Vehicles (Land)"],
+        toolOptions: {
+          choose: 1,
+          from: [
+            "Smith's Tools",
+            "Brewer's Supplies",
+            "Carpenter's Tools",
+            "Leatherworker's Tools",
+            "Mason's Tools",
+            "Potter's Tools",
+            "Weaver's Tools",
+            "Woodcarver's Tools",
+          ],
+        },
         languages: [],
         languageOptions: null,
         startingEquipment: [
-          { name: "Plow", quantity: 1 },
-          { name: "Clothes, common", quantity: 1 },
-          { name: "Pouch", quantity: 1 },
+          { name: "Artisan's Tools", quantity: 1 },
+          { name: "Shovel", quantity: 1 },
+          { name: "Common Clothes", quantity: 1 },
+          { name: "Belt Pouch", quantity: 1 },
         ],
         startingEquipmentOptions: [],
         feature: {

@@ -21,7 +21,7 @@
               <div v-if="hasWeaponProficiencies">
                 <div class="text-caption text-medium-emphasis mb-1">Weapon Training</div>
                 <div class="d-flex flex-wrap justify-center ga-1" style="min-height: 32px; align-items: center;">
-                  <v-chip v-for="weapon in character.weaponProficiencies" :key="weapon" size="small" color="red"
+                  <v-chip v-for="weapon in character.weaponProficiencies" :key="weapon" color="red" size="small"
                     variant="tonal">
                     {{ weapon }}
                   </v-chip>
@@ -52,11 +52,11 @@
               <div v-if="hasArmorProficiencies">
                 <div class="text-caption text-medium-emphasis mb-1">Armor Training</div>
                 <div class="d-flex flex-wrap justify-center ga-1" style="min-height: 32px; align-items: center;">
-                  <v-chip v-if="character.armorTraining.light" size="small" color="blue" variant="tonal">Light</v-chip>
-                  <v-chip v-if="character.armorTraining.medium" size="small" color="blue"
+                  <v-chip v-if="character.armorTraining.light" color="blue" size="small" variant="tonal">Light</v-chip>
+                  <v-chip v-if="character.armorTraining.medium" color="blue" size="small"
                     variant="tonal">Medium</v-chip>
-                  <v-chip v-if="character.armorTraining.heavy" size="small" color="blue" variant="tonal">Heavy</v-chip>
-                  <v-chip v-if="character.armorTraining.shields" size="small" color="blue"
+                  <v-chip v-if="character.armorTraining.heavy" color="blue" size="small" variant="tonal">Heavy</v-chip>
+                  <v-chip v-if="character.armorTraining.shields" color="blue" size="small"
                     variant="tonal">Shields</v-chip>
                 </div>
               </div>
@@ -84,10 +84,10 @@
             <div class="mt-3">
               <div class="text-caption text-medium-emphasis mb-1">Applied To</div>
               <div class="d-flex flex-wrap justify-center ga-1" style="min-height: 32px; align-items: center;">
-                <v-chip size="small" color="purple" variant="tonal">Skills</v-chip>
-                <v-chip size="small" color="purple" variant="tonal">Saves</v-chip>
-                <v-chip size="small" color="purple" variant="tonal">Attacks</v-chip>
-                <v-chip size="small" color="purple" variant="tonal">Spells</v-chip>
+                <v-chip color="purple" size="small" variant="tonal">Skills</v-chip>
+                <v-chip color="purple" size="small" variant="tonal">Saves</v-chip>
+                <v-chip color="purple" size="small" variant="tonal">Attacks</v-chip>
+                <v-chip color="purple" size="small" variant="tonal">Spells</v-chip>
               </div>
             </div>
           </v-card-text>
@@ -96,14 +96,14 @@
     </v-row>
 
     <!-- Skills Section -->
-    <v-card variant="outlined" class="mb-6">
+    <v-card class="mb-6" variant="outlined">
       <v-card-title class="d-flex align-center">
-        <v-icon color="green" class="mr-2">mdi-brain</v-icon>
+        <v-icon class="mr-2" color="green">mdi-brain</v-icon>
         Skill Proficiencies
         <v-spacer />
         <v-tooltip text="This represents knowledge and training - not physical items">
           <template #activator="{ props }">
-            <v-chip color="info" variant="tonal" size="small" v-bind="props">Knowledge</v-chip>
+            <v-chip color="info" size="small" variant="tonal" v-bind="props">Knowledge</v-chip>
           </template>
         </v-tooltip>
       </v-card-title>
@@ -121,12 +121,12 @@
           <!-- Class Skills (selected) -->
           <div v-if="character.selectedClassSkills && character.selectedClassSkills.length" class="ml-4 mb-3">
             <div class="text-body-2 text-medium-emphasis mb-2 d-flex align-center">
-              <v-icon size="small" color="primary" class="mr-2">mdi-school</v-icon>
+              <v-icon class="mr-2" color="primary" size="small">mdi-school</v-icon>
               From Your Class
             </div>
             <div class="ml-6 d-flex flex-wrap ga-2">
               <v-chip v-for="skill in character.selectedClassSkills" :key="skill" color="primary" variant="tonal">
-                <v-icon start size="x-small">mdi-brain</v-icon>
+                <v-icon size="x-small" start>mdi-brain</v-icon>
                 {{ skill }}
               </v-chip>
             </div>
@@ -135,12 +135,12 @@
           <!-- Background Skills -->
           <div v-if="getBackgroundSkills.length" class="ml-4 mb-3">
             <div class="text-body-2 text-medium-emphasis mb-2 d-flex align-center">
-              <v-icon size="small" color="orange" class="mr-2">mdi-briefcase</v-icon>
+              <v-icon class="mr-2" color="orange" size="small">mdi-briefcase</v-icon>
               From Your Background
             </div>
             <div class="ml-6 d-flex flex-wrap ga-2">
               <v-chip v-for="skill in getBackgroundSkills" :key="skill" color="orange" variant="tonal">
-                <v-icon start size="x-small">mdi-brain</v-icon>
+                <v-icon size="x-small" start>mdi-brain</v-icon>
                 {{ skill }}
               </v-chip>
             </div>
@@ -149,12 +149,12 @@
           <!-- Species Skills -->
           <div v-if="getSpeciesSkillProficiencies.length" class="ml-4 mb-3">
             <div class="text-body-2 text-medium-emphasis mb-2 d-flex align-center">
-              <v-icon size="small" color="purple" class="mr-2">mdi-dna</v-icon>
+              <v-icon class="mr-2" color="purple" size="small">mdi-dna</v-icon>
               From Your Species
             </div>
             <div class="ml-6 d-flex flex-wrap ga-2">
               <v-chip v-for="skill in getSpeciesSkillProficiencies" :key="skill" color="purple" variant="tonal">
-                <v-icon start size="x-small">mdi-brain</v-icon>
+                <v-icon size="x-small" start>mdi-brain</v-icon>
                 {{ skill }}
               </v-chip>
             </div>
@@ -163,12 +163,12 @@
           <!-- Expertise Skills (selected) -->
           <div v-if="character.selectedExpertise && character.selectedExpertise.length" class="ml-4 mb-3">
             <div class="text-body-2 text-medium-emphasis mb-2 d-flex align-center">
-              <v-icon size="small" color="success" class="mr-2">mdi-star-circle</v-icon>
+              <v-icon class="mr-2" color="success" size="small">mdi-star-circle</v-icon>
               Expertise (Double Proficiency)
             </div>
             <div class="ml-6 d-flex flex-wrap ga-2">
               <v-chip v-for="skill in character.selectedExpertise" :key="skill" color="success" variant="tonal">
-                <v-icon start size="x-small">mdi-star</v-icon>
+                <v-icon size="x-small" start>mdi-star</v-icon>
                 {{ skill }}
               </v-chip>
             </div>
@@ -182,16 +182,16 @@
           <!-- Class Skills Selection -->
           <div v-if="hasClassSkillChoices" class="ml-4 mb-4">
             <div class="text-body-2 text-medium-emphasis mb-2 d-flex align-center">
-              <v-icon size="small" color="primary" class="mr-2">mdi-school</v-icon>
+              <v-icon class="mr-2" color="primary" size="small">mdi-school</v-icon>
               Choose Class Skills ({{ (character.selectedClassSkills?.length || 0) }}/{{ getClassSkillChoices }})
             </div>
             <div class="ml-6">
               <div class="d-flex flex-wrap ga-2">
-                <v-chip v-for="skill in getClassSkillOptions" :key="skill.name"
+                <v-chip v-for="skill in getClassSkillOptions" :key="skill.name" clickable
                   :color="character.selectedClassSkills?.includes(skill.name) ? 'primary' : 'default'"
-                  :variant="character.selectedClassSkills?.includes(skill.name) ? 'elevated' : 'outlined'" clickable
+                  :variant="character.selectedClassSkills?.includes(skill.name) ? 'elevated' : 'outlined'"
                   @click="toggleClassSkill(skill.name)">
-                  <v-icon start size="x-small">mdi-brain</v-icon>
+                  <v-icon size="x-small" start>mdi-brain</v-icon>
                   {{ skill.name }}
                 </v-chip>
               </div>
@@ -201,16 +201,16 @@
           <!-- Expertise Selection -->
           <div v-if="hasExpertiseChoices" class="ml-4 mb-4">
             <div class="text-body-2 text-medium-emphasis mb-2 d-flex align-center">
-              <v-icon size="small" color="success" class="mr-2">mdi-star-circle</v-icon>
+              <v-icon class="mr-2" color="success" size="small">mdi-star-circle</v-icon>
               Choose Expertise ({{ (character.selectedExpertise?.length || 0) }}/{{ expertiseChoices }})
             </div>
             <div class="ml-6">
               <div class="d-flex flex-wrap ga-2">
-                <v-chip v-for="skill in getAllSkillProficiencies" :key="skill.name"
+                <v-chip v-for="skill in getAllSkillProficiencies" :key="skill.name" clickable
                   :color="character.selectedExpertise?.includes(skill.name) ? 'success' : 'default'"
-                  :variant="character.selectedExpertise?.includes(skill.name) ? 'elevated' : 'outlined'" clickable
+                  :variant="character.selectedExpertise?.includes(skill.name) ? 'elevated' : 'outlined'"
                   @click="toggleExpertise(skill.name)">
-                  <v-icon start size="x-small">mdi-star</v-icon>
+                  <v-icon size="x-small" start>mdi-star</v-icon>
                   {{ skill.name }}
                 </v-chip>
               </div>
@@ -220,7 +220,7 @@
 
         <!-- No Skills Message -->
         <div v-else-if="!character.backgroundDetails" class="text-center py-6">
-          <v-icon size="large" color="grey" class="mb-2">mdi-information-outline</v-icon>
+          <v-icon class="mb-2" color="grey" size="large">mdi-information-outline</v-icon>
           <div class="text-body-2 text-medium-emphasis">
             Skill proficiencies will appear here once you complete character creation steps.
           </div>
@@ -230,7 +230,7 @@
         <div
           v-if="(character.selectedClassSkills && character.selectedClassSkills.length) || (character.selectedExpertise && character.selectedExpertise.length)"
           class="d-flex justify-end mt-4">
-          <v-btn size="small" color="warning" variant="outlined" prepend-icon="mdi-refresh"
+          <v-btn color="warning" prepend-icon="mdi-refresh" size="small" variant="outlined"
             @click="resetAllSkillSelections">
             Reset
           </v-btn>
@@ -239,14 +239,14 @@
     </v-card>
 
     <!-- Tool Proficiencies Section -->
-    <v-card variant="outlined" class="mb-6">
+    <v-card class="mb-6" variant="outlined">
       <v-card-title class="d-flex align-center">
-        <v-icon color="amber" class="mr-2">mdi-tools</v-icon>
+        <v-icon class="mr-2" color="amber">mdi-tools</v-icon>
         Tool Proficiencies
         <v-spacer />
         <v-tooltip text="This represents knowledge of how to use tools - not owning the actual tools">
           <template #activator="{ props }">
-            <v-chip color="info" variant="tonal" size="small" v-bind="props">Knowledge</v-chip>
+            <v-chip color="info" size="small" variant="tonal" v-bind="props">Knowledge</v-chip>
           </template>
         </v-tooltip>
       </v-card-title>
@@ -262,12 +262,12 @@
           <!-- Class Tools -->
           <div v-if="classToolProficiencies.length" class="ml-4 mb-3">
             <div class="text-body-2 text-medium-emphasis mb-2 d-flex align-center">
-              <v-icon size="small" color="primary" class="mr-2">mdi-school</v-icon>
+              <v-icon class="mr-2" color="primary" size="small">mdi-school</v-icon>
               From Your Class
             </div>
             <div class="ml-6 d-flex flex-wrap ga-2">
               <v-chip v-for="tool in classToolProficiencies" :key="tool" color="primary" variant="tonal">
-                <v-icon start size="x-small">mdi-brain</v-icon>
+                <v-icon size="x-small" start>mdi-brain</v-icon>
                 {{ tool }}
               </v-chip>
             </div>
@@ -276,12 +276,12 @@
           <!-- Background Tools -->
           <div v-if="backgroundToolProficiencies.length" class="ml-4 mb-3">
             <div class="text-body-2 text-medium-emphasis mb-2 d-flex align-center">
-              <v-icon size="small" color="orange" class="mr-2">mdi-briefcase</v-icon>
+              <v-icon class="mr-2" color="orange" size="small">mdi-briefcase</v-icon>
               From Your Background
             </div>
             <div class="ml-6 d-flex flex-wrap ga-2">
               <v-chip v-for="tool in backgroundToolProficiencies" :key="tool" color="orange" variant="tonal">
-                <v-icon start size="x-small">mdi-brain</v-icon>
+                <v-icon size="x-small" start>mdi-brain</v-icon>
                 {{ tool }}
               </v-chip>
             </div>
@@ -294,17 +294,17 @@
 
           <div class="ml-4 mb-4">
             <div class="text-body-2 text-medium-emphasis mb-2 d-flex align-center">
-              <v-icon size="small" color="orange" class="mr-2">mdi-briefcase</v-icon>
+              <v-icon class="mr-2" color="orange" size="small">mdi-briefcase</v-icon>
               Choose Background Tools ({{ (character.selectedBackgroundTools?.length || 0) }}/{{ backgroundToolChoices
               }})
             </div>
             <div class="ml-6">
               <div class="d-flex flex-wrap ga-2">
-                <v-chip v-for="tool in backgroundToolOptions" :key="tool"
+                <v-chip v-for="tool in backgroundToolOptions" :key="tool" clickable
                   :color="character.selectedBackgroundTools?.includes(tool) ? 'orange' : 'default'"
-                  :variant="character.selectedBackgroundTools?.includes(tool) ? 'elevated' : 'outlined'" clickable
+                  :variant="character.selectedBackgroundTools?.includes(tool) ? 'elevated' : 'outlined'"
                   @click="toggleBackgroundTool(tool)">
-                  <v-icon start size="x-small">mdi-brain</v-icon>
+                  <v-icon size="x-small" start>mdi-brain</v-icon>
                   {{ tool }}
                 </v-chip>
               </div>
@@ -314,7 +314,7 @@
 
         <!-- No Tools Message -->
         <div v-else-if="!character.backgroundDetails" class="text-center py-6">
-          <v-icon size="large" color="grey" class="mb-2">mdi-information-outline</v-icon>
+          <v-icon class="mb-2" color="grey" size="large">mdi-information-outline</v-icon>
           <div class="text-body-2 text-medium-emphasis">
             Tool proficiencies will appear here once you select a background in Step 1.
           </div>
@@ -323,7 +323,7 @@
         <!-- Reset Button for Tools -->
         <div v-if="character.selectedBackgroundTools && character.selectedBackgroundTools.length"
           class="d-flex justify-end mt-4">
-          <v-btn size="small" color="warning" variant="outlined" prepend-icon="mdi-refresh"
+          <v-btn color="warning" prepend-icon="mdi-refresh" size="small" variant="outlined"
             @click="resetAllToolSelections">
             Reset
           </v-btn>
@@ -332,14 +332,14 @@
     </v-card>
 
     <!-- Other Proficiencies Section -->
-    <v-card variant="outlined" class="mb-6">
+    <v-card class="mb-6" variant="outlined">
       <v-card-title class="d-flex align-center">
-        <v-icon color="indigo" class="mr-2">mdi-music</v-icon>
+        <v-icon class="mr-2" color="indigo">mdi-music</v-icon>
         Other Proficiencies
         <v-spacer />
         <v-tooltip text="These represent skills and abilities you've learned - not physical possessions">
           <template #activator="{ props }">
-            <v-chip color="info" variant="tonal" size="small" v-bind="props">Knowledge</v-chip>
+            <v-chip color="info" size="small" variant="tonal" v-bind="props">Knowledge</v-chip>
           </template>
         </v-tooltip>
       </v-card-title>
@@ -357,12 +357,12 @@
           <!-- Musical Instruments -->
           <div v-if="getInstrumentProficiencies.length" class="ml-4 mb-3">
             <div class="text-body-2 text-medium-emphasis mb-2 d-flex align-center">
-              <v-icon size="small" color="purple" class="mr-2">mdi-music</v-icon>
+              <v-icon class="mr-2" color="purple" size="small">mdi-music</v-icon>
               Musical Instruments
             </div>
             <div class="ml-6 d-flex flex-wrap ga-2">
               <v-chip v-for="instrument in getInstrumentProficiencies" :key="instrument" color="purple" variant="tonal">
-                <v-icon start size="x-small">mdi-brain</v-icon>
+                <v-icon size="x-small" start>mdi-brain</v-icon>
                 {{ instrument }}
               </v-chip>
             </div>
@@ -374,12 +374,12 @@
             <!-- Class Gaming Sets -->
             <div v-if="getClassGamingSets.length" class="ml-4 mb-3">
               <div class="text-body-2 text-medium-emphasis mb-2 d-flex align-center">
-                <v-icon size="small" color="primary" class="mr-2">mdi-school</v-icon>
+                <v-icon class="mr-2" color="primary" size="small">mdi-school</v-icon>
                 Gaming Sets - From Your Class
               </div>
               <div class="ml-6 d-flex flex-wrap ga-2">
                 <v-chip v-for="gameSet in getClassGamingSets" :key="gameSet" color="primary" variant="tonal">
-                  <v-icon start size="x-small">mdi-brain</v-icon>
+                  <v-icon size="x-small" start>mdi-brain</v-icon>
                   {{ gameSet }}
                 </v-chip>
               </div>
@@ -388,12 +388,12 @@
             <!-- Background Gaming Sets (static) -->
             <div v-if="getBackgroundGamingSets.length" class="ml-4 mb-3">
               <div class="text-body-2 text-medium-emphasis mb-2 d-flex align-center">
-                <v-icon size="small" color="orange" class="mr-2">mdi-briefcase</v-icon>
+                <v-icon class="mr-2" color="orange" size="small">mdi-briefcase</v-icon>
                 Gaming Sets - From Your Background
               </div>
               <div class="ml-6 d-flex flex-wrap ga-2">
                 <v-chip v-for="gameSet in getBackgroundGamingSets" :key="gameSet" color="orange" variant="tonal">
-                  <v-icon start size="x-small">mdi-brain</v-icon>
+                  <v-icon size="x-small" start>mdi-brain</v-icon>
                   {{ gameSet }}
                 </v-chip>
               </div>
@@ -403,13 +403,13 @@
             <div v-if="character.selectedBackgroundGamingSets && character.selectedBackgroundGamingSets.length"
               class="ml-4 mb-3">
               <div class="text-body-2 text-medium-emphasis mb-2 d-flex align-center">
-                <v-icon size="small" color="orange" class="mr-2">mdi-briefcase</v-icon>
+                <v-icon class="mr-2" color="orange" size="small">mdi-briefcase</v-icon>
                 Gaming Sets - From Your Background
               </div>
               <div class="ml-6 d-flex flex-wrap ga-2">
                 <v-chip v-for="gameSet in character.selectedBackgroundGamingSets" :key="gameSet" color="orange"
                   variant="tonal">
-                  <v-icon start size="x-small">mdi-brain</v-icon>
+                  <v-icon size="x-small" start>mdi-brain</v-icon>
                   {{ gameSet }}
                 </v-chip>
               </div>
@@ -419,12 +419,12 @@
           <!-- Vehicles -->
           <div v-if="getVehicleProficiencies.length" class="ml-4 mb-3">
             <div class="text-body-2 text-medium-emphasis mb-2 d-flex align-center">
-              <v-icon size="small" color="blue" class="mr-2">mdi-car</v-icon>
+              <v-icon class="mr-2" color="blue" size="small">mdi-car</v-icon>
               Vehicle Proficiencies
             </div>
             <div class="ml-6 d-flex flex-wrap ga-2">
               <v-chip v-for="vehicle in getVehicleProficiencies" :key="vehicle" color="blue" variant="tonal">
-                <v-icon start size="x-small">mdi-brain</v-icon>
+                <v-icon size="x-small" start>mdi-brain</v-icon>
                 {{ vehicle }}
               </v-chip>
             </div>
@@ -438,17 +438,17 @@
           <!-- Background Instrument Selection -->
           <div v-if="hasBackgroundInstrumentChoices" class="ml-4 mb-4">
             <div class="text-body-2 text-medium-emphasis mb-2 d-flex align-center">
-              <v-icon size="small" color="purple" class="mr-2">mdi-music</v-icon>
+              <v-icon class="mr-2" color="purple" size="small">mdi-music</v-icon>
               Choose Musical Instrument ({{ (character.selectedBackgroundInstruments?.length || 0) }}/{{
                 backgroundInstrumentChoices }})
             </div>
             <div class="ml-6">
               <div class="d-flex flex-wrap ga-2">
-                <v-chip v-for="instrument in backgroundInstrumentOptions" :key="instrument"
+                <v-chip v-for="instrument in backgroundInstrumentOptions" :key="instrument" clickable
                   :color="character.selectedBackgroundInstruments?.includes(instrument) ? 'purple' : 'default'"
                   :variant="character.selectedBackgroundInstruments?.includes(instrument) ? 'elevated' : 'outlined'"
-                  clickable @click="toggleBackgroundInstrument(instrument)">
-                  <v-icon start size="x-small">mdi-music</v-icon>
+                  @click="toggleBackgroundInstrument(instrument)">
+                  <v-icon size="x-small" start>mdi-music</v-icon>
                   {{ instrument }}
                 </v-chip>
               </div>
@@ -458,19 +458,42 @@
           <!-- Background Gaming Set Selection -->
           <div v-if="hasBackgroundGamingSetChoices" class="ml-4 mb-4">
             <div class="text-body-2 text-medium-emphasis mb-2 d-flex align-center">
-              <v-icon size="small" color="orange" class="mr-2">mdi-briefcase</v-icon>
+              <v-icon class="mr-2" color="orange" size="small">mdi-briefcase</v-icon>
               Choose Gaming Set ({{ (character.selectedBackgroundGamingSets?.length || 0) }}/{{
                 getBackgroundGamingSetChoices }})
             </div>
+
             <div class="ml-6">
               <div class="d-flex flex-wrap ga-2">
-                <v-chip v-for="gamingSet in getBackgroundGamingSetOptions" :key="gamingSet"
-                  :color="character.selectedBackgroundGamingSets?.includes(gamingSet) ? 'orange' : 'default'"
-                  :variant="character.selectedBackgroundGamingSets?.includes(gamingSet) ? 'elevated' : 'outlined'"
-                  clickable @click="toggleBackgroundGamingSet(gamingSet)">
-                  <v-icon start size="x-small">mdi-dice-multiple</v-icon>
-                  {{ gamingSet }}
-                </v-chip>
+                <template v-for="gamingSet in getBackgroundGamingSetOptions" :key="gamingSet">
+                  <v-tooltip v-if="gamingSet === 'Playing Card Set' && character.backgroundDetails?.name === 'Soldier'"
+                    location="top" max-width="300">
+                    <template v-slot:activator="{ props: tooltipProps }">
+                      <v-chip v-bind="tooltipProps" clickable
+                        :color="character.selectedBackgroundGamingSets?.includes(gamingSet) ? 'orange' : 'primary'"
+                        :variant="character.selectedBackgroundGamingSets?.includes(gamingSet) ? 'elevated' : 'tonal'"
+                        @click="toggleBackgroundGamingSet(gamingSet)" :prepend-icon="'mdi-star-outline'">
+                        <v-icon size="x-small" start>mdi-cards-playing</v-icon>
+                        {{ gamingSet }}
+                      </v-chip>
+                    </template>
+                    <template v-slot:default>
+                      <div class="text-caption">
+                        <div class="font-weight-bold text-primary mb-1">💡 Recommended Choice</div>
+                        <div>Your Soldier background includes a <strong>Deck of Cards</strong> in your starting
+                          equipment.</div>
+                        <div>Choosing this matches what you already own!</div>
+                      </div>
+                    </template>
+                  </v-tooltip>
+                  <v-chip v-else clickable
+                    :color="character.selectedBackgroundGamingSets?.includes(gamingSet) ? 'orange' : 'default'"
+                    :variant="character.selectedBackgroundGamingSets?.includes(gamingSet) ? 'elevated' : 'outlined'"
+                    @click="toggleBackgroundGamingSet(gamingSet)">
+                    <v-icon size="x-small" start>mdi-dice-multiple</v-icon>
+                    {{ gamingSet }}
+                  </v-chip>
+                </template>
               </div>
             </div>
           </div>
@@ -480,7 +503,7 @@
         <div
           v-else-if="!getInstrumentProficiencies.length && !getClassGamingSets.length && !getBackgroundGamingSets.length && !getVehicleProficiencies.length && !(character.selectedBackgroundGamingSets && character.selectedBackgroundGamingSets.length)"
           class="text-center py-6">
-          <v-icon size="large" color="grey" class="mb-2">mdi-information-outline</v-icon>
+          <v-icon class="mb-2" color="grey" size="large">mdi-information-outline</v-icon>
           <div class="text-body-2 text-medium-emphasis">
             No additional proficiencies from your background or species
           </div>
@@ -489,7 +512,7 @@
         <!-- Reset Button for Gaming Sets -->
         <div v-if="character.selectedBackgroundGamingSets && character.selectedBackgroundGamingSets.length"
           class="d-flex justify-end mt-4">
-          <v-btn size="small" color="warning" variant="outlined" prepend-icon="mdi-refresh"
+          <v-btn color="warning" prepend-icon="mdi-refresh" size="small" variant="outlined"
             @click="resetAllOtherProficiencySelections">
             Reset
           </v-btn>
@@ -498,14 +521,14 @@
     </v-card>
 
     <!-- Languages Section -->
-    <v-card variant="outlined" class="mb-6">
+    <v-card class="mb-6" variant="outlined">
       <v-card-title class="d-flex align-center">
-        <v-icon color="teal" class="mr-2">mdi-translate</v-icon>
+        <v-icon class="mr-2" color="teal">mdi-translate</v-icon>
         Languages
         <v-spacer />
         <v-tooltip text="These are languages you can speak and understand - not physical books or scrolls">
           <template #activator="{ props }">
-            <v-chip color="info" variant="tonal" size="small" v-bind="props">Knowledge</v-chip>
+            <v-chip color="info" size="small" variant="tonal" v-bind="props">Knowledge</v-chip>
           </template>
         </v-tooltip>
       </v-card-title>
@@ -522,12 +545,12 @@
           <!-- Common Language -->
           <div class="ml-4 mb-3">
             <div class="text-body-2 text-medium-emphasis mb-2 d-flex align-center">
-              <v-icon size="small" color="grey" class="mr-2">mdi-earth</v-icon>
+              <v-icon class="mr-2" color="grey" size="small">mdi-earth</v-icon>
               Universal
             </div>
             <div class="ml-6 d-flex flex-wrap ga-2">
               <v-chip v-for="language in getCommonLanguage" :key="language" color="grey" variant="tonal">
-                <v-icon start size="x-small">mdi-translate</v-icon>
+                <v-icon size="x-small" start>mdi-translate</v-icon>
                 {{ language }}
               </v-chip>
             </div>
@@ -536,12 +559,12 @@
           <!-- Species Languages -->
           <div v-if="getSpeciesLanguages.length" class="ml-4 mb-3">
             <div class="text-body-2 text-medium-emphasis mb-2 d-flex align-center">
-              <v-icon size="small" color="purple" class="mr-2">mdi-dna</v-icon>
+              <v-icon class="mr-2" color="purple" size="small">mdi-dna</v-icon>
               From Your Species
             </div>
             <div class="ml-6 d-flex flex-wrap ga-2">
               <v-chip v-for="language in getSpeciesLanguages" :key="language" color="purple" variant="tonal">
-                <v-icon start size="x-small">mdi-translate</v-icon>
+                <v-icon size="x-small" start>mdi-translate</v-icon>
                 {{ language }}
               </v-chip>
             </div>
@@ -550,12 +573,12 @@
           <!-- Background Languages -->
           <div v-if="getBackgroundLanguages.length" class="ml-4 mb-3">
             <div class="text-body-2 text-medium-emphasis mb-2 d-flex align-center">
-              <v-icon size="small" color="orange" class="mr-2">mdi-briefcase</v-icon>
+              <v-icon class="mr-2" color="orange" size="small">mdi-briefcase</v-icon>
               From Your Background
             </div>
             <div class="ml-6 d-flex flex-wrap ga-2">
               <v-chip v-for="language in getBackgroundLanguages" :key="language" color="orange" variant="tonal">
-                <v-icon start size="x-small">mdi-translate</v-icon>
+                <v-icon size="x-small" start>mdi-translate</v-icon>
                 {{ language }}
               </v-chip>
             </div>
@@ -564,13 +587,13 @@
           <!-- Selected Background Languages -->
           <div v-if="getSelectedBackgroundLanguagesCount > 0" class="ml-4 mb-3">
             <div class="text-body-2 text-medium-emphasis mb-2 d-flex align-center">
-              <v-icon size="small" color="orange" class="mr-2">mdi-briefcase</v-icon>
+              <v-icon class="mr-2" color="orange" size="small">mdi-briefcase</v-icon>
               Languages Chosen From Background
             </div>
             <div class="ml-6 d-flex flex-wrap ga-2">
               <v-chip v-for="language in character.selectedBackgroundLanguages" :key="language" color="orange"
                 variant="tonal">
-                <v-icon start size="x-small">mdi-translate</v-icon>
+                <v-icon size="x-small" start>mdi-translate</v-icon>
                 {{ language }}
               </v-chip>
             </div>
@@ -584,16 +607,16 @@
           <!-- Background Language Selection -->
           <div class="ml-4 mb-4">
             <div class="text-body-2 text-medium-emphasis mb-2 d-flex align-center">
-              <v-icon size="small" color="orange" class="mr-2">mdi-briefcase</v-icon>
+              <v-icon class="mr-2" color="orange" size="small">mdi-briefcase</v-icon>
               Choose Language ({{ getSelectedBackgroundLanguagesCount }}/{{ getBackgroundLanguageChoices }})
             </div>
             <div class="ml-6">
               <div class="d-flex flex-wrap ga-2">
-                <v-chip v-for="language in getAvailableLanguageChoices" :key="language"
+                <v-chip v-for="language in getAvailableLanguageChoices" :key="language" clickable
                   :color="isLanguageSelected(language) ? 'orange' : 'default'"
-                  :variant="isLanguageSelected(language) ? 'elevated' : 'outlined'" clickable
+                  :variant="isLanguageSelected(language) ? 'elevated' : 'outlined'"
                   @click="toggleBackgroundLanguage(language)">
-                  <v-icon start size="x-small">mdi-translate</v-icon>
+                  <v-icon size="x-small" start>mdi-translate</v-icon>
                   {{ language }}
                 </v-chip>
               </div>
@@ -605,7 +628,7 @@
         <div
           v-else-if="!getCommonLanguage.length && !getSpeciesLanguages.length && !getBackgroundLanguages.length && !getSelectedBackgroundLanguagesCount"
           class="text-center py-6">
-          <v-icon size="large" color="grey" class="mb-2">mdi-information-outline</v-icon>
+          <v-icon class="mb-2" color="grey" size="large">mdi-information-outline</v-icon>
           <div class="text-body-2 text-medium-emphasis">
             No additional languages beyond Common
           </div>
@@ -613,7 +636,7 @@
 
         <!-- Reset Button for Languages -->
         <div v-if="getSelectedBackgroundLanguagesCount > 0" class="d-flex justify-end mt-4">
-          <v-btn size="small" color="warning" variant="outlined" prepend-icon="mdi-refresh"
+          <v-btn color="warning" prepend-icon="mdi-refresh" size="small" variant="outlined"
             @click="resetBackgroundLanguages">
             Reset
           </v-btn>
@@ -713,14 +736,14 @@ const getClassSkillOptions = computed(() => {
   if (character.value.classDetails?.skillProficiencies?.from) {
     allClassSkills = character.value.classDetails.skillProficiencies.from.map(skill => ({
       name: skill.replace('Skill: ', ''),
-      ability_score: { name: 'Unknown' } // Would need skill lookup table
+      ability_score: { name: 'Unknown' }, // Would need skill lookup table
     }))
   }
   // Check fallback structure (skills array)
   else if (character.value.classDetails?.skills) {
     allClassSkills = character.value.classDetails.skills.map(skill => ({
       name: skill,
-      ability_score: { name: 'Unknown' } // Would need skill lookup table
+      ability_score: { name: 'Unknown' }, // Would need skill lookup table
     }))
   }
 
@@ -730,7 +753,7 @@ const getClassSkillOptions = computed(() => {
 
   const existingSkills = new Set([
     ...backgroundSkillNames,
-    ...speciesSkillNames
+    ...speciesSkillNames,
   ])
 
   return allClassSkills.filter(skill => !existingSkills.has(skill.name))
@@ -766,7 +789,7 @@ const getAllSkillProficiencies = computed(() => {
     })
   }
 
-  // Format 2: skillProficiencies array  
+  // Format 2: skillProficiencies array
   if (character.value.backgroundDetails?.skillProficiencies) {
     character.value.backgroundDetails.skillProficiencies.forEach(skillName => {
       backgroundSkills.push(skillName)
@@ -779,12 +802,12 @@ const getAllSkillProficiencies = computed(() => {
       skills.push({
         name: skillName,
         ability_score: { name: 'Unknown' }, // Would need skill lookup table
-        source: 'Background'
+        source: 'Background',
       })
     } else if (skillName.name) {
       skills.push({
         ...skillName,
-        source: 'Background'
+        source: 'Background',
       })
     }
   })
@@ -818,7 +841,7 @@ const getAllSkillProficiencies = computed(() => {
 
     return {
       ...skill,
-      modifier: abilityModifier + proficiencyBonus + expertiseBonus
+      modifier: abilityModifier + proficiencyBonus + expertiseBonus,
     }
   })
 })
@@ -856,7 +879,7 @@ const hasExpertiseChoices = computed(() => {
   return totalChoices > 0 && availableSkills > 0 && selectedCount < totalChoices && classSkillsComplete
 })
 
-const isExpertiseSkill = (skillName) => {
+const isExpertiseSkill = skillName => {
   return character.value.selectedExpertise?.includes(skillName) || false
 }
 
@@ -900,7 +923,7 @@ const backgroundToolProficiencies = computed(() => {
     })
   }
 
-  // Also check toolProf as fallback  
+  // Also check toolProf as fallback
   if (character.value.backgroundDetails?.toolProf) {
     const toolProf = character.value.backgroundDetails.toolProf
     if (!toolProf.toLowerCase().includes('gaming') &&
@@ -1094,7 +1117,7 @@ const getBackgroundGamingSetOptions = computed(() => {
     'Dice Set',
     'Dragonchess Set',
     'Playing Card Set',
-    'Three-Dragon Ante Set'
+    'Three-Dragon Ante Set',
   ]
 })
 
@@ -1106,7 +1129,7 @@ const getVehicleProficiencies = computed(() => {
     vehicles.push(...character.value.classDetails.vehicleProficiencies)
   }
 
-  // Check background vehicle proficiencies  
+  // Check background vehicle proficiencies
   if (character.value.backgroundDetails?.vehicleProficiencies) {
     vehicles.push(...character.value.backgroundDetails.vehicleProficiencies)
   }
@@ -1266,7 +1289,7 @@ const getAvailableLanguageChoices = computed(() => {
     // Rare Languages (from Guidelines: available if granted by features)
     'Abyssal', 'Celestial', 'Infernal',
     // Additional Languages (also commonly available)
-    'Deep Speech', 'Primordial', 'Sylvan', 'Undercommon'
+    'Deep Speech', 'Primordial', 'Sylvan', 'Undercommon',
   ]
 
   const languageOptions = character.value.backgroundDetails?.languageOptions
@@ -1284,7 +1307,7 @@ const getAvailableLanguageChoices = computed(() => {
   return specificLanguages.filter(lang => !knownLanguages.includes(lang))
 })
 
-const isLanguageSelected = (language) => {
+const isLanguageSelected = language => {
   if (!character.value.selectedBackgroundLanguages) return false
   return character.value.selectedBackgroundLanguages.includes(language)
 }
@@ -1300,7 +1323,7 @@ const hasArmorProficiencies = computed(() => {
 const hasWeaponProficiencies = computed(() => {
   return character.value.weaponProficiencies?.length > 0
 })// Methods for selections
-const toggleClassSkill = (skillName) => {
+const toggleClassSkill = skillName => {
   if (!character.value.selectedClassSkills) {
     character.value.selectedClassSkills = []
   }
@@ -1313,7 +1336,7 @@ const toggleClassSkill = (skillName) => {
   }
 }
 
-const toggleExpertise = (skillName) => {
+const toggleExpertise = skillName => {
   if (!character.value.selectedExpertise) {
     character.value.selectedExpertise = []
   }
@@ -1326,7 +1349,7 @@ const toggleExpertise = (skillName) => {
   }
 }
 
-const toggleBackgroundTool = (toolName) => {
+const toggleBackgroundTool = toolName => {
   if (!character.value.selectedBackgroundTools) {
     character.value.selectedBackgroundTools = []
   }
@@ -1339,7 +1362,7 @@ const toggleBackgroundTool = (toolName) => {
   }
 }
 
-const toggleBackgroundInstrument = (instrumentName) => {
+const toggleBackgroundInstrument = instrumentName => {
   if (!character.value.selectedBackgroundInstruments) {
     character.value.selectedBackgroundInstruments = []
   }
@@ -1352,7 +1375,7 @@ const toggleBackgroundInstrument = (instrumentName) => {
   }
 }
 
-const toggleBackgroundGamingSet = (gamingSetName) => {
+const toggleBackgroundGamingSet = gamingSetName => {
   if (!character.value.selectedBackgroundGamingSets) {
     character.value.selectedBackgroundGamingSets = []
   }
@@ -1365,7 +1388,7 @@ const toggleBackgroundGamingSet = (gamingSetName) => {
   }
 }
 
-const toggleBackgroundLanguage = (language) => {
+const toggleBackgroundLanguage = language => {
   if (!character.value.selectedBackgroundLanguages) {
     character.value.selectedBackgroundLanguages = []
   }

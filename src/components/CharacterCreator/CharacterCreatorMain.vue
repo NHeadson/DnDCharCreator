@@ -21,7 +21,7 @@
           <p class="mb-3">
             <strong>"{{ character.name }}"</strong> has been {{ isEditing ? 'updated' : 'created' }} successfully!
           </p>
-          <v-alert type="success" variant="tonal" class="mb-0">
+          <v-alert class="mb-0" type="success" variant="tonal">
             {{ isEditing ? 'Your changes have been saved.' : 'Your character is now ready for adventure!' }}
           </v-alert>
         </v-card-text>
@@ -30,7 +30,7 @@
             View All Characters
           </v-btn>
           <v-spacer />
-          <v-btn v-if="!isEditing" color="primary" variant="elevated" prepend-icon="mdi-plus" @click="createAnother">
+          <v-btn v-if="!isEditing" color="primary" prepend-icon="mdi-plus" variant="elevated" @click="createAnother">
             Create Another
           </v-btn>
           <v-btn v-else color="primary" variant="elevated" @click="viewCharacters">
@@ -43,7 +43,7 @@
 </template>
 
 <script setup>
-import { onMounted, provide, ref, watch, computed } from 'vue'
+import { computed, onMounted, provide, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useCharacterStore } from '@/stores/characterStore'
 import { useFirestore } from '@/composables/useFirestore'
@@ -94,7 +94,7 @@ const editingCharacterId = ref(null)
 // Watch for class details changes and update class traits
 watch(
   () => character.classDetails,
-  (newDetails) => {
+  newDetails => {
     if (newDetails) {
       characterStore.updateClassTraits();
     }
@@ -113,10 +113,39 @@ const loadExistingCharacter = async characterId => {
         isEditing.value = true
         editingCharacterId.value = characterId
 
+        // Initialize loaded character data structures
+        characterStore.initializeFromLoadedData()
+
         // Update species, class, and background details if needed
         if (character.species) characterStore.updateSpeciesTraits()
         if (character.class) characterStore.updateClassTraits()
         if (character.background) characterStore.updateBackgroundTraits()
+
+        // Restore calculated states if they exist
+        if (existingCharacter.finalAbilityScores) {
+          Object.keys(existingCharacter.finalAbilityScores).forEach(ability => {
+            if (character.abilityScores[ability]) {
+              Object.assign(character.abilityScores[ability], existingCharacter.finalAbilityScores[ability]);
+            }
+          });
+        }
+
+        if (existingCharacter.allTraits) {
+          character.derivedTraits = character.derivedTraits || { species: [], lineage: [], class: [], background: [], combined: [] };
+          character.derivedTraits.combined = existingCharacter.allTraits;
+        }
+
+        // Validate and recalculate to ensure consistency
+        const validation = characterStore.validateAndRecalculate();
+        if (!validation.isValid) {
+          console.warn('Loaded character has validation issues:', validation.issues);
+          console.log('Re-running trait calculations...');
+
+          // Force recalculation of all traits and bonuses
+          if (character.species) characterStore.updateSpeciesTraits();
+          if (character.class) characterStore.updateClassTraits();
+          if (character.background) characterStore.updateBackgroundTraits();
+        }
 
         console.log('Loaded existing character for editing:', existingCharacter)
       }
@@ -175,6 +204,7 @@ provide('characterData', {
   updateSpeciesTraits: characterStore.updateSpeciesTraits,
   updateClassTraits: characterStore.updateClassTraits,
   updateBackgroundTraits: characterStore.updateBackgroundTraits,
+  updateLineageTraits: characterStore.updateLineageTraits,
 })
 
 // Handle character updates
@@ -213,15 +243,49 @@ const handleSubmitCharacter = async () => {
       return
     }
 
+    // Validate and recalculate all bonuses before saving
+    const validation = characterStore.validateAndRecalculate();
+    if (!validation.isValid) {
+      console.warn('Character validation issues found:', validation.issues);
+      // Log issues but don't block save (might be expected edge cases)
+    }
+
     // Convert ability scores to numbers before saving
     normalizeAbilityScores(character)
 
-    console.log('Saving character to Firestore...', character)
+    // Prepare enhanced character data for persistence
+    const characterData = {
+      ...character,
+      // Include calculated values
+      finalAbilityScores: Object.fromEntries(
+        Object.entries(character.abilityScores).map(([key, value]) => [
+          key,
+          {
+            ...value,
+            finalScore: value.finalScore || value.score,
+            totalBonuses: Object.values(value.bonuses || {}).reduce((sum, bonus) => sum + bonus, 0)
+          }
+        ])
+      ),
+      // Include combined traits
+      allTraits: character.derivedTraits?.combined || [],
+      // Metadata for restoration
+      calculationMetadata: {
+        lastCalculated: new Date().toISOString(),
+        validation: validation,
+        speciesAbilityBonuses: character.speciesDetails?.abilityBonus || [],
+        lineageAbilityBonuses: character.speciesDetails?.lineages?.find(
+          l => l.id === character.speciesLineage
+        )?.abilityBonus || []
+      }
+    };
+
+    console.log('Saving enhanced character to Firestore...', characterData)
 
     let result
     if (isEditing.value && editingCharacterId.value) {
       // Update existing character
-      result = await updateExistingCharacter(editingCharacterId.value, character)
+      result = await updateExistingCharacter(editingCharacterId.value, characterData)
 
       if (result.success) {
         console.log('Character updated with ID:', editingCharacterId.value)
@@ -231,7 +295,7 @@ const handleSubmitCharacter = async () => {
       }
     } else {
       // Save new character
-      result = await saveCharacter(character)
+      result = await saveCharacter(characterData)
 
       if (result.success) {
         console.log('Character saved with ID:', result.id)
@@ -249,14 +313,14 @@ const handleSubmitCharacter = async () => {
 // Dialog actions
 const viewCharacters = () => {
   showSuccessDialog.value = false
-  router.push('/characters')
+  // Force page refresh to clear form state
+  window.location.href = '/characters'
 }
 
 const createAnother = () => {
   showSuccessDialog.value = false
-  characterStore.$reset() // Reset the store to default state
-  currentStep.value = 1 // Reset to first step
-  // Don't navigate away, just reset the form
+  // Force page refresh to completely clear the form
+  window.location.reload()
 }
 </script>
 
