@@ -224,6 +224,11 @@ watch(() => props.character.background, async (newBackground, oldBackground) => 
     if (details) {
       props.character.backgroundDetails = { ...details, id: newBackground };
     }
+
+    // Call the background traits update function if it exists
+    if (props.characterData?.updateBackgroundTraits) {
+      props.characterData.updateBackgroundTraits()
+    }
   }
 })
 

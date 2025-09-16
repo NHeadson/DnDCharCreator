@@ -224,6 +224,17 @@ function normalizeAbilityScores(char) {
   }
 }
 
+// Compute final inventory snapshot using the same logic as CharacterSummary
+function computeFinalInventory(character) {
+  console.log('=== COMPUTING FINAL INVENTORY SNAPSHOT FROM UNIFIED STORE ===');
+
+  // Use the unified inventory system from character store
+  const finalInventory = characterStore.getCurrentInventory();
+
+  console.log('Final computed inventory snapshot from store:', finalInventory);
+  return finalInventory;
+}
+
 // Handle character submission
 const handleSubmitCharacter = async () => {
   try {
@@ -253,9 +264,15 @@ const handleSubmitCharacter = async () => {
     // Convert ability scores to numbers before saving
     normalizeAbilityScores(character)
 
+    // Compute final inventory snapshot for character cards
+    const finalInventorySnapshot = computeFinalInventory(character)
+    console.log('Final inventory snapshot for save:', finalInventorySnapshot)
+
     // Prepare enhanced character data for persistence
     const characterData = {
       ...character,
+      // Include final inventory snapshot for character cards
+      finalInventory: finalInventorySnapshot,
       // Include calculated values
       finalAbilityScores: Object.fromEntries(
         Object.entries(character.abilityScores).map(([key, value]) => [

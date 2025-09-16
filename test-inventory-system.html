@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0" />
+    <title>Inventory System Test</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #f5f5f5;
+      }
+      .test-section {
+        background: white;
+        padding: 20px;
+        margin: 20px 0;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+      .step {
+        margin: 10px 0;
+        padding: 15px;
+        border-left: 4px solid #2196f3;
+        background-color: #f8f9fa;
+      }
+      .error {
+        color: #d32f2f;
+        font-weight: bold;
+      }
+      .success {
+        color: #388e3c;
+        font-weight: bold;
+      }
+      .warning {
+        color: #f57c00;
+        font-weight: bold;
+      }
+      button {
+        background-color: #2196f3;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 4px;
+        cursor: pointer;
+        margin: 5px;
+      }
+      button:hover {
+        background-color: #1976d2;
+      }
+      #results {
+        margin-top: 20px;
+        padding: 15px;
+        background-color: #f0f0f0;
+        border-radius: 4px;
+      }
+      .issue-box {
+        border: 2px solid #ff9800;
+        background-color: #fff3e0;
+        padding: 15px;
+        margin: 10px 0;
+        border-radius: 8px;
+      }
+      .fix-box {
+        border: 2px solid #4caf50;
+        background-color: #e8f5e8;
+        padding: 15px;
+        margin: 10px 0;
+        border-radius: 8px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>📦 Inventory System Testing</h1>
+
+    <div class="fix-box">
+      <h2>🔧 Fix Applied: Basic Starting Equipment</h2>
+      <p><strong>Added to character store:</strong></p>
+      <ul>
+        <li>
+          <strong>Common Clothes</strong> - Simple everyday clothing suitable
+          for adventure
+        </li>
+        <li>
+          <strong>Pouch</strong> - A cloth or leather pouch for carrying coins
+          and small items
+        </li>
+      </ul>
+      <p>These items should now appear on Page 5 for all new characters.</p>
+    </div>
+
+    <div class="test-section">
+      <h2>🧪 Test Plan: Issue #1 - Missing Starting Equipment</h2>
+
+      <div class="step">
+        <strong>Test 1:</strong> Create a new character (Rock Gnome, Paladin,
+        Acolyte)
+        <ol>
+          <li>Go through character creation steps 1-4</li>
+          <li>Select "Recommended Equipment" on Page 4</li>
+          <li>Navigate to Page 5 (Character Summary)</li>
+          <li>
+            Check inventory for: Common Clothes, Pouch, weapons, selected pack
+          </li>
+        </ol>
+      </div>
+
+      <div class="step">
+        <strong>Expected Result:</strong>
+        <ul>
+          <li>✅ Common Clothes should appear</li>
+          <li>✅ Pouch should appear</li>
+          <li>✅ Class weapons should appear</li>
+          <li>✅ Selected equipment pack should appear</li>
+        </ul>
+      </div>
+
+      <button onclick="openCharacterForm()">🚀 Start New Character Test</button>
+    </div>
+
+    <div class="issue-box">
+      <h2>⚠️ Issue #2: Editing Mode Inconsistencies</h2>
+      <p><strong>Problems to investigate:</strong></p>
+      <ul>
+        <li>
+          Different items appearing when editing vs creating (Holy Symbol,
+          Prayer Book, Chain Mail)
+        </li>
+        <li>
+          "Magic Initiate (Cleric)" feat appearing for non-Cleric characters
+        </li>
+        <li>Inventory differences between creation and editing modes</li>
+      </ul>
+
+      <div class="step">
+        <strong>Test 2:</strong> Character Editing Consistency
+        <ol>
+          <li>Create and save a character (Rock Gnome, Paladin, Acolyte)</li>
+          <li>Note the exact inventory items on Page 5</li>
+          <li>Go to characters list and edit the same character</li>
+          <li>Compare Page 4 equipment and Page 5 inventory</li>
+          <li>Check if "Magic Initiate (Cleric)" appears in feats</li>
+        </ol>
+      </div>
+
+      <button onclick="openCharactersList()">📝 Test Character Editing</button>
+    </div>
+
+    <div class="test-section">
+      <h2>🔍 Manual Testing Checklist</h2>
+
+      <div id="checklist">
+        <h3>Issue #1 - Basic Starting Equipment</h3>
+        <label
+          ><input
+            type="checkbox"
+            id="clothes" />
+          Common Clothes appear in new character inventory</label
+        ><br />
+        <label
+          ><input
+            type="checkbox"
+            id="pouch" />
+          Pouch appears in new character inventory</label
+        ><br />
+        <label
+          ><input
+            type="checkbox"
+            id="weapons" />
+          Class weapons appear correctly</label
+        ><br />
+        <label
+          ><input
+            type="checkbox"
+            id="pack" />
+          Selected equipment pack appears</label
+        ><br />
+        <label
+          ><input
+            type="checkbox"
+            id="character-card" />
+          Character card shows complete inventory</label
+        ><br /><br />
+
+        <h3>Issue #2 - Editing Mode Investigation</h3>
+        <label
+          ><input
+            type="checkbox"
+            id="creation-inventory" />
+          Record creation mode inventory</label
+        ><br />
+        <label
+          ><input
+            type="checkbox"
+            id="editing-inventory" />
+          Compare editing mode inventory</label
+        ><br />
+        <label
+          ><input
+            type="checkbox"
+            id="extra-items" />
+          Identify extra items in edit mode</label
+        ><br />
+        <label
+          ><input
+            type="checkbox"
+            id="feat-issue" />
+          Check for unexpected "Magic Initiate (Cleric)" feat</label
+        ><br />
+        <label
+          ><input
+            type="checkbox"
+            id="class-consistency" />
+          Verify character class consistency</label
+        ><br />
+      </div>
+
+      <button onclick="checkProgress()">📊 Check Progress</button>
+
+      <div id="results"></div>
+    </div>
+
+    <div class="test-section">
+      <h2>🐛 Debug Information</h2>
+      <p>If issues persist, check browser console for:</p>
+      <ul>
+        <li>Character store inventory building messages</li>
+        <li>Equipment loading errors</li>
+        <li>API response differences</li>
+        <li>Character data structure variations</li>
+      </ul>
+
+      <button onclick="openDevTools()">🔧 Open Browser DevTools</button>
+    </div>
+
+    <script>
+      function openCharacterForm() {
+        window.open('http://localhost:3001/character-form', '_blank');
+      }
+
+      function openCharactersList() {
+        window.open('http://localhost:3001/characters', '_blank');
+      }
+
+      function openDevTools() {
+        // This will show a message since we can't programmatically open dev tools
+        alert(
+          'Press F12 or right-click → Inspect Element to open Developer Tools\n\nLook for console messages starting with:\n• "Building class equipment..."\n• "Building background equipment..."\n• "Building basic starting equipment..."'
+        );
+      }
+
+      function checkProgress() {
+        const checkboxes = document.querySelectorAll(
+          '#checklist input[type="checkbox"]'
+        );
+        const checked = Array.from(checkboxes).filter(
+          (cb) => cb.checked
+        ).length;
+        const total = checkboxes.length;
+
+        const results = document.getElementById('results');
+        results.innerHTML = `
+                <h3>Test Progress: ${checked}/${total} steps completed</h3>
+                <div class="progress-bar" style="background: #e0e0e0; height: 20px; border-radius: 10px; margin: 10px 0;">
+                    <div style="background: #4caf50; height: 100%; width: ${
+                      (checked / total) * 100
+                    }%; border-radius: 10px; transition: width 0.3s;"></div>
+                </div>
+            `;
+
+        // Issue #1 specific checks
+        const issue1Checks = [
+          'clothes',
+          'pouch',
+          'weapons',
+          'pack',
+          'character-card',
+        ];
+        const issue1Complete = issue1Checks.every(
+          (id) => document.getElementById(id).checked
+        );
+
+        if (issue1Complete) {
+          results.innerHTML +=
+            '<p class="success">✅ Issue #1 (Basic Starting Equipment) - All tests passed!</p>';
+        } else {
+          const missing = issue1Checks.filter(
+            (id) => !document.getElementById(id).checked
+          );
+          results.innerHTML += `<p class="warning">⚠️ Issue #1 - Missing tests: ${missing.join(
+            ', '
+          )}</p>`;
+        }
+
+        // Issue #2 specific checks
+        const issue2Checks = [
+          'creation-inventory',
+          'editing-inventory',
+          'extra-items',
+          'feat-issue',
+          'class-consistency',
+        ];
+        const issue2Complete = issue2Checks.every(
+          (id) => document.getElementById(id).checked
+        );
+
+        if (issue2Complete) {
+          results.innerHTML +=
+            '<p class="success">✅ Issue #2 (Editing Consistency) - Investigation complete!</p>';
+        } else {
+          const missing = issue2Checks.filter(
+            (id) => !document.getElementById(id).checked
+          );
+          results.innerHTML += `<p class="warning">⚠️ Issue #2 - Remaining: ${missing.join(
+            ', '
+          )}</p>`;
+        }
+      }
+
+      // Auto-run initial status
+      setTimeout(() => {
+        const results = document.getElementById('results');
+        results.innerHTML = `
+                <h3>🎯 Ready to Test!</h3>
+                <p>1. Start with Issue #1 testing (basic starting equipment)</p>
+                <p>2. Then investigate Issue #2 (editing mode consistency)</p>
+                <p>3. Use the browser console to monitor character store activity</p>
+            `;
+      }, 1000);
+    </script>
+  </body>
+</html>

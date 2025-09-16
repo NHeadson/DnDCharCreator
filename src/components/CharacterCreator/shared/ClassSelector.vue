@@ -384,6 +384,11 @@ watch(() => props.character.class, async (newClass, oldClass) => {
     if (details) {
       props.character.classDetails = { ...details, id: newClass };
     }
+
+    // Call the class traits update function if it exists
+    if (props.characterData?.updateClassTraits) {
+      props.characterData.updateClassTraits()
+    }
   }
 })
 

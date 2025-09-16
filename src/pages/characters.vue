@@ -894,73 +894,263 @@ const getCharacterTools = character => {
 }
 
 const getCharacterInventory = character => {
-  const inventory = []
-  const itemMap = new Map() // To handle duplicates by grouping items
+  console.log('=== CHARACTER INVENTORY FROM SNAPSHOT ===');
 
-  // Add equipment from character.equipment array
-  if (character.equipment && Array.isArray(character.equipment)) {
-    character.equipment.forEach((item, index) => {
-      if (item && item.name) {
-        // Create a key that considers name, source, and cost to identify truly identical items
-        const itemKey = `${item.name.toLowerCase()}_${item.source || 'unknown'}_${JSON.stringify(item.cost || {})}`
+  // Check if finalInventory exists and is complete (has equipment choices)
+  const hasCompleteInventory = character?.finalInventory &&
+    Array.isArray(character.finalInventory) &&
+    character.finalInventory.length > 4; // More than just basic starting equipment
 
-        if (itemMap.has(itemKey)) {
-          // Item already exists - this is a true duplicate, so we keep only one
-          // Don't add to quantity since these are duplicate entries, not multiple items
-          console.log(`DEBUG: Skipping duplicate entry for ${item.name}`)
-        } else {
-          // New unique item
-          itemMap.set(itemKey, {
-            name: item.name,
-            originalName: item.name,
-            quantity: item.quantity || 1,
-            source: item.source || 'unknown',
-            cost: item.cost,
-            description: item.description
-          })
-        }
-      }
-    })
+  if (hasCompleteInventory) {
+    console.log('Using complete finalInventory snapshot:', character.finalInventory);
+
+    // Format display names with quantities
+    const inventory = character.finalInventory.map(item => ({
+      ...item,
+      originalName: item.name,
+      name: item.quantity > 1 ? `${item.name} (${item.quantity})` : item.name
+    }));
+
+    // Sort inventory: weapons first, then armor, then other items
+    inventory.sort((a, b) => {
+      const aName = a.originalName.toLowerCase();
+      const bName = b.originalName.toLowerCase();
+
+      // Weapons first
+      const aIsWeapon = aName.includes('sword') || aName.includes('axe') || aName.includes('bow') ||
+        aName.includes('dagger') || aName.includes('spear') || aName.includes('mace') || aName.includes('javelin');
+      const bIsWeapon = bName.includes('sword') || bName.includes('axe') || bName.includes('bow') ||
+        bName.includes('dagger') || bName.includes('spear') || bName.includes('mace') || bName.includes('javelin');
+
+      // Armor second
+      const aIsArmor = aName.includes('armor') || aName.includes('mail') || aName === 'shield';
+      const bIsArmor = bName.includes('armor') || bName.includes('mail') || bName === 'shield';
+
+      if (aIsWeapon && !bIsWeapon) return -1;
+      if (bIsWeapon && !aIsWeapon) return 1;
+      if (aIsArmor && !bIsArmor && !bIsWeapon) return -1;
+      if (bIsArmor && !aIsArmor && !aIsWeapon) return 1;
+
+      // Alphabetical for items in same category
+      return aName.localeCompare(bName);
+    });
+
+    return inventory;
   }
 
-  // Convert map to array and format display names
-  itemMap.forEach(item => {
-    const displayName = item.quantity > 1
-      ? `${item.name} (${item.quantity})`
-      : item.name
+  // Rebuild inventory for incomplete snapshots or missing finalInventory
+  console.log('Rebuilding inventory - incomplete or missing finalInventory. Current finalInventory:', character?.finalInventory);
+  console.log('Character equipment array (raw):', character?.equipment);
 
-    inventory.push({
-      ...item,
-      name: displayName
-    })
-  })
+  // Build corrected inventory using the same logic as CharacterSummary
+  const correctedInventory = [];
 
-  // Sort inventory: weapons first, then armor, then other items
-  inventory.sort((a, b) => {
-    const aName = a.originalName.toLowerCase()
-    const bName = b.originalName.toLowerCase()
+  // COPY EXACT EQUIPMENT CHOICES STRUCTURE FROM CharacterSummary
+  const equipmentChoicesData = {
+    ranger: [
+      {
+        description: "(a) scale mail or (b) leather armor",
+        options: [
+          {
+            items: [
+              { name: "Scale Mail", quantity: 1, description: "Medium armor, AC 14 + Dex modifier (max 2)" }
+            ]
+          },
+          {
+            items: [
+              { name: "Leather Armor", quantity: 1, description: "Light armor, AC 11 + Dex modifier" }
+            ]
+          }
+        ]
+      },
+      {
+        description: "(a) two shortswords or (b) two simple melee weapons",
+        options: [
+          {
+            items: [
+              { name: "Shortsword", quantity: 2, description: "Martial weapon, 1d6 piercing, finesse" }
+            ]
+          },
+          {
+            items: [
+              { name: "Handaxe", quantity: 2, description: "Simple weapon, 1d6 slashing, thrown" }
+            ]
+          }
+        ]
+      },
+      {
+        description: "A dungeoneer's pack or an explorer's pack",
+        options: [
+          {
+            items: [
+              { name: "Dungeoneer's Pack", quantity: 1, description: "Backpack, crowbar, hammer, 10 pitons, 10 torches, tinderbox, 10 days of rations, waterskin, 50 feet of hemp rope" }
+            ]
+          },
+          {
+            items: [
+              { name: "Explorer's Pack", quantity: 1, description: "Backpack, bedroll, mess kit, tinderbox, 10 torches, 10 days of rations, waterskin, 50 feet of hemp rope" }
+            ]
+          }
+        ]
+      }
+    ],
+    rogue: [
+      {
+        description: "A rapier or a shortsword",
+        options: [
+          {
+            items: [
+              { name: "Rapier", quantity: 1, description: "Martial weapon, 1d8 piercing, finesse" }
+            ]
+          },
+          {
+            items: [
+              { name: "Shortsword", quantity: 1, description: "Martial weapon, 1d6 piercing, finesse" }
+            ]
+          }
+        ]
+      },
+      {
+        description: "A shortbow and quiver of 20 arrows or a shortsword",
+        options: [
+          {
+            items: [
+              { name: "Shortbow", quantity: 1, description: "Ranged weapon, 1d6 piercing" },
+              { name: "Arrow", quantity: 20, description: "Ammunition for shortbow" }
+            ]
+          },
+          {
+            items: [
+              { name: "Shortsword", quantity: 1, description: "Martial weapon, 1d6 piercing, finesse" }
+            ]
+          }
+        ]
+      },
+      {
+        description: "A burglar's pack, a dungeoneer's pack, or an explorer's pack",
+        options: [
+          {
+            items: [
+              { name: "Burglar's Pack", quantity: 1, description: "Backpack, bag of 1000 ball bearings, 10 feet of string, bell, 5 candles, crowbar, hammer, 10 pitons, hooded lantern, 2 flasks of oil, 5 days rations, tinderbox, waterskin, 50 feet hemp rope" }
+            ]
+          },
+          {
+            items: [
+              { name: "Dungeoneer's Pack", quantity: 1, description: "Backpack, crowbar, hammer, 10 pitons, 10 torches, tinderbox, 10 days of rations, waterskin, 50 feet of hemp rope" }
+            ]
+          },
+          {
+            items: [
+              { name: "Explorer's Pack", quantity: 1, description: "Backpack, bedroll, mess kit, tinderbox, 10 torches, 10 days of rations, waterskin, 50 feet of hemp rope" }
+            ]
+          }
+        ]
+      }
+    ]
+  };
 
-    // Weapons first
-    const aIsWeapon = aName.includes('sword') || aName.includes('axe') || aName.includes('bow') ||
-      aName.includes('dagger') || aName.includes('spear') || aName.includes('mace')
-    const bIsWeapon = bName.includes('sword') || bName.includes('axe') || bName.includes('bow') ||
-      bName.includes('dagger') || bName.includes('spear') || bName.includes('mace')
+  // Add equipment from choices using the SAME LOGIC as CharacterSummary
+  const selectedChoices = character.equipmentChoices || [];
+  const className = character.class?.toLowerCase();
+  const classEquipmentChoices = equipmentChoicesData[className] || [];
 
-    // Armor second
-    const aIsArmor = aName.includes('armor') || aName.includes('mail') || aName === 'shield'
-    const bIsArmor = bName.includes('armor') || bName.includes('mail') || bName === 'shield'
+  console.log("Character cards - processing equipment choices for", className, "with selections:", selectedChoices);
 
-    if (aIsWeapon && !bIsWeapon) return -1
-    if (bIsWeapon && !aIsWeapon) return 1
-    if (aIsArmor && !bIsArmor && !bIsWeapon) return -1
-    if (bIsArmor && !aIsArmor && !aIsWeapon) return 1
+  classEquipmentChoices.forEach((choice, choiceIndex) => {
+    const selectedOptionIndex = selectedChoices[choiceIndex];
+    if (selectedOptionIndex !== null && selectedOptionIndex !== undefined) {
+      const selectedOption = choice.options?.[selectedOptionIndex];
+      if (selectedOption && selectedOption.items) {
+        selectedOption.items.forEach((item) => {
+          console.log(`Character cards - adding equipment choice: ${item.name} x${item.quantity || 1}`);
+          correctedInventory.push({
+            name: item.name,
+            source: 'class',
+            quantity: item.quantity || 1,
+            category: 'gear' // Simplified for character cards
+          });
+        });
+      }
+    }
+  });
 
-    // Alphabetical for items in same category
-    return aName.localeCompare(bName)
-  })
+  // Track items already added from choices to avoid duplicates
+  const itemsFromChoices = correctedInventory.map(item => item.name.toLowerCase());
 
-  console.log('DEBUG: Deduplicated inventory:', inventory)
-  return inventory
+  // Add class starting equipment based on class (but avoid duplicates)
+  if (className === 'ranger') {
+    if (!itemsFromChoices.includes('longbow')) {
+      correctedInventory.push({ name: 'Longbow', source: 'class-default', quantity: 1, category: 'weapon' });
+    }
+    if (!itemsFromChoices.includes('arrow')) {
+      correctedInventory.push({ name: 'Arrow', source: 'class-default', quantity: 20, category: 'gear' });
+    }
+  } else if (className === 'rogue') {
+    if (!itemsFromChoices.includes('leather armor')) {
+      correctedInventory.push({ name: 'Leather Armor', source: 'class-default', quantity: 1, category: 'armor' });
+    }
+    if (!itemsFromChoices.includes('dagger')) {
+      correctedInventory.push({ name: 'Dagger', source: 'class-default', quantity: 2, category: 'weapon' });
+    }
+    if (!itemsFromChoices.includes("thieves' tools")) {
+      correctedInventory.push({ name: "Thieves' Tools", source: 'class-default', quantity: 1, category: 'tool' });
+    }
+  }
+
+  // Add background equipment based on background
+  const backgroundName = character.background?.toLowerCase();
+  if (backgroundName === 'criminal') {
+    correctedInventory.push({ name: 'Crowbar', source: 'background', quantity: 1, category: 'tool' });
+    correctedInventory.push({ name: 'Dark Common Clothes', source: 'background', quantity: 1, category: 'gear' });
+    correctedInventory.push({ name: 'Belt Pouch', source: 'background', quantity: 1, category: 'gear' });
+  } else if (backgroundName === 'acolyte') {
+    correctedInventory.push({ name: 'Holy Symbol', source: 'background', quantity: 1, category: 'tool' });
+    correctedInventory.push({ name: 'Prayer Book', source: 'background', quantity: 1, category: 'gear' });
+    correctedInventory.push({ name: 'Incense', source: 'background', quantity: 5, category: 'gear' });
+  }
+
+  // Track all items already added
+  const allItemsAdded = correctedInventory.map(item => item.name.toLowerCase());
+
+  // Add basic starting equipment (but avoid duplicates)
+  const hasClothes = allItemsAdded.some(name =>
+    name.includes('clothes') || name.includes('costume') || name.includes('vestments')
+  );
+  if (!hasClothes) {
+    correctedInventory.push({ name: 'Common Clothes', source: 'basic', quantity: 1, category: 'gear' });
+  }
+
+  const hasPouch = allItemsAdded.some(name =>
+    name.includes('pouch') || name.includes('bag') || name.includes('sack')
+  );
+  if (!hasPouch) {
+    correctedInventory.push({ name: 'Pouch', source: 'basic', quantity: 1, category: 'gear' });
+  }
+
+  // Sort inventory by category: weapons first, then armor, tools, gear, packs last
+  const categoryOrder = { weapon: 1, armor: 2, tool: 3, gear: 4, pack: 5 };
+
+  correctedInventory.sort((a, b) => {
+    const orderA = categoryOrder[a.category] || 6;
+    const orderB = categoryOrder[b.category] || 6;
+
+    if (orderA !== orderB) {
+      return orderA - orderB;
+    }
+
+    // Within same category, sort alphabetically
+    return a.name.localeCompare(b.name);
+  });
+
+  // Format display names with quantities and add originalName
+  const formattedInventory = correctedInventory.map(item => ({
+    ...item,
+    originalName: item.name,
+    name: item.quantity > 1 ? `${item.name} (${item.quantity})` : item.name
+  }));
+
+  console.log('Corrected inventory:', formattedInventory);
+  return formattedInventory;
 }
 
 const getEquipmentTooltip = (itemName) => {

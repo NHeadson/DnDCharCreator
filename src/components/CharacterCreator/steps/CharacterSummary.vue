@@ -487,7 +487,8 @@
 </template>
 
 <script setup>
-import { computed, ref, toRefs, watch } from 'vue'
+import { computed, ref, toRefs, watch, onMounted } from 'vue'
+import { useCharacterStore } from '@/stores/characterStore'
 
 const props = defineProps({
   character: {
@@ -502,6 +503,37 @@ const props = defineProps({
 
 // Destructure for template access while maintaining reactivity
 const { character, characterData } = toRefs(props)
+
+// Initialize character store for unified inventory management
+const characterStore = useCharacterStore()
+
+// Ensure inventory is properly built when component mounts
+onMounted(() => {
+  console.log("CharacterSummary mounted - ensuring inventory is built");
+  console.log("Character data:", character.value);
+
+  // Sync character data to character store to ensure it has the latest equipment choices
+  if (characterStore.character && character.value) {
+    // Sync important data that might be missing
+    characterStore.character.equipmentChoices = character.value.equipmentChoices || [];
+    characterStore.character.class = character.value.class;
+    characterStore.character.background = character.value.background;
+    characterStore.character.classDetails = character.value.classDetails;
+    characterStore.character.backgroundDetails = character.value.backgroundDetails;
+
+    console.log("Synced character data to store");
+    console.log("Equipment choices:", characterStore.character.equipmentChoices);
+  }
+
+  // Force clear the character equipment array to remove any duplicates
+  characterStore.character.equipment = [];
+
+  // Force a complete rebuild of the inventory
+  if (characterStore && typeof characterStore.rebuildInventory === 'function') {
+    console.log("Forcing complete inventory rebuild...");
+    characterStore.rebuildInventory();
+  }
+})
 
 // Trait details storage
 const traitDetails = ref({})
@@ -1256,214 +1288,268 @@ const equipmentChoices = computed(() => {
   return [];
 });
 
-// All inventory items (complete logic from InventoryEquipment.vue)
+// All inventory items (copy the exact working logic from EquipmentAndGear.vue)
 const allInventoryItems = computed(() => {
-  const inv = [];
+  console.log("CharacterSummary - Building inventory using EquipmentAndGear logic");
+  console.log("Equipment choices:", character.value.equipmentChoices);
 
-  // Always use package mode logic for summary (we're showing starting inventory)
-  console.log('=== SUMMARY INVENTORY DEBUG ===');
+  const inventory = [];
 
-  // Add items from selected equipment choices (if any exist)
-  const selectedEquipmentChoices = character.value?.equipmentChoices || [];
-  console.log('Summary selected equipment choices:', selectedEquipmentChoices);
+  // COPY EXACT EQUIPMENT CHOICES STRUCTURE FROM InventoryEquipment.vue
+  const equipmentChoicesData = {
+    ranger: [
+      {
+        description: "(a) scale mail or (b) leather armor",
+        options: [
+          {
+            items: [
+              { name: "Scale Mail", quantity: 1, description: "Medium armor, AC 14 + Dex modifier (max 2)", cost: { quantity: 50, unit: 'gp' } }
+            ]
+          },
+          {
+            items: [
+              { name: "Leather Armor", quantity: 1, description: "Light armor, AC 11 + Dex modifier", cost: { quantity: 10, unit: 'gp' } }
+            ]
+          }
+        ]
+      },
+      {
+        description: "(a) two shortswords or (b) two simple melee weapons",
+        options: [
+          {
+            items: [
+              { name: "Shortsword", quantity: 2, description: "Martial weapon, 1d6 piercing, finesse", cost: { quantity: 10, unit: 'gp' } }
+            ]
+          },
+          {
+            items: [
+              { name: "Handaxe", quantity: 2, description: "Simple weapon, 1d6 slashing, thrown", cost: { quantity: 5, unit: 'gp' } }
+            ]
+          }
+        ]
+      },
+      {
+        description: "A dungeoneer's pack or an explorer's pack",
+        options: [
+          {
+            items: [
+              { name: "Dungeoneer's Pack", quantity: 1, description: "Backpack, crowbar, hammer, 10 pitons, 10 torches, tinderbox, 10 days of rations, waterskin, 50 feet of hemp rope", cost: { quantity: 12, unit: 'gp' } }
+            ]
+          },
+          {
+            items: [
+              { name: "Explorer's Pack", quantity: 1, description: "Backpack, bedroll, mess kit, tinderbox, 10 torches, 10 days of rations, waterskin, 50 feet of hemp rope", cost: { quantity: 10, unit: 'gp' } }
+            ]
+          }
+        ]
+      }
+    ],
+    rogue: [
+      {
+        description: "A rapier or a shortsword",
+        options: [
+          {
+            items: [
+              { name: "Rapier", quantity: 1, description: "Martial weapon, 1d8 piercing, finesse" }
+            ]
+          },
+          {
+            items: [
+              { name: "Shortsword", quantity: 1, description: "Martial weapon, 1d6 piercing, finesse" }
+            ]
+          }
+        ]
+      },
+      {
+        description: "A shortbow and quiver of 20 arrows or a shortsword",
+        options: [
+          {
+            items: [
+              { name: "Shortbow", quantity: 1, description: "Ranged weapon, 1d6 piercing" },
+              { name: "Arrow", quantity: 20, description: "Ammunition for shortbow" }
+            ]
+          },
+          {
+            items: [
+              { name: "Shortsword", quantity: 1, description: "Martial weapon, 1d6 piercing, finesse" }
+            ]
+          }
+        ]
+      },
+      {
+        description: "A burglar's pack, a dungeoneer's pack, or an explorer's pack",
+        options: [
+          {
+            items: [
+              { name: "Burglar's Pack", quantity: 1, description: "Backpack, bag of 1000 ball bearings, 10 feet of string, bell, 5 candles, crowbar, hammer, 10 pitons, hooded lantern, 2 flasks of oil, 5 days rations, tinderbox, waterskin, 50 feet hemp rope" }
+            ]
+          },
+          {
+            items: [
+              { name: "Dungeoneer's Pack", quantity: 1, description: "Backpack, crowbar, hammer, 10 pitons, 10 torches, tinderbox, 10 days of rations, waterskin, 50 feet of hemp rope" }
+            ]
+          },
+          {
+            items: [
+              { name: "Explorer's Pack", quantity: 1, description: "Backpack, bedroll, mess kit, tinderbox, 10 torches, 10 days of rations, waterskin, 50 feet of hemp rope" }
+            ]
+          }
+        ]
+      }
+    ]
+  };
 
-  equipmentChoices.value.forEach((choice, choiceIndex) => {
-    const selectedOptionIndex = selectedEquipmentChoices[choiceIndex];
-    console.log(`Summary processing choice ${choiceIndex}, selected option:`, selectedOptionIndex);
+  // Add equipment from choices using the SAME LOGIC as InventoryEquipment
+  const selectedChoices = character.value.equipmentChoices || [];
+  const className = character.value.class?.toLowerCase();
+  const classEquipmentChoices = equipmentChoicesData[className] || [];
+
+  console.log("=== CharacterSummary Equipment Choices Debug ===");
+  console.log("Selected choices (indices):", selectedChoices);
+  console.log("Class name:", className);
+  console.log("Class equipment choices:", classEquipmentChoices);
+
+  classEquipmentChoices.forEach((choice, choiceIndex) => {
+    const selectedOptionIndex = selectedChoices[choiceIndex];
+    console.log(`\n--- Processing Choice ${choiceIndex} ---`);
+    console.log(`Selected option index: ${selectedOptionIndex}`);
+    console.log(`Choice:`, choice);
 
     if (selectedOptionIndex !== null && selectedOptionIndex !== undefined) {
-      const selectedOption = choice.options[selectedOptionIndex];
-      console.log(`Summary selected option for choice ${choiceIndex}:`, selectedOption);
-      console.log(`Summary selected option structure - has items:`, !!selectedOption?.items);
-      console.log(`Summary selected option items:`, selectedOption?.items);
+      const selectedOption = choice.options?.[selectedOptionIndex];
+      console.log(`Selected option:`, selectedOption);
 
-      // Check if this is a category choice with custom selected weapons
-      const customWeapons = character.value?.equipment?.filter(
-        item => item.choiceIndex === choiceIndex && item.source === 'class'
-      ) || [];
-      console.log(`Summary custom weapons for choice ${choiceIndex}:`, customWeapons);
-
-      if (customWeapons.length > 0) {
-        // Add the custom selected weapons instead of the generic category
-        customWeapons.forEach(weapon => {
-          console.log('Summary adding custom weapon from choice:', weapon.name);
-          inv.push({
-            ...weapon,
-            quantity: weapon.quantity || 1,
-            source: 'class'
-          });
-        });
-      } else if (selectedOption && selectedOption.items) {
-        // Add regular equipment items
-        selectedOption.items.forEach(item => {
-          console.log('Summary adding equipment choice item:', item.name);
-          inv.push({
-            ...item,
+      if (selectedOption && selectedOption.items) {
+        selectedOption.items.forEach((item) => {
+          console.log(`Adding equipment choice item: ${item.name} x${item.quantity || 1}`);
+          inventory.push({
+            name: item.name,
+            source: 'class',
             quantity: item.quantity || 1,
-            source: 'class'
+            category: getItemCategory(item.name)
           });
         });
-      } else {
-        console.log(`Summary no items found for choice ${choiceIndex} - selectedOption:`, selectedOption);
       }
     }
   });
 
-  // Add starting equipment package (but avoid duplicates with equipment choices)
-  const startingEquipment = character.value?.classDetails?.startingEquipment || [];
-  console.log('Summary starting equipment package:', startingEquipment.map(i => i?.name).filter(Boolean));
-  const itemsFromChoices = inv.map(item => item.name?.toLowerCase()).filter(Boolean);
-  console.log('Summary items already added from choices:', itemsFromChoices);
+  // Add class starting equipment based on class (but avoid duplicates with equipment choices)
+  const characterClass = character.value.class;
+  console.log("Adding class starting equipment for:", characterClass);
 
-  startingEquipment.forEach(item => {
-    if (!item || !item.name) {
-      console.warn('Summary skipping invalid starting equipment item:', item);
-      return;
+  // Track items already added from choices to avoid duplicates
+  const itemsFromChoices = inventory.map(item => item.name.toLowerCase());
+  console.log("Items already added from choices:", itemsFromChoices);
+
+  if (characterClass === 'ranger') {
+    // Only add if not already from choices
+    if (!itemsFromChoices.includes('longbow')) {
+      inventory.push({ name: 'Longbow', source: 'class-default', quantity: 1, category: 'weapon' });
+    }
+    if (!itemsFromChoices.includes('arrow')) {
+      inventory.push({ name: 'Arrow', source: 'class-default', quantity: 20, category: 'gear' });
+    }
+  } else if (characterClass === 'rogue') {
+    if (!itemsFromChoices.includes('leather armor')) {
+      inventory.push({ name: 'Leather Armor', source: 'class-default', quantity: 1, category: 'armor' });
+    }
+    if (!itemsFromChoices.includes('dagger')) {
+      inventory.push({ name: 'Dagger', source: 'class-default', quantity: 2, category: 'weapon' });
+    }
+    if (!itemsFromChoices.includes("thieves' tools")) {
+      inventory.push({ name: "Thieves' Tools", source: 'class-default', quantity: 1, category: 'tool' });
+    }
+  }
+  // Add more classes as needed
+
+  // Add background equipment based on background
+  const backgroundName = character.value.background;
+  console.log("Adding background equipment for:", backgroundName);
+  if (backgroundName === 'criminal') {
+    inventory.push({ name: 'Crowbar', source: 'background', quantity: 1, category: 'tool' });
+    inventory.push({ name: 'Dark Common Clothes', source: 'background', quantity: 1, category: 'gear' });
+    inventory.push({ name: 'Belt Pouch', source: 'background', quantity: 1, category: 'gear' });
+  } else if (backgroundName === 'acolyte') {
+    inventory.push({ name: 'Holy Symbol', source: 'background', quantity: 1, category: 'tool' });
+    inventory.push({ name: 'Prayer Book', source: 'background', quantity: 1, category: 'gear' });
+    inventory.push({ name: 'Incense', source: 'background', quantity: 5, category: 'gear' });
+  }
+  // Add more backgrounds as needed
+
+  // Add basic starting equipment (but avoid duplicates with background equipment)
+  console.log("Adding basic starting equipment");
+
+  // Track items already added from all sources
+  const allItemsAdded = inventory.map(item => item.name.toLowerCase());
+  console.log("All items already added:", allItemsAdded);
+
+  // Only add Common Clothes if there's no other clothes (like Dark Common Clothes)
+  const hasClothes = allItemsAdded.some(name =>
+    name.includes('clothes') || name.includes('costume') || name.includes('vestments')
+  );
+  if (!hasClothes) {
+    inventory.push({ name: 'Common Clothes', source: 'basic', quantity: 1, category: 'gear' });
+  } else {
+    console.log("Skipping Common Clothes - already have clothing:", allItemsAdded.filter(name =>
+      name.includes('clothes') || name.includes('costume') || name.includes('vestments')
+    ));
+  }
+
+  // Only add Pouch if there's no other pouch (like Belt Pouch)
+  const hasPouch = allItemsAdded.some(name =>
+    name.includes('pouch') || name.includes('bag') || name.includes('sack')
+  );
+  if (!hasPouch) {
+    inventory.push({ name: 'Pouch', source: 'basic', quantity: 1, category: 'gear' });
+  } else {
+    console.log("Skipping Pouch - already have container:", allItemsAdded.filter(name =>
+      name.includes('pouch') || name.includes('bag') || name.includes('sack')
+    ));
+  }
+
+  // Sort inventory by category: weapons first, then armor, tools, gear, packs last
+  const categoryOrder = { weapon: 1, armor: 2, tool: 3, gear: 4, pack: 5 };
+
+  const sortedInventory = inventory.sort((a, b) => {
+    const orderA = categoryOrder[a.category] || 6;
+    const orderB = categoryOrder[b.category] || 6;
+
+    if (orderA !== orderB) {
+      return orderA - orderB;
     }
 
-    // Skip if this item was already added from equipment choices
-    const itemNameLower = item.name.toLowerCase();
-    if (itemsFromChoices.includes(itemNameLower)) {
-      console.log('Summary skipping starting equipment (already from choice):', item.name);
-      return;
-    }
-
-    console.log('Summary adding starting equipment:', item.name);
-    inv.push({
-      ...item,
-      quantity: item.quantity || 1,
-      source: 'class-default'
-    });
+    // Within same category, sort alphabetically
+    return a.name.localeCompare(b.name);
   });
 
-  // Add background equipment from stored equipment array
-  const backgroundEquipment = character.value?.equipment?.filter(item => item.source === 'background') || [];
-  console.log('Summary background equipment from stored array:', backgroundEquipment.map(i => ({ name: i.name, quantity: i.quantity })));
-  backgroundEquipment.forEach(item => {
-    console.log('Summary adding background equipment:', item.name, 'x' + (item.quantity || 1));
-    inv.push({
-      ...item,
-      quantity: item.quantity || 1,
-      source: 'background'
-    });
-  });
+  console.log("CharacterSummary final inventory:", sortedInventory);
+  return sortedInventory;
+});
 
-  console.log('Summary raw inventory before filtering:', inv.map(i => ({ name: i.name, source: i.source, quantity: i.quantity })));
+// Helper function to categorize items
+const getItemCategory = (itemName) => {
+  const name = itemName.toLowerCase();
 
-  // Filter out generic items when specific ones have been selected
-  const filteredInv = []
-  const hasSpecificMusicalInstrument = inv.some(item =>
-    item.source !== 'class-default' && isSpecificMusicalInstrument(item)
-  )
-  const hasSpecificArtisanTool = inv.some(item =>
-    item.source !== 'class-default' && isSpecificArtisanTool(item)
-  )
+  if (name.includes('sword') || name.includes('bow') || name.includes('dagger') ||
+    name.includes('rapier') || name.includes('axe') || name.includes('spear') ||
+    name.includes('javelin') || name.includes('crossbow')) {
+    return 'weapon';
+  }
 
-  console.log('Summary filtering inventory - hasSpecificMusicalInstrument:', hasSpecificMusicalInstrument)
-  console.log('Summary filtering inventory - hasSpecificArtisanTool:', hasSpecificArtisanTool)
+  if (name.includes('armor') || name.includes('mail') || name === 'shield') {
+    return 'armor';
+  }
 
-  inv.forEach(item => {
-    const itemName = item.name?.toLowerCase() || ''
+  if (name.includes('pack')) {
+    return 'pack';
+  }
 
-    // Skip generic musical instrument if specific one exists
-    if (itemName === 'musical instrument' && hasSpecificMusicalInstrument) {
-      console.log('Summary filtering out generic Musical Instrument, specific instrument found')
-      return
-    }
+  if (name.includes('tools') || name.includes('symbol') || name.includes('kit')) {
+    return 'tool';
+  }
 
-    // Skip generic artisan's tools if specific one exists
-    if ((itemName.includes('artisan\'s tools') || itemName.includes('artisan tools') ||
-      itemName === 'artisan\'s tools' || itemName === 'set of artisan\'s tools') && hasSpecificArtisanTool) {
-      console.log('Summary filtering out generic Artisan\'s Tools, specific tool found')
-      return
-    }
-
-    filteredInv.push(item)
-  })
-
-  console.log('Summary final filtered inventory:', filteredInv.map(i => ({ name: i.name, source: i.source, quantity: i.quantity })))
-
-  // Sort inventory for better display order
-  const sortedInv = filteredInv.sort((a, b) => {
-    const getItemPriority = (item) => {
-      const name = item.name?.toLowerCase() || '';
-      const tooltip = getEquipmentTooltip(item.name);
-
-      // Check tooltip type first for accuracy
-      if (tooltip?.type) {
-        const type = tooltip.type.toLowerCase();
-        if (type.includes('weapon')) return 1; // Weapons first
-        if (type.includes('armor') || type.includes('shield')) return 2; // Armor second
-        if (type.includes('tool')) return 3; // Tools third
-        if (type.includes('equipment pack')) return 8; // Packs near end
-      }
-
-      // Fallback to name-based categorization
-      if (name.includes('sword') || name.includes('dagger') || name.includes('axe') ||
-        name.includes('mace') || name.includes('club') || name.includes('sickle') ||
-        name.includes('scimitar') || name.includes('rapier') || name.includes('bow') ||
-        name.includes('crossbow') || name.includes('javelin') || name.includes('dart') ||
-        name.includes('sling') || name.includes('flail') || name.includes('hammer') ||
-        name.includes('spear') || name.includes('trident') || name.includes('whip') ||
-        name.includes('glaive') || name.includes('halberd') || name.includes('pike') ||
-        name.includes('lance') || name.includes('maul') || name.includes('greataxe') ||
-        name.includes('greatsword') || name.includes('quarterstaff')) {
-        return 1; // Weapons first
-      }
-      if (name.includes('armor') || name.includes('mail') || name.includes('leather') ||
-        name.includes('scale') || name.includes('studded') || name.includes('hide') ||
-        name.includes('padded') || name.includes('ring') || name.includes('splint') ||
-        name.includes('shield')) {
-        return 2; // Armor second
-      }
-      if (name.includes('tools') || name.includes('kit') || name.includes('thieves')) {
-        return 3; // Tools third
-      }
-      if (name.includes('musical instrument') || name.includes('instrument') ||
-        name.includes('flute') || name.includes('lute') || name.includes('drum') ||
-        name.includes('dulcimer') || name.includes('harp') || name.includes('horn') ||
-        name.includes('lyre') || name.includes('pan flute') || name.includes('shawm') ||
-        name.includes('viol') || name.includes('bagpipes')) {
-        return 4; // Musical instruments fourth
-      }
-      if (name.includes('arrow') || name.includes('bolt') || name.includes('ammunition')) {
-        return 5; // Ammunition fifth
-      }
-      if (name.includes('costume') || name.includes('uniform') || name.includes('clothes') ||
-        name.includes('vestments')) {
-        return 6; // Clothing sixth
-      }
-      if (name.includes('pouch') || name.includes('bag') || name.includes('waterskin') ||
-        name.includes('rope') || name.includes('bedroll') || name.includes('rations') ||
-        name.includes('torch') || name.includes('candle') || name.includes('oil')) {
-        return 7; // General gear seventh
-      }
-      if (name.includes('pack') && (name.includes('dungeoneer') || name.includes('explorer') ||
-        name.includes('entertainer') || name.includes('priest') || name.includes('scholar') ||
-        name.includes('burglar') || name.includes('diplomat'))) {
-        return 8; // Equipment packs at end
-      }
-
-      return 6; // Default to general gear
-    };
-
-    const priorityA = getItemPriority(a);
-    const priorityB = getItemPriority(b);
-
-    // Primary sort by priority
-    if (priorityA !== priorityB) {
-      return priorityA - priorityB;
-    }
-
-    // Secondary sort by name alphabetically within same priority
-    const nameA = a.name?.toLowerCase() || '';
-    const nameB = b.name?.toLowerCase() || '';
-    return nameA.localeCompare(nameB);
-  });
-
-  console.log('Summary sorted inventory:', sortedInv.map(i => ({ name: i.name, priority: sortedInv.indexOf(i) + 1 })))
-  return sortedInv
-}); const hasInventoryItems = computed(() => {
+  return 'gear';
+}; const hasInventoryItems = computed(() => {
   return allInventoryItems.value.length > 0
 })
 

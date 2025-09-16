@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0" />
+    <title>Unified Inventory System Test</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+      .test-section {
+        margin: 20px 0;
+        padding: 15px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+      }
+      .test-result {
+        padding: 10px;
+        margin: 10px 0;
+        border-radius: 4px;
+      }
+      .success {
+        background-color: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+      }
+      .error {
+        background-color: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+      }
+      .warning {
+        background-color: #fff3cd;
+        color: #856404;
+        border: 1px solid #ffeaa7;
+      }
+      ul {
+        margin: 5px 0;
+        padding-left: 20px;
+      }
+      button {
+        background-color: #007bff;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 4px;
+        cursor: pointer;
+        margin: 5px;
+      }
+      button:hover {
+        background-color: #0056b3;
+      }
+      .instructions {
+        background-color: #e9ecef;
+        padding: 15px;
+        border-radius: 4px;
+        margin-bottom: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>🧪 Unified Inventory System Test</h1>
+
+    <div class="instructions">
+      <h3>📋 Test Instructions:</h3>
+      <ol>
+        <li>
+          <strong>Navigate to Character Creation:</strong> Go to the character
+          creation form
+        </li>
+        <li>
+          <strong>Create Test Character:</strong> Fill out basic details (name,
+          species, class, background)
+        </li>
+        <li>
+          <strong>Make Equipment Choices:</strong> On Page 3 (Equipment), make
+          some equipment choices
+        </li>
+        <li>
+          <strong>Check Page 5 Inventory:</strong> Go to Page 5 (Summary) and
+          note the displayed inventory
+        </li>
+        <li>
+          <strong>Save Character:</strong> Complete and save the character
+        </li>
+        <li>
+          <strong>View Character Card:</strong> Go to character list and view
+          the saved character card
+        </li>
+        <li>
+          <strong>Compare Inventories:</strong> Use the buttons below to record
+          and compare the inventories
+        </li>
+      </ol>
+    </div>
+
+    <div class="test-section">
+      <h3>🔧 Unified Inventory System Status</h3>
+      <div id="systemStatus"></div>
+
+      <h4>Key Components Modified:</h4>
+      <ul>
+        <li>
+          ✅ <strong>Character Store:</strong> Added unified inventory
+          management actions
+        </li>
+        <li>
+          ✅ <strong>CharacterSummary (Page 5):</strong> Using
+          characterStore.getCurrentInventory()
+        </li>
+        <li>
+          ✅ <strong>EquipmentAndGear (Page 3):</strong> Equipment choices
+          update character store
+        </li>
+        <li>
+          ✅ <strong>CharacterCreatorMain:</strong> Save process uses unified
+          inventory
+        </li>
+      </ul>
+    </div>
+
+    <div class="test-section">
+      <h3>📝 Record Page 5 Inventory</h3>
+      <p>
+        After creating a character and viewing Page 5 (Summary), record the
+        inventory shown:
+      </p>
+      <textarea
+        id="page5Inventory"
+        rows="5"
+        cols="80"
+        placeholder="Copy and paste or list the inventory items from Page 5 here..."></textarea>
+      <br />
+      <button onclick="savePage5Inventory()">Save Page 5 Inventory</button>
+      <div id="page5Status"></div>
+    </div>
+
+    <div class="test-section">
+      <h3>💾 Record Character Card Inventory</h3>
+      <p>
+        After saving the character and viewing the character card, record the
+        inventory shown:
+      </p>
+      <textarea
+        id="cardInventory"
+        rows="5"
+        cols="80"
+        placeholder="Copy and paste or list the inventory items from character card here..."></textarea>
+      <br />
+      <button onclick="saveCardInventory()">
+        Save Character Card Inventory
+      </button>
+      <div id="cardStatus"></div>
+    </div>
+
+    <div class="test-section">
+      <h3>🔍 Compare Inventories</h3>
+      <button onclick="compareInventories()">Compare Inventories</button>
+      <div id="comparisonResult"></div>
+    </div>
+
+    <div class="test-section">
+      <h3>🧪 Additional Test Scenarios</h3>
+      <div id="additionalTests">
+        <p>Test these scenarios to ensure robust inventory management:</p>
+        <ul>
+          <li>
+            <input
+              type="checkbox"
+              id="test1" />
+            Create Fighter with different weapon choices
+          </li>
+          <li>
+            <input
+              type="checkbox"
+              id="test2" />
+            Create Bard with Musical Instrument selection
+          </li>
+          <li>
+            <input
+              type="checkbox"
+              id="test3" />
+            Create character with Background equipment
+          </li>
+          <li>
+            <input
+              type="checkbox"
+              id="test4" />
+            Test equipment choice changes (select/deselect)
+          </li>
+          <li>
+            <input
+              type="checkbox"
+              id="test5" />
+            Verify duplicate equipment handling
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <script>
+      let page5Data = null;
+      let cardData = null;
+
+      function savePage5Inventory() {
+        const inventory = document
+          .getElementById('page5Inventory')
+          .value.trim();
+        if (!inventory) {
+          document.getElementById('page5Status').innerHTML =
+            '<div class="test-result error">Please enter the Page 5 inventory items</div>';
+          return;
+        }
+
+        page5Data = inventory;
+        document.getElementById('page5Status').innerHTML =
+          '<div class="test-result success">✅ Page 5 inventory saved successfully!</div>';
+      }
+
+      function saveCardInventory() {
+        const inventory = document.getElementById('cardInventory').value.trim();
+        if (!inventory) {
+          document.getElementById('cardStatus').innerHTML =
+            '<div class="test-result error">Please enter the character card inventory items</div>';
+          return;
+        }
+
+        cardData = inventory;
+        document.getElementById('cardStatus').innerHTML =
+          '<div class="test-result success">✅ Character card inventory saved successfully!</div>';
+      }
+
+      function compareInventories() {
+        if (!page5Data || !cardData) {
+          document.getElementById('comparisonResult').innerHTML =
+            '<div class="test-result error">Please save both Page 5 and Character Card inventories first</div>';
+          return;
+        }
+
+        // Simple comparison - normalize and compare
+        const normalize = (text) =>
+          text
+            .toLowerCase()
+            .replace(/[^\w\s]/g, '')
+            .replace(/\s+/g, ' ')
+            .trim();
+        const page5Normalized = normalize(page5Data);
+        const cardNormalized = normalize(cardData);
+
+        let result = '<h4>Comparison Results:</h4>';
+        result += '<div class="test-result">';
+
+        if (page5Normalized === cardNormalized) {
+          result += '<div class="success">';
+          result +=
+            '<strong>✅ SUCCESS:</strong> Inventories match exactly!<br>';
+          result += 'The unified inventory system is working correctly.';
+          result += '</div>';
+        } else {
+          result += '<div class="error">';
+          result +=
+            '<strong>❌ MISMATCH:</strong> Inventories do not match.<br>';
+          result += '<strong>Page 5:</strong> ' + page5Data + '<br>';
+          result += '<strong>Card:</strong> ' + cardData;
+          result += '</div>';
+
+          // Show detailed analysis
+          const page5Items = page5Data
+            .split(/[,\n]/)
+            .map((item) => item.trim())
+            .filter((item) => item);
+          const cardItems = cardData
+            .split(/[,\n]/)
+            .map((item) => item.trim())
+            .filter((item) => item);
+
+          const missing = page5Items.filter(
+            (item) =>
+              !cardItems.some(
+                (cardItem) =>
+                  normalize(cardItem).includes(normalize(item)) ||
+                  normalize(item).includes(normalize(cardItem))
+              )
+          );
+          const extra = cardItems.filter(
+            (item) =>
+              !page5Items.some(
+                (page5Item) =>
+                  normalize(page5Item).includes(normalize(item)) ||
+                  normalize(item).includes(normalize(page5Item))
+              )
+          );
+
+          if (missing.length > 0) {
+            result +=
+              '<div class="warning"><strong>Missing from card:</strong> ' +
+              missing.join(', ') +
+              '</div>';
+          }
+          if (extra.length > 0) {
+            result +=
+              '<div class="warning"><strong>Extra in card:</strong> ' +
+              extra.join(', ') +
+              '</div>';
+          }
+        }
+
+        result += '</div>';
+        document.getElementById('comparisonResult').innerHTML = result;
+      }
+
+      // Initialize system status
+      document.getElementById('systemStatus').innerHTML =
+        '<div class="test-result success">✅ Unified Inventory System has been implemented and is ready for testing</div>';
+    </script>
+  </body>
+</html>

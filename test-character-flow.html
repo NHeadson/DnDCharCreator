@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0" />
+    <title>Character Creation Flow Test</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #f5f5f5;
+      }
+      .test-section {
+        background: white;
+        padding: 20px;
+        margin: 20px 0;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+      .step {
+        margin: 10px 0;
+        padding: 10px;
+        border-left: 4px solid #2196f3;
+        background-color: #f8f9fa;
+      }
+      .error {
+        color: #d32f2f;
+        font-weight: bold;
+      }
+      .success {
+        color: #388e3c;
+        font-weight: bold;
+      }
+      .warning {
+        color: #f57c00;
+        font-weight: bold;
+      }
+      button {
+        background-color: #2196f3;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 4px;
+        cursor: pointer;
+        margin: 5px;
+      }
+      button:hover {
+        background-color: #1976d2;
+      }
+      #results {
+        margin-top: 20px;
+        padding: 15px;
+        background-color: #f0f0f0;
+        border-radius: 4px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Character Creation Flow Test</h1>
+
+    <div class="test-section">
+      <h2>Test Instructions</h2>
+      <p>
+        This test validates the character creation flow after fixing the
+        SkillsProficiencies component compile error.
+      </p>
+
+      <div class="step">
+        <strong>Step 1:</strong> Open the character form in a new tab:
+        <a
+          href="http://localhost:3002/character-form"
+          target="_blank"
+          >Character Form</a
+        >
+      </div>
+
+      <div class="step">
+        <strong>Step 2:</strong> Complete Basic Details (Name, Species, Class,
+        Background)
+      </div>
+
+      <div class="step">
+        <strong>Step 3:</strong> Navigate to Ability Scores and verify it loads
+        without errors
+      </div>
+
+      <div class="step">
+        <strong>Step 4:</strong> Navigate to Skills & Proficiencies (Step 3) -
+        This was the problematic step
+      </div>
+
+      <div class="step">
+        <strong>Step 5:</strong> Navigate to Equipment & Gear (currently has
+        disabled store integration)
+      </div>
+
+      <div class="step">
+        <strong>Step 6:</strong> Navigate to Character Summary and verify
+        inventory display
+      </div>
+    </div>
+
+    <div class="test-section">
+      <h2>Manual Test Checklist</h2>
+
+      <div id="checklist">
+        <label
+          ><input
+            type="checkbox"
+            id="step1" />
+          Step 1: Basic Details loads without errors</label
+        ><br />
+        <label
+          ><input
+            type="checkbox"
+            id="step2" />
+          Step 2: Ability Scores loads without errors</label
+        ><br />
+        <label
+          ><input
+            type="checkbox"
+            id="step3" />
+          Step 3: Skills & Proficiencies loads without Vue render errors</label
+        ><br />
+        <label
+          ><input
+            type="checkbox"
+            id="step4" />
+          Skills page displays hit points, armor class, proficiency bonus
+          correctly</label
+        ><br />
+        <label
+          ><input
+            type="checkbox"
+            id="step5" />
+          Skills selection tooltips work</label
+        ><br />
+        <label
+          ><input
+            type="checkbox"
+            id="step6" />
+          Equipment page loads (may have disabled functionality)</label
+        ><br />
+        <label
+          ><input
+            type="checkbox"
+            id="step7" />
+          Character Summary page displays inventory items</label
+        ><br />
+        <label
+          ><input
+            type="checkbox"
+            id="step8" />
+          No console errors in browser dev tools</label
+        ><br />
+      </div>
+
+      <button onclick="checkProgress()">Check Progress</button>
+      <button onclick="runAutomatedTests()">Run Automated Tests</button>
+
+      <div id="results"></div>
+    </div>
+
+    <div class="test-section">
+      <h2>Known Issues to Monitor</h2>
+
+      <div class="step warning">
+        <strong>Equipment Store Integration:</strong> Currently disabled to
+        prevent crashes
+      </div>
+
+      <div class="step warning">
+        <strong>Template References:</strong> Some toRefs usage may still need
+        .value syntax
+      </div>
+
+      <div class="step success">
+        <strong>Fixed:</strong> Compile error in SkillsProficiencies component
+      </div>
+    </div>
+
+    <script>
+      function checkProgress() {
+        const checkboxes = document.querySelectorAll(
+          '#checklist input[type="checkbox"]'
+        );
+        const checked = Array.from(checkboxes).filter(
+          (cb) => cb.checked
+        ).length;
+        const total = checkboxes.length;
+
+        const results = document.getElementById('results');
+        results.innerHTML = `
+                <h3>Test Progress: ${checked}/${total} steps completed</h3>
+                <div class="progress-bar" style="background: #e0e0e0; height: 20px; border-radius: 10px;">
+                    <div style="background: #4caf50; height: 100%; width: ${
+                      (checked / total) * 100
+                    }%; border-radius: 10px; transition: width 0.3s;"></div>
+                </div>
+                <p>Completion: ${Math.round((checked / total) * 100)}%</p>
+            `;
+
+        if (checked === total) {
+          results.innerHTML +=
+            '<p class="success">✅ All tests passed! Ready to proceed with store integration.</p>';
+        } else if (checked >= 6) {
+          results.innerHTML +=
+            '<p class="warning">⚠️ Most tests passed. Consider proceeding with caution.</p>';
+        } else {
+          results.innerHTML +=
+            '<p class="error">❌ Several tests failed. Investigation needed.</p>';
+        }
+      }
+
+      function runAutomatedTests() {
+        const results = document.getElementById('results');
+        results.innerHTML = '<h3>Running Automated Tests...</h3>';
+
+        // Check if the app is accessible
+        fetch('http://localhost:3002/character-form')
+          .then((response) => {
+            if (response.ok) {
+              results.innerHTML +=
+                '<p class="success">✅ Character form is accessible</p>';
+
+              // Test API endpoints
+              return fetch('http://localhost:3002/api/classes');
+            } else {
+              throw new Error('Character form not accessible');
+            }
+          })
+          .then((response) => {
+            if (response.ok) {
+              results.innerHTML +=
+                '<p class="success">✅ API endpoints responding</p>';
+            } else {
+              results.innerHTML +=
+                '<p class="warning">⚠️ API endpoints may have issues</p>';
+            }
+          })
+          .catch((error) => {
+            results.innerHTML += `<p class="error">❌ Connection test failed: ${error.message}</p>`;
+            results.innerHTML +=
+              '<p class="warning">Make sure the dev server is running on localhost:3002</p>';
+          });
+      }
+
+      // Auto-run connection test on page load
+      setTimeout(runAutomatedTests, 1000);
+    </script>
+  </body>
+</html>

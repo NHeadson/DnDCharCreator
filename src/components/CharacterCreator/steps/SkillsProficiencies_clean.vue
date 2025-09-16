@@ -17,12 +17,20 @@
             <div class="text-body-2 mt-2">
               <strong>Base:</strong> {{ getFormattedHPCalculation }}
             </div>
-            <!-- Hit Points Information -->
+            <!-- Weapon Proficiencies -->
             <div class="mt-4 text-left">
-              <div class="text-body-2 text-medium-emphasis mb-1">Health Info</div>
-              <div class="d-flex align-center">
-                <v-icon size="small" class="mr-1" color="info">mdi-information</v-icon>
-                <div class="text-body-2">Starting HP at level 1</div>
+              <div class="text-body-2 text-medium-emphasis mb-1">Weapon Proficiencies</div>
+              <div v-if="hasWeaponProficiencies">
+                <div class="d-flex align-center">
+                  <v-icon size="small" class="mr-1" color="success">mdi-check-circle</v-icon>
+                  <div class="text-body-2">{{ character.weaponProficiencies?.length || 0 }} proficiencies</div>
+                </div>
+              </div>
+              <div v-else>
+                <div class="d-flex align-center">
+                  <v-icon size="small" class="mr-1" color="warning">mdi-alert-circle</v-icon>
+                  <div class="text-body-2">No weapon proficiencies</div>
+                </div>
               </div>
             </div>
           </v-card>
@@ -37,12 +45,20 @@
             <div class="text-body-2 mt-2">
               <strong>Base:</strong> {{ getFormattedACCalculation }}
             </div>
-            <!-- Armor Information -->
+            <!-- Armor Proficiencies -->
             <div class="mt-4 text-left">
-              <div class="text-body-2 text-medium-emphasis mb-1">Armor Class Info</div>
-              <div class="d-flex align-center">
-                <v-icon size="small" class="mr-1" color="info">mdi-information</v-icon>
-                <div class="text-body-2">Base AC (no armor equipped)</div>
+              <div class="text-body-2 text-medium-emphasis mb-1">Armor Training</div>
+              <div v-if="hasArmorProficiencies">
+                <div class="d-flex align-center">
+                  <v-icon size="small" class="mr-1" color="success">mdi-check-circle</v-icon>
+                  <div class="text-body-2">Armor proficiencies available</div>
+                </div>
+              </div>
+              <div v-else>
+                <div class="d-flex align-center">
+                  <v-icon size="small" class="mr-1" color="warning">mdi-alert-circle</v-icon>
+                  <div class="text-body-2">Limited armor training</div>
+                </div>
               </div>
             </div>
           </v-card>
@@ -88,25 +104,20 @@
           <!-- Class Skill Choices -->
           <div v-if="hasClassSkillChoices">
             <h3 class="text-subtitle-1 mb-3 text-primary">Choose Class Skills</h3>
-            <div class="text-body-2 text-medium-emphasis mb-3 ml-4">
+            <div class="text-body-2 text-medium-emphasis mb-3">
               Select {{ getClassSkillChoices }} skill(s) from your class options
               ({{ character.selectedClassSkills?.length || 0 }}/{{ getClassSkillChoices }} selected)
             </div>
 
-            <!-- Show selection complete message and reset button when done -->
-            <div v-if="isClassSkillSelectionComplete" class="ml-8">
-              <div class="d-flex align-center ga-3 mb-3">
-                <v-icon color="success" size="small">mdi-check-circle</v-icon>
-                <span class="text-body-2 text-success">Skills selected!</span>
-                <v-btn variant="outlined" size="small" color="primary" prepend-icon="mdi-refresh"
-                  @click="resetClassSkillSelection">
-                  Change Selection
+            <v-tooltip location="top" text="Skills available to your class">
+              <template #activator="{ props }">
+                <v-btn v-bind="props" variant="outlined" size="small" class="mb-3" prepend-icon="mdi-information">
+                  Show Available Skills
                 </v-btn>
-              </div>
-            </div>
+              </template>
+            </v-tooltip>
 
-            <!-- Show skill options when not complete -->
-            <div v-else class="ml-8">
+            <div class="ml-4">
               <div class="d-flex flex-wrap ga-2">
                 <v-chip v-for="skill in getClassSkillOptions" :key="skill.name" clickable
                   :color="character.selectedClassSkills?.includes(skill.name) ? 'primary' : 'default'"
@@ -217,12 +228,6 @@ const getClassSkillChoices = computed(() => {
     character?.classDetails?.skillChoices || 0
 })
 
-const isClassSkillSelectionComplete = computed(() => {
-  const required = getClassSkillChoices.value
-  const selected = character?.selectedClassSkills?.length || 0
-  return selected >= required && required > 0
-})
-
 const getClassSkillOptions = computed(() => {
   // Return a simplified list of available skills
   const allSkills = [
@@ -276,12 +281,6 @@ const toggleExpertise = (skillName) => {
     character.selectedExpertise.splice(index, 1)
   } else if (character.selectedExpertise.length < maxExpertise) {
     character.selectedExpertise.push(skillName)
-  }
-}
-
-const resetClassSkillSelection = () => {
-  if (character.selectedClassSkills) {
-    character.selectedClassSkills = []
   }
 }
 </script>

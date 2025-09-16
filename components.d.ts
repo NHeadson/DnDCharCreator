@@ -35,6 +35,8 @@ declare module 'vue' {
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     SkillsProficiencies: typeof import('./src/components/CharacterCreator/steps/SkillsProficiencies.vue')['default']
+    SkillsProficiencies_backup: typeof import('./src/components/CharacterCreator/steps/SkillsProficiencies_backup.vue')['default']
+    SkillsProficiencies_clean: typeof import('./src/components/CharacterCreator/steps/SkillsProficiencies_clean.vue')['default']
     SkillsProficienciesMockup: typeof import('./src/components/Mockups/SkillsProficienciesMockup.vue')['default']
     SpeciesSelector: typeof import('./src/components/CharacterCreator/shared/SpeciesSelector.vue')['default']
     SpeciesTraits: typeof import('./src/components/CharacterCreator/shared/SpeciesTraits.vue')['default']

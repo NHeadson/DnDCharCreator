@@ -527,17 +527,8 @@ export const useCharacterStore = defineStore("character", {
           ];
         }
 
-        // Update starting equipment if available
-        if (selectedClass.startingEquipment) {
-          this.character.equipment = [
-            ...this.character.equipment,
-            ...selectedClass.startingEquipment.map((item) => ({
-              ...item,
-              source: "class",
-              equipped: false,
-            })),
-          ];
-        }
+        // Note: Starting equipment is handled by buildClassEquipment() method
+        // to avoid duplicates and properly manage equipment sources
 
         // Add class traits to stacking system
         if (selectedClass.features) {
@@ -585,6 +576,9 @@ export const useCharacterStore = defineStore("character", {
         this.character.derivedTraits.class = [];
         this.combineTraits();
       }
+
+      // Rebuild inventory to include class equipment
+      this.rebuildInventory();
     },
 
     // Update background traits when background changes
@@ -645,22 +639,16 @@ export const useCharacterStore = defineStore("character", {
         }
         this.addTraitsToSource("background", backgroundTraits);
 
-        // Update starting equipment from background
-        if (selectedBackground.startingEquipment) {
-          this.character.equipment = [
-            ...this.character.equipment,
-            ...selectedBackground.startingEquipment.map((item) => ({
-              ...item,
-              source: "background",
-              equipped: false,
-            })),
-          ];
-        }
+        // Note: Background equipment is handled by buildBackgroundEquipment() method
+        // to avoid duplicates and properly manage equipment sources
       } else {
         this.character.backgroundDetails = null;
         this.character.derivedTraits.background = [];
         this.combineTraits();
       }
+
+      // Rebuild inventory to include background equipment
+      this.rebuildInventory();
     },
 
     // Calculate starting gold based on class
@@ -1090,6 +1078,270 @@ export const useCharacterStore = defineStore("character", {
 
       // Force recalculation
       this.validateAndRecalculate();
+    },
+
+    // =====================================
+    // UNIFIED INVENTORY MANAGEMENT SYSTEM
+    // =====================================
+
+    // Clear all equipment and start fresh
+    clearInventory() {
+      this.character.equipment = [];
+      console.log("Inventory cleared");
+    },
+
+    // Add item to inventory with source tracking
+    addToInventory(item, source = "unknown") {
+      if (!item || !item.name) {
+        console.warn("Cannot add invalid item to inventory:", item);
+        return;
+      }
+
+      const inventoryItem = {
+        name: item.name,
+        quantity: item.quantity || 1,
+        source: source,
+        description: item.description || "",
+        type: item.type || "",
+        properties: item.properties || "",
+        damage: item.damage || "",
+        ac: item.ac || "",
+        cost: item.cost || "",
+      };
+
+      this.character.equipment.push(inventoryItem);
+      console.log(
+        `Added to inventory: ${item.name} (${source})`,
+        inventoryItem
+      );
+    },
+
+    // Remove item from inventory
+    removeFromInventory(itemName, source = null) {
+      const index = this.character.equipment.findIndex((item) => {
+        if (source) {
+          return item.name === itemName && item.source === source;
+        }
+        return item.name === itemName;
+      });
+
+      if (index !== -1) {
+        const removed = this.character.equipment.splice(index, 1)[0];
+        console.log(
+          `Removed from inventory: ${removed.name} (${removed.source})`
+        );
+        return removed;
+      }
+      console.warn(`Item not found for removal: ${itemName}`);
+      return null;
+    },
+
+    // Update item quantity in inventory
+    updateInventoryQuantity(itemName, newQuantity, source = null) {
+      const item = this.character.equipment.find((item) => {
+        if (source) {
+          return item.name === itemName && item.source === source;
+        }
+        return item.name === itemName;
+      });
+
+      if (item) {
+        item.quantity = newQuantity;
+        console.log(`Updated quantity: ${itemName} = ${newQuantity}`);
+      } else {
+        console.warn(`Item not found for quantity update: ${itemName}`);
+      }
+    },
+
+    // Build inventory from class equipment choices
+    buildClassEquipment() {
+      console.log("Building class equipment...");
+
+      // Remove existing class equipment
+      this.character.equipment = this.character.equipment.filter(
+        (item) => !["class", "class-default"].includes(item.source)
+      );
+
+      // Add equipment from choices
+      const selectedChoices = this.character.equipmentChoices || [];
+      const equipmentChoices =
+        this.character.classDetails?.equipmentChoices || [];
+
+      equipmentChoices.forEach((choice, choiceIndex) => {
+        const selectedOptionIndex = selectedChoices[choiceIndex];
+
+        if (selectedOptionIndex !== null && selectedOptionIndex !== undefined) {
+          const selectedOption = choice.options[selectedOptionIndex];
+
+          if (selectedOption && selectedOption.items) {
+            selectedOption.items.forEach((item) => {
+              this.addToInventory(item, "class");
+            });
+          }
+        }
+      });
+
+      // Add starting equipment (avoid duplicates)
+      const startingEquipment =
+        this.character.classDetails?.startingEquipment || [];
+      const existingItems = this.character.equipment.map((item) =>
+        item.name.toLowerCase()
+      );
+
+      startingEquipment.forEach((item) => {
+        if (!existingItems.includes(item.name.toLowerCase())) {
+          this.addToInventory(item, "class-default");
+        }
+      });
+
+      console.log("Class equipment built");
+    },
+
+    // Build inventory from background
+    buildBackgroundEquipment() {
+      console.log("Building background equipment...");
+
+      // Remove existing background equipment
+      this.character.equipment = this.character.equipment.filter(
+        (item) => item.source !== "background"
+      );
+
+      // Add background equipment
+      const backgroundEquipment =
+        this.character.backgroundDetails?.equipment || [];
+      backgroundEquipment.forEach((item) => {
+        this.addToInventory(item, "background");
+      });
+
+      console.log("Background equipment built");
+    },
+
+    // Build basic starting equipment all characters get
+    buildBasicStartingEquipment() {
+      console.log("Building basic starting equipment...");
+
+      // Remove existing basic equipment
+      this.character.equipment = this.character.equipment.filter(
+        (item) => item.source !== "basic"
+      );
+
+      // Basic equipment all characters should have
+      const basicEquipment = [
+        {
+          name: "Common Clothes",
+          type: "Clothing",
+          quantity: 1,
+          description: "Simple everyday clothing suitable for adventure",
+        },
+        {
+          name: "Pouch",
+          type: "Container",
+          quantity: 1,
+          description:
+            "A cloth or leather pouch for carrying coins and small items",
+        },
+      ];
+
+      basicEquipment.forEach((item) => {
+        this.addToInventory(item, "basic");
+      });
+
+      console.log("Basic starting equipment built");
+    },
+
+    // Rebuild entire inventory from current character state
+    rebuildInventory() {
+      // Debounce rapid rebuild calls
+      if (this._rebuildTimer) {
+        clearTimeout(this._rebuildTimer);
+      }
+
+      this._rebuildTimer = setTimeout(() => {
+        console.log("=== REBUILDING COMPLETE INVENTORY ===");
+
+        // Save purchased items (if any)
+        const purchasedItems = this.character.equipment.filter(
+          (item) => item.source === "purchased"
+        );
+
+        // Clear inventory
+        this.clearInventory();
+
+        // Rebuild from sources
+        this.buildClassEquipment();
+        this.buildBackgroundEquipment();
+        this.buildBasicStartingEquipment();
+
+        // Re-add purchased items
+        purchasedItems.forEach((item) => {
+          this.addToInventory(item, "purchased");
+        });
+
+        console.log(
+          "Inventory rebuild complete. Total items:",
+          this.character.equipment.length
+        );
+        console.log(
+          "Final inventory:",
+          this.character.equipment.map((i) => `${i.name} (${i.source})`)
+        );
+
+        this._rebuildTimer = null;
+      }, 100); // 100ms debounce
+    },
+
+    // Get current inventory with proper grouping and quantities
+    getCurrentInventory() {
+      const itemMap = new Map();
+
+      this.character.equipment.forEach((item) => {
+        const key = item.name.toLowerCase();
+
+        if (itemMap.has(key)) {
+          const existing = itemMap.get(key);
+          existing.quantity += item.quantity;
+        } else {
+          itemMap.set(key, {
+            name: item.name,
+            quantity: item.quantity,
+            source: item.source,
+            type: item.type,
+            description: item.description,
+            properties: item.properties,
+            damage: item.damage,
+            ac: item.ac,
+          });
+        }
+      });
+
+      return Array.from(itemMap.values()).map((item) => ({
+        ...item,
+        displayName:
+          item.quantity > 1 ? `${item.name} (${item.quantity})` : item.name,
+      }));
+    },
+
+    // Handle equipment choice selection
+    selectEquipmentChoice(choiceIndex, optionIndex) {
+      console.log(
+        `Selecting equipment choice ${choiceIndex}, option ${optionIndex}`
+      );
+
+      // Ensure equipmentChoices array exists and has proper length
+      if (!this.character.equipmentChoices) {
+        this.character.equipmentChoices = [];
+      }
+
+      // Extend array if needed
+      while (this.character.equipmentChoices.length <= choiceIndex) {
+        this.character.equipmentChoices.push(null);
+      }
+
+      // Set the choice
+      this.character.equipmentChoices[choiceIndex] = optionIndex;
+
+      // Rebuild inventory to reflect new choice
+      this.rebuildInventory();
     },
   },
 });
