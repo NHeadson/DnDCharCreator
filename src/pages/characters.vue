@@ -38,7 +38,7 @@
                       <span class="d-none d-md-inline">Admin</span>
                       <span class="d-inline d-md-none">Admin</span>
                     </v-chip>
-                    <v-btn class="logout-btn" color="grey" size="medium" title="Logout from admin" variant="text"
+                    <v-btn class="logout-btn ml-2" color="grey" size="medium" title="Logout from admin" variant="text"
                       @click="adminLogout">
                       <v-icon size="medium">mdi-logout</v-icon>
                     </v-btn>
@@ -102,13 +102,13 @@
 
                 <!-- Create Character Button -->
                 <v-col class="d-flex justify-center px-2" cols="6">
-                  <v-btn v-if="hasAccess" class="text-white create-character-btn-mobile" color="accent"
+                  <v-btn v-if="hasAccess" class="text-white create-character-btn-mobile" color="primary"
                     prepend-icon="mdi-plus" size="small" variant="elevated" @click="requireAccessForCreation">
-                    <span>Create New</span>
+                    <span>New</span>
                   </v-btn>
                   <v-btn v-else class="create-character-btn-mobile" color="grey" prepend-icon="mdi-lock" size="small"
                     variant="outlined" @click="requireAccessForCreation">
-                    <span>Create New</span>
+                    <span>New</span>
                   </v-btn>
                 </v-col>
               </v-row>
@@ -140,7 +140,7 @@
                           prepend-icon="mdi-shield-check" size="small" variant="elevated">
                           <span>Admin</span>
                         </v-chip>
-                        <v-btn class="logout-btn ml-1" color="grey" size="small" title="Logout from admin"
+                        <v-btn class="logout-btn ml-2" color="grey" size="small" title="Logout from admin"
                           variant="text" @click="adminLogout">
                           <v-icon size="small">mdi-logout</v-icon>
                         </v-btn>
@@ -229,7 +229,15 @@
                 <div class="character-overlay pa-3">
                   <div class="d-flex align-center mb-2">
                     <v-avatar class="me-3 elevation-2" color="white" size="48">
-                      <v-icon :color="getClassColor(character.classDetails?.name)" size="32">
+                      <v-img v-if="character.portrait" :aspect-ratio="1" cover height="48" :src="character.portrait"
+                        width="48">
+                        <template #placeholder>
+                          <div class="d-flex align-center justify-center fill-height">
+                            <v-progress-circular color="grey-lighten-1" indeterminate size="20" />
+                          </div>
+                        </template>
+                      </v-img>
+                      <v-icon v-else :color="getClassColor(character.classDetails?.name)" size="32">
                         {{ getClassIcon(character.classDetails?.name) }}
                       </v-icon>
                     </v-avatar>
@@ -324,34 +332,48 @@
                 <!-- Core Character Info (Always Visible) -->
                 <div class="core-character-info mb-3">
                   <v-row dense>
-                    <v-col cols="6">
-                      <div class="d-flex align-center mb-2">
-                        <v-icon class="me-2" color="blue-darken-2" size="small">mdi-dna</v-icon>
-                        <span class="text-caption font-weight-bold text-blue-darken-2 me-2">Species:</span>
-                        <span class="text-body-2 font-weight-medium">
-                          {{ character.speciesDetails?.name || 'Unknown' }}
-                          <span v-if="getLineageName(character)" class="text-caption text-grey ms-1">
-                            ({{ getLineageName(character) }})
+                    <v-col class="info-col" cols="6">
+                      <div class="d-flex align-start mb-2">
+                        <v-icon class="me-2 mt-1 flex-shrink-0" color="blue-darken-2" size="small">mdi-dna</v-icon>
+                        <div class="info-content">
+                          <span class="info-label text-blue-darken-2">Species</span>
+                          <span class="info-value">
+                            {{ character.speciesDetails?.name || 'Unknown' }}
+                            <span v-if="getLineageName(character)" class="subrace-text">
+                              ({{ getLineageName(character) }})
+                            </span>
                           </span>
-                        </span>
-                      </div>
-                      <div class="d-flex align-center">
-                        <v-icon class="me-2" color="green-darken-2" size="small">mdi-book-open-page-variant</v-icon>
-                        <span class="text-caption font-weight-bold text-green-darken-2 me-2">Background:</span>
-                        <span class="text-body-2 font-weight-medium">{{ getBackgroundName(character) }}</span>
+                        </div>
                       </div>
                     </v-col>
-                    <v-col cols="6">
-                      <div class="d-flex align-center mb-2">
-                        <v-icon class="me-2" color="purple-darken-2" size="small">mdi-compass</v-icon>
-                        <span class="text-caption font-weight-bold text-purple-darken-2 me-2">Alignment:</span>
-                        <span class="text-body-2 font-weight-medium text-no-wrap">{{ character.alignment || 'Neutral'
-                        }}</span>
+                    <v-col class="info-col" cols="6">
+                      <div class="d-flex align-start mb-2">
+                        <v-icon class="me-2 mt-1 flex-shrink-0" color="purple-darken-2"
+                          size="small">mdi-compass</v-icon>
+                        <div class="info-content">
+                          <span class="info-label text-purple-darken-2">Alignment</span>
+                          <span class="info-value">{{ character.alignment || 'Neutral' }}</span>
+                        </div>
                       </div>
-                      <div class="d-flex align-center">
-                        <v-icon class="me-2" color="orange-darken-2" size="small">mdi-star-outline</v-icon>
-                        <span class="text-caption font-weight-bold text-orange-darken-2 me-2">Proficiency:</span>
-                        <span class="text-body-2 font-weight-medium">+{{ Math.ceil(character.level / 4) + 1 }}</span>
+                    </v-col>
+                    <v-col class="info-col" cols="6">
+                      <div class="d-flex align-start">
+                        <v-icon class="me-2 mt-1 flex-shrink-0" color="green-darken-2"
+                          size="small">mdi-book-open-page-variant</v-icon>
+                        <div class="info-content">
+                          <span class="info-label text-green-darken-2">Background</span>
+                          <span class="info-value">{{ getBackgroundName(character) }}</span>
+                        </div>
+                      </div>
+                    </v-col>
+                    <v-col class="info-col" cols="6">
+                      <div class="d-flex align-start">
+                        <v-icon class="me-2 mt-1 flex-shrink-0" color="orange-darken-2"
+                          size="small">mdi-star-outline</v-icon>
+                        <div class="info-content">
+                          <span class="info-label text-orange-darken-2">Proficiency</span>
+                          <span class="info-value">+{{ Math.ceil(character.level / 4) + 1 }}</span>
+                        </div>
                       </div>
                     </v-col>
                   </v-row>
@@ -404,17 +426,18 @@
                       </template>
                       <template v-if="getEquipmentTooltip(item.originalName)" #default>
                         <div class="text-body-2 font-weight-bold mb-1">{{ item.name }}</div>
-                        <div class="text-caption mb-1" v-if="getEquipmentTooltip(item.originalName).type">
+                        <div v-if="getEquipmentTooltip(item.originalName).type" class="text-caption mb-1">
                           <strong>Type:</strong> {{ getEquipmentTooltip(item.originalName).type }}
                         </div>
-                        <div class="text-caption mb-1" v-if="getEquipmentTooltip(item.originalName).damage">
+                        <div v-if="getEquipmentTooltip(item.originalName).damage" class="text-caption mb-1">
                           <strong>Damage:</strong> {{ getEquipmentTooltip(item.originalName).damage }}
                         </div>
-                        <div class="text-caption mb-1" v-if="getEquipmentTooltip(item.originalName).ac">
+                        <div v-if="getEquipmentTooltip(item.originalName).ac" class="text-caption mb-1">
                           <strong>AC:</strong> {{ getEquipmentTooltip(item.originalName).ac }}
                         </div>
-                        <div class="text-caption mb-1"
-                          v-if="getEquipmentTooltip(item.originalName).properties && getEquipmentTooltip(item.originalName).properties !== 'None'">
+                        <div
+                          v-if="getEquipmentTooltip(item.originalName).properties && getEquipmentTooltip(item.originalName).properties !== 'None'"
+                          class="text-caption mb-1">
                           <strong>Properties:</strong> {{ getEquipmentTooltip(item.originalName).properties }}
                         </div>
                         <div class="text-caption mt-2">
@@ -583,13 +606,37 @@
       </v-card>
     </v-dialog>
 
+    <!-- Delete Success Dialog -->
+    <v-dialog v-model="deleteSuccessDialog" max-width="400" persistent>
+      <v-card>
+        <v-card-title class="d-flex align-center text-h5">
+          <v-icon class="me-2" color="success">mdi-check-circle</v-icon>
+          Character Deleted
+        </v-card-title>
+        <v-card-text class="text-body-1">
+          <p class="mb-3">
+            <strong>"{{ deletedCharacterName }}"</strong> has been successfully deleted.
+          </p>
+          <v-alert class="mb-0" type="success" variant="tonal">
+            All character data has been permanently removed.
+          </v-alert>
+        </v-card-text>
+        <v-card-actions class="pa-4">
+          <v-spacer />
+          <v-btn color="primary" variant="elevated" @click="goHome">
+            Return Home
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
     <!-- Admin Authentication Dialog -->
     <AdminAuthDialog />
   </div>
 </template>
 
 <script setup>
-import { computed, onMounted, ref, watch } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import AdminAuthDialog from '@/components/AdminAuthDialog.vue'
 import { useAdminStore } from '@/stores/adminStore'
@@ -600,17 +647,12 @@ const router = useRouter()
 const { getCharacters, deleteCharacter: deleteFromFirestore } = useFirestore()
 const adminStore = useAdminStore()
 const {
-  isAuthenticated,
-  showAuthDialog,
-  requireAuth,
   logout,
   extendSession,
 } = useAdminAuth()
 
 const hasAccess = computed(() => adminStore.isAccessValid)
 const requireAccess = adminStore.requireAccess
-const extendAccessSession = adminStore.extendAccessSession
-const getRemainingAccessTime = adminStore.getRemainingAccessTime
 
 // Reactive data
 const characters = ref([])
@@ -619,6 +661,8 @@ const error = ref(null)
 const deleteDialog = ref(false)
 const selectedCharacter = ref(null)
 const mobileActionsExpanded = ref(false)
+const deleteSuccessDialog = ref(false)
+const deletedCharacterName = ref('')
 
 // Helper functions for styling
 const getCharacterHeaderStyle = character => {
@@ -684,29 +728,6 @@ const getClassColor = className => {
   return classColors[className] || '#6366f1'
 }
 
-const getAbilityColor = modifier => {
-  if (modifier >= 4) return 'green-lighten-4'
-  if (modifier >= 2) return 'blue-lighten-4'
-  if (modifier >= 0) return 'grey-lighten-3'
-  if (modifier >= -2) return 'orange-lighten-4'
-  return 'error-lighten-4'
-}
-
-// Get top 3 ability scores for a character
-const getTopAbilities = abilityScores => {
-  if (!abilityScores) return {}
-
-  const abilities = Object.entries(abilityScores)
-    .sort(([, a], [, b]) => b.score - a.score)
-    .slice(0, 3)
-    .reduce((obj, [key, value]) => {
-      obj[key] = value
-      return obj
-    }, {})
-
-  return abilities
-}
-
 // Get notable features for a character
 const getNotableFeatures = character => {
   const features = []
@@ -747,26 +768,6 @@ const getNotableFeatures = character => {
   return features
 }
 
-// Helper functions for character choices dropdown
-const getCharacterChoicesCount = character => {
-  let count = 0
-
-  // Count lineage selection
-  if (character.speciesLineage) count += 1
-
-  // Count languages
-  count += getCharacterLanguages(character).length
-
-  // Count tools
-  count += getCharacterTools(character).length
-
-  // Count skills (limit display to avoid overwhelming)
-  const skills = getCharacterSkills(character)
-  if (skills.length > 0) count += Math.min(skills.length, 6)
-
-  return count
-}
-
 // Helper function for character details expansion count
 const getCharacterDetailsCount = character => {
   let count = 0
@@ -793,17 +794,6 @@ const getLineageName = character => {
   if (!character.speciesLineage || !character.speciesDetails?.lineages) return ''
   const lineage = character.speciesDetails.lineages.find(l => l.id === character.speciesLineage)
   return lineage?.name || character.speciesLineage
-}
-
-const getSpeciesDisplayName = character => {
-  const speciesName = character.speciesDetails?.name || 'Unknown'
-  const lineageName = getLineageName(character)
-
-  if (lineageName) {
-    return `${speciesName} (${lineageName})`
-  }
-
-  return speciesName
 }
 
 const getBackgroundName = character => {
@@ -908,7 +898,7 @@ const getCharacterInventory = character => {
     const inventory = character.finalInventory.map(item => ({
       ...item,
       originalName: item.name,
-      name: item.quantity > 1 ? `${item.name} (${item.quantity})` : item.name
+      name: item.quantity > 1 ? `${item.name} (${item.quantity})` : item.name,
     }));
 
     // Sort inventory: weapons first, then armor, then other items
@@ -949,104 +939,104 @@ const getCharacterInventory = character => {
   const equipmentChoicesData = {
     ranger: [
       {
-        description: "(a) scale mail or (b) leather armor",
+        description: '(a) scale mail or (b) leather armor',
         options: [
           {
             items: [
-              { name: "Scale Mail", quantity: 1, description: "Medium armor, AC 14 + Dex modifier (max 2)" }
-            ]
+              { name: 'Scale Mail', quantity: 1, description: 'Medium armor, AC 14 + Dex modifier (max 2)' },
+            ],
           },
           {
             items: [
-              { name: "Leather Armor", quantity: 1, description: "Light armor, AC 11 + Dex modifier" }
-            ]
-          }
-        ]
+              { name: 'Leather Armor', quantity: 1, description: 'Light armor, AC 11 + Dex modifier' },
+            ],
+          },
+        ],
       },
       {
-        description: "(a) two shortswords or (b) two simple melee weapons",
+        description: '(a) two shortswords or (b) two simple melee weapons',
         options: [
           {
             items: [
-              { name: "Shortsword", quantity: 2, description: "Martial weapon, 1d6 piercing, finesse" }
-            ]
+              { name: 'Shortsword', quantity: 2, description: 'Martial weapon, 1d6 piercing, finesse' },
+            ],
           },
           {
             items: [
-              { name: "Handaxe", quantity: 2, description: "Simple weapon, 1d6 slashing, thrown" }
-            ]
-          }
-        ]
+              { name: 'Handaxe', quantity: 2, description: 'Simple weapon, 1d6 slashing, thrown' },
+            ],
+          },
+        ],
       },
       {
         description: "A dungeoneer's pack or an explorer's pack",
         options: [
           {
             items: [
-              { name: "Dungeoneer's Pack", quantity: 1, description: "Backpack, crowbar, hammer, 10 pitons, 10 torches, tinderbox, 10 days of rations, waterskin, 50 feet of hemp rope" }
-            ]
+              { name: "Dungeoneer's Pack", quantity: 1, description: 'Backpack, crowbar, hammer, 10 pitons, 10 torches, tinderbox, 10 days of rations, waterskin, 50 feet of hemp rope' },
+            ],
           },
           {
             items: [
-              { name: "Explorer's Pack", quantity: 1, description: "Backpack, bedroll, mess kit, tinderbox, 10 torches, 10 days of rations, waterskin, 50 feet of hemp rope" }
-            ]
-          }
-        ]
-      }
+              { name: "Explorer's Pack", quantity: 1, description: 'Backpack, bedroll, mess kit, tinderbox, 10 torches, 10 days of rations, waterskin, 50 feet of hemp rope' },
+            ],
+          },
+        ],
+      },
     ],
     rogue: [
       {
-        description: "A rapier or a shortsword",
+        description: 'A rapier or a shortsword',
         options: [
           {
             items: [
-              { name: "Rapier", quantity: 1, description: "Martial weapon, 1d8 piercing, finesse" }
-            ]
+              { name: 'Rapier', quantity: 1, description: 'Martial weapon, 1d8 piercing, finesse' },
+            ],
           },
           {
             items: [
-              { name: "Shortsword", quantity: 1, description: "Martial weapon, 1d6 piercing, finesse" }
-            ]
-          }
-        ]
+              { name: 'Shortsword', quantity: 1, description: 'Martial weapon, 1d6 piercing, finesse' },
+            ],
+          },
+        ],
       },
       {
-        description: "A shortbow and quiver of 20 arrows or a shortsword",
+        description: 'A shortbow and quiver of 20 arrows or a shortsword',
         options: [
           {
             items: [
-              { name: "Shortbow", quantity: 1, description: "Ranged weapon, 1d6 piercing" },
-              { name: "Arrow", quantity: 20, description: "Ammunition for shortbow" }
-            ]
+              { name: 'Shortbow', quantity: 1, description: 'Ranged weapon, 1d6 piercing' },
+              { name: 'Arrow', quantity: 20, description: 'Ammunition for shortbow' },
+            ],
           },
           {
             items: [
-              { name: "Shortsword", quantity: 1, description: "Martial weapon, 1d6 piercing, finesse" }
-            ]
-          }
-        ]
+              { name: 'Shortsword', quantity: 1, description: 'Martial weapon, 1d6 piercing, finesse' },
+            ],
+          },
+        ],
       },
       {
         description: "A burglar's pack, a dungeoneer's pack, or an explorer's pack",
         options: [
           {
             items: [
-              { name: "Burglar's Pack", quantity: 1, description: "Backpack, bag of 1000 ball bearings, 10 feet of string, bell, 5 candles, crowbar, hammer, 10 pitons, hooded lantern, 2 flasks of oil, 5 days rations, tinderbox, waterskin, 50 feet hemp rope" }
-            ]
+              { name: "Burglar's Pack", quantity: 1, description: 'Backpack, bag of 1000 ball bearings, 10 feet of string, bell, 5 candles, crowbar, hammer, 10 pitons, hooded lantern, 2 flasks of oil, 5 days rations, tinderbox, waterskin, 50 feet of hempen rope' },
+            ],
           },
           {
             items: [
-              { name: "Dungeoneer's Pack", quantity: 1, description: "Backpack, crowbar, hammer, 10 pitons, 10 torches, tinderbox, 10 days of rations, waterskin, 50 feet of hemp rope" }
-            ]
+              { name: "Dungeoneer's Pack", quantity: 1, description: 'Backpack, crowbar, hammer, 10 pitons, 10 torches, tinderbox, 10 days of rations, waterskin, 50 feet of hemp rope' },
+            ],
           },
           {
             items: [
-              { name: "Explorer's Pack", quantity: 1, description: "Backpack, bedroll, mess kit, tinderbox, 10 torches, 10 days of rations, waterskin, 50 feet of hemp rope" }
-            ]
-          }
-        ]
-      }
-    ]
+              { name: "Explorer's Pack", quantity: 1, description: 'Backpack, bedroll, mess kit, tinderbox, 10 torches, 10 days of rations, waterskin, 50 feet of hemp rope' },
+            ],
+          },
+        ],
+      },
+    ],
   };
 
   // Add equipment from choices using the SAME LOGIC as CharacterSummary
@@ -1054,20 +1044,20 @@ const getCharacterInventory = character => {
   const className = character.class?.toLowerCase();
   const classEquipmentChoices = equipmentChoicesData[className] || [];
 
-  console.log("Character cards - processing equipment choices for", className, "with selections:", selectedChoices);
+  console.log('Character cards - processing equipment choices for', className, 'with selections:', selectedChoices);
 
   classEquipmentChoices.forEach((choice, choiceIndex) => {
     const selectedOptionIndex = selectedChoices[choiceIndex];
     if (selectedOptionIndex !== null && selectedOptionIndex !== undefined) {
       const selectedOption = choice.options?.[selectedOptionIndex];
       if (selectedOption && selectedOption.items) {
-        selectedOption.items.forEach((item) => {
+        selectedOption.items.forEach(item => {
           console.log(`Character cards - adding equipment choice: ${item.name} x${item.quantity || 1}`);
           correctedInventory.push({
             name: item.name,
             source: 'class',
             quantity: item.quantity || 1,
-            category: 'gear' // Simplified for character cards
+            category: 'gear', // Simplified for character cards
           });
         });
       }
@@ -1146,14 +1136,14 @@ const getCharacterInventory = character => {
   const formattedInventory = correctedInventory.map(item => ({
     ...item,
     originalName: item.name,
-    name: item.quantity > 1 ? `${item.name} (${item.quantity})` : item.name
+    name: item.quantity > 1 ? `${item.name} (${item.quantity})` : item.name,
   }));
 
   console.log('Corrected inventory:', formattedInventory);
   return formattedInventory;
 }
 
-const getEquipmentTooltip = (itemName) => {
+const getEquipmentTooltip = itemName => {
   if (!itemName) return null;
 
   // Clean the item name
@@ -1187,37 +1177,37 @@ const getEquipmentTooltip = (itemName) => {
     'entertainer\'s pack': {
       type: 'Equipment Pack',
       description: 'Includes a backpack, a bedroll, 2 costumes, 5 candles, 5 days of rations, a waterskin, and a disguise kit.',
-      contents: ['Backpack', 'Bedroll', '2 Costumes', '5 Candles', '5 days of rations', 'Waterskin', 'Disguise kit']
+      contents: ['Backpack', 'Bedroll', '2 Costumes', '5 Candles', '5 days of rations', 'Waterskin', 'Disguise kit'],
     },
     'diplomat\'s pack': {
       type: 'Equipment Pack',
       description: 'Includes a chest, 2 cases for maps and scrolls, a set of fine clothes, a bottle of ink, an ink pen, a lamp, 2 flasks of oil, 5 sheets of paper, a vial of perfume, sealing wax, and soap.',
-      contents: ['Chest', '2 Map/Scroll Cases', 'Fine Clothes', 'Ink Bottle', 'Ink Pen', 'Lamp', '2 Oil Flasks', '5 Sheets Paper', 'Perfume Vial', 'Sealing Wax', 'Soap']
+      contents: ['Chest', '2 Map/Scroll Cases', 'Fine Clothes', 'Ink Bottle', 'Ink Pen', 'Lamp', '2 Oil Flasks', '5 Sheets Paper', 'Perfume Vial', 'Sealing Wax', 'Soap'],
     },
     'dungeoneer\'s pack': {
       type: 'Equipment Pack',
       description: 'Includes a backpack, a crowbar, a hammer, 10 pitons, 10 torches, a tinderbox, 10 days of rations, and a waterskin.',
-      contents: ['Backpack', 'Crowbar', 'Hammer', '10 Pitons', '10 Torches', 'Tinderbox', '10 days of rations', 'Waterskin']
+      contents: ['Backpack', 'Crowbar', 'Hammer', '10 Pitons', '10 Torches', 'Tinderbox', '10 days of rations', 'Waterskin'],
     },
     'explorer\'s pack': {
       type: 'Equipment Pack',
       description: 'Includes a backpack, a bedroll, a mess kit, a tinderbox, 10 torches, 10 days of rations, a waterskin, and 50 feet of hemp rope.',
-      contents: ['Backpack', 'Bedroll', 'Mess kit', 'Tinderbox', '10 Torches', '10 days of rations', 'Waterskin', '50 ft hemp rope']
+      contents: ['Backpack', 'Bedroll', 'Mess kit', 'Tinderbox', '10 Torches', '10 days of rations', 'Waterskin', '50 ft hemp rope'],
     },
     'priest\'s pack': {
       type: 'Equipment Pack',
       description: 'Includes a backpack, a blanket, 10 candles, a tinderbox, an alms box, 2 blocks of incense, a censer, vestments, 2 days of rations, and a waterskin.',
-      contents: ['Backpack', 'Blanket', '10 Candles', 'Tinderbox', 'Alms box', '2 Incense blocks', 'Censer', 'Vestments', '2 days of rations', 'Waterskin']
+      contents: ['Backpack', 'Blanket', '10 Candles', 'Tinderbox', 'Alms box', '2 Incense blocks', 'Censer', 'Vestments', '2 days of rations', 'Waterskin'],
     },
     'scholar\'s pack': {
       type: 'Equipment Pack',
       description: 'Includes a backpack, a book of lore, a bottle of ink, an ink pen, 10 sheets of parchment, a little bag of sand, and a small knife.',
-      contents: ['Backpack', 'Book of lore', 'Ink bottle', 'Ink pen', '10 Parchment sheets', 'Bag of sand', 'Small knife']
+      contents: ['Backpack', 'Book of lore', 'Ink bottle', 'Ink pen', '10 Parchment sheets', 'Bag of sand', 'Small knife'],
     },
     'burglar\'s pack': {
       type: 'Equipment Pack',
       description: 'Includes a backpack, a bag of 1,000 ball bearings, 10 feet of string, a bell, 5 candles, a crowbar, a hammer, 10 pitons, a hooded lantern, 2 flasks of oil, 5 days rations, a tinderbox, a waterskin, and 50 feet of hempen rope.',
-      contents: ['Backpack', '1,000 Ball bearings', '10 ft String', 'Bell', '5 Candles', 'Crowbar', 'Hammer', '10 Pitons', 'Hooded lantern', '2 Oil flasks', '5 days rations', 'Tinderbox', 'Waterskin', '50 ft hemp rope']
+      contents: ['Backpack', '1,000 Ball bearings', '10 ft String', 'Bell', '5 Candles', 'Crowbar', 'Hammer', '10 Pitons', 'Hooded lantern', '2 Oil flasks', '5 days rations', 'Tinderbox', 'Waterskin', '50 ft hemp rope'],
     },
 
     // Tools
@@ -1274,7 +1264,7 @@ const getEquipmentTooltip = (itemName) => {
     'rope': { type: 'Adventuring Gear', description: 'Strong rope useful for climbing and securing equipment.' },
     'fine clothes': { type: 'Clothing', description: 'Elegant clothing made from fine materials. Provides advantage on social interactions with nobles and wealthy merchants.' },
     'set of fine clothes': { type: 'Clothing', description: 'Elegant clothing made from fine materials. Provides advantage on social interactions with nobles and wealthy merchants.' },
-    'disguise kit': { type: 'Tools', description: 'This kit includes cosmetics, hair dye, small props, and clothing necessary to create a disguise.' }
+    'disguise kit': { type: 'Tools', description: 'This kit includes cosmetics, hair dye, small props, and clothing necessary to create a disguise.' },
   };
 
   return tooltips[cleanName] || null;
@@ -1338,6 +1328,7 @@ const editCharacter = character => {
 
 // Confirm character deletion - requires admin authentication
 const confirmDelete = character => {
+
   adminStore.requireAdminAccess(() => {
     selectedCharacter.value = character
     deleteDialog.value = true
@@ -1354,7 +1345,10 @@ const deleteCharacter = async () => {
     if (result.success) {
       // Remove from local array
       characters.value = characters.value.filter(c => c.id !== selectedCharacter.value.id)
-      alert('Character deleted successfully')
+
+      // Show success dialog
+      deletedCharacterName.value = selectedCharacter.value.name
+      deleteSuccessDialog.value = true
 
       // Extend admin session on successful action
       extendSession()
@@ -1396,6 +1390,13 @@ const requireAccessForCreation = () => {
   })
 }
 
+// Go home after successful deletion
+const goHome = () => {
+  deleteSuccessDialog.value = false
+  // Refresh to home page
+  window.location.href = '/'
+}
+
 // Load characters on component mount
 onMounted(() => {
   loadCharacters()
@@ -1412,8 +1413,8 @@ onMounted(() => {
   display: none;
 }
 
-/* At 1117px and below, switch to mobile layout */
-@media (max-width: 1117px) {
+/* At 800px and below, switch to mobile layout */
+@media (max-width: 800px) {
   .quick-actions-desktop {
     display: none !important;
   }
@@ -1441,12 +1442,15 @@ onMounted(() => {
     padding: 1.5rem 0 !important;
     margin-bottom: 1rem !important;
   }
+
+  .quick-actions-mobile .logout-btn {
+    min-width: 28px !important;
+    padding: 0 4px !important;
+  }
 }
 
 /* Mobile quick actions styling */
 .quick-actions-chip-mobile {
-  min-width: 140px !important;
-  width: 140px !important;
   text-align: center !important;
   justify-content: center !important;
   font-size: 0.75rem !important;
@@ -1472,8 +1476,6 @@ onMounted(() => {
 
 @media (max-width: 600px) {
   .quick-actions-chip-mobile {
-    min-width: 120px !important;
-    width: 120px !important;
     font-size: 0.7rem !important;
   }
 
@@ -1485,8 +1487,6 @@ onMounted(() => {
 
 @media (max-width: 480px) {
   .quick-actions-chip-mobile {
-    min-width: 100px !important;
-    width: 100px !important;
     font-size: 0.65rem !important;
   }
 
@@ -1792,84 +1792,47 @@ onMounted(() => {
 }
 
 /* Enhanced core character info layout */
+.core-character-info .info-col {
+  display: flex;
+  align-items: stretch;
+}
+
+.core-character-info .info-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.core-character-info .info-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.core-character-info .info-value {
+  font-size: 0.875rem;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .core-character-info .d-flex {
   align-items: flex-start;
 }
 
-/* Essential stats cards styling */
-.essential-stat-card {
-  transition: all 0.2s ease;
-  padding: 0 !important;
-  position: relative !important;
+.core-character-info .info-value .subrace-text {
+  font-size: 0.8em;
+  font-weight: 400;
+  color: rgba(var(--v-theme-on-surface), 0.7);
+  margin-left: 2px;
 }
 
-.essential-stat-card>* {
-  width: 100%;
-  text-align: center;
-}
-
-.essential-stat-card .v-icon {
-  top: 5px;
-  flex-shrink: 0;
-}
-
-.essential-stat-card .text-caption {
-  color: rgba(var(--v-theme-on-surface), 0.6);
-  font-weight: 500;
-  top: 5px;
-  position: relative;
-}
-
-.essential-stat-card .text-h6 {
-  bottom: 5px;
-  flex-shrink: 0;
-}
-
-.essential-stat-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
-}
-
-.v-theme--dark .essential-stat-card:hover {
-  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.1) !important;
-}
-
-.essential-stats .v-card {
-  transition: all 0.2s ease;
-}
-
-.essential-stats .v-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
-}
-
-/* Ability scores on main card styling */
-.ability-scores-main .ability-score-card-main {
-  transition: all 0.2s ease;
-  border: 1px solid rgba(var(--v-theme-primary), 0.2) !important;
-  background: rgba(var(--v-theme-primary), 0.02) !important;
-}
-
-.ability-scores-main .ability-score-card-main:hover {
-  transform: translateY(-1px);
-  border-color: rgba(var(--v-theme-primary), 0.4) !important;
-  background: rgba(var(--v-theme-primary), 0.05) !important;
-  box-shadow: 0 2px 8px rgba(var(--v-theme-primary), 0.15) !important;
-}
-
-.ability-scores-main h4 {
-  color: rgb(var(--v-theme-primary)) !important;
-}
-
-/* Admin chip group tight spacing */
-.admin-chip-group>*+* {
-  margin-left: 4px !important;
-}
-
-/* Logout button reduced padding */
-.logout-btn {
-  min-width: auto !important;
-  padding-left: 6px !important;
-  padding-right: 6px !important;
+@media (max-width: 960px) {
+  .core-character-info .v-col {
+    flex-basis: 100%;
+    max-width: 100%;
+  }
 }
 </style>

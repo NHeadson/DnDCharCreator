@@ -19,9 +19,17 @@
         </v-alert>
 
         <v-form @submit.prevent="handleAccessSubmit">
-          <v-text-field v-model="accessPasswordInput" autofocus class="mb-3" :error-messages="accessError"
-            label="Access Code or Admin Password" prepend-inner-icon="mdi-lock" type="password" variant="outlined"
-            @keyup.enter="handleAccessSubmit" />
+          <v-text-field
+            v-model="accessPasswordInput"
+            autofocus
+            class="mb-3"
+            :error-messages="accessError"
+            label="Access Code or Admin Password"
+            prepend-inner-icon="mdi-lock"
+            type="password"
+            variant="outlined"
+            @keyup.enter="handleAccessSubmit"
+          />
 
           <div class="text-caption text-grey mb-4">
             <v-icon class="me-1" size="small">mdi-clock-outline</v-icon>
@@ -31,8 +39,14 @@
       </v-card-text>
 
       <v-card-actions class="pa-6 pt-0">
-        <v-btn class="flex-grow-1" color="primary" :disabled="!accessPasswordInput.trim()" prepend-icon="mdi-key"
-          variant="elevated" @click="handleAccessSubmit">
+        <v-btn
+          class="flex-grow-1"
+          color="primary"
+          :disabled="!accessPasswordInput.trim()"
+          prepend-icon="mdi-key"
+          variant="elevated"
+          @click="handleAccessSubmit"
+        >
           Authenticate
         </v-btn>
       </v-card-actions>
@@ -41,23 +55,23 @@
 </template>
 
 <script setup>
-import { useAdminStore } from '@/stores/adminStore'
-import { storeToRefs } from 'pinia'
+  import { useAdminStore } from '@/stores/adminStore'
+  import { storeToRefs } from 'pinia'
 
-const adminStore = useAdminStore()
-const {
-  showAccessDialog,
-  accessPasswordInput,
-  accessError,
-  accessType,
-} = storeToRefs(adminStore)
+  const adminStore = useAdminStore()
+  const {
+    showAccessDialog,
+    accessPasswordInput,
+    accessError,
+    accessType,
+  } = storeToRefs(adminStore)
 
-const handleAccessSubmit = () => {
-  adminStore.handleAccessSubmit()
-}
-const closeAccessDialog = () => {
-  adminStore.closeAccessDialog()
-}
+  const handleAccessSubmit = () => {
+    adminStore.handleAccessSubmit()
+  }
+  const closeAccessDialog = () => {
+    adminStore.closeAccessDialog()
+  }
 </script>
 
 <style scoped>

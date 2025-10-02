@@ -11,7 +11,7 @@
         <!-- Hit Points -->
         <v-col cols="12" md="4">
           <v-card class="skill-card pa-4 text-center" color="error" variant="outlined">
-            <v-icon size="large" class="mb-2" color="error">mdi-heart</v-icon>
+            <v-icon class="mb-2" color="error" size="large">mdi-heart</v-icon>
             <div class="text-h6 mb-2">Hit Points</div>
             <div class="text-h3 text-error">{{ calculateHitPoints }}</div>
             <div class="text-body-2 mt-2">
@@ -21,7 +21,7 @@
             <div class="mt-4 text-left">
               <div class="text-body-2 text-medium-emphasis mb-1">Health Info</div>
               <div class="d-flex align-center">
-                <v-icon size="small" class="mr-1" color="info">mdi-information</v-icon>
+                <v-icon class="mr-1" color="info" size="small">mdi-information</v-icon>
                 <div class="text-body-2">Starting HP at level 1</div>
               </div>
             </div>
@@ -31,7 +31,7 @@
         <!-- Armor Class -->
         <v-col cols="12" md="4">
           <v-card class="skill-card pa-4 text-center" color="primary" variant="outlined">
-            <v-icon size="large" class="mb-2" color="primary">mdi-shield</v-icon>
+            <v-icon class="mb-2" color="primary" size="large">mdi-shield</v-icon>
             <div class="text-h6 mb-2">Armor Class</div>
             <div class="text-h3 text-blue">{{ calculateArmorClass }}</div>
             <div class="text-body-2 mt-2">
@@ -41,7 +41,7 @@
             <div class="mt-4 text-left">
               <div class="text-body-2 text-medium-emphasis mb-1">Armor Class Info</div>
               <div class="d-flex align-center">
-                <v-icon size="small" class="mr-1" color="info">mdi-information</v-icon>
+                <v-icon class="mr-1" color="info" size="small">mdi-information</v-icon>
                 <div class="text-body-2">Base AC (no armor equipped)</div>
               </div>
             </div>
@@ -51,7 +51,7 @@
         <!-- Proficiency Bonus -->
         <v-col cols="12" md="4">
           <v-card class="skill-card pa-4 text-center" color="purple" variant="outlined">
-            <v-icon size="large" class="mb-2" color="purple">mdi-star</v-icon>
+            <v-icon class="mb-2" color="purple" size="large">mdi-star</v-icon>
             <div class="text-h6 mb-2">Proficiency Bonus</div>
             <div class="text-h3 text-purple">+{{ character.proficiencyBonus }}</div>
             <div class="text-body-2 mt-2">
@@ -98,8 +98,13 @@
               <div class="d-flex align-center ga-3 mb-3">
                 <v-icon color="success" size="small">mdi-check-circle</v-icon>
                 <span class="text-body-2 text-success">Skills selected!</span>
-                <v-btn variant="outlined" size="small" color="primary" prepend-icon="mdi-refresh"
-                  @click="resetClassSkillSelection">
+                <v-btn
+                  color="primary"
+                  prepend-icon="mdi-refresh"
+                  size="small"
+                  variant="outlined"
+                  @click="resetClassSkillSelection"
+                >
                   Change Selection
                 </v-btn>
               </div>
@@ -108,10 +113,14 @@
             <!-- Show skill options when not complete -->
             <div v-else class="ml-8">
               <div class="d-flex flex-wrap ga-2">
-                <v-chip v-for="skill in getClassSkillOptions" :key="skill.name" clickable
+                <v-chip
+                  v-for="skill in getClassSkillOptions"
+                  :key="skill.name"
+                  clickable
                   :color="character.selectedClassSkills?.includes(skill.name) ? 'primary' : 'default'"
                   :variant="character.selectedClassSkills?.includes(skill.name) ? 'elevated' : 'outlined'"
-                  @click="toggleClassSkill(skill.name)">
+                  @click="toggleClassSkill(skill.name)"
+                >
                   <v-icon size="x-small" start>mdi-school</v-icon>
                   {{ skill.name }}
                 </v-chip>
@@ -129,10 +138,14 @@
 
             <div class="ml-4">
               <div class="d-flex flex-wrap ga-2">
-                <v-chip v-for="skill in getAllSkillProficiencies" :key="skill" clickable
+                <v-chip
+                  v-for="skill in getAllSkillProficiencies"
+                  :key="skill"
+                  clickable
                   :color="character.selectedExpertise?.includes(skill) ? 'orange' : 'default'"
                   :variant="character.selectedExpertise?.includes(skill) ? 'elevated' : 'outlined'"
-                  @click="toggleExpertise(skill)">
+                  @click="toggleExpertise(skill)"
+                >
                   <v-icon size="x-small" start>mdi-star</v-icon>
                   {{ skill }}
                 </v-chip>
@@ -147,143 +160,143 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
+  import { computed } from 'vue'
 
-// Props
-const props = defineProps({
-  character: {
-    type: Object,
-    required: true
-  },
-  characterData: {
-    type: Object,
-    required: true
-  }
-})
+  // Props
+  const props = defineProps({
+    character: {
+      type: Object,
+      required: true,
+    },
+    characterData: {
+      type: Object,
+      required: true,
+    },
+  })
 
-// Character reference
-const character = props.character
-const characterData = props.characterData
+  // Character reference
+  const character = props.character
+  const characterData = props.characterData
 
-// Simplified computed properties to avoid errors
-const calculateHitPoints = computed(() => {
-  if (!character?.classDetails) return 0
-  const hitDie = character.classDetails.hit_die || 6
-  const constitution = character.abilityScores?.constitution?.score || 10
-  const conModifier = Math.floor((constitution - 10) / 2)
-  return hitDie + conModifier
-})
+  // Simplified computed properties to avoid errors
+  const calculateHitPoints = computed(() => {
+    if (!character?.classDetails) return 0
+    const hitDie = character.classDetails.hit_die || 6
+    const constitution = character.abilityScores?.constitution?.score || 10
+    const conModifier = Math.floor((constitution - 10) / 2)
+    return hitDie + conModifier
+  })
 
-const calculateArmorClass = computed(() => {
-  const dexterity = character?.abilityScores?.dexterity?.score || 10
-  const dexModifier = Math.floor((dexterity - 10) / 2)
-  return 10 + dexModifier
-})
+  const calculateArmorClass = computed(() => {
+    const dexterity = character?.abilityScores?.dexterity?.score || 10
+    const dexModifier = Math.floor((dexterity - 10) / 2)
+    return 10 + dexModifier
+  })
 
-const getFormattedHPCalculation = computed(() => {
-  const hitDie = character?.classDetails?.hit_die || 6
-  const conModifier = Math.floor(((character?.abilityScores?.constitution?.score || 10) - 10) / 2)
-  const sign = conModifier >= 0 ? '+' : ''
-  return `d${hitDie} ${sign}${conModifier} CON`
-})
+  const getFormattedHPCalculation = computed(() => {
+    const hitDie = character?.classDetails?.hit_die || 6
+    const conModifier = Math.floor(((character?.abilityScores?.constitution?.score || 10) - 10) / 2)
+    const sign = conModifier >= 0 ? '+' : ''
+    return `d${hitDie} ${sign}${conModifier} CON`
+  })
 
-const getFormattedACCalculation = computed(() => {
-  const dexModifier = Math.floor(((character?.abilityScores?.dexterity?.score || 10) - 10) / 2)
-  const sign = dexModifier >= 0 ? '+' : ''
-  return `10 ${sign}${dexModifier} DEX`
-})
+  const getFormattedACCalculation = computed(() => {
+    const dexModifier = Math.floor(((character?.abilityScores?.dexterity?.score || 10) - 10) / 2)
+    const sign = dexModifier >= 0 ? '+' : ''
+    return `10 ${sign}${dexModifier} DEX`
+  })
 
-const hasWeaponProficiencies = computed(() => {
-  return character?.weaponProficiencies && character.weaponProficiencies.length > 0
-})
+  const hasWeaponProficiencies = computed(() => {
+    return character?.weaponProficiencies && character.weaponProficiencies.length > 0
+  })
 
-const hasArmorProficiencies = computed(() => {
-  return character?.armorTraining && Object.values(character.armorTraining).some(Boolean)
-})
+  const hasArmorProficiencies = computed(() => {
+    return character?.armorTraining && Object.values(character.armorTraining).some(Boolean)
+  })
 
-const hasClassSkillChoices = computed(() => {
-  return character?.classDetails?.skillProficiencies?.count > 0 ||
-    character?.classDetails?.skillChoices > 0
-})
+  const hasClassSkillChoices = computed(() => {
+    return character?.classDetails?.skillProficiencies?.count > 0 ||
+      character?.classDetails?.skillChoices > 0
+  })
 
-const hasExpertiseChoices = computed(() => {
-  // Simplified check for classes that get expertise (like Rogue, Bard)
-  const classesWithExpertise = ['rogue', 'bard']
-  return classesWithExpertise.includes(character?.class?.toLowerCase() || '')
-})
+  const hasExpertiseChoices = computed(() => {
+    // Simplified check for classes that get expertise (like Rogue, Bard)
+    const classesWithExpertise = ['rogue', 'bard']
+    return classesWithExpertise.includes(character?.class?.toLowerCase() || '')
+  })
 
-const getClassSkillChoices = computed(() => {
-  return character?.classDetails?.skillProficiencies?.count ||
-    character?.classDetails?.skillChoices || 0
-})
+  const getClassSkillChoices = computed(() => {
+    return character?.classDetails?.skillProficiencies?.count ||
+      character?.classDetails?.skillChoices || 0
+  })
 
-const isClassSkillSelectionComplete = computed(() => {
-  const required = getClassSkillChoices.value
-  const selected = character?.selectedClassSkills?.length || 0
-  return selected >= required && required > 0
-})
+  const isClassSkillSelectionComplete = computed(() => {
+    const required = getClassSkillChoices.value
+    const selected = character?.selectedClassSkills?.length || 0
+    return selected >= required && required > 0
+  })
 
-const getClassSkillOptions = computed(() => {
-  // Return a simplified list of available skills
-  const allSkills = [
-    { name: 'Acrobatics' }, { name: 'Animal Handling' }, { name: 'Arcana' },
-    { name: 'Athletics' }, { name: 'Deception' }, { name: 'History' },
-    { name: 'Insight' }, { name: 'Intimidation' }, { name: 'Investigation' },
-    { name: 'Medicine' }, { name: 'Nature' }, { name: 'Perception' },
-    { name: 'Performance' }, { name: 'Persuasion' }, { name: 'Religion' },
-    { name: 'Sleight of Hand' }, { name: 'Stealth' }, { name: 'Survival' }
-  ]
+  const getClassSkillOptions = computed(() => {
+    // Return a simplified list of available skills
+    const allSkills = [
+      { name: 'Acrobatics' }, { name: 'Animal Handling' }, { name: 'Arcana' },
+      { name: 'Athletics' }, { name: 'Deception' }, { name: 'History' },
+      { name: 'Insight' }, { name: 'Intimidation' }, { name: 'Investigation' },
+      { name: 'Medicine' }, { name: 'Nature' }, { name: 'Perception' },
+      { name: 'Performance' }, { name: 'Persuasion' }, { name: 'Religion' },
+      { name: 'Sleight of Hand' }, { name: 'Stealth' }, { name: 'Survival' },
+    ]
 
-  return allSkills
-})
+    return allSkills
+  })
 
-const getAllSkillProficiencies = computed(() => {
-  const skills = []
+  const getAllSkillProficiencies = computed(() => {
+    const skills = []
 
-  // Add selected class skills
-  if (character?.selectedClassSkills) {
-    skills.push(...character.selectedClassSkills)
-  }
+    // Add selected class skills
+    if (character?.selectedClassSkills) {
+      skills.push(...character.selectedClassSkills)
+    }
 
-  return [...new Set(skills)] // Remove duplicates
-})
+    return [...new Set(skills)] // Remove duplicates
+  })
 
-// Functions
-const toggleClassSkill = (skillName) => {
-  if (!character.selectedClassSkills) {
-    character.selectedClassSkills = []
-  }
+  // Functions
+  const toggleClassSkill = skillName => {
+    if (!character.selectedClassSkills) {
+      character.selectedClassSkills = []
+    }
 
-  const index = character.selectedClassSkills.indexOf(skillName)
-  const maxChoices = getClassSkillChoices.value
+    const index = character.selectedClassSkills.indexOf(skillName)
+    const maxChoices = getClassSkillChoices.value
 
-  if (index > -1) {
-    character.selectedClassSkills.splice(index, 1)
-  } else if (character.selectedClassSkills.length < maxChoices) {
-    character.selectedClassSkills.push(skillName)
-  }
-}
-
-const toggleExpertise = (skillName) => {
-  if (!character.selectedExpertise) {
-    character.selectedExpertise = []
+    if (index > -1) {
+      character.selectedClassSkills.splice(index, 1)
+    } else if (character.selectedClassSkills.length < maxChoices) {
+      character.selectedClassSkills.push(skillName)
+    }
   }
 
-  const index = character.selectedExpertise.indexOf(skillName)
-  const maxExpertise = 2
+  const toggleExpertise = skillName => {
+    if (!character.selectedExpertise) {
+      character.selectedExpertise = []
+    }
 
-  if (index > -1) {
-    character.selectedExpertise.splice(index, 1)
-  } else if (character.selectedExpertise.length < maxExpertise) {
-    character.selectedExpertise.push(skillName)
-  }
-}
+    const index = character.selectedExpertise.indexOf(skillName)
+    const maxExpertise = 2
 
-const resetClassSkillSelection = () => {
-  if (character.selectedClassSkills) {
-    character.selectedClassSkills = []
+    if (index > -1) {
+      character.selectedExpertise.splice(index, 1)
+    } else if (character.selectedExpertise.length < maxExpertise) {
+      character.selectedExpertise.push(skillName)
+    }
   }
-}
+
+  const resetClassSkillSelection = () => {
+    if (character.selectedClassSkills) {
+      character.selectedClassSkills = []
+    }
+  }
 </script>
 
 <style scoped>

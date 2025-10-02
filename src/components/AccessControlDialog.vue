@@ -9,7 +9,7 @@
       <v-divider />
 
       <v-card-text class="pa-6">
-        <v-alert class="mb-4" variant="tonal" color="info" icon="mdi-account-group">
+        <v-alert class="mb-4" color="info" icon="mdi-account-group" variant="tonal">
           <v-alert-title>
             Private D&D Group
           </v-alert-title>
@@ -19,15 +19,29 @@
 
         <form id="access-form" action="data:text/plain,success" method="post" @submit="handleFormSubmit">
           <!-- Hidden username field for browser autofill recognition -->
-          <input aria-hidden="true" autocomplete="username" name="username" style="display: none;" type="text"
-            value="dnd-group-member">
+          <input
+            aria-hidden="true"
+            autocomplete="username"
+            name="username"
+            style="display: none;"
+            type="text"
+            value="dnd-group-member"
+          >
 
           <!-- Native password input for better browser recognition -->
           <div class="mb-3">
             <label class="text-body-2 text-grey mb-2 d-block" for="access-password">Access Code</label>
-            <input id="access-password" v-model="accessPasswordInput" autocomplete="current-password" autofocus
-              class="v-input native-password-input" :class="{ 'error': accessError }" name="password"
-              placeholder="Enter access code" type="password">
+            <input
+              id="access-password"
+              v-model="accessPasswordInput"
+              autocomplete="current-password"
+              autofocus
+              class="v-input native-password-input"
+              :class="{ 'error': accessError }"
+              name="password"
+              placeholder="Enter access code"
+              type="password"
+            >
             <div v-if="accessError" class="text-error text-caption mt-1">{{ accessError }}</div>
             <div class="text-caption text-grey mt-1">Get this code from your DM</div>
           </div>
@@ -47,8 +61,15 @@
       </v-card-text>
 
       <v-card-actions class="pa-6 pt-0">
-        <v-btn class="flex-grow-1" color="primary" :disabled="!accessPasswordInput.trim()" form="access-form"
-          prepend-icon="mdi-check" type="submit" variant="elevated">
+        <v-btn
+          class="flex-grow-1"
+          color="primary"
+          :disabled="!accessPasswordInput.trim()"
+          form="access-form"
+          prepend-icon="mdi-check"
+          type="submit"
+          variant="elevated"
+        >
           Enter
         </v-btn>
       </v-card-actions>
@@ -59,54 +80,54 @@
 <script setup>
 
 
-import { computed, watch } from 'vue'
-import { storeToRefs } from 'pinia'
-import { useAdminStore } from '@/stores/adminStore'
+  import { computed, watch } from 'vue'
+  import { storeToRefs } from 'pinia'
+  import { useAdminStore } from '@/stores/adminStore'
 
-const adminStore = useAdminStore()
-const { showAccessDialog, accessPasswordInput, accessError } = storeToRefs(adminStore)
-const handleAccessSubmit = adminStore.handleAccessSubmit
-const closeAccessDialog = adminStore.closeAccessDialog
-const hasAccess = computed(() => adminStore.isAccessValid)
+  const adminStore = useAdminStore()
+  const { showAccessDialog, accessPasswordInput, accessError } = storeToRefs(adminStore)
+  const handleAccessSubmit = adminStore.handleAccessSubmit
+  const closeAccessDialog = adminStore.closeAccessDialog
+  const hasAccess = computed(() => adminStore.isAccessValid)
 
-watch(hasAccess, val => {
-  if (val) {
-    closeAccessDialog()
+  watch(hasAccess, val => {
+    if (val) {
+      closeAccessDialog()
+    }
+  }, { immediate: true })
+
+  // Handle form submission to trigger browser password save
+  const handleFormSubmit = event => {
+    // Don't prevent the default immediately - let the browser see the submission
+
+    if (!accessPasswordInput.value.trim()) {
+      event.preventDefault()
+      return
+    }
+
+    const success = handleAccessSubmit()
+
+    if (success) {
+      // Create an iframe to submit the form to, avoiding page navigation
+      const iframe = document.createElement('iframe')
+      iframe.style.display = 'none'
+      iframe.name = 'password-save-frame'
+      document.body.append(iframe)
+
+      // Update form target to the iframe
+      const form = event.target
+      form.target = 'password-save-frame'
+
+      // Clean up after a brief delay
+      setTimeout(() => {
+        iframe.remove()
+      }, 1000)
+      // Explicitly close the dialog after successful access
+      closeAccessDialog()
+    } else {
+      event.preventDefault()
+    }
   }
-}, { immediate: true })
-
-// Handle form submission to trigger browser password save
-const handleFormSubmit = event => {
-  // Don't prevent the default immediately - let the browser see the submission
-
-  if (!accessPasswordInput.value.trim()) {
-    event.preventDefault()
-    return
-  }
-
-  const success = handleAccessSubmit()
-
-  if (success) {
-    // Create an iframe to submit the form to, avoiding page navigation
-    const iframe = document.createElement('iframe')
-    iframe.style.display = 'none'
-    iframe.name = 'password-save-frame'
-    document.body.append(iframe)
-
-    // Update form target to the iframe
-    const form = event.target
-    form.target = 'password-save-frame'
-
-    // Clean up after a brief delay
-    setTimeout(() => {
-      iframe.remove()
-    }, 1000)
-    // Explicitly close the dialog after successful access
-    closeAccessDialog()
-  } else {
-    event.preventDefault()
-  }
-}
 </script>
 
 <style scoped>

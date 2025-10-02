@@ -1,12 +1,12 @@
-import { defineStore } from "pinia";
-import { ref } from "vue";
-import { dndAPI } from "@/services/dndAPI.js";
+import { defineStore } from 'pinia';
+import { ref } from 'vue';
+import { dndAPI } from '@/services/dndAPI.js';
 
-export const useCharacterStore = defineStore("character", {
+export const useCharacterStore = defineStore('character', {
   state: () => ({
     character: {
-      name: "",
-      playerName: "",
+      name: '',
+      playerName: '',
       species: null,
       speciesDetails: null,
       speciesLineage: null,
@@ -19,7 +19,8 @@ export const useCharacterStore = defineStore("character", {
       level: 1,
       xp: 0,
       alignment: null,
-      backstory: "",
+      backstory: '',
+      portrait: '',
       personality: { traits: [], ideals: [], bonds: [], flaws: [] },
       additionalLanguages: [],
       selectedTools: [],
@@ -36,7 +37,7 @@ export const useCharacterStore = defineStore("character", {
       proficiencyBonus: 2,
       hasHeroicInspiration: false,
       initiative: 0,
-      size: "",
+      size: '',
       speed: 0,
       passivePerception: 10,
       skillProficiencies: {},
@@ -52,16 +53,16 @@ export const useCharacterStore = defineStore("character", {
       equipment: [],
       equipmentChoices: [], // Array storing selected option index for each equipment choice
       coins: { cp: 0, sp: 0, ep: 0, gp: 0, pp: 0 },
-      attunedItems: ["", "", ""],
+      attunedItems: ['', '', ''],
       weapons: [],
       damagingCantrips: [],
-      spellcastingAbilityName: "",
+      spellcastingAbilityName: '',
       spellSaveDC: 8,
       spellAttackBonus: 0,
       cantrips: [],
       preparedSpells: [],
       expendedSpellSlots: {},
-      notes: "",
+      notes: '',
       // Calculated/derived traits
       derivedTraits: {
         species: [],
@@ -72,7 +73,7 @@ export const useCharacterStore = defineStore("character", {
       },
     },
     currentStep: 1,
-    abilityGenerationMethod: "standard",
+    abilityGenerationMethod: 'standard',
     rolledStats: [],
     rolling: false,
     timesRerolled: 0,
@@ -99,7 +100,7 @@ export const useCharacterStore = defineStore("character", {
   }),
   actions: {
     // Fetch cantrips and 1st-level spells for the selected class
-    async fetchSpellsForClass(classIndex) {
+    async fetchSpellsForClass (classIndex) {
       this.isLoadingSpells = true;
       this.spellError = null;
       try {
@@ -117,7 +118,7 @@ export const useCharacterStore = defineStore("character", {
         this.isLoadingSpells = false;
       }
     },
-    async loadSpeciesData() {
+    async loadSpeciesData () {
       this.isLoadingSpecies = true;
       this.speciesError = null;
       try {
@@ -131,7 +132,7 @@ export const useCharacterStore = defineStore("character", {
         this.isLoadingSpecies = false;
       }
     },
-    async loadClassData() {
+    async loadClassData () {
       this.isLoadingClasses = true;
       this.classError = null;
       try {
@@ -145,185 +146,185 @@ export const useCharacterStore = defineStore("character", {
         this.isLoadingClasses = false;
       }
     },
-    async loadBackgroundData() {
+    async loadBackgroundData () {
       this.isLoadingBackgrounds = true;
       this.backgroundError = null;
       // Fallback backgrounds (copy from useCharacterData.js)
       const fallbackBackgroundData = [
         {
-          id: "acolyte",
-          name: "Acolyte",
+          id: 'acolyte',
+          name: 'Acolyte',
           description:
-            "You have spent your life in the service of a temple to a specific god or pantheon of gods.",
-          skillProficiencies: ["Insight", "Religion"],
+            'You have spent your life in the service of a temple to a specific god or pantheon of gods.',
+          skillProficiencies: ['Insight', 'Religion'],
           toolProficiencies: ["Calligrapher's Supplies"],
           languages: [],
           languageOptions: {
             choose: 2,
-            from: ["Any"],
+            from: ['Any'],
           },
           startingEquipment: [
-            { name: "Holy Symbol", quantity: 1 },
-            { name: "Prayer Book", quantity: 1 },
-            { name: "Incense", quantity: 5 },
+            { name: 'Holy Symbol', quantity: 1 },
+            { name: 'Prayer Book', quantity: 1 },
+            { name: 'Incense', quantity: 5 },
           ],
           startingMoney: { gp: 15 },
           feature: {
-            name: "Shelter of the Faithful",
+            name: 'Shelter of the Faithful',
             description:
-              "You can perform religious ceremonies and gain shelter at temples.",
+              'You can perform religious ceremonies and gain shelter at temples.',
           },
-          feat: "Magic Initiate (Cleric)",
-          skillProfs: ["Insight", "Religion"],
+          feat: 'Magic Initiate (Cleric)',
+          skillProfs: ['Insight', 'Religion'],
           toolProf: "Calligrapher's Supplies",
-          equipmentChoice: "A or B",
-          abilityScores: ["Intelligence", "Wisdom", "Charisma"],
+          equipmentChoice: 'A or B',
+          abilityScores: ['Intelligence', 'Wisdom', 'Charisma'],
         },
         {
-          id: "criminal",
-          name: "Criminal",
+          id: 'criminal',
+          name: 'Criminal',
           description:
-            "You are an experienced criminal with a history of breaking the law.",
-          skillProficiencies: ["Deception", "Stealth"],
+            'You are an experienced criminal with a history of breaking the law.',
+          skillProficiencies: ['Deception', 'Stealth'],
           toolProficiencies: ["Thieves' Tools"],
           languages: [],
           languageOptions: null,
           startingEquipment: [
-            { name: "Crowbar", quantity: 1 },
-            { name: "Dark Common Clothes", quantity: 1 },
-            { name: "Belt Pouch", quantity: 1 },
+            { name: 'Crowbar', quantity: 1 },
+            { name: 'Dark Common Clothes', quantity: 1 },
+            { name: 'Belt Pouch', quantity: 1 },
           ],
           startingMoney: { gp: 15 },
           feature: {
-            name: "Criminal Contact",
+            name: 'Criminal Contact',
             description:
-              "You have a reliable contact in the criminal underworld.",
+              'You have a reliable contact in the criminal underworld.',
           },
-          feat: "Alert",
-          skillProfs: ["Sleight of Hand", "Stealth"],
+          feat: 'Alert',
+          skillProfs: ['Sleight of Hand', 'Stealth'],
           toolProf: "Thieves' Tools",
-          equipmentChoice: "A or B",
-          abilityScores: ["Dexterity", "Constitution", "Intelligence"],
+          equipmentChoice: 'A or B',
+          abilityScores: ['Dexterity', 'Constitution', 'Intelligence'],
         },
         {
-          id: "sage",
-          name: "Sage",
-          description: "You spent years learning the lore of the multiverse.",
-          skillProficiencies: ["Arcana", "History"],
+          id: 'sage',
+          name: 'Sage',
+          description: 'You spent years learning the lore of the multiverse.',
+          skillProficiencies: ['Arcana', 'History'],
           toolProficiencies: ["Calligrapher's Supplies"],
           languages: [],
-          languageOptions: { choose: 2, from: ["Any"] },
+          languageOptions: { choose: 2, from: ['Any'] },
           startingEquipment: [
-            { name: "Ink and Quill", quantity: 1 },
-            { name: "Small Knife", quantity: 1 },
-            { name: "Common Clothes", quantity: 1 },
+            { name: 'Ink and Quill', quantity: 1 },
+            { name: 'Small Knife', quantity: 1 },
+            { name: 'Common Clothes', quantity: 1 },
           ],
           startingMoney: { gp: 10 },
           feature: {
-            name: "Researcher",
-            description: "You know where to find information and who to ask.",
+            name: 'Researcher',
+            description: 'You know where to find information and who to ask.',
           },
-          feat: "Magic Initiate (Wizard)",
-          skillProfs: ["Arcana", "History"],
+          feat: 'Magic Initiate (Wizard)',
+          skillProfs: ['Arcana', 'History'],
           toolProf: "Calligrapher's Supplies",
-          equipmentChoice: "A or B",
-          abilityScores: ["Constitution", "Intelligence", "Wisdom"],
+          equipmentChoice: 'A or B',
+          abilityScores: ['Constitution', 'Intelligence', 'Wisdom'],
         },
         {
-          id: "soldier",
-          name: "Soldier",
+          id: 'soldier',
+          name: 'Soldier',
           description:
-            "You had a military career and are experienced in battle.",
-          skillProficiencies: ["Athletics", "Intimidation"],
-          toolProficiencies: ["Gaming Set"],
+            'You had a military career and are experienced in battle.',
+          skillProficiencies: ['Athletics', 'Intimidation'],
+          toolProficiencies: ['Gaming Set'],
           languages: [],
           languageOptions: null,
           startingEquipment: [
-            { name: "Uniform", quantity: 1 },
-            { name: "Belt Pouch", quantity: 1 },
-            { name: "Deck of Cards", quantity: 1 },
+            { name: 'Uniform', quantity: 1 },
+            { name: 'Belt Pouch', quantity: 1 },
+            { name: 'Deck of Cards', quantity: 1 },
           ],
           feature: {
-            name: "Military Rank",
-            description: "You have a military rank and soldiers loyal to you.",
+            name: 'Military Rank',
+            description: 'You have a military rank and soldiers loyal to you.',
           },
-          feat: "Savage Attacker",
-          skillProfs: ["Athletics", "Intimidation"],
-          toolProf: "Gaming Set (choice)",
-          equipmentChoice: "A or B",
-          abilityScores: ["Strength", "Dexterity", "Constitution"],
+          feat: 'Savage Attacker',
+          skillProfs: ['Athletics', 'Intimidation'],
+          toolProf: 'Gaming Set (choice)',
+          equipmentChoice: 'A or B',
+          abilityScores: ['Strength', 'Dexterity', 'Constitution'],
         },
         {
-          id: "hermit",
-          name: "Hermit",
+          id: 'hermit',
+          name: 'Hermit',
           description:
-            "You lived in seclusion for a formative part of your life.",
-          skillProficiencies: ["Medicine", "Religion"],
-          toolProficiencies: ["Herbalism Kit"],
+            'You lived in seclusion for a formative part of your life.',
+          skillProficiencies: ['Medicine', 'Religion'],
+          toolProficiencies: ['Herbalism Kit'],
           languages: [],
-          languageOptions: { choose: 1, from: ["Any"] },
+          languageOptions: { choose: 1, from: ['Any'] },
           startingEquipment: [
-            { name: "Herbalism Kit", quantity: 1 },
-            { name: "Scroll Case", quantity: 1 },
-            { name: "Winter Blanket", quantity: 1 },
+            { name: 'Herbalism Kit', quantity: 1 },
+            { name: 'Scroll Case', quantity: 1 },
+            { name: 'Winter Blanket', quantity: 1 },
           ],
           feature: {
-            name: "Discovery",
+            name: 'Discovery',
             description:
-              "You discovered a unique and powerful secret about the cosmos.",
+              'You discovered a unique and powerful secret about the cosmos.',
           },
-          feat: "Healer",
-          skillProfs: ["Medicine", "Religion"],
-          toolProf: "Herbalism Kit",
-          equipmentChoice: "A or B",
-          abilityScores: ["Intelligence", "Wisdom", "Charisma"],
+          feat: 'Healer',
+          skillProfs: ['Medicine', 'Religion'],
+          toolProf: 'Herbalism Kit',
+          equipmentChoice: 'A or B',
+          abilityScores: ['Intelligence', 'Wisdom', 'Charisma'],
         },
         {
-          id: "entertainer",
-          name: "Entertainer",
+          id: 'entertainer',
+          name: 'Entertainer',
           description:
-            "You thrive in front of an audience and know how to entrance them.",
-          skillProficiencies: ["Acrobatics", "Performance"],
-          toolProficiencies: ["Disguise Kit", "Musical Instrument"],
+            'You thrive in front of an audience and know how to entrance them.',
+          skillProficiencies: ['Acrobatics', 'Performance'],
+          toolProficiencies: ['Disguise Kit', 'Musical Instrument'],
           languages: [],
           languageOptions: null,
           instrumentOptions: {
             choose: 1,
             from: [
-              "Bagpipes",
-              "Drum",
-              "Dulcimer",
-              "Flute",
-              "Lute",
-              "Lyre",
-              "Horn",
-              "Pan Flute",
-              "Shawm",
-              "Viol",
+              'Bagpipes',
+              'Drum',
+              'Dulcimer',
+              'Flute',
+              'Lute',
+              'Lyre',
+              'Horn',
+              'Pan Flute',
+              'Shawm',
+              'Viol',
             ],
           },
           startingEquipment: [
-            { name: "Musical Instrument", quantity: 1 },
-            { name: "Costume", quantity: 1 },
-            { name: "Belt Pouch", quantity: 1 },
+            { name: 'Musical Instrument', quantity: 1 },
+            { name: 'Costume', quantity: 1 },
+            { name: 'Belt Pouch', quantity: 1 },
           ],
           feature: {
-            name: "By Popular Demand",
-            description: "You can perform in exchange for lodging and food.",
+            name: 'By Popular Demand',
+            description: 'You can perform in exchange for lodging and food.',
           },
-          feat: "Musician",
-          skillProfs: ["Acrobatics", "Performance"],
-          toolProf: "Musical Instrument (choice)",
-          equipmentChoice: "A or B",
-          abilityScores: ["Dexterity", "Constitution", "Charisma"],
+          feat: 'Musician',
+          skillProfs: ['Acrobatics', 'Performance'],
+          toolProf: 'Musical Instrument (choice)',
+          equipmentChoice: 'A or B',
+          abilityScores: ['Dexterity', 'Constitution', 'Charisma'],
         },
         {
-          id: "folk-hero",
-          name: "Folk Hero",
+          id: 'folk-hero',
+          name: 'Folk Hero',
           description:
-            "You come from a humble social rank, but you are destined for so much more.",
-          skillProficiencies: ["Animal Handling", "Survival"],
-          toolProficiencies: ["Vehicles (Land)"],
+            'You come from a humble social rank, but you are destined for so much more.',
+          skillProficiencies: ['Animal Handling', 'Survival'],
+          toolProficiencies: ['Vehicles (Land)'],
           toolOptions: {
             choose: 1,
             from: [
@@ -340,83 +341,83 @@ export const useCharacterStore = defineStore("character", {
           languageOptions: null,
           startingEquipment: [
             { name: "Artisan's Tools", quantity: 1 },
-            { name: "Shovel", quantity: 1 },
-            { name: "Common Clothes", quantity: 1 },
+            { name: 'Shovel', quantity: 1 },
+            { name: 'Common Clothes', quantity: 1 },
           ],
           feature: {
-            name: "Rustic Hospitality",
+            name: 'Rustic Hospitality',
             description:
-              "Common folk will provide you with simple accommodations and food.",
+              'Common folk will provide you with simple accommodations and food.',
           },
-          feat: "Tough",
-          skillProfs: ["Animal Handling", "Survival"],
+          feat: 'Tough',
+          skillProfs: ['Animal Handling', 'Survival'],
           toolProf: "Artisan's Tools (choice)",
-          equipmentChoice: "A or B",
-          abilityScores: ["Strength", "Constitution", "Wisdom"],
+          equipmentChoice: 'A or B',
+          abilityScores: ['Strength', 'Constitution', 'Wisdom'],
         },
         {
-          id: "noble",
-          name: "Noble",
+          id: 'noble',
+          name: 'Noble',
           description:
-            "You understand wealth, power, and privilege from birth.",
-          skillProficiencies: ["History", "Persuasion"],
-          toolProficiencies: ["Gaming Set"],
+            'You understand wealth, power, and privilege from birth.',
+          skillProficiencies: ['History', 'Persuasion'],
+          toolProficiencies: ['Gaming Set'],
           languages: [],
-          languageOptions: { choose: 1, from: ["Any"] },
+          languageOptions: { choose: 1, from: ['Any'] },
           startingEquipment: [
-            { name: "Fine Clothes", quantity: 1 },
-            { name: "Signet Ring", quantity: 1 },
-            { name: "Scroll of Pedigree", quantity: 1 },
+            { name: 'Fine Clothes', quantity: 1 },
+            { name: 'Signet Ring', quantity: 1 },
+            { name: 'Scroll of Pedigree', quantity: 1 },
           ],
           feature: {
-            name: "Position of Privilege",
+            name: 'Position of Privilege',
             description:
-              "You are welcome in high society and can secure audiences with nobles.",
+              'You are welcome in high society and can secure audiences with nobles.',
           },
-          feat: "Skilled",
-          skillProfs: ["History", "Persuasion"],
-          toolProf: "Gaming Set (choice)",
-          equipmentChoice: "A or B",
-          abilityScores: ["Intelligence", "Wisdom", "Charisma"],
+          feat: 'Skilled',
+          skillProfs: ['History', 'Persuasion'],
+          toolProf: 'Gaming Set (choice)',
+          equipmentChoice: 'A or B',
+          abilityScores: ['Intelligence', 'Wisdom', 'Charisma'],
         },
         {
-          id: "outlander",
-          name: "Outlander",
-          description: "You grew up in the wilds, far from civilization.",
-          skillProficiencies: ["Athletics", "Survival"],
-          toolProficiencies: ["Herbalism Kit", "Musical Instrument"],
+          id: 'outlander',
+          name: 'Outlander',
+          description: 'You grew up in the wilds, far from civilization.',
+          skillProficiencies: ['Athletics', 'Survival'],
+          toolProficiencies: ['Herbalism Kit', 'Musical Instrument'],
           languages: [],
-          languageOptions: { choose: 1, from: ["Any"] },
+          languageOptions: { choose: 1, from: ['Any'] },
           instrumentOptions: {
             choose: 1,
             from: [
-              "Bagpipes",
-              "Drum",
-              "Dulcimer",
-              "Flute",
-              "Lute",
-              "Lyre",
-              "Horn",
-              "Pan Flute",
-              "Shawm",
-              "Viol",
+              'Bagpipes',
+              'Drum',
+              'Dulcimer',
+              'Flute',
+              'Lute',
+              'Lyre',
+              'Horn',
+              'Pan Flute',
+              'Shawm',
+              'Viol',
             ],
           },
           startingEquipment: [
-            { name: "Staff", quantity: 1 },
-            { name: "Hunting Trap", quantity: 1 },
+            { name: 'Staff', quantity: 1 },
+            { name: 'Hunting Trap', quantity: 1 },
             { name: "Traveler's Clothes", quantity: 1 },
           ],
           feature: {
-            name: "Wanderer",
+            name: 'Wanderer',
             description:
-              "You have an excellent memory for geography and can find food and shelter.",
+              'You have an excellent memory for geography and can find food and shelter.',
           },
-          feat: "Magic Initiate (Druid)",
-          skillProfs: ["Athletics", "Survival"],
-          toolProf: "Herbalism Kit",
-          equipmentChoice: "A or B",
-          abilityScores: ["Strength", "Dexterity", "Wisdom"],
+          feat: 'Magic Initiate (Druid)',
+          skillProfs: ['Athletics', 'Survival'],
+          toolProf: 'Herbalism Kit',
+          equipmentChoice: 'A or B',
+          abilityScores: ['Strength', 'Dexterity', 'Wisdom'],
         },
       ];
       try {
@@ -437,7 +438,7 @@ export const useCharacterStore = defineStore("character", {
         this.isLoadingBackgrounds = false;
       }
     },
-    async loadEquipmentData() {
+    async loadEquipmentData () {
       this.isLoadingEquipment = true;
       this.equipmentError = null;
       try {
@@ -451,35 +452,35 @@ export const useCharacterStore = defineStore("character", {
         this.isLoadingEquipment = false;
       }
     },
-    setCharacter(data) {
+    setCharacter (data) {
       this.character = { ...this.character, ...data };
     },
-    setLoading(val) {
+    setLoading (val) {
       this.loading = val;
     },
-    setError(err) {
+    setError (err) {
       this.error = err;
     },
-    setCurrentStep(step) {
+    setCurrentStep (step) {
       this.currentStep = step;
     },
-    setAbilityGenerationMethod(method) {
+    setAbilityGenerationMethod (method) {
       this.abilityGenerationMethod = method;
     },
-    setRolledStats(stats) {
+    setRolledStats (stats) {
       this.rolledStats = stats;
     },
-    setRolling(val) {
+    setRolling (val) {
       this.rolling = val;
     },
-    setTimesRerolled(val) {
+    setTimesRerolled (val) {
       this.timesRerolled = val;
     },
-    reset() {
+    reset () {
       // Reset character to initial state
       this.$reset();
     },
-    async loadAllData() {
+    async loadAllData () {
       await Promise.all([
         this.loadSpeciesData(),
         this.loadClassData(),
@@ -489,29 +490,29 @@ export const useCharacterStore = defineStore("character", {
     },
 
     // Update species traits when species changes
-    updateSpeciesTraits() {
+    updateSpeciesTraits () {
       this.updateSpeciesTraitsWithStacking();
     },
 
     // Update class traits when class changes
-    updateClassTraits() {
-      console.log("DEBUG - updateClassTraits called");
-      console.log("DEBUG - character.class:", this.character.class);
+    updateClassTraits () {
+      console.log('DEBUG - updateClassTraits called');
+      console.log('DEBUG - character.class:', this.character.class);
       console.log(
-        "DEBUG - character.classDetails available:",
+        'DEBUG - character.classDetails available:',
         !!this.character.classDetails
       );
 
       // Use classDetails (detailed data) instead of classData (basic list)
       if (this.character.classDetails) {
         const selectedClass = this.character.classDetails;
-        console.log("DEBUG - found classDetails:", selectedClass.name);
+        console.log('DEBUG - found classDetails:', selectedClass.name);
         console.log(
-          "DEBUG - classDetails.armorTraining:",
+          'DEBUG - classDetails.armorTraining:',
           selectedClass.armorTraining
         );
         console.log(
-          "DEBUG - classDetails.weaponProficiencies:",
+          'DEBUG - classDetails.weaponProficiencies:',
           selectedClass.weaponProficiencies
         );
 
@@ -532,16 +533,16 @@ export const useCharacterStore = defineStore("character", {
 
         // Add class traits to stacking system
         if (selectedClass.features) {
-          this.addTraitsToSource("class", selectedClass.features);
+          this.addTraitsToSource('class', selectedClass.features);
         }
 
-        console.log("DEBUG - After assignment:");
+        console.log('DEBUG - After assignment:');
         console.log(
-          "DEBUG - character.armorTraining:",
+          'DEBUG - character.armorTraining:',
           this.character.armorTraining
         );
         console.log(
-          "DEBUG - character.weaponProficiencies:",
+          'DEBUG - character.weaponProficiencies:',
           this.character.weaponProficiencies
         );
 
@@ -552,12 +553,12 @@ export const useCharacterStore = defineStore("character", {
         // Initialize saving throw proficiencies
         this.character.savingThrowProficiencies = {};
         const abilityNames = [
-          "strength",
-          "dexterity",
-          "constitution",
-          "intelligence",
-          "wisdom",
-          "charisma",
+          'strength',
+          'dexterity',
+          'constitution',
+          'intelligence',
+          'wisdom',
+          'charisma',
         ];
         for (const ability of abilityNames) {
           this.character.savingThrowProficiencies[ability] = {
@@ -582,14 +583,14 @@ export const useCharacterStore = defineStore("character", {
     },
 
     // Update background traits when background changes
-    updateBackgroundTraits() {
+    updateBackgroundTraits () {
       // First, remove any existing background feats
       this.character.feats = this.character.feats.filter(
-        (feat) => feat.source !== "Background"
+        feat => feat.source !== 'Background'
       );
 
       const selectedBackground = this.backgroundData.find(
-        (b) => b.id === this.character.background
+        b => b.id === this.character.background
       );
       if (selectedBackground) {
         this.character.backgroundDetails = selectedBackground;
@@ -612,7 +613,7 @@ export const useCharacterStore = defineStore("character", {
         for (const toolProf of toolProfs) {
           if (
             toolProf &&
-            !toolProf.includes("(choice)") &&
+            !toolProf.includes('(choice)') &&
             !this.character.toolProficiencies.includes(toolProf)
           ) {
             this.character.toolProficiencies.push(toolProf);
@@ -623,7 +624,7 @@ export const useCharacterStore = defineStore("character", {
         if (selectedBackground.feat) {
           this.character.feats.push({
             name: selectedBackground.feat,
-            source: "Background",
+            source: 'Background',
             description: `Feat granted by ${selectedBackground.name} background`,
           });
         }
@@ -634,10 +635,10 @@ export const useCharacterStore = defineStore("character", {
           backgroundTraits.push({
             name: selectedBackground.feature.name,
             description: selectedBackground.feature.description,
-            source: "background",
+            source: 'background',
           });
         }
-        this.addTraitsToSource("background", backgroundTraits);
+        this.addTraitsToSource('background', backgroundTraits);
 
         // Note: Background equipment is handled by buildBackgroundEquipment() method
         // to avoid duplicates and properly manage equipment sources
@@ -652,7 +653,7 @@ export const useCharacterStore = defineStore("character", {
     },
 
     // Calculate starting gold based on class
-    calculateStartingGold() {
+    calculateStartingGold () {
       const classGoldTable = {
         barbarian: { dice: 2, sides: 4, multiplier: 10 },
         bard: { dice: 5, sides: 4, multiplier: 10 },
@@ -684,7 +685,7 @@ export const useCharacterStore = defineStore("character", {
     },
 
     // Spend gold for equipment
-    spendGold(amount) {
+    spendGold (amount) {
       if (this.character.coins.gp >= amount) {
         this.character.coins.gp -= amount;
         return true;
@@ -693,18 +694,18 @@ export const useCharacterStore = defineStore("character", {
     },
 
     // Add equipment to inventory
-    addEquipment(item) {
+    addEquipment (item) {
       this.character.equipment.push({
         ...item,
-        source: "purchased",
+        source: 'purchased',
         equipped: false,
       });
     },
 
     // Remove equipment from inventory
-    removeEquipment(itemName) {
+    removeEquipment (itemName) {
       const index = this.character.equipment.findIndex(
-        (item) => item.name === itemName
+        item => item.name === itemName
       );
       if (index > -1) {
         this.character.equipment.splice(index, 1);
@@ -712,15 +713,15 @@ export const useCharacterStore = defineStore("character", {
     },
 
     // Equipment choice management
-    setEquipmentChoices(choices) {
+    setEquipmentChoices (choices) {
       this.character.equipmentChoices = [...choices];
     },
 
-    getEquipmentChoices() {
+    getEquipmentChoices () {
       return this.character.equipmentChoices || [];
     },
 
-    updateEquipmentChoice(choiceIndex, optionIndex) {
+    updateEquipmentChoice (choiceIndex, optionIndex) {
       if (!this.character.equipmentChoices) {
         this.character.equipmentChoices = [];
       }
@@ -728,7 +729,7 @@ export const useCharacterStore = defineStore("character", {
     },
 
     // Get total gold value
-    getTotalGoldValue() {
+    getTotalGoldValue () {
       return (
         this.character.coins.gp +
         this.character.coins.sp / 10 +
@@ -738,10 +739,10 @@ export const useCharacterStore = defineStore("character", {
     },
 
     // Ability Score Bonus Management
-    applyAbilityScoreBonuses(source, bonuses) {
+    applyAbilityScoreBonuses (source, bonuses) {
       if (!Array.isArray(bonuses)) return;
 
-      bonuses.forEach((bonus) => {
+      bonuses.forEach(bonus => {
         const abilityName = bonus.ability?.toLowerCase();
         if (abilityName && this.character.abilityScores[abilityName]) {
           this.character.abilityScores[abilityName].bonuses[source] =
@@ -750,16 +751,16 @@ export const useCharacterStore = defineStore("character", {
       });
     },
 
-    removeAbilityScoreBonuses(source) {
-      Object.keys(this.character.abilityScores).forEach((ability) => {
+    removeAbilityScoreBonuses (source) {
+      Object.keys(this.character.abilityScores).forEach(ability => {
         if (this.character.abilityScores[ability].bonuses[source]) {
           delete this.character.abilityScores[ability].bonuses[source];
         }
       });
     },
 
-    calculateFinalAbilityScores() {
-      Object.keys(this.character.abilityScores).forEach((ability) => {
+    calculateFinalAbilityScores () {
+      Object.keys(this.character.abilityScores).forEach(ability => {
         const abilityData = this.character.abilityScores[ability];
         const bonusTotal = Object.values(abilityData.bonuses).reduce(
           (sum, bonus) => sum + bonus,
@@ -779,18 +780,18 @@ export const useCharacterStore = defineStore("character", {
     },
 
     // Lineage Change Handler
-    updateLineageTraits(newLineageId) {
+    updateLineageTraits (newLineageId) {
       // Remove old lineage bonuses
-      this.removeAbilityScoreBonuses("lineage");
+      this.removeAbilityScoreBonuses('lineage');
 
       // Apply new lineage bonuses
       if (newLineageId && this.character.speciesDetails?.lineages) {
         const selectedLineage = this.character.speciesDetails.lineages.find(
-          (l) => l.id === newLineageId
+          l => l.id === newLineageId
         );
         if (selectedLineage && selectedLineage.abilityBonus) {
           this.applyAbilityScoreBonuses(
-            "lineage",
+            'lineage',
             selectedLineage.abilityBonus
           );
         }
@@ -807,24 +808,24 @@ export const useCharacterStore = defineStore("character", {
     },
 
     // Trait Stacking System
-    addTraitsToSource(source, traits) {
+    addTraitsToSource (source, traits) {
       if (!Array.isArray(traits)) return;
-      this.character.derivedTraits[source] = traits.map((trait) => ({
+      this.character.derivedTraits[source] = traits.map(trait => ({
         name: trait.name,
-        description: trait.description || trait.desc || "",
-        source: source,
+        description: trait.description || trait.desc || '',
+        source,
         index: trait.index || null,
       }));
       this.combineTraits();
     },
 
-    combineTraits() {
+    combineTraits () {
       const allTraits = [];
 
       // Combine traits from all sources
-      Object.keys(this.character.derivedTraits).forEach((source) => {
+      Object.keys(this.character.derivedTraits).forEach(source => {
         if (
-          source !== "combined" &&
+          source !== 'combined' &&
           Array.isArray(this.character.derivedTraits[source])
         ) {
           allTraits.push(...this.character.derivedTraits[source]);
@@ -835,14 +836,14 @@ export const useCharacterStore = defineStore("character", {
       const uniqueTraits = [];
       const traitNames = new Set();
 
-      allTraits.forEach((trait) => {
+      allTraits.forEach(trait => {
         if (!traitNames.has(trait.name)) {
           uniqueTraits.push(trait);
           traitNames.add(trait.name);
         } else {
           // Handle trait conflicts - prefer more specific sources
           const existingIndex = uniqueTraits.findIndex(
-            (t) => t.name === trait.name
+            t => t.name === trait.name
           );
           if (existingIndex !== -1) {
             const existing = uniqueTraits[existingIndex];
@@ -867,16 +868,16 @@ export const useCharacterStore = defineStore("character", {
     },
 
     // Enhanced Species Traits Update
-    updateSpeciesTraitsWithStacking() {
+    updateSpeciesTraitsWithStacking () {
       const selectedSpecies = this.speciesData.find(
-        (s) => s.id === this.character.species
+        s => s.id === this.character.species
       );
       if (selectedSpecies) {
         this.character.speciesDetails = selectedSpecies;
         this.character.size = selectedSpecies.size;
         this.character.speed = selectedSpecies.speed;
 
-        if (selectedSpecies.id === "human") {
+        if (selectedSpecies.id === 'human') {
           this.character.hasHeroicInspiration = true;
         }
 
@@ -887,40 +888,40 @@ export const useCharacterStore = defineStore("character", {
 
         // Apply species ability score bonuses
         this.applyAbilityScoreBonuses(
-          "species",
+          'species',
           selectedSpecies.abilityBonus || []
         );
 
         // Add species traits
-        this.addTraitsToSource("species", selectedSpecies.traits || []);
+        this.addTraitsToSource('species', selectedSpecies.traits || []);
 
         // Apply lineage bonuses and traits if applicable
         if (this.character.speciesLineage && selectedSpecies.lineages) {
           const selectedLineage = selectedSpecies.lineages.find(
-            (l) => l.id === this.character.speciesLineage
+            l => l.id === this.character.speciesLineage
           );
           if (selectedLineage) {
             if (selectedLineage.abilityBonus) {
               this.applyAbilityScoreBonuses(
-                "lineage",
+                'lineage',
                 selectedLineage.abilityBonus
               );
             }
             if (selectedLineage.traits) {
-              this.addTraitsToSource("lineage", selectedLineage.traits);
+              this.addTraitsToSource('lineage', selectedLineage.traits);
             }
           }
         }
       } else {
         this.character.speciesDetails = null;
-        this.character.size = "";
+        this.character.size = '';
         this.character.speed = 0;
         this.character.hasHeroicInspiration = false;
         this.character.speciesLineage = null;
 
         // Remove species and lineage bonuses/traits
-        this.removeAbilityScoreBonuses("species");
-        this.removeAbilityScoreBonuses("lineage");
+        this.removeAbilityScoreBonuses('species');
+        this.removeAbilityScoreBonuses('lineage');
         this.character.derivedTraits.species = [];
         this.character.derivedTraits.lineage = [];
         this.combineTraits();
@@ -931,7 +932,7 @@ export const useCharacterStore = defineStore("character", {
     },
 
     // Validation System
-    validateCharacterBonuses() {
+    validateCharacterBonuses () {
       const issues = [];
 
       // Validate ability score bonuses are applied
@@ -939,7 +940,7 @@ export const useCharacterStore = defineStore("character", {
         this.character.species &&
         this.character.speciesDetails?.abilityBonus
       ) {
-        this.character.speciesDetails.abilityBonus.forEach((bonus) => {
+        this.character.speciesDetails.abilityBonus.forEach(bonus => {
           const abilityName = bonus.ability?.toLowerCase();
           if (abilityName && this.character.abilityScores[abilityName]) {
             const appliedBonus =
@@ -963,10 +964,10 @@ export const useCharacterStore = defineStore("character", {
         this.character.speciesDetails?.lineages
       ) {
         const selectedLineage = this.character.speciesDetails.lineages.find(
-          (l) => l.id === this.character.speciesLineage
+          l => l.id === this.character.speciesLineage
         );
         if (selectedLineage?.abilityBonus) {
-          selectedLineage.abilityBonus.forEach((bonus) => {
+          selectedLineage.abilityBonus.forEach(bonus => {
             const abilityName = bonus.ability?.toLowerCase();
             if (abilityName && this.character.abilityScores[abilityName]) {
               const appliedBonus =
@@ -986,7 +987,7 @@ export const useCharacterStore = defineStore("character", {
       }
 
       // Validate final scores are calculated
-      Object.keys(this.character.abilityScores).forEach((ability) => {
+      Object.keys(this.character.abilityScores).forEach(ability => {
         const abilityData = this.character.abilityScores[ability];
         const expectedFinal =
           abilityData.score +
@@ -999,7 +1000,7 @@ export const useCharacterStore = defineStore("character", {
         if (abilityData.finalScore !== clampedFinal) {
           issues.push(
             `Final score for ${ability} not calculated correctly. Expected: ${clampedFinal}, Found: ${
-              abilityData.finalScore || "undefined"
+              abilityData.finalScore || 'undefined'
             }`
           );
         }
@@ -1020,28 +1021,28 @@ export const useCharacterStore = defineStore("character", {
           this.character.derivedTraits.class.length > 0 ||
           this.character.derivedTraits.background.length > 0)
       ) {
-        issues.push("Traits are not being combined properly");
+        issues.push('Traits are not being combined properly');
       }
 
       return {
         isValid: issues.length === 0,
-        issues: issues,
+        issues,
       };
     },
 
-    validateAndRecalculate() {
+    validateAndRecalculate () {
       this.calculateFinalAbilityScores();
       this.combineTraits();
       return this.validateCharacterBonuses();
     },
 
     // Debug helper to inspect current bonuses
-    debugBonuses() {
-      console.log("=== Character Bonuses Debug ===");
-      console.log("Species:", this.character.species);
-      console.log("Lineage:", this.character.speciesLineage);
-      console.log("Ability Scores with Bonuses:");
-      Object.keys(this.character.abilityScores).forEach((ability) => {
+    debugBonuses () {
+      console.log('=== Character Bonuses Debug ===');
+      console.log('Species:', this.character.species);
+      console.log('Lineage:', this.character.speciesLineage);
+      console.log('Ability Scores with Bonuses:');
+      Object.keys(this.character.abilityScores).forEach(ability => {
         const data = this.character.abilityScores[ability];
         console.log(`  ${ability}:`, {
           base: data.score,
@@ -1050,16 +1051,16 @@ export const useCharacterStore = defineStore("character", {
           modifier: data.modifier,
         });
       });
-      console.log("Derived Traits:", this.character.derivedTraits);
+      console.log('Derived Traits:', this.character.derivedTraits);
       const validation = this.validateCharacterBonuses();
-      console.log("Validation:", validation);
+      console.log('Validation:', validation);
       return validation;
     },
 
     // Initialize character from loaded data
-    initializeFromLoadedData() {
+    initializeFromLoadedData () {
       // Ensure bonuses object exists on all ability scores
-      Object.keys(this.character.abilityScores).forEach((ability) => {
+      Object.keys(this.character.abilityScores).forEach(ability => {
         if (!this.character.abilityScores[ability].bonuses) {
           this.character.abilityScores[ability].bonuses = {};
         }
@@ -1085,28 +1086,28 @@ export const useCharacterStore = defineStore("character", {
     // =====================================
 
     // Clear all equipment and start fresh
-    clearInventory() {
+    clearInventory () {
       this.character.equipment = [];
-      console.log("Inventory cleared");
+      console.log('Inventory cleared');
     },
 
     // Add item to inventory with source tracking
-    addToInventory(item, source = "unknown") {
+    addToInventory (item, source = 'unknown') {
       if (!item || !item.name) {
-        console.warn("Cannot add invalid item to inventory:", item);
+        console.warn('Cannot add invalid item to inventory:', item);
         return;
       }
 
       const inventoryItem = {
         name: item.name,
         quantity: item.quantity || 1,
-        source: source,
-        description: item.description || "",
-        type: item.type || "",
-        properties: item.properties || "",
-        damage: item.damage || "",
-        ac: item.ac || "",
-        cost: item.cost || "",
+        source,
+        description: item.description || '',
+        type: item.type || '',
+        properties: item.properties || '',
+        damage: item.damage || '',
+        ac: item.ac || '',
+        cost: item.cost || '',
       };
 
       this.character.equipment.push(inventoryItem);
@@ -1117,8 +1118,8 @@ export const useCharacterStore = defineStore("character", {
     },
 
     // Remove item from inventory
-    removeFromInventory(itemName, source = null) {
-      const index = this.character.equipment.findIndex((item) => {
+    removeFromInventory (itemName, source = null) {
+      const index = this.character.equipment.findIndex(item => {
         if (source) {
           return item.name === itemName && item.source === source;
         }
@@ -1137,8 +1138,8 @@ export const useCharacterStore = defineStore("character", {
     },
 
     // Update item quantity in inventory
-    updateInventoryQuantity(itemName, newQuantity, source = null) {
-      const item = this.character.equipment.find((item) => {
+    updateInventoryQuantity (itemName, newQuantity, source = null) {
+      const item = this.character.equipment.find(item => {
         if (source) {
           return item.name === itemName && item.source === source;
         }
@@ -1154,12 +1155,12 @@ export const useCharacterStore = defineStore("character", {
     },
 
     // Build inventory from class equipment choices
-    buildClassEquipment() {
-      console.log("Building class equipment...");
+    buildClassEquipment () {
+      console.log('Building class equipment...');
 
       // Remove existing class equipment
       this.character.equipment = this.character.equipment.filter(
-        (item) => !["class", "class-default"].includes(item.source)
+        item => !['class', 'class-default'].includes(item.source)
       );
 
       // Add equipment from choices
@@ -1174,8 +1175,8 @@ export const useCharacterStore = defineStore("character", {
           const selectedOption = choice.options[selectedOptionIndex];
 
           if (selectedOption && selectedOption.items) {
-            selectedOption.items.forEach((item) => {
-              this.addToInventory(item, "class");
+            selectedOption.items.forEach(item => {
+              this.addToInventory(item, 'class');
             });
           }
         }
@@ -1184,84 +1185,84 @@ export const useCharacterStore = defineStore("character", {
       // Add starting equipment (avoid duplicates)
       const startingEquipment =
         this.character.classDetails?.startingEquipment || [];
-      const existingItems = this.character.equipment.map((item) =>
+      const existingItems = this.character.equipment.map(item =>
         item.name.toLowerCase()
       );
 
-      startingEquipment.forEach((item) => {
+      startingEquipment.forEach(item => {
         if (!existingItems.includes(item.name.toLowerCase())) {
-          this.addToInventory(item, "class-default");
+          this.addToInventory(item, 'class-default');
         }
       });
 
-      console.log("Class equipment built");
+      console.log('Class equipment built');
     },
 
     // Build inventory from background
-    buildBackgroundEquipment() {
-      console.log("Building background equipment...");
+    buildBackgroundEquipment () {
+      console.log('Building background equipment...');
 
       // Remove existing background equipment
       this.character.equipment = this.character.equipment.filter(
-        (item) => item.source !== "background"
+        item => item.source !== 'background'
       );
 
       // Add background equipment
       const backgroundEquipment =
         this.character.backgroundDetails?.equipment || [];
-      backgroundEquipment.forEach((item) => {
-        this.addToInventory(item, "background");
+      backgroundEquipment.forEach(item => {
+        this.addToInventory(item, 'background');
       });
 
-      console.log("Background equipment built");
+      console.log('Background equipment built');
     },
 
     // Build basic starting equipment all characters get
-    buildBasicStartingEquipment() {
-      console.log("Building basic starting equipment...");
+    buildBasicStartingEquipment () {
+      console.log('Building basic starting equipment...');
 
       // Remove existing basic equipment
       this.character.equipment = this.character.equipment.filter(
-        (item) => item.source !== "basic"
+        item => item.source !== 'basic'
       );
 
       // Basic equipment all characters should have
       const basicEquipment = [
         {
-          name: "Common Clothes",
-          type: "Clothing",
+          name: 'Common Clothes',
+          type: 'Clothing',
           quantity: 1,
-          description: "Simple everyday clothing suitable for adventure",
+          description: 'Simple everyday clothing suitable for adventure',
         },
         {
-          name: "Pouch",
-          type: "Container",
+          name: 'Pouch',
+          type: 'Container',
           quantity: 1,
           description:
-            "A cloth or leather pouch for carrying coins and small items",
+            'A cloth or leather pouch for carrying coins and small items',
         },
       ];
 
-      basicEquipment.forEach((item) => {
-        this.addToInventory(item, "basic");
+      basicEquipment.forEach(item => {
+        this.addToInventory(item, 'basic');
       });
 
-      console.log("Basic starting equipment built");
+      console.log('Basic starting equipment built');
     },
 
     // Rebuild entire inventory from current character state
-    rebuildInventory() {
+    rebuildInventory () {
       // Debounce rapid rebuild calls
       if (this._rebuildTimer) {
         clearTimeout(this._rebuildTimer);
       }
 
       this._rebuildTimer = setTimeout(() => {
-        console.log("=== REBUILDING COMPLETE INVENTORY ===");
+        console.log('=== REBUILDING COMPLETE INVENTORY ===');
 
         // Save purchased items (if any)
         const purchasedItems = this.character.equipment.filter(
-          (item) => item.source === "purchased"
+          item => item.source === 'purchased'
         );
 
         // Clear inventory
@@ -1273,17 +1274,17 @@ export const useCharacterStore = defineStore("character", {
         this.buildBasicStartingEquipment();
 
         // Re-add purchased items
-        purchasedItems.forEach((item) => {
-          this.addToInventory(item, "purchased");
+        purchasedItems.forEach(item => {
+          this.addToInventory(item, 'purchased');
         });
 
         console.log(
-          "Inventory rebuild complete. Total items:",
+          'Inventory rebuild complete. Total items:',
           this.character.equipment.length
         );
         console.log(
-          "Final inventory:",
-          this.character.equipment.map((i) => `${i.name} (${i.source})`)
+          'Final inventory:',
+          this.character.equipment.map(i => `${i.name} (${i.source})`)
         );
 
         this._rebuildTimer = null;
@@ -1291,10 +1292,10 @@ export const useCharacterStore = defineStore("character", {
     },
 
     // Get current inventory with proper grouping and quantities
-    getCurrentInventory() {
+    getCurrentInventory () {
       const itemMap = new Map();
 
-      this.character.equipment.forEach((item) => {
+      this.character.equipment.forEach(item => {
         const key = item.name.toLowerCase();
 
         if (itemMap.has(key)) {
@@ -1314,7 +1315,7 @@ export const useCharacterStore = defineStore("character", {
         }
       });
 
-      return Array.from(itemMap.values()).map((item) => ({
+      return Array.from(itemMap.values()).map(item => ({
         ...item,
         displayName:
           item.quantity > 1 ? `${item.name} (${item.quantity})` : item.name,
@@ -1322,7 +1323,7 @@ export const useCharacterStore = defineStore("character", {
     },
 
     // Handle equipment choice selection
-    selectEquipmentChoice(choiceIndex, optionIndex) {
+    selectEquipmentChoice (choiceIndex, optionIndex) {
       console.log(
         `Selecting equipment choice ${choiceIndex}, option ${optionIndex}`
       );

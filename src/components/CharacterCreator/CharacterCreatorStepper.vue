@@ -12,8 +12,13 @@
         <br>Using fallback data instead.
       </v-alert>
 
-      <v-stepper v-model="localCurrentStep" editable elevation="2" :items="stepItems"
-        :mobile="$vuetify.display.mdAndDown">
+      <v-stepper
+        v-model="localCurrentStep"
+        editable
+        elevation="2"
+        :items="stepItems"
+        :mobile="$vuetify.display.mdAndDown"
+      >
         <template #next-text="{ next }">
           <!-- Current step: {{ localCurrentStep }} -->
           <v-btn v-if="localCurrentStep < 5" color="primary" variant="elevated" @click="next">
@@ -23,20 +28,35 @@
 
         <template #actions="{ next, prev }">
           <div class="navigation-buttons" :class="{ 'mobile-nav': $vuetify.display.smAndDown }">
-            <v-btn v-if="localCurrentStep > 1" :size="$vuetify.display.smAndDown ? 'small' : 'default'" variant="text"
-              @click="prev">
+            <v-btn
+              v-if="localCurrentStep > 1"
+              :size="$vuetify.display.smAndDown ? 'small' : 'default'"
+              variant="text"
+              @click="prev"
+            >
               <v-icon v-if="$vuetify.display.smAndDown" icon="mdi-chevron-left" />
               <span v-else>Previous</span>
             </v-btn>
             <v-spacer />
-            <v-btn v-if="localCurrentStep < 5" color="primary" :size="$vuetify.display.smAndDown ? 'small' : 'default'"
-              variant="elevated" @click="next">
+            <v-btn
+              v-if="localCurrentStep < 5"
+              color="primary"
+              :size="$vuetify.display.smAndDown ? 'small' : 'default'"
+              variant="elevated"
+              @click="next"
+            >
               <span v-if="!$vuetify.display.smAndDown">Next</span>
               <v-icon v-else icon="mdi-chevron-right" />
             </v-btn>
-            <v-btn v-else-if="localCurrentStep === 5" class="save-character-btn-centered" color="success"
+            <v-btn
+              v-else-if="localCurrentStep === 5"
+              class="save-character-btn-centered"
+              color="success"
               :prepend-icon="$vuetify.display.smAndDown ? undefined : 'mdi-content-save'"
-              :size="$vuetify.display.smAndDown ? 'default' : 'x-large'" variant="elevated" @click="saveCharacter">
+              :size="$vuetify.display.smAndDown ? 'default' : 'x-large'"
+              variant="elevated"
+              @click="saveCharacter"
+            >
               <v-icon v-if="$vuetify.display.smAndDown" class="me-2" icon="mdi-content-save" />
               Save Character
             </v-btn>
@@ -83,90 +103,90 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue'
-import AbilityScores from './steps/AbilityScores.vue'
-import CharacterInformation from './steps/CharacterInformation.vue'
-import CharacterSummary from './steps/CharacterSummary.vue'
-import InventoryEquipment from './steps/InventoryEquipment.vue'
-import SkillsProficiencies from './steps/SkillsProficiencies.vue'
+  import { ref, watch } from 'vue'
+  import AbilityScores from './steps/AbilityScores.vue'
+  import CharacterInformation from './steps/CharacterInformation.vue'
+  import CharacterSummary from './steps/CharacterSummary.vue'
+  import InventoryEquipment from './steps/InventoryEquipment.vue'
+  import SkillsProficiencies from './steps/SkillsProficiencies.vue'
 
-const props = defineProps({
-  character: {
-    type: Object,
-    required: true,
-  },
-  characterData: {
-    type: Object,
-    required: true,
-  },
-  currentStep: {
-    type: Number,
-    default: 1,
-  },
-})
+  const props = defineProps({
+    character: {
+      type: Object,
+      required: true,
+    },
+    characterData: {
+      type: Object,
+      required: true,
+    },
+    currentStep: {
+      type: Number,
+      default: 1,
+    },
+  })
 
-const emit = defineEmits(['update:current-step', 'submit-character'])
+  const emit = defineEmits(['update:current-step', 'submit-character'])
 
-const localCurrentStep = ref(props.currentStep)
+  const localCurrentStep = ref(props.currentStep)
 
-// Save character function
-const saveCharacter = () => {
-  console.log('Save Character button clicked on step:', localCurrentStep.value)
-  emit('submit-character')
-}
+  // Save character function
+  const saveCharacter = () => {
+    console.log('Save Character button clicked on step:', localCurrentStep.value)
+    emit('submit-character')
+  }
 
-// Watch for external currentStep changes
-watch(() => props.currentStep, newStep => {
-  console.log('External step change:', newStep)
-  localCurrentStep.value = newStep
-})
+  // Watch for external currentStep changes
+  watch(() => props.currentStep, newStep => {
+    console.log('External step change:', newStep)
+    localCurrentStep.value = newStep
+  })
 
-// Watch for local step changes and emit them
-watch(localCurrentStep, newStep => {
-  console.log('Local step change to:', newStep)
-  emit('update:current-step', newStep)
-})
+  // Watch for local step changes and emit them
+  watch(localCurrentStep, newStep => {
+    console.log('Local step change to:', newStep)
+    emit('update:current-step', newStep)
+  })
 
-// Function to determine if a step should be enabled (optional validation)
-const isStepEnabled = stepValue => {
-  // Allow clicking on any step for now - you can add validation later
-  // For example: return stepValue <= maxAllowedStep.value
-  return true
-}
+  // Function to determine if a step should be enabled (optional validation)
+  const isStepEnabled = stepValue => {
+    // Allow clicking on any step for now - you can add validation later
+    // For example: return stepValue <= maxAllowedStep.value
+    return true
+  }
 
-// Enhanced step items with better mobile-friendly titles
-const stepItems = [
-  {
-    title: 'Character Info',
-    subtitle: 'Species, Class, Background',
-    value: 1,
-    icon: 'mdi-account-edit',
-  },
-  {
-    title: 'Abilities',
-    subtitle: 'Ability Scores',
-    value: 2,
-    icon: 'mdi-dice-6',
-  },
-  {
-    title: 'Skills & Proficiencies',
-    subtitle: 'What You Know',
-    value: 3,
-    icon: 'mdi-brain',
-  },
-  {
-    title: 'Inventory & Equipment',
-    subtitle: 'What You Own',
-    value: 4,
-    icon: 'mdi-package-variant',
-  },
-  {
-    title: 'Summary',
-    subtitle: 'Review & Save',
-    value: 5,
-    icon: 'mdi-check-circle',
-  },
-]
+  // Enhanced step items with better mobile-friendly titles
+  const stepItems = [
+    {
+      title: 'Character Info',
+      subtitle: 'Species, Class, Background',
+      value: 1,
+      icon: 'mdi-account-edit',
+    },
+    {
+      title: 'Abilities',
+      subtitle: 'Ability Scores',
+      value: 2,
+      icon: 'mdi-dice-6',
+    },
+    {
+      title: 'Skills & Proficiencies',
+      subtitle: 'What You Know',
+      value: 3,
+      icon: 'mdi-brain',
+    },
+    {
+      title: 'Inventory & Equipment',
+      subtitle: 'What You Own',
+      value: 4,
+      icon: 'mdi-package-variant',
+    },
+    {
+      title: 'Summary',
+      subtitle: 'Review & Save',
+      value: 5,
+      icon: 'mdi-check-circle',
+    },
+  ]
 </script>
 
 <style scoped>
@@ -404,5 +424,11 @@ const stepItems = [
 .navigation-buttons:has(.save-character-btn-centered) {
   padding: 36px 24px;
   margin: 24px 0;
+}
+
+@media (max-width: 960px) {
+  .v-stepper {
+    --v-stepper-header-padding: 1rem;
+  }
 }
 </style>

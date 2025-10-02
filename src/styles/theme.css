@@ -1,5 +1,9 @@
 /* Global Theme Variables and Styles */
 
+body {
+  min-width: 320px;
+}
+
 /* Default CSS Custom Properties - these will be updated by the theme system */
 :root {
   /* Card background for separation */

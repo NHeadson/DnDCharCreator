@@ -1,15 +1,15 @@
 <template>
   <v-card class="character-header-card mb-6">
     <v-row class="dense-form align-center" no-gutters>
-      <!-- Character Portrait (Smaller) -->
+      <!-- Character Portrait -->
       <v-col class="px-6 py-4" cols="12" sm="2">
         <div class="character-portrait-container">
-          <div class="character-portrait" @click="uploadPortrait">
+          <div class="character-portrait" @click="isPortraitSelectorOpen = true">
             <v-img
               class="portrait-image"
               cover
               height="100"
-              :src="character.portrait"
+              :src="character.portrait || ''"
               width="100"
             >
               <template #placeholder>
@@ -25,46 +25,47 @@
         </div>
       </v-col>
 
-      <!-- Character Name (Prominent) -->
-      <v-col class="px-6 py-4" cols="12" sm="4">
-        <div class="character-name-section">
-          <v-text-field
-            v-model="character.name"
-            class="character-name-input"
-            density="compact"
-            hide-details
-            placeholder="Enter Character Name"
-            variant="outlined"
-          >
-            <template #append-inner>
-              <v-btn
-                color="primary"
-                icon
-                :loading="isGeneratingName"
-                size="small"
-                variant="text"
-                @click="generateRandomName"
-              >
-                <v-icon size="24">mdi-dice-6</v-icon>
-                <v-tooltip activator="parent" location="top">Generate random name</v-tooltip>
-              </v-btn>
-            </template>
-          </v-text-field>
-        </div>
+      <!-- Character & Player Name -->
+      <v-col class="px-6 py-4" cols="12" sm="7">
+        <v-row dense>
+          <v-col cols="12" md="8">
+            <v-text-field
+              v-model="character.name"
+              class="character-name-input"
+              density="compact"
+              hide-details
+              :placeholder="$vuetify.display.mobile ? 'Character Name' : 'Enter Character Name'"
+              variant="outlined"
+            >
+              <template #append-inner>
+                <v-btn
+                  class="random-name-btn"
+                  color="primary"
+                  icon
+                  :loading="isGeneratingName"
+                  size="small"
+                  variant="text"
+                  @click="generateRandomName"
+                >
+                  <v-icon size="24">mdi-dice-6</v-icon>
+                  <v-tooltip activator="parent" location="top">Generate random name</v-tooltip>
+                </v-btn>
+              </template>
+            </v-text-field>
+          </v-col>
+          <v-col cols="12" md="4">
+            <v-text-field
+              v-model="character.playerName"
+              density="compact"
+              hide-details
+              label="Player Name"
+              variant="outlined"
+            />
+          </v-col>
+        </v-row>
       </v-col>
 
-      <!-- Player Name -->
-      <v-col class="px-6 py-4" cols="12" sm="3">
-        <v-text-field
-          v-model="character.playerName"
-          density="compact"
-          hide-details
-          label="Player Name"
-          variant="outlined"
-        />
-      </v-col>
-
-      <!-- Level & XP (Display Only) -->
+      <!-- Level & XP -->
       <v-col class="px-6 py-4" cols="12" sm="3">
         <v-row dense no-gutters>
           <v-col class="pe-2" cols="6">
@@ -83,10 +84,16 @@
       </v-col>
     </v-row>
   </v-card>
+  <PortraitSelector
+    v-model="isPortraitSelectorOpen"
+    :character-race="character.species"
+    @select="handlePortraitSelect"
+  />
 </template>
 
 <script setup>
   import { ref } from 'vue'
+  import PortraitSelector from './PortraitSelector.vue'
 
   const props = defineProps({
     character: {
@@ -100,21 +107,12 @@
   })
 
   const isGeneratingName = ref(false)
-
-  const alignmentOptions = [
-    'Lawful Good',
-    'Neutral Good',
-    'Chaotic Good',
-    'Lawful Neutral',
-    'True Neutral',
-    'Chaotic Neutral',
-    'Lawful Evil',
-    'Neutral Evil',
-    'Chaotic Evil',
-  ]
+  const isPortraitSelectorOpen = ref(false)
 
   // Initialize character properties if they don't exist
   if (!props.character.playerName) props.character.playerName = ''
+  if (!props.character.portrait) props.character.portrait = ''
+
 
   const generateRandomName = async () => {
     if (!props.characterData?.generateName) {
@@ -157,9 +155,12 @@
     props.character.name = `${firstName} ${lastName}`
   }
 
-  const uploadPortrait = () => {
-    // TODO: Implement portrait upload functionality
-    console.log('Portrait upload clicked')
+  const handlePortraitSelect = selection => {
+    props.character.portrait = selection.url;
+    if (selection.race) {
+      props.character.species = selection.race;
+    }
+    isPortraitSelectorOpen.value = false
   }
 </script>
 
@@ -198,8 +199,6 @@
 
 .portrait-image {
   transition: all 0.3s ease;
-  width: 80%;
-  height: 80%;
 }
 
 .character-portrait:hover .portrait-image {
@@ -268,24 +267,6 @@
   }
 }
 
-/* Read-only field styling - no hover effects */
-:deep(.readonly-field) {
-  .v-field {
-    background-color: var(--v-theme-surface-variant);
-    opacity: 0.8;
-  }
-
-  .v-field--focused {
-    box-shadow: none !important;
-  }
-
-  .v-field__input {
-    color: var(--v-theme-on-surface-variant);
-    font-weight: 400;
-  }
-}
-
-
 /* Stat display styling */
 .stat-display {
   display: flex;
@@ -298,7 +279,6 @@
   justify-content: center;
 }
 
-/* Use secondary color for background, and theme-on-secondary for text */
 .stat-secondary-bg {
   background-color: var(--theme-secondary);
 }
@@ -321,17 +301,6 @@
   font-size: 1.1rem;
   font-weight: 600;
   color: var(--v-theme-on-surface);
-}
-
-/* Switch styling */
-:deep(.v-switch) {
-  .v-switch__track {
-    opacity: 0.3;
-  }
-
-  .v-switch__thumb {
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  }
 }
 
 /* Button styling */
@@ -381,6 +350,12 @@
 @media (max-width: 600px) {
   .character-name-section :deep(.character-name-input .v-field__input) {
     font-size: 1rem;
+  }
+
+  .random-name-btn {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    min-width: 36px !important;
   }
 
   /* Stack vertically on mobile */

@@ -13,8 +13,13 @@
           <v-chip v-if="character.speciesLineage" color="primary" size="small" variant="elevated" />
         </div>
         <v-chip-group v-if="character.speciesDetails.abilityBonus?.length" class="ma-0">
-          <v-chip v-for="bonus in character.speciesDetails.abilityBonus" :key="bonus.ability" v-chip <
-            color="blue" /></v-chip-group>
+          <v-chip
+            v-for="bonus in character.speciesDetails.abilityBonus"
+            :key="bonus.ability"
+            v-chip
+            <
+            color="blue"
+          /></v-chip-group>
       </div>
 
       <!-- Quick Stats Row -->
@@ -44,8 +49,10 @@
       </div>
 
       <!-- Languages & Other Info -->
-      <v-row v-if="character.speciesDetails.languages?.length || character.speciesDetails.damageResistance?.length"
-        dense>
+      <v-row
+        v-if="character.speciesDetails.languages?.length || character.speciesDetails.damageResistance?.length"
+        dense
+      >
         <v-col v-if="character.speciesDetails.languages?.length" cols="12" sm="6" />
         <v-col v-if="character.speciesDetails.damageResistance?.length" cols="12" sm="6" />
       </v-row>
@@ -62,64 +69,64 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
+  import { computed } from 'vue'
 
-const props = defineProps({
-  character: {
-    type: Object,
-    required: true,
-  },
-  characterData: {
-    type: Object,
-    required: true,
-  },
-})
+  const props = defineProps({
+    character: {
+      type: Object,
+      required: true,
+    },
+    characterData: {
+      type: Object,
+      required: true,
+    },
+  })
 
-// Computed property for lineage-specific traits
-const lineageTraits = computed(() => {
-  if (!props.character.speciesLineage || !props.character.speciesDetails?.lineages) {
-    return []
+  // Computed property for lineage-specific traits
+  const lineageTraits = computed(() => {
+    if (!props.character.speciesLineage || !props.character.speciesDetails?.lineages) {
+      return []
+    }
+
+    const lineage = props.character.speciesDetails.lineages.find(
+      l => l.name.toLowerCase() === props.character.speciesLineage.toLowerCase()
+    )
+
+    return lineage?.traits || []
+  })
+
+  // Get key differentiators for each lineage/subrace
+  const getLineageHighlights = lineage => {
+    const highlights = {
+      // Elf lineages
+      'High Elf': 'Extra cantrip, weapon training, bonus language',
+      'Wood Elf': 'Keen senses, mask of the wild, elf weapon training',
+      'Dark Elf (Drow)': 'Superior darkvision, drow magic, sunlight sensitivity',
+      'Drow': 'Superior darkvision, drow magic, sunlight sensitivity',
+
+      // Dwarf lineages
+      'Hill Dwarf': 'Dwarven toughness, extra hit points per level',
+      'Mountain Dwarf': 'Armor proficiency, more robust and hardy',
+
+      // Halfling lineages
+      'Lightfoot': 'Naturally stealthy, social and charming',
+      'Lightfoot Halfling': 'Naturally stealthy, social and charming',
+      'Stout': 'Poison resistance, hardy constitution',
+      'Stout Halfling': 'Poison resistance, hardy constitution',
+
+      // Gnome lineages
+      'Forest Gnome': 'Speak with animals, natural illusionist',
+      'Rock Gnome': 'Tinker abilities, tool expertise',
+
+      // Human variants
+      'Variant Human': 'Extra feat, extra skill, flexible and adaptable',
+
+      // Default fallback
+      'default': 'Unique traits and abilities',
+    }
+
+    return highlights[lineage.name] || highlights['default']
   }
-
-  const lineage = props.character.speciesDetails.lineages.find(
-    l => l.name.toLowerCase() === props.character.speciesLineage.toLowerCase()
-  )
-
-  return lineage?.traits || []
-})
-
-// Get key differentiators for each lineage/subrace
-const getLineageHighlights = lineage => {
-  const highlights = {
-    // Elf lineages
-    'High Elf': 'Extra cantrip, weapon training, bonus language',
-    'Wood Elf': 'Keen senses, mask of the wild, elf weapon training',
-    'Dark Elf (Drow)': 'Superior darkvision, drow magic, sunlight sensitivity',
-    'Drow': 'Superior darkvision, drow magic, sunlight sensitivity',
-
-    // Dwarf lineages
-    'Hill Dwarf': 'Dwarven toughness, extra hit points per level',
-    'Mountain Dwarf': 'Armor proficiency, more robust and hardy',
-
-    // Halfling lineages
-    'Lightfoot': 'Naturally stealthy, social and charming',
-    'Lightfoot Halfling': 'Naturally stealthy, social and charming',
-    'Stout': 'Poison resistance, hardy constitution',
-    'Stout Halfling': 'Poison resistance, hardy constitution',
-
-    // Gnome lineages
-    'Forest Gnome': 'Speak with animals, natural illusionist',
-    'Rock Gnome': 'Tinker abilities, tool expertise',
-
-    // Human variants
-    'Variant Human': 'Extra feat, extra skill, flexible and adaptable',
-
-    // Default fallback
-    'default': 'Unique traits and abilities',
-  }
-
-  return highlights[lineage.name] || highlights['default']
-}
 </script>
 
 <style scoped>

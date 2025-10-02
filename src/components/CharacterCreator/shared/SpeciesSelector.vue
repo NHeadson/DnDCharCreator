@@ -8,20 +8,37 @@
             <span class="text-subtitle-1 text-md-h6">Species Selection</span>
           </v-card-title>
           <v-card-text class="pt-2 pb-3">
-            <v-select v-model="character.species" :density="$vuetify.display.smAndDown ? 'comfortable' : 'compact'"
-              :error="!!characterData?.speciesError" :error-messages="characterData?.speciesError" item-title="name"
-              item-value="id" :items="characterData?.speciesData || []" label="Choose Your Species"
-              :loading="characterData?.isLoadingSpecies" variant="outlined" @update:model-value="onSpeciesChange">
+            <v-select
+              v-model="character.species"
+              :density="$vuetify.display.smAndDown ? 'comfortable' : 'compact'"
+              :error="!!characterData?.speciesError"
+              :error-messages="characterData?.speciesError"
+              item-title="name"
+              item-value="id"
+              :items="characterData?.speciesData || []"
+              label="Choose Your Species"
+              :loading="characterData?.isLoadingSpecies"
+              variant="outlined"
+              @update:model-value="onSpeciesChange"
+            >
               <template #prepend>
                 <v-icon color="primary" size="small">mdi-account-group</v-icon>
               </template>
             </v-select>
 
             <!-- Subspecies/Lineage Selection -->
-            <v-select v-if="character.species && availableLineages.length > 0" v-model="character.speciesLineage"
-              class="mt-3" :density="$vuetify.display.smAndDown ? 'comfortable' : 'compact'" item-title="name"
-              item-value="id" :items="availableLineages" label="Choose Your Lineage/Subrace" variant="outlined"
-              @update:model-value="onLineageChange">
+            <v-select
+              v-if="character.species && availableLineages.length > 0"
+              v-model="character.speciesLineage"
+              class="mt-3"
+              :density="$vuetify.display.smAndDown ? 'comfortable' : 'compact'"
+              item-title="name"
+              item-value="id"
+              :items="availableLineages"
+              label="Choose Your Lineage/Subrace"
+              variant="outlined"
+              @update:model-value="onLineageChange"
+            >
               <template #prepend>
                 <v-icon color="secondary" size="small">mdi-family-tree</v-icon>
               </template>
@@ -50,19 +67,29 @@
             </div>
           </v-card-text>
         </v-card>
-        <v-card v-else-if="selectedSpeciesInfo" class="text-blue-grey-lighten-5 species-preview-card"
-          style="padding-right: 24px;" variant="tonal">
+        <v-card
+          v-else-if="selectedSpeciesInfo"
+          class="text-blue-grey-lighten-5 species-preview-card"
+          style="padding-right: 24px;"
+          variant="tonal"
+        >
           <v-card-title class="d-flex align-center justify-space-between py-2">
             <div class="d-flex align-center">
               <v-icon class="text-blue-grey-darken-2 me-2" size="small">mdi-dna</v-icon>
               <span class="text-subtitle-1 font-weight-bold">{{ selectedSpeciesInfo.name }}</span>
             </div>
-            <div v-if="selectedSpeciesInfo.abilityBonus && selectedSpeciesInfo.abilityBonus.length"
-              class="d-flex flex-column align-end">
+            <div
+              v-if="selectedSpeciesInfo.abilityBonus && selectedSpeciesInfo.abilityBonus.length"
+              class="d-flex flex-column align-end"
+            >
               <span class="text-caption text-grey-darken-1 mb-1" style="font-size: 0.85em;">Ability Bonuses</span>
               <div style="display: flex; gap: 6px; flex-wrap: wrap;">
-                <v-tooltip v-for="bonus in selectedSpeciesInfo.abilityBonus" :key="'bonus-' + bonus.ability"
-                  location="top" :text="'Bonus to ' + bonus.ability">
+                <v-tooltip
+                  v-for="bonus in selectedSpeciesInfo.abilityBonus"
+                  :key="'bonus-' + bonus.ability"
+                  location="top"
+                  :text="'Bonus to ' + bonus.ability"
+                >
                   <template #activator="{ props }">
                     <v-chip v-bind="props" color="blue" size="small" variant="tonal">
                       +{{ bonus.bonus }} {{ bonus.ability.slice(0, 3) }}
@@ -95,8 +122,12 @@
                     <v-icon size="small" start>mdi-run</v-icon>
                     {{ selectedSpeciesInfo.speed }}ft
                   </v-chip>
-                  <v-chip v-if="effectiveDarkvision !== null && effectiveDarkvision !== undefined" color="purple"
-                    size="small" variant="tonal">
+                  <v-chip
+                    v-if="effectiveDarkvision !== null && effectiveDarkvision !== undefined"
+                    color="purple"
+                    size="small"
+                    variant="tonal"
+                  >
                     <v-icon size="small" start>mdi-eye</v-icon>
                     {{ effectiveDarkvision }}ft vision
                   </v-chip>
@@ -116,8 +147,12 @@
               </div>
               <div class="ms-3">
                 <div style="display: flex; gap: 6px; flex-wrap: wrap;">
-                  <v-tooltip v-for="trait in selectedSpeciesInfo.traits" :key="'trait-' + trait.name" location="top"
-                    :text="trait.desc || 'A special trait of this species'">
+                  <v-tooltip
+                    v-for="trait in selectedSpeciesInfo.traits"
+                    :key="'trait-' + trait.name"
+                    location="top"
+                    :text="trait.desc || 'A special trait of this species'"
+                  >
                     <template #activator="{ props }">
                       <v-chip v-bind="props" color="amber-lighten-4" size="small" variant="tonal">
                         {{ trait.name }}
@@ -136,8 +171,12 @@
               </div>
               <div class="ms-3">
                 <div style="display: flex; gap: 6px; flex-wrap: wrap;">
-                  <v-tooltip v-for="lang in selectedSpeciesInfo.languages" :key="'lang-' + lang" location="top"
-                    :text="'A language your species can speak'">
+                  <v-tooltip
+                    v-for="lang in selectedSpeciesInfo.languages"
+                    :key="'lang-' + lang"
+                    location="top"
+                    :text="'A language your species can speak'"
+                  >
                     <template #activator="{ props }">
                       <v-chip v-bind="props" color="indigo" size="small" variant="tonal">
                         {{ lang }}
@@ -166,12 +205,17 @@
                   </div>
                 </template>
                 <template v-else>
-                  <div class="lineage-options-row"
-                    :style="selectedSpeciesInfo.lineages.length === 3 ? 'display: flex; gap: 6px; flex-wrap: nowrap; justify-content: space-between;' : ''">
-                    <div v-for="lineage in selectedSpeciesInfo.lineages" :key="lineage.id"
+                  <div
+                    class="lineage-options-row"
+                    :style="selectedSpeciesInfo.lineages.length === 3 ? 'display: flex; gap: 6px; flex-wrap: nowrap; justify-content: space-between;' : ''"
+                  >
+                    <div
+                      v-for="lineage in selectedSpeciesInfo.lineages"
+                      :key="lineage.id"
                       class="lineage-option-card compact"
                       :class="[character.speciesLineage === lineage.id ? 'selected-lineage' : '', 'lineage-option-card', 'compact']"
-                      :style="selectedSpeciesInfo.lineages.length === 3 ? 'flex: 1 1 0; min-width: 0; max-width: 33%;' : ''">
+                      :style="selectedSpeciesInfo.lineages.length === 3 ? 'flex: 1 1 0; min-width: 0; max-width: 33%;' : ''"
+                    >
                       <div class="d-flex align-center justify-space-between">
                         <span class="text-caption font-weight-bold text-grey">{{ lineage.name }}</span>
                       </div>
@@ -194,176 +238,176 @@
 </template>
 
 <script setup>
-import { computed, ref, watch } from 'vue'
+  import { computed, ref, watch } from 'vue'
 
-const props = defineProps({
-  character: {
-    type: Object,
-    required: true,
-  },
-  characterData: {
-    type: Object,
-    required: true,
-  },
-})
+  const props = defineProps({
+    character: {
+      type: Object,
+      required: true,
+    },
+    characterData: {
+      type: Object,
+      required: true,
+    },
+  })
 
-const activeSubrace = ref(0)
-const availableLineages = ref([])
+  const activeSubrace = ref(0)
+  const availableLineages = ref([])
 
-const selectedSpeciesInfo = computed(() => {
-  if (!props.character.species || !props.characterData?.speciesData) {
-    return null
-  }
+  const selectedSpeciesInfo = computed(() => {
+    if (!props.character.species || !props.characterData?.speciesData) {
+      return null
+    }
 
-  // speciesData is a ref, so we need to access its value
-  const info = props.characterData.speciesData.find(
-    species => species.id === props.character.species,
-  )
-  if (!info) return null
+    // speciesData is a ref, so we need to access its value
+    const info = props.characterData.speciesData.find(
+      species => species.id === props.character.species,
+    )
+    if (!info) return null
 
-  // Normalize languages: always array of strings
-  let languages = []
-  if (Array.isArray(info.languages)) {
-    languages = info.languages.map(l => typeof l === 'string' ? l : (l?.name || l?.index || String(l)))
-  } else if (typeof info.languages === 'string') {
-    languages = [info.languages]
-  }
+    // Normalize languages: always array of strings
+    let languages = []
+    if (Array.isArray(info.languages)) {
+      languages = info.languages.map(l => typeof l === 'string' ? l : (l?.name || l?.index || String(l)))
+    } else if (typeof info.languages === 'string') {
+      languages = [info.languages]
+    }
 
-  // Fallback for common races if languages is empty
-  if ((!languages || !languages.length) && info.id === 'dragonborn') {
-    languages = ['Common', 'Draconic']
-  } else if ((!languages || !languages.length) && info.id === 'dwarf') {
-    languages = ['Common', 'Dwarvish']
-  } else if ((!languages || !languages.length) && info.id === 'elf') {
-    languages = ['Common', 'Elvish']
-  } else if ((!languages || !languages.length) && info.id === 'half-elf') {
-    languages = ['Common', 'Elvish']
-  } else if ((!languages || !languages.length) && info.id === 'half-orc') {
-    languages = ['Common', 'Orc']
-  } else if ((!languages || !languages.length) && info.id === 'gnome') {
-    languages = ['Common', 'Gnomish']
-  } else if ((!languages || !languages.length) && info.id === 'halfling') {
-    languages = ['Common', 'Halfling']
-  } else if ((!languages || !languages.length) && info.id === 'tiefling') {
-    languages = ['Common', 'Infernal']
-  } else if ((!languages || !languages.length) && info.id === 'human') {
-    languages = ['Common']
-  }
-
-
-  // Normalize lineages: always array, fallback to subraces if present
-  let lineages = [];
-  if (Array.isArray(info.lineages) && info.lineages.length > 0) {
-    lineages = info.lineages.map(sub => ({
-      id: sub.id || sub.index || sub.name?.toLowerCase().replace(/\s+/g, '_'),
-      name: sub.name || sub.index,
-      desc: sub.desc || sub.description || '',
-    }));
-  } else if (Array.isArray(info.subraces) && info.subraces.length > 0) {
-    // Some API data may use 'subraces' instead of 'lineages'
-    lineages = info.subraces.map(sub => ({
-      id: sub.index || sub.name?.toLowerCase().replace(/\s+/g, '_'),
-      name: sub.name || sub.index,
-      desc: sub.desc || sub.description || '',
-    }));
-  }
-
-  return {
-    ...info,
-    languages,
-    lineages,
-  }
-})
+    // Fallback for common races if languages is empty
+    if ((!languages || !languages.length) && info.id === 'dragonborn') {
+      languages = ['Common', 'Draconic']
+    } else if ((!languages || !languages.length) && info.id === 'dwarf') {
+      languages = ['Common', 'Dwarvish']
+    } else if ((!languages || !languages.length) && info.id === 'elf') {
+      languages = ['Common', 'Elvish']
+    } else if ((!languages || !languages.length) && info.id === 'half-elf') {
+      languages = ['Common', 'Elvish']
+    } else if ((!languages || !languages.length) && info.id === 'half-orc') {
+      languages = ['Common', 'Orc']
+    } else if ((!languages || !languages.length) && info.id === 'gnome') {
+      languages = ['Common', 'Gnomish']
+    } else if ((!languages || !languages.length) && info.id === 'halfling') {
+      languages = ['Common', 'Halfling']
+    } else if ((!languages || !languages.length) && info.id === 'tiefling') {
+      languages = ['Common', 'Infernal']
+    } else if ((!languages || !languages.length) && info.id === 'human') {
+      languages = ['Common']
+    }
 
 
-// Watch for species changes to load lineages
-watch(() => props.character.species, newSpeciesId => {
-  const info = props.characterData.speciesData.find(
-    species => species.id === newSpeciesId,
-  );
-  let lineages = [];
-  if (info) {
+    // Normalize lineages: always array, fallback to subraces if present
+    let lineages = [];
     if (Array.isArray(info.lineages) && info.lineages.length > 0) {
-      lineages = info.lineages;
+      lineages = info.lineages.map(sub => ({
+        id: sub.id || sub.index || sub.name?.toLowerCase().replace(/\s+/g, '_'),
+        name: sub.name || sub.index,
+        desc: sub.desc || sub.description || '',
+      }));
     } else if (Array.isArray(info.subraces) && info.subraces.length > 0) {
+      // Some API data may use 'subraces' instead of 'lineages'
       lineages = info.subraces.map(sub => ({
         id: sub.index || sub.name?.toLowerCase().replace(/\s+/g, '_'),
         name: sub.name || sub.index,
+        desc: sub.desc || sub.description || '',
       }));
     }
-  }
-  availableLineages.value = lineages;
-  // Clear lineage selection when species changes
-  props.character.speciesLineage = null;
-}, { immediate: true })
 
-const onSpeciesChange = () => {
-  // Update species details when species changes
-  if (props.character.species && selectedSpeciesInfo.value) {
-    props.character.speciesDetails = selectedSpeciesInfo.value
-  }
+    return {
+      ...info,
+      languages,
+      lineages,
+    }
+  })
 
-  // Call the original update function if it exists
-  if (props.characterData?.updateSpeciesTraits) {
-    props.characterData.updateSpeciesTraits()
-  }
-}
 
-// Get key differentiators for each lineage/subrace
-const onLineageChange = () => {
-  // Update lineage traits when lineage changes
-  if (props.characterData?.updateLineageTraits) {
-    props.characterData.updateLineageTraits(props.character.speciesLineage)
-  }
-}
+  // Watch for species changes to load lineages
+  watch(() => props.character.species, newSpeciesId => {
+    const info = props.characterData.speciesData.find(
+      species => species.id === newSpeciesId,
+    );
+    let lineages = [];
+    if (info) {
+      if (Array.isArray(info.lineages) && info.lineages.length > 0) {
+        lineages = info.lineages;
+      } else if (Array.isArray(info.subraces) && info.subraces.length > 0) {
+        lineages = info.subraces.map(sub => ({
+          id: sub.index || sub.name?.toLowerCase().replace(/\s+/g, '_'),
+          name: sub.name || sub.index,
+        }));
+      }
+    }
+    availableLineages.value = lineages;
+    // Clear lineage selection when species changes
+    props.character.speciesLineage = null;
+  }, { immediate: true })
 
-const effectiveDarkvision = computed(() => {
-  if (!selectedSpeciesInfo.value) return null;
-  // If a lineage is selected and it's Drow/Dark Elf, override to 120ft
-  const drowNames = ['Drow', 'Dark Elf (Drow)', 'dark_elf_(drow)', 'drow'];
-  const selectedLineage = selectedSpeciesInfo.value.lineages?.find(l => l.id === props.character.speciesLineage);
-  if (
-    selectedLineage &&
-    (drowNames.includes(selectedLineage.name) || drowNames.includes(selectedLineage.id))
-  ) {
-    return 120;
-  }
-  // Only return null if darkvision is truly missing or 0
-  const dv = selectedSpeciesInfo.value.darkvision;
-  return (typeof dv === 'number' && dv > 0) ? dv : null;
-});
+  const onSpeciesChange = () => {
+    // Update species details when species changes
+    if (props.character.species && selectedSpeciesInfo.value) {
+      props.character.speciesDetails = selectedSpeciesInfo.value
+    }
 
-const getLineageHighlights = lineage => {
-  const highlights = {
-    // Elf lineages
-    'High Elf': 'Extra cantrip, weapon training, bonus language',
-    'Wood Elf': 'Keen senses, mask of the wild, elf weapon training',
-    'Dark Elf (Drow)': 'Superior darkvision, drow magic, sunlight sensitivity',
-    'Drow': 'Superior darkvision, drow magic, sunlight sensitivity',
-
-    // Dwarf lineages
-    'Hill Dwarf': 'Dwarven toughness, extra hit points per level',
-    'Mountain Dwarf': 'Armor proficiency, more robust and hardy',
-
-    // Halfling lineages
-    'Lightfoot': 'Naturally stealthy, social and charming',
-    'Lightfoot Halfling': 'Naturally stealthy, social and charming',
-    'Stout': 'Poison resistance, hardy constitution',
-    'Stout Halfling': 'Poison resistance, hardy constitution',
-
-    // Gnome lineages
-    'Forest Gnome': 'Speak with animals, natural illusionist',
-    'Rock Gnome': 'Tinker abilities, tool expertise',
-
-    // Human variants
-    'Variant Human': 'Extra feat, extra skill, flexible and adaptable',
-
-    // Default fallback
-    'default': 'Unique traits and abilities',
+    // Call the original update function if it exists
+    if (props.characterData?.updateSpeciesTraits) {
+      props.characterData.updateSpeciesTraits()
+    }
   }
 
-  return highlights[lineage.name] || highlights['default']
-}
+  // Get key differentiators for each lineage/subrace
+  const onLineageChange = () => {
+    // Update lineage traits when lineage changes
+    if (props.characterData?.updateLineageTraits) {
+      props.characterData.updateLineageTraits(props.character.speciesLineage)
+    }
+  }
+
+  const effectiveDarkvision = computed(() => {
+    if (!selectedSpeciesInfo.value) return null;
+    // If a lineage is selected and it's Drow/Dark Elf, override to 120ft
+    const drowNames = ['Drow', 'Dark Elf (Drow)', 'dark_elf_(drow)', 'drow'];
+    const selectedLineage = selectedSpeciesInfo.value.lineages?.find(l => l.id === props.character.speciesLineage);
+    if (
+      selectedLineage &&
+      (drowNames.includes(selectedLineage.name) || drowNames.includes(selectedLineage.id))
+    ) {
+      return 120;
+    }
+    // Only return null if darkvision is truly missing or 0
+    const dv = selectedSpeciesInfo.value.darkvision;
+    return (typeof dv === 'number' && dv > 0) ? dv : null;
+  });
+
+  const getLineageHighlights = lineage => {
+    const highlights = {
+      // Elf lineages
+      'High Elf': 'Extra cantrip, weapon training, bonus language',
+      'Wood Elf': 'Keen senses, mask of the wild, elf weapon training',
+      'Dark Elf (Drow)': 'Superior darkvision, drow magic, sunlight sensitivity',
+      'Drow': 'Superior darkvision, drow magic, sunlight sensitivity',
+
+      // Dwarf lineages
+      'Hill Dwarf': 'Dwarven toughness, extra hit points per level',
+      'Mountain Dwarf': 'Armor proficiency, more robust and hardy',
+
+      // Halfling lineages
+      'Lightfoot': 'Naturally stealthy, social and charming',
+      'Lightfoot Halfling': 'Naturally stealthy, social and charming',
+      'Stout': 'Poison resistance, hardy constitution',
+      'Stout Halfling': 'Poison resistance, hardy constitution',
+
+      // Gnome lineages
+      'Forest Gnome': 'Speak with animals, natural illusionist',
+      'Rock Gnome': 'Tinker abilities, tool expertise',
+
+      // Human variants
+      'Variant Human': 'Extra feat, extra skill, flexible and adaptable',
+
+      // Default fallback
+      'default': 'Unique traits and abilities',
+    }
+
+    return highlights[lineage.name] || highlights['default']
+  }
 </script>
 
 <style scoped>

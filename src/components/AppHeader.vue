@@ -332,6 +332,10 @@
 .hamburger-btn {
   color: var(--theme-on-primary, #F5F5DC) !important;
   transition: all 0.3s ease;
+  border-radius: 8px !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  min-width: 40px !important;
 }
 
 .hamburger-btn:hover {
@@ -401,8 +405,8 @@
   display: none !important;
 }
 
-/* At 1117px and below, show hamburger menu */
-@media (max-width: 1117px) {
+/* At 800px and below, show hamburger menu */
+@media (max-width: 800px) {
   .nav-buttons-desktop {
     display: none !important;
   }
@@ -544,6 +548,16 @@
 
   .nav-btn .v-icon {
     font-size: 0.9rem !important;
+  }
+}
+
+@media (max-width: 1280px) {
+  .nav-text {
+    display: none;
+  }
+
+  .nav-btn {
+    min-width: 60px !important;
   }
 }
 </style>

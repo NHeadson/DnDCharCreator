@@ -32,6 +32,7 @@ declare module 'vue' {
     FeaturesAndTraits: typeof import('./src/components/CharacterCreator/steps/FeaturesAndTraits.vue')['default']
     InventoryEquipment: typeof import('./src/components/CharacterCreator/steps/InventoryEquipment.vue')['default']
     InventoryEquipmentMockup: typeof import('./src/components/Mockups/InventoryEquipmentMockup.vue')['default']
+    PortraitSelector: typeof import('./src/components/CharacterCreator/shared/PortraitSelector.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     SkillsProficiencies: typeof import('./src/components/CharacterCreator/steps/SkillsProficiencies.vue')['default']

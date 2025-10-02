@@ -10,4 +10,18 @@
 
 </script>
 
-<style scoped></style>
+<style scoped>
+.v-footer {
+  border-top: 1px solid rgba(var(--v-border-color), var(--v-border-opacity));
+  padding: 0 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (max-width: 600px) {
+  .v-footer {
+    font-size: 0.8rem;
+  }
+}
+</style>
