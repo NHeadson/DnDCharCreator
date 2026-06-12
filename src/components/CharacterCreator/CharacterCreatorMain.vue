@@ -312,7 +312,7 @@ const handleSubmitCharacter = async () => {
 const viewCharacters = () => {
   showSuccessDialog.value = false
   // Force page refresh to clear form state
-  window.location.href = '/characters'
+  window.location.href = '/'
 }
 
 const createAnother = () => {
