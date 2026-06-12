@@ -1,15 +1,2 @@
-{
-  "firestore": {
-    "rules": "firestore.rules"
-  },
-  "hosting": {
-    "public": "dist",
-    "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
-    "rewrites": [
-      {
-        "source": "**",
-        "destination": "/index.html"
-      }
-    ]
-  }
-}
+{ "firestore": { "rules": "firestore.rules" }, "hosting": { "site": "dndcharcreator-93e5a", "public": "dist", "ignore": ["firebase.json", "**/.*", "**/node_modules/**"], "rewrites": [ { "source":
+"**", "destination": "/index.html" } ] } }

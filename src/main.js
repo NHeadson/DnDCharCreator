@@ -22,9 +22,21 @@ const firebaseConfig = {
   appId: import.meta.env.VITE_FIREBASE_APP_ID,
 }
 
+const missingFirebaseKeys = Object.entries(firebaseConfig)
+  .filter(([, value]) => !value)
+  .map(([key]) => key)
+
+if (missingFirebaseKeys.length) {
+  const missing = missingFirebaseKeys.join(', ')
+  throw new Error(
+    `Missing Firebase environment variables: ${missing}. ` +
+      'Set these in your local .env file or your deployment environment before building.'
+  )
+}
+
 const app = initializeApp(firebaseConfig)
 const db = getFirestore(app)
-const auth = getAuth()
+const auth = getAuth(app)
 onAuthStateChanged(auth, (user) => {
   if (!user) {
     signInAnonymously(auth)

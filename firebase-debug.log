@@ -1,0 +1,56 @@
+[debug] [2026-06-12T20:26:57.164Z] ----------------------------------------------------------------------
+[debug] [2026-06-12T20:26:57.167Z] Command:       C:\Program Files\nodejs\node.exe E:\Projects\dnd-form\node_modules\firebase-tools\lib\bin\firebase.js deploy
+[debug] [2026-06-12T20:26:57.168Z] CLI Version:   15.20.0
+[debug] [2026-06-12T20:26:57.168Z] Platform:      win32
+[debug] [2026-06-12T20:26:57.168Z] Node Version:  v24.16.0
+[debug] [2026-06-12T20:26:57.168Z] Time:          Fri Jun 12 2026 15:26:57 GMT-0500 (Central Daylight Time)
+[debug] [2026-06-12T20:26:57.168Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2026-06-12T20:26:57.170Z] >>> [apiv2][query] GET https://firebase-public.firebaseio.com/cli.json [none]
+[debug] [2026-06-12T20:26:58.588Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-06-12T20:26:58.589Z] > authorizing via signed-in user (headsonnick@gmail.com)
+[debug] [2026-06-12T20:26:58.589Z] [iam] checking project dndcharcreator-93e5a for permissions ["datastore.indexes.create","datastore.indexes.delete","datastore.indexes.list","datastore.indexes.update","firebase.projects.get","firebasehosting.sites.update"]
+[debug] [2026-06-12T20:26:58.590Z] Checked if tokens are valid: false, expires at: 1758225048791
+[debug] [2026-06-12T20:26:58.590Z] Checked if tokens are valid: false, expires at: 1758225048791
+[debug] [2026-06-12T20:26:58.590Z] > refreshing access token with scopes: []
+[debug] [2026-06-12T20:26:58.591Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2026-06-12T20:26:58.591Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-06-12T20:26:58.664Z] <<< [apiv2][status] GET https://firebase-public.firebaseio.com/cli.json 200
+[debug] [2026-06-12T20:26:58.664Z] <<< [apiv2][body] GET https://firebase-public.firebaseio.com/cli.json {"cloudBuildErrorAfter":1594252800000,"cloudBuildWarnAfter":1590019200000,"defaultNode10After":1594252800000,"minVersion":"3.0.5","node8DeploysDisabledAfter":1613390400000,"node8RuntimeDisabledAfter":1615809600000,"node8WarnAfter":1600128000000}
+[debug] [2026-06-12T20:26:58.729Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 400
+[debug] [2026-06-12T20:26:58.729Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-06-12T20:26:58.730Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/dndcharcreator-93e5a:testIamPermissions [none]
+[debug] [2026-06-12T20:26:58.730Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/dndcharcreator-93e5a:testIamPermissions  x-goog-user-project=dndcharcreator-93e5a
+[debug] [2026-06-12T20:26:58.730Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/dndcharcreator-93e5a:testIamPermissions {"permissions":["datastore.indexes.create","datastore.indexes.delete","datastore.indexes.list","datastore.indexes.update","firebase.projects.get","firebasehosting.sites.update"]}
+[debug] [2026-06-12T20:26:58.867Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/dndcharcreator-93e5a:testIamPermissions 401
+[debug] [2026-06-12T20:26:58.867Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/dndcharcreator-93e5a:testIamPermissions {"error":{"code":401,"message":"Request had invalid authentication credentials. Expected OAuth 2 access token, login cookie or other valid authentication credential. See https://developers.google.com/identity/sign-in/web/devconsole-project.","status":"UNAUTHENTICATED","details":[{"@type":"type.googleapis.com/google.rpc.ErrorInfo","reason":"ACCESS_TOKEN_TYPE_UNSUPPORTED","metadata":{"method":"google.cloudresourcemanager.v1.Projects.TestIamPermissions","service":"cloudresourcemanager.googleapis.com"}}]}}
+[debug] [2026-06-12T20:26:58.867Z] Got a 401 Unauthenticated error for a call that required authentication. Refreshing tokens.
+[debug] [2026-06-12T20:26:58.867Z] Checked if tokens are valid: false, expires at: 1758225048791
+[debug] [2026-06-12T20:26:58.867Z] Checked if tokens are valid: false, expires at: 1758225048791
+[debug] [2026-06-12T20:26:58.867Z] > refreshing access token with scopes: []
+[debug] [2026-06-12T20:26:58.867Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2026-06-12T20:26:58.867Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-06-12T20:26:58.915Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 400
+[debug] [2026-06-12T20:26:58.915Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-06-12T20:26:58.916Z] [iam] error while checking permissions, command may fail: Request to https://cloudresourcemanager.googleapis.com/v1/projects/dndcharcreator-93e5a:testIamPermissions had HTTP Error: 401, Request had invalid authentication credentials. Expected OAuth 2 access token, login cookie or other valid authentication credential. See https://developers.google.com/identity/sign-in/web/devconsole-project.
+[debug] [2026-06-12T20:26:58.916Z] Checked if tokens are valid: false, expires at: 1758225048791
+[debug] [2026-06-12T20:26:58.917Z] Checked if tokens are valid: false, expires at: 1758225048791
+[debug] [2026-06-12T20:26:58.917Z] > refreshing access token with scopes: []
+[debug] [2026-06-12T20:26:58.917Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2026-06-12T20:26:58.917Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-06-12T20:26:58.970Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 400
+[debug] [2026-06-12T20:26:58.970Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-06-12T20:26:58.970Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/dndcharcreator-93e5a [none]
+[debug] [2026-06-12T20:26:59.057Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/dndcharcreator-93e5a 401
+[debug] [2026-06-12T20:26:59.057Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/dndcharcreator-93e5a {"error":{"code":401,"message":"Request had invalid authentication credentials. Expected OAuth 2 access token, login cookie or other valid authentication credential. See https://developers.google.com/identity/sign-in/web/devconsole-project.","status":"UNAUTHENTICATED"}}
+[debug] [2026-06-12T20:26:59.057Z] Got a 401 Unauthenticated error for a call that required authentication. Refreshing tokens.
+[debug] [2026-06-12T20:26:59.057Z] Checked if tokens are valid: false, expires at: 1758225048791
+[debug] [2026-06-12T20:26:59.057Z] Checked if tokens are valid: false, expires at: 1758225048791
+[debug] [2026-06-12T20:26:59.057Z] > refreshing access token with scopes: []
+[debug] [2026-06-12T20:26:59.057Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2026-06-12T20:26:59.057Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-06-12T20:26:59.124Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 400
+[debug] [2026-06-12T20:26:59.124Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-06-12T20:26:59.124Z] Request to https://firebase.googleapis.com/v1beta1/projects/dndcharcreator-93e5a had HTTP Error: 401, Request had invalid authentication credentials. Expected OAuth 2 access token, login cookie or other valid authentication credential. See https://developers.google.com/identity/sign-in/web/devconsole-project.
+[error] 
+[error] Error: Assertion failed: resolving hosting target of a site with no site name or target name. This should have caused an error earlier
