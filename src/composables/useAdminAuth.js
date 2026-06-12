@@ -14,25 +14,18 @@ const authExpiresAt = ref(null)
 // Session timeout (30 minutes)
 const SESSION_TIMEOUT = 30 * 60 * 1000
 
-export function useAdminAuth () {
+export function useAdminAuth() {
   // Check if current session is still valid
   const isSessionValid = computed(() => {
-    return (
-      isAuthenticated.value
-      && authExpiresAt.value
-      && Date.now() < authExpiresAt.value
-    )
+    return isAuthenticated.value && authExpiresAt.value && Date.now() < authExpiresAt.value
   })
 
   // Authenticate admin user
-  const authenticate = password => {
+  const authenticate = (password) => {
     // Check if environment variable is properly configured
     if (!ADMIN_PASSWORD) {
-      authError.value
-        = 'Admin authentication is not properly configured. Please contact the administrator.'
-      console.error(
-        'Missing required environment variable: VITE_ADMIN_PASSWORD',
-      )
+      authError.value = 'Admin authentication is not properly configured. Please contact the administrator.'
+      console.error('Missing required environment variable: VITE_ADMIN_PASSWORD')
       return false
     }
 
@@ -51,8 +44,7 @@ export function useAdminAuth () {
 
       return true
     } else {
-      authError.value
-        = 'Invalid password. Please contact the DM if you need access.'
+      authError.value = 'Invalid password. Please contact the DM if you need access.'
       return false
     }
   }
@@ -74,11 +66,7 @@ export function useAdminAuth () {
     }
 
     // Session expired, clear auth
-    if (
-      isAuthenticated.value
-      && authExpiresAt.value
-      && Date.now() >= authExpiresAt.value
-    ) {
+    if (isAuthenticated.value && authExpiresAt.value && Date.now() >= authExpiresAt.value) {
       logout()
     }
 

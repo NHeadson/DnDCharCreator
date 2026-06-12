@@ -1,18 +1,12 @@
 <template>
   <v-card flat>
     <v-card-title class="text-h4 text-center mb-4">⚔️ Equipment & Gear</v-card-title>
-    <v-card-subtitle class="text-center mb-6">
-      Equip your character for adventure and combat readiness
-    </v-card-subtitle>
+    <v-card-subtitle class="text-center mb-6">Equip your character for adventure and combat readiness</v-card-subtitle>
     <v-card-text>
-
       <!-- Starting Gold and Equipment Method -->
       <v-card class="mb-6" variant="outlined">
         <v-card-title class="text-h6">💰 Equipment Method</v-card-title>
-        <v-card-subtitle class="text-body-2 mb-4">
-          Choose how to obtain your starting equipment. Recommended Equipment provides a complete loadout based on your
-          character choices.
-        </v-card-subtitle>
+        <v-card-subtitle class="text-body-2 mb-4">Choose how to obtain your starting equipment. Recommended Equipment provides a complete loadout based on your character choices.</v-card-subtitle>
         <v-card-text>
           <v-radio-group v-model="equipmentMethod" hide-details>
             <v-row>
@@ -26,17 +20,9 @@
                 >
                   <div class="d-flex align-center mb-2">
                     <v-radio color="primary" hide-details value="class" />
-                    <v-icon
-                      class="ml-2 mr-2"
-                      :color="equipmentMethod === 'class' ? 'primary' : 'default'"
-                    >mdi-package-variant</v-icon>
-                    <span class="text-h6" :class="equipmentMethod === 'class' ? 'text-primary' : ''">
-                      Recommended Equipment
-                    </span>
-                    <v-tooltip
-                      location="top"
-                      text="This method provides equipment tailored for your class and is easy for new players"
-                    >
+                    <v-icon class="ml-2 mr-2" :color="equipmentMethod === 'class' ? 'primary' : 'default'">mdi-package-variant</v-icon>
+                    <span class="text-h6" :class="equipmentMethod === 'class' ? 'text-primary' : ''">Recommended Equipment</span>
+                    <v-tooltip location="top" text="This method provides equipment tailored for your class and is easy for new players">
                       <template #activator="{ props }">
                         <v-chip v-bind="props" class="ml-2" color="success" size="x-small">Recommended</v-chip>
                       </template>
@@ -44,9 +30,8 @@
                   </div>
 
                   <div class="text-body-2 mb-3">
-                    Get a complete starting loadout with equipment suggestions based on your race/subrace, class, and
-                    background.
-                    This provides a balanced selection of weapons, armor, tools, and gear that work well together.
+                    Get a complete starting loadout with equipment suggestions based on your race/subrace, class, and background. This provides a balanced selection of weapons, armor, tools, and gear
+                    that work well together.
                   </div>
 
                   <!-- Preview of class equipment -->
@@ -57,91 +42,63 @@
                     <div class="equipment-preview-grid">
                       <div v-if="classStartingEquipment.weapons.length" class="mb-1 d-flex align-center">
                         <v-icon color="accent" size="x-small">mdi-sword</v-icon>
-                        <span class="text-caption ml-1">{{ classStartingEquipment.weapons.length }} weapon{{
-                          classStartingEquipment.weapons.length > 1 ? 's' : '' }}</span>
+                        <span class="text-caption ml-1">{{ classStartingEquipment.weapons.length }} weapon{{ classStartingEquipment.weapons.length > 1 ? 's' : '' }}</span>
                       </div>
 
                       <div v-if="classStartingEquipment.armor.length" class="mb-1 d-flex align-center">
                         <v-icon color="blue" size="x-small">mdi-shield</v-icon>
-                        <span class="text-caption ml-1">{{ classStartingEquipment.armor.length }} armor piece{{
-                          classStartingEquipment.armor.length > 1 ? 's' : '' }}</span>
+                        <span class="text-caption ml-1">{{ classStartingEquipment.armor.length }} armor piece{{ classStartingEquipment.armor.length > 1 ? 's' : '' }}</span>
                       </div>
 
-                      <div
-                        v-if="classStartingEquipment.tools.length || (hasBackgroundEquipment && backgroundStartingEquipment.tools.length)"
-                        class="mb-1 d-flex align-center"
-                      >
+                      <div v-if="classStartingEquipment.tools.length || (hasBackgroundEquipment && backgroundStartingEquipment.tools.length)" class="mb-1 d-flex align-center">
                         <v-icon color="green" size="x-small">mdi-wrench</v-icon>
-                        <span class="text-caption ml-1">{{ classStartingEquipment.tools.length + (hasBackgroundEquipment
-                          ?
-                            backgroundStartingEquipment.tools.length : 0) }} tool{{
-                          (classStartingEquipment.tools.length + (hasBackgroundEquipment ?
-                            backgroundStartingEquipment.tools.length : 0))
-                            > 1 ? 's' : '' }}</span>
+                        <span class="text-caption ml-1">
+                          {{ classStartingEquipment.tools.length + (hasBackgroundEquipment ? backgroundStartingEquipment.tools.length : 0) }} tool{{
+                            classStartingEquipment.tools.length + (hasBackgroundEquipment ? backgroundStartingEquipment.tools.length : 0) > 1 ? 's' : ''
+                          }}
+                        </span>
                       </div>
 
-                      <div
-                        v-if="classStartingEquipment.gear.length || (hasBackgroundEquipment && backgroundStartingEquipment.gear.length)"
-                        class="mb-1 d-flex align-center"
-                      >
+                      <div v-if="classStartingEquipment.gear.length || (hasBackgroundEquipment && backgroundStartingEquipment.gear.length)" class="mb-1 d-flex align-center">
                         <v-icon color="orange" size="x-small">mdi-bag-personal</v-icon>
-                        <span class="text-caption ml-1">{{ classStartingEquipment.gear.length + (hasBackgroundEquipment
-                          ?
-                            backgroundStartingEquipment.gear.length : 0) }} gear item{{
-                          (classStartingEquipment.gear.length + (hasBackgroundEquipment ?
-                            backgroundStartingEquipment.gear.length : 0)) >
-                            1 ? 's' : '' }}</span>
+                        <span class="text-caption ml-1">
+                          {{ classStartingEquipment.gear.length + (hasBackgroundEquipment ? backgroundStartingEquipment.gear.length : 0) }} gear item{{
+                            classStartingEquipment.gear.length + (hasBackgroundEquipment ? backgroundStartingEquipment.gear.length : 0) > 1 ? 's' : ''
+                          }}
+                        </span>
                       </div>
 
-                      <div
-                        v-if="hasBackgroundEquipment && backgroundStartingEquipment.money"
-                        class="mb-1 d-flex align-center"
-                      >
+                      <div v-if="hasBackgroundEquipment && backgroundStartingEquipment.money" class="mb-1 d-flex align-center">
                         <v-icon color="amber" size="x-small">mdi-cash</v-icon>
                         <span class="text-caption ml-1">{{ backgroundStartingEquipment.money }}</span>
                       </div>
                     </div>
 
-                    <v-btn
-                      class="mt-2 pa-0"
-                      color="primary"
-                      size="x-small"
-                      variant="text"
-                      @click.stop="showClassEquipmentPreview = !showClassEquipmentPreview"
-                    >
+                    <v-btn class="mt-2 pa-0" color="primary" size="x-small" variant="text" @click.stop="showClassEquipmentPreview = !showClassEquipmentPreview">
                       {{ showClassEquipmentPreview ? 'Hide' : 'Show' }} Details
-                      <v-icon size="small">{{ showClassEquipmentPreview ? 'mdi-chevron-up' : 'mdi-chevron-down'
-                      }}</v-icon>
+                      <v-icon size="small">{{ showClassEquipmentPreview ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
                     </v-btn>
 
                     <v-expand-transition>
                       <div v-if="showClassEquipmentPreview" class="mt-2">
                         <div v-if="classStartingEquipment.weapons.length" class="mb-2">
                           <div class="text-caption font-weight-medium text-accent">⚔️ Weapons:</div>
-                          <div v-for="weapon in classStartingEquipment.weapons" :key="weapon" class="text-caption ml-3">
-                            • {{ weapon }}
-                          </div>
+                          <div v-for="weapon in classStartingEquipment.weapons" :key="weapon" class="text-caption ml-3">• {{ weapon }}</div>
                         </div>
 
                         <div v-if="classStartingEquipment.armor.length" class="mb-2">
                           <div class="text-caption font-weight-medium text-blue">🛡️ Armor:</div>
-                          <div v-for="armor in classStartingEquipment.armor" :key="armor" class="text-caption ml-3">
-                            • {{ armor }}
-                          </div>
+                          <div v-for="armor in classStartingEquipment.armor" :key="armor" class="text-caption ml-3">• {{ armor }}</div>
                         </div>
 
                         <div v-if="classStartingEquipment.tools.length" class="mb-2">
                           <div class="text-caption font-weight-medium text-green">🔧 Tools:</div>
-                          <div v-for="tool in classStartingEquipment.tools" :key="tool" class="text-caption ml-3">
-                            • {{ tool }}
-                          </div>
+                          <div v-for="tool in classStartingEquipment.tools" :key="tool" class="text-caption ml-3">• {{ tool }}</div>
                         </div>
 
                         <div v-if="classStartingEquipment.gear.length" class="mb-2">
                           <div class="text-caption font-weight-medium text-orange">🎒 Gear:</div>
-                          <div v-for="item in classStartingEquipment.gear" :key="item" class="text-caption ml-3">
-                            • {{ item }}
-                          </div>
+                          <div v-for="item in classStartingEquipment.gear" :key="item" class="text-caption ml-3">• {{ item }}</div>
                         </div>
                       </div>
                     </v-expand-transition>
@@ -149,19 +106,14 @@
 
                   <div v-else class="class-equipment-preview">
                     <v-divider class="mb-2" />
-                    <div class="text-caption text-medium-emphasis">
-                      Select a class to see equipment preview
-                    </div>
+                    <div class="text-caption text-medium-emphasis">Select a class to see equipment preview</div>
                   </div>
 
                   <!-- Spacer to push badge to bottom -->
                   <v-spacer />
 
                   <div class="mt-auto pt-3">
-                    <v-tooltip
-                      location="top"
-                      text="This method gives you a complete set of equipment that works well together"
-                    >
+                    <v-tooltip location="top" text="This method gives you a complete set of equipment that works well together">
                       <template #activator="{ props }">
                         <v-chip v-bind="props" color="success" size="small" variant="outlined">
                           <v-icon size="small" start>mdi-check</v-icon>
@@ -183,13 +135,8 @@
                 >
                   <div class="d-flex align-center mb-2">
                     <v-radio color="primary" hide-details value="gold" />
-                    <v-icon
-                      class="ml-2 mr-2"
-                      :color="equipmentMethod === 'gold' ? 'primary' : 'default'"
-                    >mdi-cash</v-icon>
-                    <span class="text-h6" :class="equipmentMethod === 'gold' ? 'text-primary' : ''">
-                      Starting Gold
-                    </span>
+                    <v-icon class="ml-2 mr-2" :color="equipmentMethod === 'gold' ? 'primary' : 'default'">mdi-cash</v-icon>
+                    <span class="text-h6" :class="equipmentMethod === 'gold' ? 'text-primary' : ''">Starting Gold</span>
                     <v-tooltip location="top" text="You can choose your own equipment but start with less gold">
                       <template #activator="{ props }">
                         <v-chip v-bind="props" class="ml-2" color="info" size="x-small">Customizable</v-chip>
@@ -197,17 +144,12 @@
                     </v-tooltip>
                   </div>
 
-                  <div class="text-body-2 mb-3">
-                    Receive starting gold based on your class and purchase equipment yourself.
-                    This gives you complete control over your equipment choices.
-                  </div>
+                  <div class="text-body-2 mb-3">Receive starting gold based on your class and purchase equipment yourself. This gives you complete control over your equipment choices.</div>
 
                   <!-- Gold amount preview -->
                   <div class="gold-preview">
                     <v-divider class="mb-2" />
-                    <div class="text-caption text-medium-emphasis mb-1">Starting gold for {{
-                      character.classDetails?.name
-                        || character.class || 'your class' }}:</div>
+                    <div class="text-caption text-medium-emphasis mb-1">Starting gold for {{ character.classDetails?.name || character.class || 'your class' }}:</div>
 
                     <div class="d-flex align-center mb-2">
                       <v-icon class="mr-2" color="yellow-darken-2">mdi-cash</v-icon>
@@ -215,17 +157,9 @@
                       <span class="text-caption ml-2 text-medium-emphasis">({{ getClassGoldRange }})</span>
                     </div>
 
-                    <div class="text-caption text-medium-emphasis mb-2">
-                      Starting gold based on class average: {{ getClassGoldRange }}
-                    </div>
+                    <div class="text-caption text-medium-emphasis mb-2">Starting gold based on class average: {{ getClassGoldRange }}</div>
 
-                    <v-btn
-                      class="mt-1 pa-0"
-                      color="primary"
-                      size="x-small"
-                      variant="text"
-                      @click.stop="showGoldAdvantages = !showGoldAdvantages"
-                    >
+                    <v-btn class="mt-1 pa-0" color="primary" size="x-small" variant="text" @click.stop="showGoldAdvantages = !showGoldAdvantages">
                       {{ showGoldAdvantages ? 'Hide' : 'Show' }} Advantages
                       <v-icon size="small">{{ showGoldAdvantages ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
                     </v-btn>
@@ -258,10 +192,7 @@
                   <v-spacer />
 
                   <div class="mt-auto pt-3">
-                    <v-tooltip
-                      location="top"
-                      text="You have complete freedom to choose your equipment but need to manage your budget"
-                    >
+                    <v-tooltip location="top" text="You have complete freedom to choose your equipment but need to manage your budget">
                       <template #activator="{ props }">
                         <v-chip v-bind="props" color="info" size="small" variant="outlined">
                           <v-icon size="small" start>mdi-cog</v-icon>
@@ -281,10 +212,22 @@
             <div class="text-body-2">
               With {{ calculateStartingGold }} GP, you can afford:
               <ul class="mt-2 ml-4">
-                <li><strong>Weapon:</strong> Simple weapons (2-5 GP) or some martial weapons (10-25 GP)</li>
-                <li><strong>Armor:</strong> Leather armor (10 GP), studded leather (45 GP), or chain mail (75 GP)</li>
-                <li><strong>Shield:</strong> 10 GP for +2 AC bonus</li>
-                <li><strong>Adventuring gear:</strong> Backpack (2 GP), rope (2 GP), torches (1 CP each)</li>
+                <li>
+                  <strong>Weapon:</strong>
+                  Simple weapons (2-5 GP) or some martial weapons (10-25 GP)
+                </li>
+                <li>
+                  <strong>Armor:</strong>
+                  Leather armor (10 GP), studded leather (45 GP), or chain mail (75 GP)
+                </li>
+                <li>
+                  <strong>Shield:</strong>
+                  10 GP for +2 AC bonus
+                </li>
+                <li>
+                  <strong>Adventuring gear:</strong>
+                  Backpack (2 GP), rope (2 GP), torches (1 CP each)
+                </li>
               </ul>
             </div>
           </v-alert>
@@ -300,9 +243,10 @@
               {{ equipmentMethod === 'class' ? 'Recommended Equipment Package' : 'Custom Equipment' }}
             </div>
             <div class="text-subtitle-2 text-medium-emphasis">
-              {{ equipmentMethod === 'class'
-                ? 'Complete starting loadout based on your race/subrace, class, and background'
-                : 'Build your equipment loadout by adding weapons, armor, tools, and gear with your starting gold'
+              {{
+                equipmentMethod === 'class'
+                  ? 'Complete starting loadout based on your race/subrace, class, and background'
+                  : 'Build your equipment loadout by adding weapons, armor, tools, and gear with your starting gold'
               }}
             </div>
           </div>
@@ -314,16 +258,18 @@
           <div class="text-body-2">
             Complete starting loadout from your class, background, and species.
             <span v-if="backgroundStartingEquipment.money">
-              Your background provides <strong>{{ backgroundStartingEquipment.money }}</strong> for additional
-              purchases <strong>during gameplay</strong>.
+              Your background provides
+              <strong>{{ backgroundStartingEquipment.money }}</strong>
+              for additional purchases
+              <strong>during gameplay</strong>
+              .
             </span>
           </div>
         </v-alert>
         <v-alert v-if="equipmentMethod === 'gold'" class="ma-4 mb-0" type="warning" variant="tonal">
           <v-alert-title>💰 Equipment Budget: {{ remainingGold }} GP</v-alert-title>
           <div class="text-body-2">
-            Use your {{ calculateStartingGold }} GP starting gold to purchase all necessary equipment.
-            Remember to get weapons, armor, and basic adventuring supplies before spending on luxury items.
+            Use your {{ calculateStartingGold }} GP starting gold to purchase all necessary equipment. Remember to get weapons, armor, and basic adventuring supplies before spending on luxury items.
           </div>
         </v-alert>
 
@@ -333,10 +279,7 @@
             <!-- Weapons -->
             <v-col class="d-flex" cols="12" lg="6">
               <v-card class="flex-grow-1" variant="outlined">
-                <v-card-title
-                  class="d-flex align-center justify-space-between pa-4"
-                  style="background: rgba(var(--v-theme-surface-variant), 0.3);"
-                >
+                <v-card-title class="d-flex align-center justify-space-between pa-4" style="background: rgba(var(--v-theme-surface-variant), 0.3)">
                   <div class="d-flex align-center">
                     <v-icon class="me-2" color="red">mdi-sword</v-icon>
                     <div>
@@ -344,16 +287,7 @@
                       <div class="text-caption text-medium-emphasis">{{ allWeapons.length }} equipped</div>
                     </div>
                   </div>
-                  <v-btn
-                    v-if="equipmentMethod !== 'class'"
-                    color="red"
-                    prepend-icon="mdi-plus"
-                    size="small"
-                    variant="elevated"
-                    @click="addWeaponDialog = true"
-                  >
-                    Add Weapon
-                  </v-btn>
+                  <v-btn v-if="equipmentMethod !== 'class'" color="red" prepend-icon="mdi-plus" size="small" variant="elevated" @click="addWeaponDialog = true">Add Weapon</v-btn>
                 </v-card-title>
 
                 <v-card-text class="pa-2">
@@ -366,10 +300,7 @@
                           </v-avatar>
                         </template>
 
-                        <v-list-item-title
-                          class="text-truncate"
-                          :style="weapon.name.length > 25 ? 'font-size: 0.875rem;' : ''"
-                        >
+                        <v-list-item-title class="text-truncate" :style="weapon.name.length > 25 ? 'font-size: 0.875rem;' : ''">
                           {{ weapon.name }}
                           <v-chip
                             v-if="!weapon.custom && detectEquipmentChoices(weapon.name)"
@@ -381,19 +312,10 @@
                             {{ isEquipmentChoiceComplete(weapon.name) ? 'Complete' : 'Choice Required' }}
                           </v-chip>
                         </v-list-item-title>
-                        <v-list-item-subtitle>
-                          {{ weapon.damage || 'Varies' }} • {{ weapon.properties || weapon.type || 'Weapon' }}
-                        </v-list-item-subtitle>
+                        <v-list-item-subtitle>{{ weapon.damage || 'Varies' }} • {{ weapon.properties || weapon.type || 'Weapon' }}</v-list-item-subtitle>
 
                         <template #append>
-                          <v-btn
-                            v-if="weapon.custom"
-                            color="error"
-                            icon
-                            size="small"
-                            variant="text"
-                            @click="removeCustomWeapon(index)"
-                          >
+                          <v-btn v-if="weapon.custom" color="error" icon size="small" variant="text" @click="removeCustomWeapon(index)">
                             <v-icon size="small">mdi-delete</v-icon>
                           </v-btn>
                         </template>
@@ -404,28 +326,13 @@
                         <v-card class="pa-3" variant="outlined">
                           <!-- Show current selections -->
                           <div v-if="isEquipmentChoiceComplete(weapon.name)">
-                            <div class="text-caption text-success mb-2">
-                              Selected:
-                            </div>
+                            <div class="text-caption text-success mb-2">Selected:</div>
                             <div class="d-flex flex-wrap ga-2 mb-3">
-                              <v-chip
-                                v-for="choice in (equipmentChoices[detectEquipmentChoices(weapon.name).type] || [])"
-                                :key="choice"
-                                color="success"
-                                size="x-small"
-                                variant="tonal"
-                              >
+                              <v-chip v-for="choice in equipmentChoices[detectEquipmentChoices(weapon.name).type] || []" :key="choice" color="success" size="x-small" variant="tonal">
                                 {{ choice }}
                               </v-chip>
                             </div>
-                            <v-btn
-                              color="primary"
-                              size="x-small"
-                              variant="text"
-                              @click="clearEquipmentChoices(detectEquipmentChoices(weapon.name).type)"
-                            >
-                              Change Selection
-                            </v-btn>
+                            <v-btn color="primary" size="x-small" variant="text" @click="clearEquipmentChoices(detectEquipmentChoices(weapon.name).type)">Change Selection</v-btn>
                           </div>
 
                           <!-- Inline choice interface for incomplete selections -->
@@ -433,16 +340,8 @@
                             <!-- Multi-stage choice handling (e.g., Artisan's Tools or Musical Instrument) -->
                             <div v-if="detectEquipmentChoices(weapon.name).isMultiStage">
                               <!-- Stage 1: Choose category -->
-                              <div
-                                v-if="!multiStageChoices[detectEquipmentChoices(weapon.name).type]?.category"
-                                class="text-caption text-medium-emphasis mb-2"
-                              >
-                                Choose category:
-                              </div>
-                              <div
-                                v-if="!multiStageChoices[detectEquipmentChoices(weapon.name).type]?.category"
-                                class="d-flex flex-wrap ga-2 mb-3"
-                              >
+                              <div v-if="!multiStageChoices[detectEquipmentChoices(weapon.name).type]?.category" class="text-caption text-medium-emphasis mb-2">Choose category:</div>
+                              <div v-if="!multiStageChoices[detectEquipmentChoices(weapon.name).type]?.category" class="d-flex flex-wrap ga-2 mb-3">
                                 <v-chip
                                   v-for="option in getAvailableChoicesForType(detectEquipmentChoices(weapon.name).type)"
                                   :key="option"
@@ -458,31 +357,33 @@
 
                               <!-- Stage 2: Choose specific item from selected category -->
                               <div v-if="multiStageChoices[detectEquipmentChoices(weapon.name).type]?.category">
-                                <div class="text-caption text-success mb-2">
-                                  Category selected: {{
-                                    multiStageChoices[detectEquipmentChoices(weapon.name).type].category }}
-                                </div>
-                                <div class="text-caption text-medium-emphasis mb-2">
-                                  Now choose specific item:
-                                </div>
+                                <div class="text-caption text-success mb-2">Category selected: {{ multiStageChoices[detectEquipmentChoices(weapon.name).type].category }}</div>
+                                <div class="text-caption text-medium-emphasis mb-2">Now choose specific item:</div>
                                 <div class="d-flex flex-wrap ga-2 mb-3">
                                   <v-chip
                                     v-for="option in getSpecificOptionsForCategory(multiStageChoices[detectEquipmentChoices(weapon.name).type].category)"
                                     :key="option"
                                     clickable
-                                    :color="getEquipmentDuplicateState(option, detectEquipmentChoices(weapon.name).type)
-                                      ? 'error'
-                                      : (equipmentChoices[detectEquipmentChoices(weapon.name).type] || []).includes(option)
-                                        ? 'success'
-                                        : 'default'"
+                                    :color="
+                                      getEquipmentDuplicateState(option, detectEquipmentChoices(weapon.name).type)
+                                        ? 'error'
+                                        : (equipmentChoices[detectEquipmentChoices(weapon.name).type] || []).includes(option)
+                                          ? 'success'
+                                          : 'default'
+                                    "
                                     :disabled="getEquipmentDuplicateState(option, detectEquipmentChoices(weapon.name).type)"
                                     size="x-small"
-                                    :variant="getEquipmentDuplicateState(option, detectEquipmentChoices(weapon.name).type)
-                                      ? 'tonal'
-                                      : (equipmentChoices[detectEquipmentChoices(weapon.name).type] || []).includes(option)
-                                        ? 'elevated'
-                                        : 'outlined'"
-                                    @click="!getEquipmentDuplicateState(option, detectEquipmentChoices(weapon.name).type) && toggleEquipmentChoice(detectEquipmentChoices(weapon.name).type, option, detectEquipmentChoices(weapon.name).count)"
+                                    :variant="
+                                      getEquipmentDuplicateState(option, detectEquipmentChoices(weapon.name).type)
+                                        ? 'tonal'
+                                        : (equipmentChoices[detectEquipmentChoices(weapon.name).type] || []).includes(option)
+                                          ? 'elevated'
+                                          : 'outlined'
+                                    "
+                                    @click="
+                                      !getEquipmentDuplicateState(option, detectEquipmentChoices(weapon.name).type) &&
+                                      toggleEquipmentChoice(detectEquipmentChoices(weapon.name).type, option, detectEquipmentChoices(weapon.name).count)
+                                    "
                                   >
                                     {{ option }}
                                   </v-chip>
@@ -491,7 +392,10 @@
                                   color="primary"
                                   size="x-small"
                                   variant="text"
-                                  @click="multiStageChoices[detectEquipmentChoices(weapon.name).type] = null; equipmentChoices[detectEquipmentChoices(weapon.name).type] = []"
+                                  @click="
+                                    multiStageChoices[detectEquipmentChoices(weapon.name).type] = null
+                                    equipmentChoices[detectEquipmentChoices(weapon.name).type] = []
+                                  "
                                 >
                                   Choose Different Category
                                 </v-btn>
@@ -502,11 +406,18 @@
                             <div v-else>
                               <div class="text-caption text-medium-emphasis mb-2">
                                 Select {{ detectEquipmentChoices(weapon.name).count }}
-                                {{ detectEquipmentChoices(weapon.name).type === 'musicalInstruments' ? 'instrument proficiency'
-                                  : detectEquipmentChoices(weapon.name).type === 'gamingSets' ? 'gaming set proficiency'
-                                    : detectEquipmentChoices(weapon.name).type === 'artisanTools' ? 'tool proficiency'
-                                      : detectEquipmentChoices(weapon.name).type === 'vehicles' ? 'vehicle proficiency'
-                                        : detectEquipmentChoices(weapon.name).type.startsWith('choice_') ? 'option' : 'item'
+                                {{
+                                  detectEquipmentChoices(weapon.name).type === 'musicalInstruments'
+                                    ? 'instrument proficiency'
+                                    : detectEquipmentChoices(weapon.name).type === 'gamingSets'
+                                      ? 'gaming set proficiency'
+                                      : detectEquipmentChoices(weapon.name).type === 'artisanTools'
+                                        ? 'tool proficiency'
+                                        : detectEquipmentChoices(weapon.name).type === 'vehicles'
+                                          ? 'vehicle proficiency'
+                                          : detectEquipmentChoices(weapon.name).type.startsWith('choice_')
+                                            ? 'option'
+                                            : 'item'
                                 }}{{ detectEquipmentChoices(weapon.name).count > 1 ? 's' : '' }}:
                               </div>
 
@@ -515,19 +426,26 @@
                                   v-for="option in getAvailableChoicesForType(detectEquipmentChoices(weapon.name).type)"
                                   :key="option"
                                   clickable
-                                  :color="getEquipmentDuplicateState(option, detectEquipmentChoices(weapon.name).type)
-                                    ? 'error'
-                                    : (equipmentChoices[detectEquipmentChoices(weapon.name).type] || []).includes(option)
-                                      ? 'success'
-                                      : 'default'"
+                                  :color="
+                                    getEquipmentDuplicateState(option, detectEquipmentChoices(weapon.name).type)
+                                      ? 'error'
+                                      : (equipmentChoices[detectEquipmentChoices(weapon.name).type] || []).includes(option)
+                                        ? 'success'
+                                        : 'default'
+                                  "
                                   :disabled="getEquipmentDuplicateState(option, detectEquipmentChoices(weapon.name).type)"
                                   size="x-small"
-                                  :variant="getEquipmentDuplicateState(option, detectEquipmentChoices(weapon.name).type)
-                                    ? 'tonal'
-                                    : (equipmentChoices[detectEquipmentChoices(weapon.name).type] || []).includes(option)
-                                      ? 'elevated'
-                                      : 'outlined'"
-                                  @click="!getEquipmentDuplicateState(option, detectEquipmentChoices(weapon.name).type) && toggleEquipmentChoice(detectEquipmentChoices(weapon.name).type, option, detectEquipmentChoices(weapon.name).count)"
+                                  :variant="
+                                    getEquipmentDuplicateState(option, detectEquipmentChoices(weapon.name).type)
+                                      ? 'tonal'
+                                      : (equipmentChoices[detectEquipmentChoices(weapon.name).type] || []).includes(option)
+                                        ? 'elevated'
+                                        : 'outlined'
+                                  "
+                                  @click="
+                                    !getEquipmentDuplicateState(option, detectEquipmentChoices(weapon.name).type) &&
+                                    toggleEquipmentChoice(detectEquipmentChoices(weapon.name).type, option, detectEquipmentChoices(weapon.name).count)
+                                  "
                                 >
                                   {{ option }}
                                 </v-chip>
@@ -535,22 +453,25 @@
                             </div>
 
                             <div class="text-caption text-medium-emphasis">
-                              {{ (equipmentChoices[detectEquipmentChoices(weapon.name).type] || []).length }} / {{
-                                detectEquipmentChoices(weapon.name).count }} selected
+                              {{ (equipmentChoices[detectEquipmentChoices(weapon.name).type] || []).length }} / {{ detectEquipmentChoices(weapon.name).count }} selected
                             </div>
 
                             <!-- Vehicle proficiency clarification -->
                             <div
                               v-if="detectEquipmentChoices(weapon.name).type === 'vehicles'"
                               class="text-caption text-medium-emphasis mt-2 pa-2"
-                              style="background: rgba(var(--v-theme-surface-variant), 0.3); border-radius: 4px;"
+                              style="background: rgba(var(--v-theme-surface-variant), 0.3); border-radius: 4px"
                             >
                               <div class="font-weight-medium mb-1">Vehicle Proficiencies:</div>
-                              <div><strong>Land:</strong> Carts, carriages, chariots, sleds, wagons</div>
-                              <div><strong>Water:</strong> Boats, ships, sailing vessels</div>
-                              <div class="mt-1 text-xs">These represent your character's knowledge in operating
-                                vehicles, not
-                                ownership.</div>
+                              <div>
+                                <strong>Land:</strong>
+                                Carts, carriages, chariots, sleds, wagons
+                              </div>
+                              <div>
+                                <strong>Water:</strong>
+                                Boats, ships, sailing vessels
+                              </div>
+                              <div class="mt-1 text-xs">These represent your character's knowledge in operating vehicles, not ownership.</div>
                             </div>
                           </div>
                         </v-card>
@@ -569,10 +490,7 @@
             <!-- Armor -->
             <v-col class="d-flex" cols="12" lg="6">
               <v-card class="flex-grow-1" variant="outlined">
-                <v-card-title
-                  class="d-flex align-center justify-space-between pa-4"
-                  style="background: rgba(var(--v-theme-surface-variant), 0.3);"
-                >
+                <v-card-title class="d-flex align-center justify-space-between pa-4" style="background: rgba(var(--v-theme-surface-variant), 0.3)">
                   <div class="d-flex align-center">
                     <v-icon class="me-2" color="blue">mdi-shield</v-icon>
                     <div>
@@ -580,16 +498,7 @@
                       <div class="text-caption text-medium-emphasis">{{ allArmor.length }} equipped</div>
                     </div>
                   </div>
-                  <v-btn
-                    v-if="equipmentMethod !== 'class'"
-                    color="blue"
-                    prepend-icon="mdi-plus"
-                    size="small"
-                    variant="elevated"
-                    @click="addArmorDialog = true"
-                  >
-                    Add Armor
-                  </v-btn>
+                  <v-btn v-if="equipmentMethod !== 'class'" color="blue" prepend-icon="mdi-plus" size="small" variant="elevated" @click="addArmorDialog = true">Add Armor</v-btn>
                 </v-card-title>
 
                 <v-card-text class="pa-2">
@@ -602,10 +511,7 @@
                           </v-avatar>
                         </template>
 
-                        <v-list-item-title
-                          class="text-truncate"
-                          :style="armor.name.length > 25 ? 'font-size: 0.875rem;' : ''"
-                        >
+                        <v-list-item-title class="text-truncate" :style="armor.name.length > 25 ? 'font-size: 0.875rem;' : ''">
                           {{ armor.name }}
                           <v-chip
                             v-if="!armor.custom && detectEquipmentChoices(armor.name)"
@@ -617,19 +523,10 @@
                             {{ isEquipmentChoiceComplete(armor.name) ? 'Complete' : 'Choice Required' }}
                           </v-chip>
                         </v-list-item-title>
-                        <v-list-item-subtitle>
-                          AC {{ armor.ac || 'Varies' }} • {{ armor.type || 'Armor' }}
-                        </v-list-item-subtitle>
+                        <v-list-item-subtitle>AC {{ armor.ac || 'Varies' }} • {{ armor.type || 'Armor' }}</v-list-item-subtitle>
 
                         <template #append>
-                          <v-btn
-                            v-if="armor.custom"
-                            color="error"
-                            icon
-                            size="small"
-                            variant="text"
-                            @click="removeCustomArmor(index)"
-                          >
+                          <v-btn v-if="armor.custom" color="error" icon size="small" variant="text" @click="removeCustomArmor(index)">
                             <v-icon size="small">mdi-delete</v-icon>
                           </v-btn>
                         </template>
@@ -640,39 +537,31 @@
                         <v-card class="pa-3" variant="outlined">
                           <!-- Show current selections -->
                           <div v-if="isEquipmentChoiceComplete(armor.name)">
-                            <div class="text-caption text-success mb-2">
-                              Selected:
-                            </div>
+                            <div class="text-caption text-success mb-2">Selected:</div>
                             <div class="d-flex flex-wrap ga-2 mb-3">
-                              <v-chip
-                                v-for="choice in (equipmentChoices[detectEquipmentChoices(armor.name).type] || [])"
-                                :key="choice"
-                                color="success"
-                                size="x-small"
-                                variant="tonal"
-                              >
+                              <v-chip v-for="choice in equipmentChoices[detectEquipmentChoices(armor.name).type] || []" :key="choice" color="success" size="x-small" variant="tonal">
                                 {{ choice }}
                               </v-chip>
                             </div>
-                            <v-btn
-                              color="primary"
-                              size="x-small"
-                              variant="text"
-                              @click="clearEquipmentChoices(detectEquipmentChoices(armor.name).type)"
-                            >
-                              Change Selection
-                            </v-btn>
+                            <v-btn color="primary" size="x-small" variant="text" @click="clearEquipmentChoices(detectEquipmentChoices(armor.name).type)">Change Selection</v-btn>
                           </div>
 
                           <!-- Inline choice interface for incomplete selections -->
                           <div v-else>
                             <div class="text-caption text-medium-emphasis mb-2">
                               Select {{ detectEquipmentChoices(armor.name).count }}
-                              {{ detectEquipmentChoices(armor.name).type === 'musicalInstruments' ? 'instrument proficiency'
-                                : detectEquipmentChoices(armor.name).type === 'gamingSets' ? 'gaming set proficiency'
-                                  : detectEquipmentChoices(armor.name).type === 'artisanTools' ? 'tool proficiency'
-                                    : detectEquipmentChoices(armor.name).type === 'vehicles' ? 'vehicle proficiency'
-                                      : detectEquipmentChoices(armor.name).type.startsWith('choice_') ? 'option' : 'item'
+                              {{
+                                detectEquipmentChoices(armor.name).type === 'musicalInstruments'
+                                  ? 'instrument proficiency'
+                                  : detectEquipmentChoices(armor.name).type === 'gamingSets'
+                                    ? 'gaming set proficiency'
+                                    : detectEquipmentChoices(armor.name).type === 'artisanTools'
+                                      ? 'tool proficiency'
+                                      : detectEquipmentChoices(armor.name).type === 'vehicles'
+                                        ? 'vehicle proficiency'
+                                        : detectEquipmentChoices(armor.name).type.startsWith('choice_')
+                                          ? 'option'
+                                          : 'item'
                               }}{{ detectEquipmentChoices(armor.name).count > 1 ? 's' : '' }}:
                             </div>
                             <div class="d-flex flex-wrap ga-2 mb-3">
@@ -680,41 +569,51 @@
                                 v-for="option in getAvailableChoicesForType(detectEquipmentChoices(armor.name).type)"
                                 :key="option"
                                 clickable
-                                :color="getEquipmentDuplicateState(option, detectEquipmentChoices(armor.name).type)
-                                  ? 'error'
-                                  : (equipmentChoices[detectEquipmentChoices(armor.name).type] || []).includes(option)
-                                    ? 'success'
-                                    : 'default'"
+                                :color="
+                                  getEquipmentDuplicateState(option, detectEquipmentChoices(armor.name).type)
+                                    ? 'error'
+                                    : (equipmentChoices[detectEquipmentChoices(armor.name).type] || []).includes(option)
+                                      ? 'success'
+                                      : 'default'
+                                "
                                 :disabled="getEquipmentDuplicateState(option, detectEquipmentChoices(armor.name).type)"
                                 size="x-small"
-                                :variant="getEquipmentDuplicateState(option, detectEquipmentChoices(armor.name).type)
-                                  ? 'tonal'
-                                  : (equipmentChoices[detectEquipmentChoices(armor.name).type] || []).includes(option)
-                                    ? 'elevated'
-                                    : 'outlined'"
-                                @click="!getEquipmentDuplicateState(option, detectEquipmentChoices(armor.name).type) && toggleEquipmentChoice(detectEquipmentChoices(armor.name).type, option, detectEquipmentChoices(armor.name).count)"
+                                :variant="
+                                  getEquipmentDuplicateState(option, detectEquipmentChoices(armor.name).type)
+                                    ? 'tonal'
+                                    : (equipmentChoices[detectEquipmentChoices(armor.name).type] || []).includes(option)
+                                      ? 'elevated'
+                                      : 'outlined'
+                                "
+                                @click="
+                                  !getEquipmentDuplicateState(option, detectEquipmentChoices(armor.name).type) &&
+                                  toggleEquipmentChoice(detectEquipmentChoices(armor.name).type, option, detectEquipmentChoices(armor.name).count)
+                                "
                               >
                                 {{ option }}
                               </v-chip>
                             </div>
 
                             <div class="text-caption text-medium-emphasis">
-                              {{ (equipmentChoices[detectEquipmentChoices(armor.name).type] || []).length }} / {{
-                                detectEquipmentChoices(armor.name).count }} selected
+                              {{ (equipmentChoices[detectEquipmentChoices(armor.name).type] || []).length }} / {{ detectEquipmentChoices(armor.name).count }} selected
                             </div>
 
                             <!-- Vehicle proficiency clarification -->
                             <div
                               v-if="detectEquipmentChoices(armor.name).type === 'vehicles'"
                               class="text-caption text-medium-emphasis mt-2 pa-2"
-                              style="background: rgba(var(--v-theme-surface-variant), 0.3); border-radius: 4px;"
+                              style="background: rgba(var(--v-theme-surface-variant), 0.3); border-radius: 4px"
                             >
                               <div class="font-weight-medium mb-1">Vehicle Proficiencies:</div>
-                              <div><strong>Land:</strong> Carts, carriages, chariots, sleds, wagons</div>
-                              <div><strong>Water:</strong> Boats, ships, sailing vessels</div>
-                              <div class="mt-1 text-xs">These represent your character's knowledge in operating
-                                vehicles, not
-                                ownership.</div>
+                              <div>
+                                <strong>Land:</strong>
+                                Carts, carriages, chariots, sleds, wagons
+                              </div>
+                              <div>
+                                <strong>Water:</strong>
+                                Boats, ships, sailing vessels
+                              </div>
+                              <div class="mt-1 text-xs">These represent your character's knowledge in operating vehicles, not ownership.</div>
                             </div>
                           </div>
                         </v-card>
@@ -733,10 +632,7 @@
             <!-- Tools -->
             <v-col class="d-flex" cols="12" lg="6">
               <v-card class="flex-grow-1" variant="outlined">
-                <v-card-title
-                  class="d-flex align-center justify-space-between pa-4"
-                  style="background: rgba(var(--v-theme-surface-variant), 0.3);"
-                >
+                <v-card-title class="d-flex align-center justify-space-between pa-4" style="background: rgba(var(--v-theme-surface-variant), 0.3)">
                   <div class="d-flex align-center">
                     <v-icon class="me-2" color="green">mdi-tools</v-icon>
                     <div>
@@ -744,16 +640,7 @@
                       <div class="text-caption text-medium-emphasis">{{ allTools.length }} equipped</div>
                     </div>
                   </div>
-                  <v-btn
-                    v-if="equipmentMethod !== 'class'"
-                    color="green"
-                    prepend-icon="mdi-plus"
-                    size="small"
-                    variant="elevated"
-                    @click="addToolDialog = true"
-                  >
-                    Add Tool
-                  </v-btn>
+                  <v-btn v-if="equipmentMethod !== 'class'" color="green" prepend-icon="mdi-plus" size="small" variant="elevated" @click="addToolDialog = true">Add Tool</v-btn>
                 </v-card-title>
 
                 <v-card-text class="pa-2">
@@ -769,10 +656,7 @@
                           </template>
 
                           <div class="w-100">
-                            <v-list-item-title
-                              class="text-truncate"
-                              :style="tool.name.length > 25 ? 'font-size: 0.875rem;' : ''"
-                            >
+                            <v-list-item-title class="text-truncate" :style="tool.name.length > 25 ? 'font-size: 0.875rem;' : ''">
                               {{ tool.name }}
                               <v-chip
                                 v-if="!tool.custom && detectEquipmentChoices(tool.name)"
@@ -790,14 +674,7 @@
                           </div>
 
                           <template #append>
-                            <v-btn
-                              v-if="tool.custom"
-                              color="error"
-                              icon
-                              size="small"
-                              variant="text"
-                              @click="removeCustomTool(index)"
-                            >
+                            <v-btn v-if="tool.custom" color="error" icon size="small" variant="text" @click="removeCustomTool(index)">
                               <v-icon size="small">mdi-delete</v-icon>
                             </v-btn>
                           </template>
@@ -809,28 +686,13 @@
                         <v-card class="pa-3" variant="outlined">
                           <!-- Show current selections -->
                           <div v-if="isEquipmentChoiceComplete(tool.name)">
-                            <div class="text-caption text-success mb-2">
-                              Selected:
-                            </div>
+                            <div class="text-caption text-success mb-2">Selected:</div>
                             <div class="d-flex flex-wrap ga-2 mb-3">
-                              <v-chip
-                                v-for="choice in (equipmentChoices[detectEquipmentChoices(tool.name).type] || [])"
-                                :key="choice"
-                                color="success"
-                                size="x-small"
-                                variant="tonal"
-                              >
+                              <v-chip v-for="choice in equipmentChoices[detectEquipmentChoices(tool.name).type] || []" :key="choice" color="success" size="x-small" variant="tonal">
                                 {{ choice }}
                               </v-chip>
                             </div>
-                            <v-btn
-                              color="primary"
-                              size="x-small"
-                              variant="text"
-                              @click="clearEquipmentChoices(detectEquipmentChoices(tool.name).type)"
-                            >
-                              Change Selection
-                            </v-btn>
+                            <v-btn color="primary" size="x-small" variant="text" @click="clearEquipmentChoices(detectEquipmentChoices(tool.name).type)">Change Selection</v-btn>
                           </div>
 
                           <!-- Inline choice interface for incomplete selections -->
@@ -838,16 +700,8 @@
                             <!-- Multi-stage choice handling (e.g., Artisan's Tools or Musical Instrument) -->
                             <div v-if="detectEquipmentChoices(tool.name).isMultiStage">
                               <!-- Stage 1: Choose category -->
-                              <div
-                                v-if="!multiStageChoices[detectEquipmentChoices(tool.name).type]?.category"
-                                class="text-caption text-medium-emphasis mb-2"
-                              >
-                                Choose category:
-                              </div>
-                              <div
-                                v-if="!multiStageChoices[detectEquipmentChoices(tool.name).type]?.category"
-                                class="d-flex flex-wrap ga-2 mb-3"
-                              >
+                              <div v-if="!multiStageChoices[detectEquipmentChoices(tool.name).type]?.category" class="text-caption text-medium-emphasis mb-2">Choose category:</div>
+                              <div v-if="!multiStageChoices[detectEquipmentChoices(tool.name).type]?.category" class="d-flex flex-wrap ga-2 mb-3">
                                 <v-chip
                                   v-for="option in getAvailableChoicesForType(detectEquipmentChoices(tool.name).type)"
                                   :key="option"
@@ -863,31 +717,33 @@
 
                               <!-- Stage 2: Choose specific item from selected category -->
                               <div v-if="multiStageChoices[detectEquipmentChoices(tool.name).type]?.category">
-                                <div class="text-caption text-success mb-2">
-                                  Category selected: {{
-                                    multiStageChoices[detectEquipmentChoices(tool.name).type].category }}
-                                </div>
-                                <div class="text-caption text-medium-emphasis mb-2">
-                                  Now choose specific item:
-                                </div>
+                                <div class="text-caption text-success mb-2">Category selected: {{ multiStageChoices[detectEquipmentChoices(tool.name).type].category }}</div>
+                                <div class="text-caption text-medium-emphasis mb-2">Now choose specific item:</div>
                                 <div class="d-flex flex-wrap ga-2 mb-3">
                                   <v-chip
                                     v-for="option in getSpecificOptionsForCategory(multiStageChoices[detectEquipmentChoices(tool.name).type].category)"
                                     :key="option"
                                     clickable
-                                    :color="getEquipmentDuplicateState(option, detectEquipmentChoices(tool.name).type)
-                                      ? 'error'
-                                      : (equipmentChoices[detectEquipmentChoices(tool.name).type] || []).includes(option)
-                                        ? 'success'
-                                        : 'default'"
+                                    :color="
+                                      getEquipmentDuplicateState(option, detectEquipmentChoices(tool.name).type)
+                                        ? 'error'
+                                        : (equipmentChoices[detectEquipmentChoices(tool.name).type] || []).includes(option)
+                                          ? 'success'
+                                          : 'default'
+                                    "
                                     :disabled="getEquipmentDuplicateState(option, detectEquipmentChoices(tool.name).type)"
                                     size="x-small"
-                                    :variant="getEquipmentDuplicateState(option, detectEquipmentChoices(tool.name).type)
-                                      ? 'tonal'
-                                      : (equipmentChoices[detectEquipmentChoices(tool.name).type] || []).includes(option)
-                                        ? 'elevated'
-                                        : 'outlined'"
-                                    @click="!getEquipmentDuplicateState(option, detectEquipmentChoices(tool.name).type) && toggleEquipmentChoice(detectEquipmentChoices(tool.name).type, option, detectEquipmentChoices(tool.name).count)"
+                                    :variant="
+                                      getEquipmentDuplicateState(option, detectEquipmentChoices(tool.name).type)
+                                        ? 'tonal'
+                                        : (equipmentChoices[detectEquipmentChoices(tool.name).type] || []).includes(option)
+                                          ? 'elevated'
+                                          : 'outlined'
+                                    "
+                                    @click="
+                                      !getEquipmentDuplicateState(option, detectEquipmentChoices(tool.name).type) &&
+                                      toggleEquipmentChoice(detectEquipmentChoices(tool.name).type, option, detectEquipmentChoices(tool.name).count)
+                                    "
                                   >
                                     {{ option }}
                                   </v-chip>
@@ -896,7 +752,10 @@
                                   color="primary"
                                   size="x-small"
                                   variant="text"
-                                  @click="multiStageChoices[detectEquipmentChoices(tool.name).type] = null; equipmentChoices[detectEquipmentChoices(tool.name).type] = []"
+                                  @click="
+                                    multiStageChoices[detectEquipmentChoices(tool.name).type] = null
+                                    equipmentChoices[detectEquipmentChoices(tool.name).type] = []
+                                  "
                                 >
                                   Choose Different Category
                                 </v-btn>
@@ -927,43 +786,51 @@
                                   v-for="option in getAvailableChoicesForType(detectEquipmentChoices(tool.name).type)"
                                   :key="option"
                                   clickable
-                                  :color="getEquipmentDuplicateState(option, detectEquipmentChoices(tool.name).type)
-                                    ? 'error'
-                                    : (equipmentChoices[detectEquipmentChoices(tool.name).type] || []).includes(option)
-                                      ? 'success'
-                                      : 'default'
+                                  :color="
+                                    getEquipmentDuplicateState(option, detectEquipmentChoices(tool.name).type)
+                                      ? 'error'
+                                      : (equipmentChoices[detectEquipmentChoices(tool.name).type] || []).includes(option)
+                                        ? 'success'
+                                        : 'default'
                                   "
                                   :disabled="getEquipmentDuplicateState(option, detectEquipmentChoices(tool.name).type)"
                                   size="x-small"
-                                  :variant="getEquipmentDuplicateState(option, detectEquipmentChoices(tool.name).type)
-                                    ? 'tonal'
-                                    : (equipmentChoices[detectEquipmentChoices(tool.name).type] || []).includes(option)
-                                      ? 'elevated'
-                                      : 'outlined'
+                                  :variant="
+                                    getEquipmentDuplicateState(option, detectEquipmentChoices(tool.name).type)
+                                      ? 'tonal'
+                                      : (equipmentChoices[detectEquipmentChoices(tool.name).type] || []).includes(option)
+                                        ? 'elevated'
+                                        : 'outlined'
                                   "
-                                  @click="!getEquipmentDuplicateState(option, detectEquipmentChoices(tool.name).type) && toggleEquipmentChoice(detectEquipmentChoices(tool.name).type, option, detectEquipmentChoices(tool.name).count)"
+                                  @click="
+                                    !getEquipmentDuplicateState(option, detectEquipmentChoices(tool.name).type) &&
+                                    toggleEquipmentChoice(detectEquipmentChoices(tool.name).type, option, detectEquipmentChoices(tool.name).count)
+                                  "
                                 >
                                   {{ option }}
                                 </v-chip>
                               </div>
 
                               <div class="text-caption text-medium-emphasis">
-                                {{ (equipmentChoices[detectEquipmentChoices(tool.name).type] || []).length }} / {{
-                                  detectEquipmentChoices(tool.name).count }} selected
+                                {{ (equipmentChoices[detectEquipmentChoices(tool.name).type] || []).length }} / {{ detectEquipmentChoices(tool.name).count }} selected
                               </div>
 
                               <!-- Vehicle proficiency clarification -->
                               <div
                                 v-if="detectEquipmentChoices(tool.name).type === 'vehicles'"
                                 class="text-caption text-medium-emphasis mt-2 pa-2"
-                                style="background: rgba(var(--v-theme-surface-variant), 0.3); border-radius: 4px;"
+                                style="background: rgba(var(--v-theme-surface-variant), 0.3); border-radius: 4px"
                               >
                                 <div class="font-weight-medium mb-1">Vehicle Proficiencies:</div>
-                                <div><strong>Land:</strong> Carts, carriages, chariots, sleds, wagons</div>
-                                <div><strong>Water:</strong> Boats, ships, sailing vessels</div>
-                                <div class="mt-1 text-xs">These represent your character's knowledge in operating
-                                  vehicles, not
-                                  ownership.</div>
+                                <div>
+                                  <strong>Land:</strong>
+                                  Carts, carriages, chariots, sleds, wagons
+                                </div>
+                                <div>
+                                  <strong>Water:</strong>
+                                  Boats, ships, sailing vessels
+                                </div>
+                                <div class="mt-1 text-xs">These represent your character's knowledge in operating vehicles, not ownership.</div>
                               </div>
                             </div>
                           </div>
@@ -983,10 +850,7 @@
             <!-- Adventuring Gear -->
             <v-col class="d-flex" cols="12" lg="6">
               <v-card class="flex-grow-1" variant="outlined">
-                <v-card-title
-                  class="d-flex align-center justify-space-between pa-4"
-                  style="background: rgba(var(--v-theme-surface-variant), 0.3);"
-                >
+                <v-card-title class="d-flex align-center justify-space-between pa-4" style="background: rgba(var(--v-theme-surface-variant), 0.3)">
                   <div class="d-flex align-center">
                     <v-icon class="me-2" color="orange">mdi-bag-personal</v-icon>
                     <div>
@@ -994,16 +858,7 @@
                       <div class="text-caption text-medium-emphasis">{{ allGear.length }} equipped</div>
                     </div>
                   </div>
-                  <v-btn
-                    v-if="equipmentMethod !== 'class'"
-                    color="orange"
-                    prepend-icon="mdi-plus"
-                    size="small"
-                    variant="elevated"
-                    @click="addGearDialog = true"
-                  >
-                    Add Gear
-                  </v-btn>
+                  <v-btn v-if="equipmentMethod !== 'class'" color="orange" prepend-icon="mdi-plus" size="small" variant="elevated" @click="addGearDialog = true">Add Gear</v-btn>
                 </v-card-title>
 
                 <v-card-text class="pa-2">
@@ -1019,10 +874,7 @@
                           </template>
 
                           <div class="w-100">
-                            <v-list-item-title
-                              class="text-truncate"
-                              :style="item.name.length > 25 ? 'font-size: 0.875rem;' : ''"
-                            >
+                            <v-list-item-title class="text-truncate" :style="item.name.length > 25 ? 'font-size: 0.875rem;' : ''">
                               {{ item.name }}
                               <v-chip
                                 v-if="!item.custom && detectEquipmentChoices(item.name)"
@@ -1040,14 +892,7 @@
                           </div>
 
                           <template #append>
-                            <v-btn
-                              v-if="item.custom"
-                              color="error"
-                              icon
-                              size="small"
-                              variant="text"
-                              @click="removeCustomGear(index)"
-                            >
+                            <v-btn v-if="item.custom" color="error" icon size="small" variant="text" @click="removeCustomGear(index)">
                               <v-icon size="small">mdi-delete</v-icon>
                             </v-btn>
                           </template>
@@ -1059,40 +904,31 @@
                         <v-card class="pa-3" variant="outlined">
                           <!-- Show current selections -->
                           <div v-if="isEquipmentChoiceComplete(item.name)">
-                            <div class="text-caption text-success mb-2">
-                              Selected:
-                            </div>
+                            <div class="text-caption text-success mb-2">Selected:</div>
                             <div class="d-flex flex-wrap ga-2 mb-3">
-                              <v-chip
-                                v-for="choice in (equipmentChoices[detectEquipmentChoices(item.name).type] || [])"
-                                :key="choice"
-                                color="success"
-                                size="x-small"
-                                variant="tonal"
-                              >
+                              <v-chip v-for="choice in equipmentChoices[detectEquipmentChoices(item.name).type] || []" :key="choice" color="success" size="x-small" variant="tonal">
                                 {{ choice }}
                               </v-chip>
                             </div>
-                            <v-btn
-                              color="primary"
-                              size="x-small"
-                              variant="text"
-                              @click="clearEquipmentChoices(detectEquipmentChoices(item.name).type)"
-                            >
-                              Change Selection
-                            </v-btn>
+                            <v-btn color="primary" size="x-small" variant="text" @click="clearEquipmentChoices(detectEquipmentChoices(item.name).type)">Change Selection</v-btn>
                           </div>
 
                           <!-- Inline choice interface for incomplete selections -->
                           <div v-else>
                             <div class="text-caption text-medium-emphasis mb-2">
                               Select {{ detectEquipmentChoices(item.name).count }}
-                              {{ detectEquipmentChoices(item.name).type === 'musicalInstruments' ? 'instrument proficiency'
-                                : detectEquipmentChoices(item.name).type === 'gamingSets' ? 'gaming set proficiency'
-                                  : detectEquipmentChoices(item.name).type === 'artisanTools' ? 'tool proficiency'
-                                    : detectEquipmentChoices(item.name).type === 'vehicles' ? 'vehicle proficiency'
-                                      : detectEquipmentChoices(item.name).type.startsWith('choice_') ? 'option'
-                                        : 'item'
+                              {{
+                                detectEquipmentChoices(item.name).type === 'musicalInstruments'
+                                  ? 'instrument proficiency'
+                                  : detectEquipmentChoices(item.name).type === 'gamingSets'
+                                    ? 'gaming set proficiency'
+                                    : detectEquipmentChoices(item.name).type === 'artisanTools'
+                                      ? 'tool proficiency'
+                                      : detectEquipmentChoices(item.name).type === 'vehicles'
+                                        ? 'vehicle proficiency'
+                                        : detectEquipmentChoices(item.name).type.startsWith('choice_')
+                                          ? 'option'
+                                          : 'item'
                               }}{{ detectEquipmentChoices(item.name).count > 1 ? 's' : '' }}:
                             </div>
                             <div class="d-flex flex-wrap ga-2 mb-3">
@@ -1100,41 +936,51 @@
                                 v-for="option in getAvailableChoicesForType(detectEquipmentChoices(item.name).type)"
                                 :key="option"
                                 clickable
-                                :color="getEquipmentDuplicateState(option, detectEquipmentChoices(item.name).type)
-                                  ? 'error'
-                                  : (equipmentChoices[detectEquipmentChoices(item.name).type] || []).includes(option)
-                                    ? 'success'
-                                    : 'default'"
+                                :color="
+                                  getEquipmentDuplicateState(option, detectEquipmentChoices(item.name).type)
+                                    ? 'error'
+                                    : (equipmentChoices[detectEquipmentChoices(item.name).type] || []).includes(option)
+                                      ? 'success'
+                                      : 'default'
+                                "
                                 :disabled="getEquipmentDuplicateState(option, detectEquipmentChoices(item.name).type)"
                                 size="x-small"
-                                :variant="getEquipmentDuplicateState(option, detectEquipmentChoices(item.name).type)
-                                  ? 'tonal'
-                                  : (equipmentChoices[detectEquipmentChoices(item.name).type] || []).includes(option)
-                                    ? 'elevated'
-                                    : 'outlined'"
-                                @click="!getEquipmentDuplicateState(option, detectEquipmentChoices(item.name).type) && toggleEquipmentChoice(detectEquipmentChoices(item.name).type, option, detectEquipmentChoices(item.name).count)"
+                                :variant="
+                                  getEquipmentDuplicateState(option, detectEquipmentChoices(item.name).type)
+                                    ? 'tonal'
+                                    : (equipmentChoices[detectEquipmentChoices(item.name).type] || []).includes(option)
+                                      ? 'elevated'
+                                      : 'outlined'
+                                "
+                                @click="
+                                  !getEquipmentDuplicateState(option, detectEquipmentChoices(item.name).type) &&
+                                  toggleEquipmentChoice(detectEquipmentChoices(item.name).type, option, detectEquipmentChoices(item.name).count)
+                                "
                               >
                                 {{ option }}
                               </v-chip>
                             </div>
 
                             <div class="text-caption text-medium-emphasis">
-                              {{ (equipmentChoices[detectEquipmentChoices(item.name).type] || []).length }} / {{
-                                detectEquipmentChoices(item.name).count }} selected
+                              {{ (equipmentChoices[detectEquipmentChoices(item.name).type] || []).length }} / {{ detectEquipmentChoices(item.name).count }} selected
                             </div>
 
                             <!-- Vehicle proficiency clarification -->
                             <div
                               v-if="detectEquipmentChoices(item.name).type === 'vehicles'"
                               class="text-caption text-medium-emphasis mt-2 pa-2"
-                              style="background: rgba(var(--v-theme-surface-variant), 0.3); border-radius: 4px;"
+                              style="background: rgba(var(--v-theme-surface-variant), 0.3); border-radius: 4px"
                             >
                               <div class="font-weight-medium mb-1">Vehicle Proficiencies:</div>
-                              <div><strong>Land:</strong> Carts, carriages, chariots, sleds, wagons</div>
-                              <div><strong>Water:</strong> Boats, ships, sailing vessels</div>
-                              <div class="mt-1 text-xs">These represent your character's knowledge in operating
-                                vehicles, not
-                                ownership.</div>
+                              <div>
+                                <strong>Land:</strong>
+                                Carts, carriages, chariots, sleds, wagons
+                              </div>
+                              <div>
+                                <strong>Water:</strong>
+                                Boats, ships, sailing vessels
+                              </div>
+                              <div class="mt-1 text-xs">These represent your character's knowledge in operating vehicles, not ownership.</div>
                             </div>
                           </div>
                         </v-card>
@@ -1205,7 +1051,6 @@
           </div>
         </v-card-text>
       </v-card>
-
     </v-card-text>
   </v-card>
 
@@ -1227,9 +1072,7 @@
               <div class="text-body-2 mt-2">Loading weapons...</div>
             </div>
 
-            <div v-else-if="weaponOptions.length === 0" class="text-center py-4 text-medium-emphasis">
-              No weapons available from API.
-            </div>
+            <div v-else-if="weaponOptions.length === 0" class="text-center py-4 text-medium-emphasis">No weapons available from API.</div>
 
             <div v-else class="equipment-chips">
               <div class="text-body-2 mb-3">Select a weapon:</div>
@@ -1239,7 +1082,7 @@
                   :key="weapon.id"
                   class="weapon-chip"
                   clickable
-                  :color="selectedWeapon === weapon ? 'primary' : (canAfford(weapon) ? 'default' : 'error')"
+                  :color="selectedWeapon === weapon ? 'primary' : canAfford(weapon) ? 'default' : 'error'"
                   :disabled="!canAfford(weapon) && equipmentMethod === 'gold'"
                   :variant="selectedWeapon === weapon ? 'elevated' : 'outlined'"
                   @click="selectedWeapon = selectedWeapon === weapon ? null : weapon"
@@ -1247,11 +1090,8 @@
                   <div class="chip-content">
                     <div class="font-weight-medium">{{ weapon.name }}</div>
                     <div class="text-caption">
-                      {{ weapon.damage?.dice || 'Varies' }} {{ weapon.damage?.type || '' }}
-                      • {{ weapon.cost?.quantity || 0 }}{{ weapon.cost?.unit || 'gp' }}
-                      <span v-if="!canAfford(weapon) && equipmentMethod === 'gold'" class="text-error ml-1">
-                        (Can't afford)
-                      </span>
+                      {{ weapon.damage?.dice || 'Varies' }} {{ weapon.damage?.type || '' }} • {{ weapon.cost?.quantity || 0 }}{{ weapon.cost?.unit || 'gp' }}
+                      <span v-if="!canAfford(weapon) && equipmentMethod === 'gold'" class="text-error ml-1">(Can't afford)</span>
                     </div>
                   </div>
                 </v-chip>
@@ -1270,18 +1110,16 @@
 
       <v-card-actions>
         <v-spacer />
-        <v-btn @click="addWeaponDialog = false; selectedWeapon = null">Cancel</v-btn>
         <v-btn
-          v-if="weaponTab === 'api'"
-          color="primary"
-          :disabled="!selectedWeapon || !canAfford(selectedWeapon)"
-          @click="addSelectedWeapon"
+          @click="
+            addWeaponDialog = false
+            selectedWeapon = null
+          "
         >
-          Add Selected
+          Cancel
         </v-btn>
-        <v-btn v-if="weaponTab === 'custom'" color="primary" :disabled="!newWeapon.name" @click="addCustomWeapon">
-          Add Custom
-        </v-btn>
+        <v-btn v-if="weaponTab === 'api'" color="primary" :disabled="!selectedWeapon || !canAfford(selectedWeapon)" @click="addSelectedWeapon">Add Selected</v-btn>
+        <v-btn v-if="weaponTab === 'custom'" color="primary" :disabled="!newWeapon.name" @click="addCustomWeapon">Add Custom</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -1303,9 +1141,7 @@
               <div class="text-body-2 mt-2">Loading armor...</div>
             </div>
 
-            <div v-else-if="armorOptions.length === 0" class="text-center py-4 text-medium-emphasis">
-              No armor available from API.
-            </div>
+            <div v-else-if="armorOptions.length === 0" class="text-center py-4 text-medium-emphasis">No armor available from API.</div>
 
             <div v-else class="equipment-chips">
               <div class="text-body-2 mb-3">Select armor:</div>
@@ -1315,7 +1151,7 @@
                   :key="armor.id"
                   class="armor-chip"
                   clickable
-                  :color="selectedArmor === armor ? 'primary' : (canAfford(armor) ? 'default' : 'error')"
+                  :color="selectedArmor === armor ? 'primary' : canAfford(armor) ? 'default' : 'error'"
                   :disabled="!canAfford(armor) && equipmentMethod === 'gold'"
                   :variant="selectedArmor === armor ? 'elevated' : 'outlined'"
                   @click="selectedArmor = selectedArmor === armor ? null : armor"
@@ -1324,11 +1160,9 @@
                     <div class="font-weight-medium">{{ armor.name }}</div>
                     <div class="text-caption">
                       AC {{ armor.armorClass?.base || 'Varies' }}
-                      <span v-if="armor.armorCategory"> • {{ armor.armorCategory }}</span>
+                      <span v-if="armor.armorCategory">• {{ armor.armorCategory }}</span>
                       • {{ armor.cost?.quantity || 0 }}{{ armor.cost?.unit || 'gp' }}
-                      <span v-if="!canAfford(armor) && equipmentMethod === 'gold'" class="text-error ml-1">
-                        (Can't afford)
-                      </span>
+                      <span v-if="!canAfford(armor) && equipmentMethod === 'gold'" class="text-error ml-1">(Can't afford)</span>
                     </div>
                   </div>
                 </v-chip>
@@ -1347,18 +1181,16 @@
 
       <v-card-actions>
         <v-spacer />
-        <v-btn @click="addArmorDialog = false; selectedArmor = null">Cancel</v-btn>
         <v-btn
-          v-if="armorTab === 'api'"
-          color="primary"
-          :disabled="!selectedArmor || !canAfford(selectedArmor)"
-          @click="addSelectedArmor"
+          @click="
+            addArmorDialog = false
+            selectedArmor = null
+          "
         >
-          Add Selected
+          Cancel
         </v-btn>
-        <v-btn v-if="armorTab === 'custom'" color="primary" :disabled="!newArmor.name" @click="addCustomArmor">
-          Add Custom
-        </v-btn>
+        <v-btn v-if="armorTab === 'api'" color="primary" :disabled="!selectedArmor || !canAfford(selectedArmor)" @click="addSelectedArmor">Add Selected</v-btn>
+        <v-btn v-if="armorTab === 'custom'" color="primary" :disabled="!newArmor.name" @click="addCustomArmor">Add Custom</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -1380,9 +1212,7 @@
               <div class="text-body-2 mt-2">Loading tools...</div>
             </div>
 
-            <div v-else-if="toolOptions.length === 0" class="text-center py-4 text-medium-emphasis">
-              No tools available from API.
-            </div>
+            <div v-else-if="toolOptions.length === 0" class="text-center py-4 text-medium-emphasis">No tools available from API.</div>
 
             <div v-else class="equipment-chips">
               <div class="text-body-2 mb-3">Select a tool:</div>
@@ -1392,7 +1222,7 @@
                   :key="tool.id"
                   class="tool-chip"
                   clickable
-                  :color="selectedTool === tool ? 'primary' : (canAfford(tool) ? 'default' : 'error')"
+                  :color="selectedTool === tool ? 'primary' : canAfford(tool) ? 'default' : 'error'"
                   :disabled="!canAfford(tool) && equipmentMethod === 'gold'"
                   :variant="selectedTool === tool ? 'elevated' : 'outlined'"
                   @click="selectedTool = selectedTool === tool ? null : tool"
@@ -1402,9 +1232,7 @@
                     <div class="text-caption">
                       {{ tool.category || 'Tool' }}
                       • {{ tool.cost?.quantity || 0 }}{{ tool.cost?.unit || 'gp' }}
-                      <span v-if="!canAfford(tool) && equipmentMethod === 'gold'" class="text-error ml-1">
-                        (Can't afford)
-                      </span>
+                      <span v-if="!canAfford(tool) && equipmentMethod === 'gold'" class="text-error ml-1">(Can't afford)</span>
                     </div>
                   </div>
                 </v-chip>
@@ -1422,18 +1250,16 @@
 
       <v-card-actions>
         <v-spacer />
-        <v-btn @click="addToolDialog = false; selectedTool = null">Cancel</v-btn>
         <v-btn
-          v-if="toolTab === 'api'"
-          color="primary"
-          :disabled="!selectedTool || !canAfford(selectedTool)"
-          @click="addSelectedTool"
+          @click="
+            addToolDialog = false
+            selectedTool = null
+          "
         >
-          Add Selected
+          Cancel
         </v-btn>
-        <v-btn v-if="toolTab === 'custom'" color="primary" :disabled="!newTool.name" @click="addCustomTool">
-          Add Custom
-        </v-btn>
+        <v-btn v-if="toolTab === 'api'" color="primary" :disabled="!selectedTool || !canAfford(selectedTool)" @click="addSelectedTool">Add Selected</v-btn>
+        <v-btn v-if="toolTab === 'custom'" color="primary" :disabled="!newTool.name" @click="addCustomTool">Add Custom</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -1455,9 +1281,7 @@
               <div class="text-body-2 mt-2">Loading gear...</div>
             </div>
 
-            <div v-else-if="gearOptions.length === 0" class="text-center py-4 text-medium-emphasis">
-              No adventuring gear available from API.
-            </div>
+            <div v-else-if="gearOptions.length === 0" class="text-center py-4 text-medium-emphasis">No adventuring gear available from API.</div>
 
             <div v-else class="equipment-chips">
               <div class="text-body-2 mb-3">Select adventuring gear:</div>
@@ -1467,7 +1291,7 @@
                   :key="gear.id"
                   class="gear-chip"
                   clickable
-                  :color="selectedGear === gear ? 'primary' : (canAfford(gear) ? 'default' : 'error')"
+                  :color="selectedGear === gear ? 'primary' : canAfford(gear) ? 'default' : 'error'"
                   :disabled="!canAfford(gear) && equipmentMethod === 'gold'"
                   :variant="selectedGear === gear ? 'elevated' : 'outlined'"
                   @click="selectedGear = selectedGear === gear ? null : gear"
@@ -1477,9 +1301,7 @@
                     <div class="text-caption">
                       {{ gear.category || 'Equipment' }}
                       • {{ gear.cost?.quantity || 0 }}{{ gear.cost?.unit || 'gp' }}
-                      <span v-if="!canAfford(gear) && equipmentMethod === 'gold'" class="text-error ml-1">
-                        (Can't afford)
-                      </span>
+                      <span v-if="!canAfford(gear) && equipmentMethod === 'gold'" class="text-error ml-1">(Can't afford)</span>
                     </div>
                   </div>
                 </v-chip>
@@ -1497,18 +1319,16 @@
 
       <v-card-actions>
         <v-spacer />
-        <v-btn @click="addGearDialog = false; selectedGear = null">Cancel</v-btn>
         <v-btn
-          v-if="gearTab === 'api'"
-          color="primary"
-          :disabled="!selectedGear || !canAfford(selectedGear)"
-          @click="addSelectedGear"
+          @click="
+            addGearDialog = false
+            selectedGear = null
+          "
         >
-          Add Selected
+          Cancel
         </v-btn>
-        <v-btn v-if="gearTab === 'custom'" color="primary" :disabled="!newGear.name" @click="addCustomGear">
-          Add Custom
-        </v-btn>
+        <v-btn v-if="gearTab === 'api'" color="primary" :disabled="!selectedGear || !canAfford(selectedGear)" @click="addSelectedGear">Add Selected</v-btn>
+        <v-btn v-if="gearTab === 'custom'" color="primary" :disabled="!newGear.name" @click="addCustomGear">Add Custom</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -1521,11 +1341,7 @@
         Choose Musical Instruments
       </v-card-title>
       <v-card-text>
-        <div class="text-body-2 mb-4">
-          Select {{ choiceDialogs.requiredCount || 1 }} musical instrument{{ (choiceDialogs.requiredCount || 1) > 1 ?
-            's'
-            : '' }}:
-        </div>
+        <div class="text-body-2 mb-4">Select {{ choiceDialogs.requiredCount || 1 }} musical instrument{{ (choiceDialogs.requiredCount || 1) > 1 ? 's' : '' }}:</div>
         <div class="d-flex flex-wrap ga-2">
           <v-chip
             v-for="instrument in availableChoices.musicalInstruments"
@@ -1540,16 +1356,10 @@
         </div>
       </v-card-text>
       <v-card-actions>
-        <div class="text-caption text-medium-emphasis">
-          Selected: {{ (equipmentChoices.musicalInstruments || []).length }} / {{ choiceDialogs.requiredCount || 1 }}
-        </div>
+        <div class="text-caption text-medium-emphasis">Selected: {{ (equipmentChoices.musicalInstruments || []).length }} / {{ choiceDialogs.requiredCount || 1 }}</div>
         <v-spacer />
         <v-btn @click="choiceDialogs.musicalInstruments = false">Cancel</v-btn>
-        <v-btn
-          color="primary"
-          :disabled="(equipmentChoices.musicalInstruments || []).length !== (choiceDialogs.requiredCount || 1)"
-          @click="confirmEquipmentChoices('musicalInstruments')"
-        >
+        <v-btn color="primary" :disabled="(equipmentChoices.musicalInstruments || []).length !== (choiceDialogs.requiredCount || 1)" @click="confirmEquipmentChoices('musicalInstruments')">
           Confirm Selection
         </v-btn>
       </v-card-actions>
@@ -1578,18 +1388,10 @@
         </div>
       </v-card-text>
       <v-card-actions>
-        <div class="text-caption text-medium-emphasis">
-          Selected: {{ (equipmentChoices.gamingSets || []).length }} / 1
-        </div>
+        <div class="text-caption text-medium-emphasis">Selected: {{ (equipmentChoices.gamingSets || []).length }} / 1</div>
         <v-spacer />
         <v-btn @click="choiceDialogs.gamingSets = false">Cancel</v-btn>
-        <v-btn
-          color="primary"
-          :disabled="(equipmentChoices.gamingSets || []).length !== 1"
-          @click="confirmEquipmentChoices('gamingSets')"
-        >
-          Confirm Selection
-        </v-btn>
+        <v-btn color="primary" :disabled="(equipmentChoices.gamingSets || []).length !== 1" @click="confirmEquipmentChoices('gamingSets')">Confirm Selection</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -1601,11 +1403,7 @@
         Choose Artisan's Tools
       </v-card-title>
       <v-card-text>
-        <div class="text-body-2 mb-4">
-          Select {{ choiceDialogs.requiredCount || 1 }} artisan's tool{{ (choiceDialogs.requiredCount || 1) > 1 ? 's' :
-            ''
-          }}:
-        </div>
+        <div class="text-body-2 mb-4">Select {{ choiceDialogs.requiredCount || 1 }} artisan's tool{{ (choiceDialogs.requiredCount || 1) > 1 ? 's' : '' }}:</div>
         <div class="d-flex flex-wrap ga-2">
           <v-chip
             v-for="tool in availableChoices.artisanTools"
@@ -1620,16 +1418,10 @@
         </div>
       </v-card-text>
       <v-card-actions>
-        <div class="text-caption text-medium-emphasis">
-          Selected: {{ (equipmentChoices.artisanTools || []).length }} / {{ choiceDialogs.requiredCount || 1 }}
-        </div>
+        <div class="text-caption text-medium-emphasis">Selected: {{ (equipmentChoices.artisanTools || []).length }} / {{ choiceDialogs.requiredCount || 1 }}</div>
         <v-spacer />
         <v-btn @click="choiceDialogs.artisanTools = false">Cancel</v-btn>
-        <v-btn
-          color="primary"
-          :disabled="(equipmentChoices.artisanTools || []).length !== (choiceDialogs.requiredCount || 1)"
-          @click="confirmEquipmentChoices('artisanTools')"
-        >
+        <v-btn color="primary" :disabled="(equipmentChoices.artisanTools || []).length !== (choiceDialogs.requiredCount || 1)" @click="confirmEquipmentChoices('artisanTools')">
           Confirm Selection
         </v-btn>
       </v-card-actions>
@@ -1643,1182 +1435,1201 @@
         Choose Vehicle Proficiency
       </v-card-title>
       <v-card-text>
-        <div class="text-body-2 mb-4">
-          Select a vehicle proficiency. This represents your character's knowledge and skill in operating vehicles,
-          not ownership of the actual vehicles themselves.
-        </div>
+        <div class="text-body-2 mb-4">Select a vehicle proficiency. This represents your character's knowledge and skill in operating vehicles, not ownership of the actual vehicles themselves.</div>
         <div class="d-flex flex-wrap ga-2">
           <v-chip
             v-for="vehicle in availableChoices.vehicles"
             :key="vehicle"
             clickable
-            :color="getEquipmentDuplicateState(vehicle).isDuplicate ? 'error' :
-              (equipmentChoices.vehicles || []).includes(vehicle) ? 'success' : 'default'"
+            :color="getEquipmentDuplicateState(vehicle).isDuplicate ? 'error' : (equipmentChoices.vehicles || []).includes(vehicle) ? 'success' : 'default'"
             :disabled="getEquipmentDuplicateState(vehicle).isDuplicate"
-            :variant="getEquipmentDuplicateState(vehicle).isDuplicate ? 'tonal' :
-              (equipmentChoices.vehicles || []).includes(vehicle) ? 'elevated' : 'outlined'"
+            :variant="getEquipmentDuplicateState(vehicle).isDuplicate ? 'tonal' : (equipmentChoices.vehicles || []).includes(vehicle) ? 'elevated' : 'outlined'"
             @click="getEquipmentDuplicateState(vehicle).isDuplicate ? null : addEquipmentChoice('vehicles', vehicle)"
           >
             {{ vehicle }}
           </v-chip>
         </div>
         <div class="text-caption text-medium-emphasis mt-3">
-          <strong>Vehicles (land):</strong> Carts, carriages, chariots, sleds, wagons<br>
-          <strong>Vehicles (water):</strong> Boats, ships, sailing vessels
+          <strong>Vehicles (land):</strong>
+          Carts, carriages, chariots, sleds, wagons
+          <br />
+          <strong>Vehicles (water):</strong>
+          Boats, ships, sailing vessels
         </div>
       </v-card-text>
       <v-card-actions>
-        <div class="text-caption text-medium-emphasis">
-          Selected: {{ (equipmentChoices.vehicles || []).length }} / 1
-        </div>
+        <div class="text-caption text-medium-emphasis">Selected: {{ (equipmentChoices.vehicles || []).length }} / 1</div>
         <v-spacer />
         <v-btn @click="choiceDialogs.vehicles = false">Cancel</v-btn>
-        <v-btn
-          color="primary"
-          :disabled="(equipmentChoices.vehicles || []).length !== 1"
-          @click="confirmEquipmentChoices('vehicles')"
-        >
-          Confirm Selection
-        </v-btn>
+        <v-btn color="primary" :disabled="(equipmentChoices.vehicles || []).length !== 1" @click="confirmEquipmentChoices('vehicles')">Confirm Selection</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
 </template>
 
 <script setup>
-  import { computed, onMounted, ref, toRefs, watch } from 'vue'
-  import { dndAPI } from '@/services/dndAPI.js'
-  import { useCharacterStore } from '@/stores/characterStore'
+import { computed, onMounted, ref, toRefs, watch } from 'vue'
+import { dndAPI } from '@/services/dndAPI.js'
+import { useCharacterStore } from '@/stores/characterStore'
 
-  const props = defineProps({
-    character: {
-      type: Object,
-      required: true,
+const props = defineProps({
+  character: {
+    type: Object,
+    required: true,
+  },
+  characterData: {
+    type: Object,
+    required: true,
+  },
+})
+
+// Destructure for template access while maintaining reactivity
+const { character, characterData } = toRefs(props)
+
+// Initialize character store for unified inventory management
+const characterStore = useCharacterStore()
+
+// Equipment method selection
+const equipmentMethod = ref('class')
+
+// Dice rolling for starting gold
+const rolledStartingGold = ref(0)
+
+// Dice rolling function for starting gold
+const rollStartingGold = () => {
+  const className = characterData.value.selectedClass?.index
+  if (!className) return
+
+  const rollsByClass = {
+    barbarian: { dice: 2, sides: 4, multiplier: 10 },
+    bard: { dice: 5, sides: 4, multiplier: 10 },
+    cleric: { dice: 5, sides: 4, multiplier: 10 },
+    druid: { dice: 2, sides: 4, multiplier: 10 },
+    fighter: { dice: 5, sides: 4, multiplier: 10 },
+    monk: { dice: 5, sides: 4, multiplier: 1 },
+    paladin: { dice: 5, sides: 4, multiplier: 10 },
+    ranger: { dice: 4, sides: 4, multiplier: 10 },
+    rogue: { dice: 4, sides: 4, multiplier: 10 },
+    sorcerer: { dice: 3, sides: 4, multiplier: 10 },
+    warlock: { dice: 4, sides: 4, multiplier: 10 },
+    wizard: { dice: 4, sides: 4, multiplier: 10 },
+  }
+
+  const rollData = rollsByClass[className]
+  if (!rollData) return
+
+  let total = 0
+  for (let i = 0; i < rollData.dice; i++) {
+    total += Math.floor(Math.random() * rollData.sides) + 1
+  }
+
+  rolledStartingGold.value = total * rollData.multiplier
+
+  // Update character store with the rolled gold amount
+  if (equipmentMethod.value === 'gold') {
+    character.value.coins.gp = rolledStartingGold.value
+  }
+}
+
+// Custom equipment arrays
+const customWeapons = ref([])
+const customArmor = ref([])
+const customTools = ref([])
+const customGear = ref([])
+
+// Dialog states
+const addWeaponDialog = ref(false)
+const addArmorDialog = ref(false)
+const addToolDialog = ref(false)
+const addGearDialog = ref(false)
+
+// Equipment method preview states
+const showClassEquipmentPreview = ref(false)
+const showGoldAdvantages = ref(false)
+
+// New item forms
+const newWeapon = ref({ name: '', damage: '', properties: '' })
+const newArmor = ref({ name: '', ac: '', type: '' })
+const newTool = ref({ name: '', type: '' })
+const newGear = ref({ name: '', description: '' })
+
+// Equipment API data
+const allEquipment = ref([])
+const loadingEquipment = ref(false)
+// Filtered equipment by category
+const weaponOptions = computed(() => {
+  return allEquipment.value.filter((item) => {
+    const category = item.category?.toLowerCase() || ''
+    return category.includes('weapon') || category.includes('martial') || category.includes('simple') || item.weaponCategory || item.damage
+  })
+})
+
+const armorOptions = computed(() => {
+  return allEquipment.value.filter((item) => {
+    const category = item.category?.toLowerCase() || ''
+    return category.includes('armor') || item.armorCategory || item.armorClass
+  })
+})
+
+const toolOptions = computed(() => {
+  return allEquipment.value.filter((item) => {
+    return item.category?.toLowerCase().includes('tool') || item.category?.toLowerCase().includes('kit') || item.name.toLowerCase().includes('tools')
+  })
+})
+
+const gearOptions = computed(() => {
+  return allEquipment.value.filter((item) => {
+    return item.category?.toLowerCase().includes('adventuring') || item.category?.toLowerCase().includes('gear') || item.category === 'Miscellaneous'
+  })
+})
+
+// Selected equipment from API
+const selectedWeapon = ref(null)
+const selectedArmor = ref(null)
+const selectedTool = ref(null)
+const selectedGear = ref(null)
+
+// Tab selection for dialogs
+const weaponTab = ref('api')
+const armorTab = ref('api')
+const toolTab = ref('api')
+const gearTab = ref('api')
+
+// Equipment choices for "choice" items
+const equipmentChoices = ref({
+  musicalInstruments: [],
+  gamingSets: [],
+  artisanTools: [],
+  vehicles: [],
+})
+
+// Multi-stage equipment choices (category -> specific item)
+const multiStageChoices = ref({})
+
+// Equipment choice dialogs
+const choiceDialogs = ref({
+  musicalInstruments: false,
+  gamingSets: false,
+  artisanTools: false,
+  vehicles: false,
+})
+
+// Available choices for different categories
+const availableChoices = {
+  musicalInstruments: ['Bagpipes', 'Drum', 'Dulcimer', 'Flute', 'Lute', 'Lyre', 'Horn', 'Pan flute', 'Shawm', 'Viol'],
+  gamingSets: ['Dice set', 'Dragonchess set', 'Playing card set', 'Three-Dragon Ante set'],
+  artisanTools: [
+    "Alchemist's supplies",
+    "Brewer's supplies",
+    "Calligrapher's supplies",
+    "Carpenter's tools",
+    "Cartographer's tools",
+    "Cobbler's tools",
+    "Cook's utensils",
+    "Glassblower's tools",
+    "Jeweler's tools",
+    "Leatherworker's tools",
+    "Mason's tools",
+    "Painter's supplies",
+    "Potter's tools",
+    "Smith's tools",
+    "Tinker's tools",
+    "Weaver's tools",
+    "Woodcarver's tools",
+  ],
+  vehicles: ['Vehicles (land)', 'Vehicles (water)'],
+  martialMeleeWeapons: [
+    'Battleaxe',
+    'Flail',
+    'Glaive',
+    'Greataxe',
+    'Greatsword',
+    'Halberd',
+    'Lance',
+    'Longsword',
+    'Maul',
+    'Morningstar',
+    'Pike',
+    'Rapier',
+    'Scimitar',
+    'Shortsword',
+    'Trident',
+    'War pick',
+    'Warhammer',
+    'Whip',
+  ],
+  simpleMeleeWeapons: ['Club', 'Dagger', 'Dart', 'Handaxe', 'Javelin', 'Light hammer', 'Mace', 'Quarterstaff', 'Sickle', 'Spear'],
+  martialRangedWeapons: ['Blowgun', 'Hand crossbow', 'Heavy crossbow', 'Longbow', 'Net'],
+  simpleRangedWeapons: ['Light crossbow', 'Shortbow', 'Sling'],
+  simpleWeapons: [
+    // Combine all simple weapon types for "any simple weapon" choices
+    'Club',
+    'Dagger',
+    'Dart',
+    'Handaxe',
+    'Javelin',
+    'Light hammer',
+    'Mace',
+    'Quarterstaff',
+    'Sickle',
+    'Spear',
+    'Light crossbow',
+    'Shortbow',
+    'Sling',
+  ],
+  shields: ['Shield'],
+  weapons: [
+    // Combine all weapon types for general "weapon" choices
+    'Battleaxe',
+    'Flail',
+    'Glaive',
+    'Greataxe',
+    'Greatsword',
+    'Halberd',
+    'Lance',
+    'Longsword',
+    'Maul',
+    'Morningstar',
+    'Pike',
+    'Rapier',
+    'Scimitar',
+    'Shortsword',
+    'Trident',
+    'War pick',
+    'Warhammer',
+    'Whip',
+    'Club',
+    'Dagger',
+    'Dart',
+    'Handaxe',
+    'Javelin',
+    'Light hammer',
+    'Mace',
+    'Quarterstaff',
+    'Sickle',
+    'Spear',
+    'Blowgun',
+    'Hand crossbow',
+    'Heavy crossbow',
+    'Longbow',
+    'Net',
+    'Light crossbow',
+    'Shortbow',
+    'Sling',
+  ],
+}
+
+// Starting gold calculation
+const calculateStartingGold = computed(() => {
+  // Show rolled value if available, regardless of equipment method
+  if (rolledStartingGold.value > 0) {
+    return rolledStartingGold.value
+  }
+
+  // Default to showing dice formula values for reference
+  const className = character.value.class || character.value.classDetails?.index
+  const goldRanges = {
+    barbarian: 50, // 2d4 × 10
+    bard: 125, // 5d4 × 10
+    cleric: 125, // 5d4 × 10
+    druid: 50, // 2d4 × 10
+    fighter: 125, // 5d4 × 10
+    monk: 25, // 5d4
+    paladin: 125, // 5d4 × 10
+    ranger: 125, // 5d4 × 10
+    rogue: 100, // 4d4 × 10
+    sorcerer: 75, // 3d4 × 10
+    warlock: 100, // 4d4 × 10
+    wizard: 100, // 4d4 × 10
+  }
+
+  return goldRanges[className] || 100
+})
+
+const getClassGoldRange = computed(() => {
+  const className = character.value.class || character.value.classDetails?.index
+  const goldDescriptions = {
+    barbarian: '2d4 × 10 gp',
+    bard: '5d4 × 10 gp',
+    cleric: '5d4 × 10 gp',
+    druid: '2d4 × 10 gp',
+    fighter: '5d4 × 10 gp',
+    monk: '5d4 gp',
+    paladin: '5d4 × 10 gp',
+    ranger: '5d4 × 10 gp',
+    rogue: '4d4 × 10 gp',
+    sorcerer: '3d4 × 10 gp',
+    warlock: '4d4 × 10 gp',
+    wizard: '4d4 × 10 gp',
+  }
+
+  return goldDescriptions[className] || '4d4 × 10 gp'
+})
+
+// Class starting equipment
+const classStartingEquipment = computed(() => {
+  const className = character.value.class || character.value.classDetails?.index
+
+  const equipmentData = {
+    fighter: {
+      weapons: ['Longsword or any martial melee weapon', 'Shield or second weapon', 'Light crossbow and 20 bolts'],
+      armor: ['Chain mail or leather armor', 'Shield (if chosen)'],
+      tools: [],
+      gear: ["Dungeoneer's pack or Explorer's pack"],
     },
-    characterData: {
-      type: Object,
-      required: true,
+    rogue: {
+      weapons: ['Rapier or shortsword', 'Shortbow and quiver of 20 arrows', 'Dagger (2)'],
+      armor: ['Leather armor'],
+      tools: ["Thieves' tools"],
+      gear: ["Burglar's pack", 'Two daggers'],
     },
-  })
-
-  // Destructure for template access while maintaining reactivity
-  const { character, characterData } = toRefs(props)
-
-  // Initialize character store for unified inventory management
-  const characterStore = useCharacterStore()
-
-  // Equipment method selection
-  const equipmentMethod = ref('class')
-
-  // Dice rolling for starting gold
-  const rolledStartingGold = ref(0)
-
-  // Dice rolling function for starting gold
-  const rollStartingGold = () => {
-    const className = characterData.value.selectedClass?.index
-    if (!className) return
-
-    const rollsByClass = {
-      barbarian: { dice: 2, sides: 4, multiplier: 10 },
-      bard: { dice: 5, sides: 4, multiplier: 10 },
-      cleric: { dice: 5, sides: 4, multiplier: 10 },
-      druid: { dice: 2, sides: 4, multiplier: 10 },
-      fighter: { dice: 5, sides: 4, multiplier: 10 },
-      monk: { dice: 5, sides: 4, multiplier: 1 },
-      paladin: { dice: 5, sides: 4, multiplier: 10 },
-      ranger: { dice: 4, sides: 4, multiplier: 10 },
-      rogue: { dice: 4, sides: 4, multiplier: 10 },
-      sorcerer: { dice: 3, sides: 4, multiplier: 10 },
-      warlock: { dice: 4, sides: 4, multiplier: 10 },
-      wizard: { dice: 4, sides: 4, multiplier: 10 },
-    }
-
-    const rollData = rollsByClass[className]
-    if (!rollData) return
-
-    let total = 0
-    for (let i = 0; i < rollData.dice; i++) {
-      total += Math.floor(Math.random() * rollData.sides) + 1
-    }
-
-    rolledStartingGold.value = total * rollData.multiplier
-
-    // Update character store with the rolled gold amount
-    if (equipmentMethod.value === 'gold') {
-      character.value.coins.gp = rolledStartingGold.value
-    }
+    wizard: {
+      weapons: ['Quarterstaff or dagger', 'Light crossbow and 20 bolts or any simple weapon'],
+      armor: [],
+      tools: [],
+      gear: ['Spellbook', "Scholar's pack", 'Component pouch or arcane focus'],
+    },
+    cleric: {
+      weapons: ['Mace or warhammer', 'Light crossbow and 20 bolts or any simple weapon'],
+      armor: ['Scale mail or Leather Armor', 'Shield'],
+      tools: [],
+      gear: ["Priest's pack", 'Shield', 'Holy symbol'],
+    },
+    ranger: {
+      weapons: ['Two shortswords or two simple melee weapons', 'Longbow and quiver of 20 arrows'],
+      armor: ['Scale mail or Leather Armor'],
+      tools: [],
+      gear: ["Dungeoneer's pack or Explorer's pack"],
+    },
+    barbarian: {
+      weapons: ['Greataxe or any martial melee weapon', 'Two handaxes or any simple weapon', 'Javelin (4)'],
+      armor: [],
+      tools: [],
+      gear: ["Explorer's pack"],
+    },
+    bard: {
+      weapons: ['Rapier or Longsword or any simple weapon', 'Dagger'],
+      armor: ['Leather armor'],
+      tools: ['Three musical instruments of your choice'],
+      gear: ["Entertainer's pack", 'Lute or any other musical instrument'],
+    },
+    druid: {
+      weapons: ['Scimitar or any simple melee weapon', 'Shield', 'Leather armor'],
+      armor: ['Leather armor', 'Shield'],
+      tools: ['Herbalism kit'],
+      gear: ["Explorer's pack", 'Druidcraft focus'],
+    },
+    monk: {
+      weapons: ['Shortsword or any simple weapon', 'Dart (10)'],
+      armor: [],
+      tools: ["Artisan's tools or Musical instrument"],
+      gear: ["Dungeoneer's pack or Explorer's pack"],
+    },
+    paladin: {
+      weapons: ['Martial weapon and shield or two martial weapons', 'Five javelins or any simple melee weapon'],
+      armor: ['Chain mail', 'Shield (if chosen)'],
+      tools: [],
+      gear: ["Priest's pack or Explorer's pack", 'Holy symbol'],
+    },
+    sorcerer: {
+      weapons: ['Light crossbow and 20 bolts or any simple weapon', 'Dagger (2)'],
+      armor: [],
+      tools: [],
+      gear: ["Dungeoneer's pack or Explorer's pack", 'Sorcerous focus'],
+    },
+    warlock: {
+      weapons: ['Light crossbow and 20 bolts or any simple weapon', 'Simple weapon'],
+      armor: ['Leather armor'],
+      tools: [],
+      gear: ["Scholar's pack or Dungeoneer's pack", 'Simple weapon', 'Arcane focus'],
+    },
   }
 
-  // Custom equipment arrays
-  const customWeapons = ref([])
-  const customArmor = ref([])
-  const customTools = ref([])
-  const customGear = ref([])
+  return equipmentData[className] || { weapons: [], armor: [], tools: [], gear: [] }
+})
 
-  // Dialog states
-  const addWeaponDialog = ref(false)
-  const addArmorDialog = ref(false)
-  const addToolDialog = ref(false)
-  const addGearDialog = ref(false)
+const backgroundStartingEquipment = computed(() => {
+  const backgroundName = character.value.background || character.value.backgroundDetails?.index
 
-  // Equipment method preview states
-  const showClassEquipmentPreview = ref(false)
-  const showGoldAdvantages = ref(false)
-
-  // New item forms
-  const newWeapon = ref({ name: '', damage: '', properties: '' })
-  const newArmor = ref({ name: '', ac: '', type: '' })
-  const newTool = ref({ name: '', type: '' })
-  const newGear = ref({ name: '', description: '' })
-
-  // Equipment API data
-  const allEquipment = ref([])
-  const loadingEquipment = ref(false)
-  // Filtered equipment by category
-  const weaponOptions = computed(() => {
-    return allEquipment.value.filter(item => {
-      const category = item.category?.toLowerCase() || ''
-      return category.includes('weapon') ||
-        category.includes('martial') ||
-        category.includes('simple') ||
-        item.weaponCategory ||
-        item.damage
-    })
-  })
-
-  const armorOptions = computed(() => {
-    return allEquipment.value.filter(item => {
-      const category = item.category?.toLowerCase() || ''
-      return category.includes('armor') ||
-        item.armorCategory ||
-        item.armorClass
-    })
-  })
-
-  const toolOptions = computed(() => {
-    return allEquipment.value.filter(item => {
-      return item.category?.toLowerCase().includes('tool') ||
-        item.category?.toLowerCase().includes('kit') ||
-        item.name.toLowerCase().includes('tools')
-    })
-  })
-
-  const gearOptions = computed(() => {
-    return allEquipment.value.filter(item => {
-      return item.category?.toLowerCase().includes('adventuring') ||
-        item.category?.toLowerCase().includes('gear') ||
-        item.category === 'Miscellaneous'
-    })
-  })
-
-  // Selected equipment from API
-  const selectedWeapon = ref(null)
-  const selectedArmor = ref(null)
-  const selectedTool = ref(null)
-  const selectedGear = ref(null)
-
-  // Tab selection for dialogs
-  const weaponTab = ref('api')
-  const armorTab = ref('api')
-  const toolTab = ref('api')
-  const gearTab = ref('api')
-
-  // Equipment choices for "choice" items
-  const equipmentChoices = ref({
-    musicalInstruments: [],
-    gamingSets: [],
-    artisanTools: [],
-    vehicles: [],
-  })
-
-  // Multi-stage equipment choices (category -> specific item)
-  const multiStageChoices = ref({})
-
-  // Equipment choice dialogs
-  const choiceDialogs = ref({
-    musicalInstruments: false,
-    gamingSets: false,
-    artisanTools: false,
-    vehicles: false,
-  })
-
-  // Available choices for different categories
-  const availableChoices = {
-    musicalInstruments: [
-      'Bagpipes', 'Drum', 'Dulcimer', 'Flute', 'Lute', 'Lyre', 'Horn', 'Pan flute', 'Shawm', 'Viol',
-    ],
-    gamingSets: [
-      'Dice set', 'Dragonchess set', 'Playing card set', 'Three-Dragon Ante set',
-    ],
-    artisanTools: [
-      "Alchemist's supplies", "Brewer's supplies", "Calligrapher's supplies", "Carpenter's tools",
-      "Cartographer's tools", "Cobbler's tools", "Cook's utensils", "Glassblower's tools",
-      "Jeweler's tools", "Leatherworker's tools", "Mason's tools", "Painter's supplies",
-      "Potter's tools", "Smith's tools", "Tinker's tools", "Weaver's tools", "Woodcarver's tools",
-    ],
-    vehicles: [
-      'Vehicles (land)', 'Vehicles (water)',
-    ],
-    martialMeleeWeapons: [
-      'Battleaxe', 'Flail', 'Glaive', 'Greataxe', 'Greatsword', 'Halberd', 'Lance', 'Longsword',
-      'Maul', 'Morningstar', 'Pike', 'Rapier', 'Scimitar', 'Shortsword', 'Trident', 'War pick',
-      'Warhammer', 'Whip',
-    ],
-    simpleMeleeWeapons: [
-      'Club', 'Dagger', 'Dart', 'Handaxe', 'Javelin', 'Light hammer', 'Mace', 'Quarterstaff',
-      'Sickle', 'Spear',
-    ],
-    martialRangedWeapons: [
-      'Blowgun', 'Hand crossbow', 'Heavy crossbow', 'Longbow', 'Net',
-    ],
-    simpleRangedWeapons: [
-      'Light crossbow', 'Shortbow', 'Sling',
-    ],
-    simpleWeapons: [
-      // Combine all simple weapon types for "any simple weapon" choices
-      'Club', 'Dagger', 'Dart', 'Handaxe', 'Javelin', 'Light hammer',
-      'Mace', 'Quarterstaff', 'Sickle', 'Spear', 'Light crossbow', 'Shortbow', 'Sling',
-    ],
-    shields: [
-      'Shield',
-    ],
-    weapons: [
-      // Combine all weapon types for general "weapon" choices
-      'Battleaxe', 'Flail', 'Glaive', 'Greataxe', 'Greatsword', 'Halberd', 'Lance', 'Longsword',
-      'Maul', 'Morningstar', 'Pike', 'Rapier', 'Scimitar', 'Shortsword', 'Trident', 'War pick',
-      'Warhammer', 'Whip', 'Club', 'Dagger', 'Dart', 'Handaxe', 'Javelin', 'Light hammer',
-      'Mace', 'Quarterstaff', 'Sickle', 'Spear', 'Blowgun', 'Hand crossbow', 'Heavy crossbow',
-      'Longbow', 'Net', 'Light crossbow', 'Shortbow', 'Sling',
-    ],
+  const backgroundEquipment = {
+    acolyte: {
+      tools: ['Holy symbol'],
+      gear: ['Prayer book or prayer wheel', 'Incense (5 sticks)', 'Vestments', 'Common clothes'],
+      money: '15 gp',
+    },
+    criminal: {
+      tools: ["Thieves' tools", 'Gaming set'],
+      gear: ['Crowbar', 'Dark common clothes with hood', 'Belt pouch'],
+      money: '15 gp',
+    },
+    entertainer: {
+      tools: ['Disguise kit', 'One musical instrument of your choice'],
+      gear: ['Costume', 'Belt pouch'],
+      money: '15 gp',
+    },
+    'folk-hero': {
+      tools: ["Artisan's tools (choice)", 'Vehicles (land)'],
+      gear: ["Smith's tools", 'Shovel', 'Iron pot', 'Common clothes'],
+      money: '10 gp',
+    },
+    hermit: {
+      tools: ['Herbalism kit'],
+      gear: ['Scroll case', 'Winter blanket', 'Common clothes'],
+      money: '5 gp',
+    },
+    noble: {
+      tools: ['Gaming set'],
+      gear: ['Signet ring', 'Scroll of pedigree', 'Fine clothes', 'Purse'],
+      money: '25 gp',
+    },
+    outlander: {
+      tools: ['Herbalism kit', 'One musical instrument of your choice'],
+      gear: ['Staff', 'Hunting trap', "Traveler's clothes", 'Belt pouch'],
+      money: '10 gp',
+    },
+    sage: {
+      tools: [],
+      gear: ['Ink and quill', 'Small knife', 'Letter from dead colleague', 'Common clothes'],
+      money: '10 gp',
+    },
+    soldier: {
+      tools: ['Gaming set', 'Vehicles (land)'],
+      gear: ['Insignia of rank', 'Trophy from fallen enemy', 'Common clothes'],
+      money: '10 gp',
+    },
   }
 
-  // Starting gold calculation
-  const calculateStartingGold = computed(() => {
-    // Show rolled value if available, regardless of equipment method
-    if (rolledStartingGold.value > 0) {
-      return rolledStartingGold.value
-    }
+  return backgroundEquipment[backgroundName] || { tools: [], gear: [], money: '10 gp' }
+})
 
-    // Default to showing dice formula values for reference
-    const className = character.value.class || character.value.classDetails?.index
-    const goldRanges = {
-      'barbarian': 50, // 2d4 × 10
-      'bard': 125, // 5d4 × 10
-      'cleric': 125, // 5d4 × 10
-      'druid': 50, // 2d4 × 10
-      'fighter': 125, // 5d4 × 10
-      'monk': 25, // 5d4
-      'paladin': 125, // 5d4 × 10
-      'ranger': 125, // 5d4 × 10
-      'rogue': 100, // 4d4 × 10
-      'sorcerer': 75, // 3d4 × 10
-      'warlock': 100, // 4d4 × 10
-      'wizard': 100, // 4d4 × 10
-    }
+// Check if equipment data exists
+const hasClassEquipment = computed(() => {
+  const equipment = classStartingEquipment.value
+  return equipment.weapons.length > 0 || equipment.armor.length > 0 || equipment.tools.length > 0 || equipment.gear.length > 0
+})
 
-    return goldRanges[className] || 100
-  })
+const hasBackgroundEquipment = computed(() => {
+  const equipment = backgroundStartingEquipment.value
+  return equipment.tools.length > 0 || equipment.gear.length > 0 || equipment.money
+})
 
-  const getClassGoldRange = computed(() => {
-    const className = character.value.class || character.value.classDetails?.index
-    const goldDescriptions = {
-      'barbarian': '2d4 × 10 gp',
-      'bard': '5d4 × 10 gp',
-      'cleric': '5d4 × 10 gp',
-      'druid': '2d4 × 10 gp',
-      'fighter': '5d4 × 10 gp',
-      'monk': '5d4 gp',
-      'paladin': '5d4 × 10 gp',
-      'ranger': '5d4 × 10 gp',
-      'rogue': '4d4 × 10 gp',
-      'sorcerer': '3d4 × 10 gp',
-      'warlock': '4d4 × 10 gp',
-      'wizard': '4d4 × 10 gp',
-    }
+// Combined equipment arrays
+const allWeapons = computed(() => {
+  const classWeapons = equipmentMethod.value === 'class' ? classStartingEquipment.value.weapons.map((w) => ({ name: w, type: 'Class Equipment' })) : []
+  const customWeaponsList = customWeapons.value.map((w) => ({ ...w, custom: true }))
+  return [...classWeapons, ...customWeaponsList]
+})
 
-    return goldDescriptions[className] || '4d4 × 10 gp'
-  })
+const allArmor = computed(() => {
+  const classArmor = equipmentMethod.value === 'class' ? classStartingEquipment.value.armor.map((a) => ({ name: a, type: 'Class Equipment' })) : []
+  const customArmorList = customArmor.value.map((a) => ({ ...a, custom: true }))
+  return [...classArmor, ...customArmorList]
+})
 
-  // Class starting equipment
-  const classStartingEquipment = computed(() => {
-    const className = character.value.class || character.value.classDetails?.index
+const allTools = computed(() => {
+  const classTools = equipmentMethod.value === 'class' ? classStartingEquipment.value.tools.map((t) => ({ name: t, type: 'Class Equipment' })) : []
+  const backgroundTools = hasBackgroundEquipment.value ? backgroundStartingEquipment.value.tools.map((t) => ({ name: t, type: 'Background Equipment' })) : []
+  const customToolsList = customTools.value.map((t) => ({ ...t, custom: true }))
+  return [...classTools, ...backgroundTools, ...customToolsList]
+})
 
-    const equipmentData = {
-      'fighter': {
-        weapons: ['Longsword or any martial melee weapon', 'Shield or second weapon', 'Light crossbow and 20 bolts'],
-        armor: ['Chain mail or leather armor', 'Shield (if chosen)'],
-        tools: [],
-        gear: ['Dungeoneer\'s pack or Explorer\'s pack'],
-      },
-      'rogue': {
-        weapons: ['Rapier or shortsword', 'Shortbow and quiver of 20 arrows', 'Dagger (2)'],
-        armor: ['Leather armor'],
-        tools: ['Thieves\' tools'],
-        gear: ['Burglar\'s pack', 'Two daggers'],
-      },
-      'wizard': {
-        weapons: ['Quarterstaff or dagger', 'Light crossbow and 20 bolts or any simple weapon'],
-        armor: [],
-        tools: [],
-        gear: ['Spellbook', 'Scholar\'s pack', 'Component pouch or arcane focus'],
-      },
-      'cleric': {
-        weapons: ['Mace or warhammer', 'Light crossbow and 20 bolts or any simple weapon'],
-        armor: ['Scale mail or Leather Armor', 'Shield'],
-        tools: [],
-        gear: ['Priest\'s pack', 'Shield', 'Holy symbol'],
-      },
-      'ranger': {
-        weapons: ['Two shortswords or two simple melee weapons', 'Longbow and quiver of 20 arrows'],
-        armor: ['Scale mail or Leather Armor'],
-        tools: [],
-        gear: ['Dungeoneer\'s pack or Explorer\'s pack'],
-      },
-      'barbarian': {
-        weapons: ['Greataxe or any martial melee weapon', 'Two handaxes or any simple weapon', 'Javelin (4)'],
-        armor: [],
-        tools: [],
-        gear: ['Explorer\'s pack'],
-      },
-      'bard': {
-        weapons: ['Rapier or Longsword or any simple weapon', 'Dagger'],
-        armor: ['Leather armor'],
-        tools: ['Three musical instruments of your choice'],
-        gear: ['Entertainer\'s pack', 'Lute or any other musical instrument'],
-      },
-      'druid': {
-        weapons: ['Scimitar or any simple melee weapon', 'Shield', 'Leather armor'],
-        armor: ['Leather armor', 'Shield'],
-        tools: ['Herbalism kit'],
-        gear: ['Explorer\'s pack', 'Druidcraft focus'],
-      },
-      'monk': {
-        weapons: ['Shortsword or any simple weapon', 'Dart (10)'],
-        armor: [],
-        tools: ['Artisan\'s tools or Musical instrument'],
-        gear: ['Dungeoneer\'s pack or Explorer\'s pack'],
-      },
-      'paladin': {
-        weapons: ['Martial weapon and shield or two martial weapons', 'Five javelins or any simple melee weapon'],
-        armor: ['Chain mail', 'Shield (if chosen)'],
-        tools: [],
-        gear: ['Priest\'s pack or Explorer\'s pack', 'Holy symbol'],
-      },
-      'sorcerer': {
-        weapons: ['Light crossbow and 20 bolts or any simple weapon', 'Dagger (2)'],
-        armor: [],
-        tools: [],
-        gear: ['Dungeoneer\'s pack or Explorer\'s pack', 'Sorcerous focus'],
-      },
-      'warlock': {
-        weapons: ['Light crossbow and 20 bolts or any simple weapon', 'Simple weapon'],
-        armor: ['Leather armor'],
-        tools: [],
-        gear: ['Scholar\'s pack or Dungeoneer\'s pack', 'Simple weapon', 'Arcane focus'],
-      },
-    }
+const allGear = computed(() => {
+  const classGear = equipmentMethod.value === 'class' ? classStartingEquipment.value.gear.map((g) => ({ name: g, type: 'Class Equipment' })) : []
+  const backgroundGear = hasBackgroundEquipment.value ? backgroundStartingEquipment.value.gear.map((g) => ({ name: g, type: 'Background Equipment' })) : []
+  const customGearList = customGear.value.map((g) => ({ ...g, custom: true }))
+  return [...classGear, ...backgroundGear, ...customGearList]
+})
 
-    return equipmentData[className] || { weapons: [], armor: [], tools: [], gear: [] }
-  })
+// Helper function to capitalize first letter of equipment names
+const capitalizeEquipmentName = (name) => {
+  if (!name) return ''
+  return name.charAt(0).toUpperCase() + name.slice(1)
+}
 
-  const backgroundStartingEquipment = computed(() => {
-    const backgroundName = character.value.background || character.value.backgroundDetails?.index
+// Equipment totals
+const totalWeapons = computed(() => allWeapons.value.length)
+const totalArmor = computed(() => allArmor.value.length)
+const totalTools = computed(() => allTools.value.length)
+const totalGear = computed(() => allGear.value.length)
 
-    const backgroundEquipment = {
-      'acolyte': {
-        tools: ['Holy symbol'],
-        gear: ['Prayer book or prayer wheel', 'Incense (5 sticks)', 'Vestments', 'Common clothes'],
-        money: '15 gp',
-      },
-      'criminal': {
-        tools: ['Thieves\' tools', 'Gaming set'],
-        gear: ['Crowbar', 'Dark common clothes with hood', 'Belt pouch'],
-        money: '15 gp',
-      },
-      'entertainer': {
-        tools: ['Disguise kit', 'One musical instrument of your choice'],
-        gear: ['Costume', 'Belt pouch'],
-        money: '15 gp',
-      },
-      'folk-hero': {
-        tools: ['Artisan\'s tools (choice)', 'Vehicles (land)'],
-        gear: ['Smith\'s tools', 'Shovel', 'Iron pot', 'Common clothes'],
-        money: '10 gp',
-      },
-      'hermit': {
-        tools: ['Herbalism kit'],
-        gear: ['Scroll case', 'Winter blanket', 'Common clothes'],
-        money: '5 gp',
-      },
-      'noble': {
-        tools: ['Gaming set'],
-        gear: ['Signet ring', 'Scroll of pedigree', 'Fine clothes', 'Purse'],
-        money: '25 gp',
-      },
-      'outlander': {
-        tools: ['Herbalism kit', 'One musical instrument of your choice'],
-        gear: ['Staff', 'Hunting trap', 'Traveler\'s clothes', 'Belt pouch'],
-        money: '10 gp',
-      },
-      'sage': {
-        tools: [],
-        gear: ['Ink and quill', 'Small knife', 'Letter from dead colleague', 'Common clothes'],
-        money: '10 gp',
-      },
-      'soldier': {
-        tools: ['Gaming set', 'Vehicles (land)'],
-        gear: ['Insignia of rank', 'Trophy from fallen enemy', 'Common clothes'],
-        money: '10 gp',
-      },
-    }
-
-    return backgroundEquipment[backgroundName] || { tools: [], gear: [], money: '10 gp' }
-  })
-
-  // Check if equipment data exists
-  const hasClassEquipment = computed(() => {
-    const equipment = classStartingEquipment.value
-    return equipment.weapons.length > 0 || equipment.armor.length > 0 || equipment.tools.length > 0 || equipment.gear.length > 0
-  })
-
-  const hasBackgroundEquipment = computed(() => {
-    const equipment = backgroundStartingEquipment.value
-    return equipment.tools.length > 0 || equipment.gear.length > 0 || equipment.money
-  })
-
-  // Combined equipment arrays
-  const allWeapons = computed(() => {
-    const classWeapons = equipmentMethod.value === 'class' ? classStartingEquipment.value.weapons.map(w => ({ name: w, type: 'Class Equipment' })) : []
-    const customWeaponsList = customWeapons.value.map(w => ({ ...w, custom: true }))
-    return [...classWeapons, ...customWeaponsList]
-  })
-
-  const allArmor = computed(() => {
-    const classArmor = equipmentMethod.value === 'class' ? classStartingEquipment.value.armor.map(a => ({ name: a, type: 'Class Equipment' })) : []
-    const customArmorList = customArmor.value.map(a => ({ ...a, custom: true }))
-    return [...classArmor, ...customArmorList]
-  })
-
-  const allTools = computed(() => {
-    const classTools = equipmentMethod.value === 'class' ? classStartingEquipment.value.tools.map(t => ({ name: t, type: 'Class Equipment' })) : []
-    const backgroundTools = hasBackgroundEquipment.value ? backgroundStartingEquipment.value.tools.map(t => ({ name: t, type: 'Background Equipment' })) : []
-    const customToolsList = customTools.value.map(t => ({ ...t, custom: true }))
-    return [...classTools, ...backgroundTools, ...customToolsList]
-  })
-
-  const allGear = computed(() => {
-    const classGear = equipmentMethod.value === 'class' ? classStartingEquipment.value.gear.map(g => ({ name: g, type: 'Class Equipment' })) : []
-    const backgroundGear = hasBackgroundEquipment.value ? backgroundStartingEquipment.value.gear.map(g => ({ name: g, type: 'Background Equipment' })) : []
-    const customGearList = customGear.value.map(g => ({ ...g, custom: true }))
-    return [...classGear, ...backgroundGear, ...customGearList]
-  })
-
-  // Helper function to capitalize first letter of equipment names
-  const capitalizeEquipmentName = name => {
-    if (!name) return ''
-    return name.charAt(0).toUpperCase() + name.slice(1)
+// Calculate total cost of purchased equipment
+const totalSpent = computed(() => {
+  if (equipmentMethod.value !== 'gold') {
+    return 0
   }
 
-  // Equipment totals
-  const totalWeapons = computed(() => allWeapons.value.length)
-  const totalArmor = computed(() => allArmor.value.length)
-  const totalTools = computed(() => allTools.value.length)
-  const totalGear = computed(() => allGear.value.length)
+  let total = 0
 
-  // Calculate total cost of purchased equipment
-  const totalSpent = computed(() => {
-    if (equipmentMethod.value !== 'gold') {
-      return 0
+  // Add costs from custom weapons
+  customWeapons.value.forEach((weapon) => {
+    if (weapon.cost?.quantity) {
+      total += weapon.cost.quantity
     }
-
-    let total = 0
-
-    // Add costs from custom weapons
-    customWeapons.value.forEach(weapon => {
-      if (weapon.cost?.quantity) {
-        total += weapon.cost.quantity
-      }
-    })
-
-    // Add costs from custom armor
-    customArmor.value.forEach(armor => {
-      if (armor.cost?.quantity) {
-        total += armor.cost.quantity
-      }
-    })
-
-    // Add costs from custom tools
-    customTools.value.forEach(tool => {
-      if (tool.cost?.quantity) {
-        total += tool.cost.quantity
-      }
-    })
-
-    // Add costs from custom gear
-    customGear.value.forEach(gear => {
-      if (gear.cost?.quantity) {
-        total += gear.cost.quantity
-      }
-    })
-
-    return total
   })
 
-  const remainingGold = computed(() => {
-    // Only calculate gold when using the gold equipment method
-    if (equipmentMethod.value !== 'gold') {
-      return 0 // Explicitly return 0 for class equipment
+  // Add costs from custom armor
+  customArmor.value.forEach((armor) => {
+    if (armor.cost?.quantity) {
+      total += armor.cost.quantity
     }
-
-    const remaining = Math.max(0, calculateStartingGold.value - totalSpent.value)
-    return remaining
   })
 
-  // Computed function to check if an equipment choice should be disabled due to duplicates
-  const getEquipmentDuplicateState = computed(() => {
-    return (option, currentChoiceType) => {
-      try {
-        // Normalize the option string for comparison
-        const normalizeString = str => str.toLowerCase().replace(/['']/g, "'").trim()
-        const normalizedOption = normalizeString(option)
-
-        // Comprehensive duplicate check across all equipment sources
-
-        // 1. Check other equipment choice selections (different choice types)
-        if (equipmentChoices.value) {
-          for (const [choiceType, selections] of Object.entries(equipmentChoices.value)) {
-            // Skip the current choice type
-            if (choiceType === currentChoiceType) continue
-
-            // Check if this option is selected in another choice type
-            if (Array.isArray(selections) && selections.some(item => normalizeString(item) === normalizedOption)) {
-              return true
-            }
-          }
-        }
-
-        // 2. Check multi-stage choices for specific items already selected
-        if (multiStageChoices.value) {
-          for (const [choiceType, stageChoice] of Object.entries(multiStageChoices.value)) {
-            // Skip the current choice type
-            if (choiceType === currentChoiceType) continue
-
-            // Check if this option is selected as a specific item in a multi-stage choice
-            if (stageChoice && stageChoice.specificItem && normalizeString(stageChoice.specificItem) === normalizedOption) {
-              return true
-            }
-          }
-        }
-
-        // 2b. NEW: Check if this option conflicts with multi-stage category choices
-        // For example, if "Artisan's Tools" is selected as a category, individual artisan tools should be disabled
-        if (multiStageChoices.value) {
-          for (const [choiceType, stageChoice] of Object.entries(multiStageChoices.value)) {
-            // Skip the current choice type
-            if (choiceType === currentChoiceType) continue
-
-            if (stageChoice && stageChoice.category) {
-              // Only prevent conflicts between different choice types
-              // Check if this option falls under the selected category
-              if (stageChoice.category === 'Artisan\'s Tools' && availableChoices.artisanTools && availableChoices.artisanTools.includes(option)) {
-                // Only block if this is preventing cross-choice conflicts
-                // Don't block legitimate artisan tool choices from each other
-                const isCurrentChoiceArtisanToolsOnly = currentChoiceType === 'artisanTools'
-                if (!isCurrentChoiceArtisanToolsOnly) {
-                  return true
-                }
-              }
-
-              if (stageChoice.category === 'Musical Instrument' && availableChoices.musicalInstruments && availableChoices.musicalInstruments.includes(option)) {
-                const isCurrentChoiceMusicalInstrumentsOnly = currentChoiceType === 'musicalInstruments'
-                if (!isCurrentChoiceMusicalInstrumentsOnly) {
-                  return true
-                }
-              }
-            }
-          }
-        } // 3. Check all currently equipped gear (includes background + class + custom)
-        if (allGear.value && Array.isArray(allGear.value)) {
-          if (allGear.value.some(item => normalizeString(item.name || '') === normalizedOption)) {
-            return true
-          }
-        }
-
-        // 4. Check all currently equipped tools (includes background + class + custom)
-        if (allTools.value && Array.isArray(allTools.value)) {
-          if (allTools.value.some(item => normalizeString(item.name || '') === normalizedOption)) {
-            return true
-          }
-        }
-
-        // 5. Check all currently equipped weapons (includes background + class + custom)
-        if (allWeapons.value && Array.isArray(allWeapons.value)) {
-          if (allWeapons.value.some(item => normalizeString(item.name || '') === normalizedOption)) {
-            return true
-          }
-        }
-
-        // 6. Check all currently equipped armor (includes background + class + custom)
-        if (allArmor.value && Array.isArray(allArmor.value)) {
-          if (allArmor.value.some(item => normalizeString(item.name || '') === normalizedOption)) {
-            return true
-          }
-        }
-
-        return false
-      } catch (error) {
-        console.warn('Error in getEquipmentDuplicateState:', error)
-        return false
-      }
+  // Add costs from custom tools
+  customTools.value.forEach((tool) => {
+    if (tool.cost?.quantity) {
+      total += tool.cost.quantity
     }
-  })// Load equipment from API
-  const loadEquipment = async () => {
-    if (loadingEquipment.value || allEquipment.value.length > 0) return
+  })
 
-    loadingEquipment.value = true
+  // Add costs from custom gear
+  customGear.value.forEach((gear) => {
+    if (gear.cost?.quantity) {
+      total += gear.cost.quantity
+    }
+  })
+
+  return total
+})
+
+const remainingGold = computed(() => {
+  // Only calculate gold when using the gold equipment method
+  if (equipmentMethod.value !== 'gold') {
+    return 0 // Explicitly return 0 for class equipment
+  }
+
+  const remaining = Math.max(0, calculateStartingGold.value - totalSpent.value)
+  return remaining
+})
+
+// Computed function to check if an equipment choice should be disabled due to duplicates
+const getEquipmentDuplicateState = computed(() => {
+  return (option, currentChoiceType) => {
     try {
-      const equipment = await dndAPI.getEquipment()
-      allEquipment.value = equipment || []
-      console.log(`Loaded ${allEquipment.value.length} equipment items`)
+      // Normalize the option string for comparison
+      const normalizeString = (str) => str.toLowerCase().replace(/['']/g, "'").trim()
+      const normalizedOption = normalizeString(option)
+
+      // Comprehensive duplicate check across all equipment sources
+
+      // 1. Check other equipment choice selections (different choice types)
+      if (equipmentChoices.value) {
+        for (const [choiceType, selections] of Object.entries(equipmentChoices.value)) {
+          // Skip the current choice type
+          if (choiceType === currentChoiceType) continue
+
+          // Check if this option is selected in another choice type
+          if (Array.isArray(selections) && selections.some((item) => normalizeString(item) === normalizedOption)) {
+            return true
+          }
+        }
+      }
+
+      // 2. Check multi-stage choices for specific items already selected
+      if (multiStageChoices.value) {
+        for (const [choiceType, stageChoice] of Object.entries(multiStageChoices.value)) {
+          // Skip the current choice type
+          if (choiceType === currentChoiceType) continue
+
+          // Check if this option is selected as a specific item in a multi-stage choice
+          if (stageChoice && stageChoice.specificItem && normalizeString(stageChoice.specificItem) === normalizedOption) {
+            return true
+          }
+        }
+      }
+
+      // 2b. NEW: Check if this option conflicts with multi-stage category choices
+      // For example, if "Artisan's Tools" is selected as a category, individual artisan tools should be disabled
+      if (multiStageChoices.value) {
+        for (const [choiceType, stageChoice] of Object.entries(multiStageChoices.value)) {
+          // Skip the current choice type
+          if (choiceType === currentChoiceType) continue
+
+          if (stageChoice && stageChoice.category) {
+            // Only prevent conflicts between different choice types
+            // Check if this option falls under the selected category
+            if (stageChoice.category === "Artisan's Tools" && availableChoices.artisanTools && availableChoices.artisanTools.includes(option)) {
+              // Only block if this is preventing cross-choice conflicts
+              // Don't block legitimate artisan tool choices from each other
+              const isCurrentChoiceArtisanToolsOnly = currentChoiceType === 'artisanTools'
+              if (!isCurrentChoiceArtisanToolsOnly) {
+                return true
+              }
+            }
+
+            if (stageChoice.category === 'Musical Instrument' && availableChoices.musicalInstruments && availableChoices.musicalInstruments.includes(option)) {
+              const isCurrentChoiceMusicalInstrumentsOnly = currentChoiceType === 'musicalInstruments'
+              if (!isCurrentChoiceMusicalInstrumentsOnly) {
+                return true
+              }
+            }
+          }
+        }
+      } // 3. Check all currently equipped gear (includes background + class + custom)
+      if (allGear.value && Array.isArray(allGear.value)) {
+        if (allGear.value.some((item) => normalizeString(item.name || '') === normalizedOption)) {
+          return true
+        }
+      }
+
+      // 4. Check all currently equipped tools (includes background + class + custom)
+      if (allTools.value && Array.isArray(allTools.value)) {
+        if (allTools.value.some((item) => normalizeString(item.name || '') === normalizedOption)) {
+          return true
+        }
+      }
+
+      // 5. Check all currently equipped weapons (includes background + class + custom)
+      if (allWeapons.value && Array.isArray(allWeapons.value)) {
+        if (allWeapons.value.some((item) => normalizeString(item.name || '') === normalizedOption)) {
+          return true
+        }
+      }
+
+      // 6. Check all currently equipped armor (includes background + class + custom)
+      if (allArmor.value && Array.isArray(allArmor.value)) {
+        if (allArmor.value.some((item) => normalizeString(item.name || '') === normalizedOption)) {
+          return true
+        }
+      }
+
+      return false
     } catch (error) {
-      console.error('Failed to load equipment:', error)
-      allEquipment.value = []
-    } finally {
-      loadingEquipment.value = false
+      console.warn('Error in getEquipmentDuplicateState:', error)
+      return false
     }
   }
+}) // Load equipment from API
+const loadEquipment = async () => {
+  if (loadingEquipment.value || allEquipment.value.length > 0) return
 
-  // Cost validation functions
-  const canAfford = item => {
-    if (equipmentMethod.value !== 'gold') {
-      return true // No cost restrictions for class equipment method
-    }
+  loadingEquipment.value = true
+  try {
+    const equipment = await dndAPI.getEquipment()
+    allEquipment.value = equipment || []
+    console.log(`Loaded ${allEquipment.value.length} equipment items`)
+  } catch (error) {
+    console.error('Failed to load equipment:', error)
+    allEquipment.value = []
+  } finally {
+    loadingEquipment.value = false
+  }
+}
 
-    const itemCost = item?.cost?.quantity || 0
-    return itemCost <= remainingGold.value
+// Cost validation functions
+const canAfford = (item) => {
+  if (equipmentMethod.value !== 'gold') {
+    return true // No cost restrictions for class equipment method
   }
 
-  const getAffordabilityMessage = item => {
-    if (equipmentMethod.value !== 'gold') {
-      return ''
-    }
+  const itemCost = item?.cost?.quantity || 0
+  return itemCost <= remainingGold.value
+}
 
-    const itemCost = item?.cost?.quantity || 0
-    if (itemCost > remainingGold.value) {
-      return `Insufficient gold: Need ${itemCost}gp, have ${remainingGold.value}gp`
-    }
+const getAffordabilityMessage = (item) => {
+  if (equipmentMethod.value !== 'gold') {
     return ''
   }
 
-  // Add equipment from API selection
-  function addSelectedWeapon () {
-    if (selectedWeapon.value) {
-      if (!canAfford(selectedWeapon.value)) {
-        alert(getAffordabilityMessage(selectedWeapon.value))
-        return
-      }
+  const itemCost = item?.cost?.quantity || 0
+  if (itemCost > remainingGold.value) {
+    return `Insufficient gold: Need ${itemCost}gp, have ${remainingGold.value}gp`
+  }
+  return ''
+}
 
-      customWeapons.value.push({
-        name: selectedWeapon.value.name,
-        damage: selectedWeapon.value.damage?.dice || 'Varies',
-        properties: selectedWeapon.value.properties?.join(', ') || '',
-        cost: selectedWeapon.value.cost,
-        weight: selectedWeapon.value.weight,
-      })
-      selectedWeapon.value = null
-      addWeaponDialog.value = false
+// Add equipment from API selection
+function addSelectedWeapon() {
+  if (selectedWeapon.value) {
+    if (!canAfford(selectedWeapon.value)) {
+      alert(getAffordabilityMessage(selectedWeapon.value))
+      return
     }
+
+    customWeapons.value.push({
+      name: selectedWeapon.value.name,
+      damage: selectedWeapon.value.damage?.dice || 'Varies',
+      properties: selectedWeapon.value.properties?.join(', ') || '',
+      cost: selectedWeapon.value.cost,
+      weight: selectedWeapon.value.weight,
+    })
+    selectedWeapon.value = null
+    addWeaponDialog.value = false
+  }
+}
+
+function addSelectedArmor() {
+  if (selectedArmor.value) {
+    if (!canAfford(selectedArmor.value)) {
+      alert(getAffordabilityMessage(selectedArmor.value))
+      return
+    }
+
+    customArmor.value.push({
+      name: selectedArmor.value.name,
+      ac: selectedArmor.value.armorClass?.base || 'Varies',
+      type: selectedArmor.value.armorCategory || 'Armor',
+      cost: selectedArmor.value.cost,
+      weight: selectedArmor.value.weight,
+    })
+    selectedArmor.value = null
+    addArmorDialog.value = false
+  }
+}
+
+function addSelectedTool() {
+  if (selectedTool.value) {
+    if (!canAfford(selectedTool.value)) {
+      alert(getAffordabilityMessage(selectedTool.value))
+      return
+    }
+
+    customTools.value.push({
+      name: selectedTool.value.name,
+      type: selectedTool.value.category || 'Tool',
+      cost: selectedTool.value.cost,
+      weight: selectedTool.value.weight,
+    })
+    selectedTool.value = null
+    addToolDialog.value = false
+  }
+}
+
+function addSelectedGear() {
+  if (selectedGear.value) {
+    if (!canAfford(selectedGear.value)) {
+      alert(getAffordabilityMessage(selectedGear.value))
+      return
+    }
+
+    customGear.value.push({
+      name: selectedGear.value.name,
+      description: selectedGear.value.description || selectedGear.value.category,
+      cost: selectedGear.value.cost,
+      weight: selectedGear.value.weight,
+    })
+    selectedGear.value = null
+    addGearDialog.value = false
+  }
+}
+
+// Add custom equipment functions (manual entry)
+function addCustomWeapon() {
+  if (newWeapon.value.name) {
+    customWeapons.value.push({ ...newWeapon.value })
+    newWeapon.value = { name: '', damage: '', properties: '' }
+    addWeaponDialog.value = false
+  }
+}
+
+function addCustomArmor() {
+  if (newArmor.value.name) {
+    customArmor.value.push({ ...newArmor.value })
+    newArmor.value = { name: '', ac: '', type: '' }
+    addArmorDialog.value = false
+  }
+}
+
+function addCustomTool() {
+  if (newTool.value.name) {
+    customTools.value.push({ ...newTool.value })
+    newTool.value = { name: '', type: '' }
+    addToolDialog.value = false
+  }
+}
+
+function addCustomGear() {
+  if (newGear.value.name) {
+    customGear.value.push({ ...newGear.value })
+    newGear.value = { name: '', description: '' }
+    addGearDialog.value = false
+  }
+}
+
+// Remove custom equipment functions
+function removeCustomWeapon(index) {
+  const customIndex = index - (equipmentMethod.value === 'class' ? classStartingEquipment.value.weapons.length : 0)
+  if (customIndex >= 0) {
+    customWeapons.value.splice(customIndex, 1)
+  }
+}
+
+function removeCustomArmor(index) {
+  const customIndex = index - (equipmentMethod.value === 'class' ? classStartingEquipment.value.armor.length : 0)
+  if (customIndex >= 0) {
+    customArmor.value.splice(customIndex, 1)
+  }
+}
+
+function removeCustomTool(index) {
+  const classToolsLength = equipmentMethod.value === 'class' ? classStartingEquipment.value.tools.length : 0
+  const backgroundToolsLength = hasBackgroundEquipment.value ? backgroundStartingEquipment.value.tools.length : 0
+  const customIndex = index - classToolsLength - backgroundToolsLength
+  if (customIndex >= 0) {
+    customTools.value.splice(customIndex, 1)
+  }
+}
+
+function removeCustomGear(index) {
+  const classGearLength = equipmentMethod.value === 'class' ? classStartingEquipment.value.gear.length : 0
+  const backgroundGearLength = hasBackgroundEquipment.value ? backgroundStartingEquipment.value.gear.length : 0
+  const customIndex = index - classGearLength - backgroundGearLength
+  if (customIndex >= 0) {
+    customGear.value.splice(customIndex, 1)
+  }
+}
+
+// Save equipment to character object and unified inventory store
+watch([allWeapons, allArmor, allTools, allGear], ([weapons, armor, tools, gear]) => {
+  character.value.equipment = {
+    weapons,
+    armor,
+    tools,
+    gear,
+    method: equipmentMethod.value,
+    startingGold: calculateStartingGold.value,
   }
 
-  function addSelectedArmor () {
-    if (selectedArmor.value) {
-      if (!canAfford(selectedArmor.value)) {
-        alert(getAffordabilityMessage(selectedArmor.value))
-        return
-      }
+  // Note: Inventory management is handled by updateClassTraits() and updateBackgroundTraits()
+  // called from ClassSelector and BackgroundSelector components to avoid duplication
 
-      customArmor.value.push({
-        name: selectedArmor.value.name,
-        ac: selectedArmor.value.armorClass?.base || 'Varies',
-        type: selectedArmor.value.armorCategory || 'Armor',
-        cost: selectedArmor.value.cost,
-        weight: selectedArmor.value.weight,
-      })
-      selectedArmor.value = null
-      addArmorDialog.value = false
-    }
-  }
-
-  function addSelectedTool () {
-    if (selectedTool.value) {
-      if (!canAfford(selectedTool.value)) {
-        alert(getAffordabilityMessage(selectedTool.value))
-        return
-      }
-
-      customTools.value.push({
-        name: selectedTool.value.name,
-        type: selectedTool.value.category || 'Tool',
-        cost: selectedTool.value.cost,
-        weight: selectedTool.value.weight,
-      })
-      selectedTool.value = null
-      addToolDialog.value = false
-    }
-  }
-
-  function addSelectedGear () {
-    if (selectedGear.value) {
-      if (!canAfford(selectedGear.value)) {
-        alert(getAffordabilityMessage(selectedGear.value))
-        return
-      }
-
-      customGear.value.push({
-        name: selectedGear.value.name,
-        description: selectedGear.value.description || selectedGear.value.category,
-        cost: selectedGear.value.cost,
-        weight: selectedGear.value.weight,
-      })
-      selectedGear.value = null
-      addGearDialog.value = false
-    }
-  }
-
-  // Add custom equipment functions (manual entry)
-  function addCustomWeapon () {
-    if (newWeapon.value.name) {
-      customWeapons.value.push({ ...newWeapon.value })
-      newWeapon.value = { name: '', damage: '', properties: '' }
-      addWeaponDialog.value = false
-    }
-  }
-
-  function addCustomArmor () {
-    if (newArmor.value.name) {
-      customArmor.value.push({ ...newArmor.value })
-      newArmor.value = { name: '', ac: '', type: '' }
-      addArmorDialog.value = false
-    }
-  }
-
-  function addCustomTool () {
-    if (newTool.value.name) {
-      customTools.value.push({ ...newTool.value })
-      newTool.value = { name: '', type: '' }
-      addToolDialog.value = false
-    }
-  }
-
-  function addCustomGear () {
-    if (newGear.value.name) {
-      customGear.value.push({ ...newGear.value })
-      newGear.value = { name: '', description: '' }
-      addGearDialog.value = false
-    }
-  }
-
-  // Remove custom equipment functions
-  function removeCustomWeapon (index) {
-    const customIndex = index - (equipmentMethod.value === 'class' ? classStartingEquipment.value.weapons.length : 0)
-    if (customIndex >= 0) {
-      customWeapons.value.splice(customIndex, 1)
-    }
-  }
-
-  function removeCustomArmor (index) {
-    const customIndex = index - (equipmentMethod.value === 'class' ? classStartingEquipment.value.armor.length : 0)
-    if (customIndex >= 0) {
-      customArmor.value.splice(customIndex, 1)
-    }
-  }
-
-  function removeCustomTool (index) {
-    const classToolsLength = equipmentMethod.value === 'class' ? classStartingEquipment.value.tools.length : 0
-    const backgroundToolsLength = hasBackgroundEquipment.value ? backgroundStartingEquipment.value.tools.length : 0
-    const customIndex = index - classToolsLength - backgroundToolsLength
-    if (customIndex >= 0) {
-      customTools.value.splice(customIndex, 1)
-    }
-  }
-
-  function removeCustomGear (index) {
-    const classGearLength = equipmentMethod.value === 'class' ? classStartingEquipment.value.gear.length : 0
-    const backgroundGearLength = hasBackgroundEquipment.value ? backgroundStartingEquipment.value.gear.length : 0
-    const customIndex = index - classGearLength - backgroundGearLength
-    if (customIndex >= 0) {
-      customGear.value.splice(customIndex, 1)
-    }
-  }
-
-  // Save equipment to character object and unified inventory store
-  watch([allWeapons, allArmor, allTools, allGear], ([weapons, armor, tools, gear]) => {
-    character.value.equipment = {
-      weapons,
-      armor,
-      tools,
-      gear,
-      method: equipmentMethod.value,
-      startingGold: calculateStartingGold.value,
-    }
-
-    // Note: Inventory management is handled by updateClassTraits() and updateBackgroundTraits()
-    // called from ClassSelector and BackgroundSelector components to avoid duplication
-
-    // Only add custom items to the character store
-    try {
-      if (characterStore) {
-        [...weapons, ...armor, ...tools, ...gear].forEach(item => {
-          if (item.custom && typeof characterStore.addToInventory === 'function') {
-            characterStore.addToInventory({
-              name: item.name,
-              type: item.type || 'Equipment',
-              quantity: item.quantity || 1,
-              source: 'custom',
-            })
-          }
-        })
-      }
-    } catch (error) {
-      console.warn('Error adding custom items to character store inventory:', error)
-    }
-  })// Watch equipment method changes
-  watch(equipmentMethod, newMethod => {
-    character.value.equipmentMethod = newMethod
-
-    // Update gold when switching to gold method
-    if (newMethod === 'gold') {
-      if (rolledStartingGold.value > 0) {
-        character.value.coins.gp = rolledStartingGold.value
-      } else {
-        character.value.coins.gp = calculateStartingGold.value
-      }
-    } else {
-      // Reset coins when using class equipment
-      character.value.coins = { cp: 0, sp: 0, ep: 0, gp: 0, pp: 0 }
-    }
-  })
-
-  // Load equipment on component mount
-  onMounted(() => {
-    loadEquipment()
-  })
-
-  // Equipment choice handling functions
-  function detectEquipmentChoices (tool) {
-    const toolLower = tool.toLowerCase()
-
-    // Check for "A or B or any C" patterns (like "Rapier or longsword or any simple weapon")
-    if (toolLower.includes(' or any ')) {
-      // Split by " or " to get all parts
-      const allParts = tool.split(/\s+or\s+/i)
-
-      // Look for a part that starts with "any "
-      const anyIndex = allParts.findIndex(part => part.toLowerCase().trim().startsWith('any '))
-
-      if (anyIndex !== -1 && allParts.length >= 2) {
-        const categoryText = allParts[anyIndex].replace(/^any\s+/i, '').trim().toLowerCase()
-        const specificItems = allParts.slice(0, anyIndex).map(item => item.trim())
-
-        let categoryKey = null
-        let categoryOptions = []
-
-        // Map category text to our available choices
-        if (categoryText.includes('simple') && categoryText.includes('weapon')) {
-          categoryKey = 'simpleWeapons'
-          // Combine simple melee and ranged weapons
-          categoryOptions = [...availableChoices.simpleMeleeWeapons, ...availableChoices.simpleRangedWeapons]
-        } else if (categoryText.includes('martial') && categoryText.includes('melee') && categoryText.includes('weapon')) {
-          categoryKey = 'martialMeleeWeapons'
-          categoryOptions = [...availableChoices.martialMeleeWeapons]
-        } else if (categoryText.includes('simple') && categoryText.includes('melee') && categoryText.includes('weapon')) {
-          categoryKey = 'simpleMeleeWeapons'
-          categoryOptions = [...availableChoices.simpleMeleeWeapons]
-        } else if (categoryText.includes('martial') && categoryText.includes('ranged') && categoryText.includes('weapon')) {
-          categoryKey = 'martialRangedWeapons'
-          categoryOptions = [...availableChoices.martialRangedWeapons]
-        } else if (categoryText.includes('simple') && categoryText.includes('ranged') && categoryText.includes('weapon')) {
-          categoryKey = 'simpleRangedWeapons'
-          categoryOptions = [...availableChoices.simpleRangedWeapons]
-        } else if (categoryText.includes('weapon')) {
-          categoryKey = 'weapons'
-          categoryOptions = [...availableChoices.weapons]
-        } else if (categoryText.includes('instrument') || categoryText.includes('insutument')) {
-          // Handle "any other instrument" or "any other musical instrument" (with typo support)
-          categoryKey = 'musicalInstruments'
-          categoryOptions = [...availableChoices.musicalInstruments]
-        }
-
-        if (categoryKey && categoryOptions.length > 0) {
-          // Add specific items to the options if they're not already there
-          specificItems.forEach(item => {
-            if (!categoryOptions.includes(item)) {
-              categoryOptions.unshift(item) // Add to beginning
-            }
+  // Only add custom items to the character store
+  try {
+    if (characterStore) {
+      ;[...weapons, ...armor, ...tools, ...gear].forEach((item) => {
+        if (item.custom && typeof characterStore.addToInventory === 'function') {
+          characterStore.addToInventory({
+            name: item.name,
+            type: item.type || 'Equipment',
+            quantity: item.quantity || 1,
+            source: 'custom',
           })
-
-          const choiceKey = `choice_${tool.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase()}`
-          availableChoices[choiceKey] = categoryOptions
-
-          return { type: choiceKey, count: 1, specificOptions: categoryOptions }
         }
-      }
+      })
     }
+  } catch (error) {
+    console.warn('Error adding custom items to character store inventory:', error)
+  }
+}) // Watch equipment method changes
+watch(equipmentMethod, (newMethod) => {
+  character.value.equipmentMethod = newMethod
 
-    // Check for "X or any Y" patterns (like "Longsword or any martial melee weapon")
-    if (toolLower.includes(' or any ')) {
-      const parts = tool.split(/\s+or\s+any\s+/i)
-      if (parts.length === 2) {
-        const specificItem = parts[0].trim()
-        const categoryText = parts[1].trim().toLowerCase()
-
-        let categoryKey = null
-        let categoryOptions = []
-
-        // Map category text to our available choices
-        if (categoryText.includes('martial') && categoryText.includes('melee') && categoryText.includes('weapon')) {
-          categoryKey = 'martialMeleeWeapons'
-          categoryOptions = [...availableChoices.martialMeleeWeapons]
-        } else if (categoryText.includes('simple') && categoryText.includes('melee') && categoryText.includes('weapon')) {
-          categoryKey = 'simpleMeleeWeapons'
-          categoryOptions = [...availableChoices.simpleMeleeWeapons]
-        } else if (categoryText.includes('martial') && categoryText.includes('ranged') && categoryText.includes('weapon')) {
-          categoryKey = 'martialRangedWeapons'
-          categoryOptions = [...availableChoices.martialRangedWeapons]
-        } else if (categoryText.includes('simple') && categoryText.includes('ranged') && categoryText.includes('weapon')) {
-          categoryKey = 'simpleRangedWeapons'
-          categoryOptions = [...availableChoices.simpleRangedWeapons]
-        } else if (categoryText.includes('weapon')) {
-          categoryKey = 'weapons'
-          categoryOptions = [...availableChoices.weapons]
-        } else if (categoryText.includes('instrument') || categoryText.includes('insutument')) {
-          // Handle "any other instrument" or "any other musical instrument" (with typo support)
-          categoryKey = 'musicalInstruments'
-          categoryOptions = [...availableChoices.musicalInstruments]
-        }
-
-        if (categoryKey && categoryOptions.length > 0) {
-          // Add the specific item to the options if it's not already there
-          if (!categoryOptions.includes(specificItem)) {
-            categoryOptions.unshift(specificItem) // Add to beginning
-          }
-
-          const choiceKey = `choice_${tool.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase()}`
-          availableChoices[choiceKey] = categoryOptions
-
-          return { type: choiceKey, count: 1, specificOptions: categoryOptions }
-        }
-      }
+  // Update gold when switching to gold method
+  if (newMethod === 'gold') {
+    if (rolledStartingGold.value > 0) {
+      character.value.coins.gp = rolledStartingGold.value
+    } else {
+      character.value.coins.gp = calculateStartingGold.value
     }
+  } else {
+    // Reset coins when using class equipment
+    character.value.coins = { cp: 0, sp: 0, ep: 0, gp: 0, pp: 0 }
+  }
+})
 
-    // Check for simple "X or Y" patterns first (like "Dungeoneer's pack or Explorer's pack")
-    if (toolLower.includes(' or ')) {
-      // Extract the specific options from the text
-      const options = tool.split(/\s+or\s+/i).map(option => option.trim())
-      if (options.length === 2) {
-        // Special handling for "Artisan's tools or Musical instrument"
-        if (options.some(opt => opt.toLowerCase().includes('artisan') && opt.toLowerCase().includes('tool')) &&
-          options.some(opt => opt.toLowerCase().includes('musical instrument'))) {
+// Load equipment on component mount
+onMounted(() => {
+  loadEquipment()
+})
 
-          // Create a two-stage choice: first choose category, then specific item
-          const choiceKey = `choice_${tool.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase()}`
-          const categoryOptions = ['Artisan\'s Tools', 'Musical Instrument']
+// Equipment choice handling functions
+function detectEquipmentChoices(tool) {
+  const toolLower = tool.toLowerCase()
 
-          if (!availableChoices[choiceKey]) {
-            availableChoices[choiceKey] = categoryOptions
-          }
+  // Check for "A or B or any C" patterns (like "Rapier or longsword or any simple weapon")
+  if (toolLower.includes(' or any ')) {
+    // Split by " or " to get all parts
+    const allParts = tool.split(/\s+or\s+/i)
 
-          return { type: choiceKey, count: 1, specificOptions: categoryOptions, isMultiStage: true }
-        }
+    // Look for a part that starts with "any "
+    const anyIndex = allParts.findIndex((part) => part.toLowerCase().trim().startsWith('any '))
 
-        // Handle special cases like "second weapon" -> expand to weapon options
-        const expandedOptions = []
+    if (anyIndex !== -1 && allParts.length >= 2) {
+      const categoryText = allParts[anyIndex]
+        .replace(/^any\s+/i, '')
+        .trim()
+        .toLowerCase()
+      const specificItems = allParts.slice(0, anyIndex).map((item) => item.trim())
 
-        options.forEach(option => {
-          const optionLower = option.toLowerCase()
-          if (optionLower.includes('weapon')) {
-            // If one option is "weapon" or "second weapon", expand it
-            expandedOptions.push(...availableChoices.weapons)
-          } else {
-            expandedOptions.push(option)
+      let categoryKey = null
+      let categoryOptions = []
+
+      // Map category text to our available choices
+      if (categoryText.includes('simple') && categoryText.includes('weapon')) {
+        categoryKey = 'simpleWeapons'
+        // Combine simple melee and ranged weapons
+        categoryOptions = [...availableChoices.simpleMeleeWeapons, ...availableChoices.simpleRangedWeapons]
+      } else if (categoryText.includes('martial') && categoryText.includes('melee') && categoryText.includes('weapon')) {
+        categoryKey = 'martialMeleeWeapons'
+        categoryOptions = [...availableChoices.martialMeleeWeapons]
+      } else if (categoryText.includes('simple') && categoryText.includes('melee') && categoryText.includes('weapon')) {
+        categoryKey = 'simpleMeleeWeapons'
+        categoryOptions = [...availableChoices.simpleMeleeWeapons]
+      } else if (categoryText.includes('martial') && categoryText.includes('ranged') && categoryText.includes('weapon')) {
+        categoryKey = 'martialRangedWeapons'
+        categoryOptions = [...availableChoices.martialRangedWeapons]
+      } else if (categoryText.includes('simple') && categoryText.includes('ranged') && categoryText.includes('weapon')) {
+        categoryKey = 'simpleRangedWeapons'
+        categoryOptions = [...availableChoices.simpleRangedWeapons]
+      } else if (categoryText.includes('weapon')) {
+        categoryKey = 'weapons'
+        categoryOptions = [...availableChoices.weapons]
+      } else if (categoryText.includes('instrument') || categoryText.includes('insutument')) {
+        // Handle "any other instrument" or "any other musical instrument" (with typo support)
+        categoryKey = 'musicalInstruments'
+        categoryOptions = [...availableChoices.musicalInstruments]
+      }
+
+      if (categoryKey && categoryOptions.length > 0) {
+        // Add specific items to the options if they're not already there
+        specificItems.forEach((item) => {
+          if (!categoryOptions.includes(item)) {
+            categoryOptions.unshift(item) // Add to beginning
           }
         })
 
-        // Remove duplicates
-        const uniqueOptions = [...new Set(expandedOptions)]
-
-        // Create a unique key for this specific choice
         const choiceKey = `choice_${tool.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase()}`
+        availableChoices[choiceKey] = categoryOptions
 
-        // Store the available options for this specific choice
-        if (!availableChoices[choiceKey]) {
-          availableChoices[choiceKey] = uniqueOptions
+        return { type: choiceKey, count: 1, specificOptions: categoryOptions }
+      }
+    }
+  }
+
+  // Check for "X or any Y" patterns (like "Longsword or any martial melee weapon")
+  if (toolLower.includes(' or any ')) {
+    const parts = tool.split(/\s+or\s+any\s+/i)
+    if (parts.length === 2) {
+      const specificItem = parts[0].trim()
+      const categoryText = parts[1].trim().toLowerCase()
+
+      let categoryKey = null
+      let categoryOptions = []
+
+      // Map category text to our available choices
+      if (categoryText.includes('martial') && categoryText.includes('melee') && categoryText.includes('weapon')) {
+        categoryKey = 'martialMeleeWeapons'
+        categoryOptions = [...availableChoices.martialMeleeWeapons]
+      } else if (categoryText.includes('simple') && categoryText.includes('melee') && categoryText.includes('weapon')) {
+        categoryKey = 'simpleMeleeWeapons'
+        categoryOptions = [...availableChoices.simpleMeleeWeapons]
+      } else if (categoryText.includes('martial') && categoryText.includes('ranged') && categoryText.includes('weapon')) {
+        categoryKey = 'martialRangedWeapons'
+        categoryOptions = [...availableChoices.martialRangedWeapons]
+      } else if (categoryText.includes('simple') && categoryText.includes('ranged') && categoryText.includes('weapon')) {
+        categoryKey = 'simpleRangedWeapons'
+        categoryOptions = [...availableChoices.simpleRangedWeapons]
+      } else if (categoryText.includes('weapon')) {
+        categoryKey = 'weapons'
+        categoryOptions = [...availableChoices.weapons]
+      } else if (categoryText.includes('instrument') || categoryText.includes('insutument')) {
+        // Handle "any other instrument" or "any other musical instrument" (with typo support)
+        categoryKey = 'musicalInstruments'
+        categoryOptions = [...availableChoices.musicalInstruments]
+      }
+
+      if (categoryKey && categoryOptions.length > 0) {
+        // Add the specific item to the options if it's not already there
+        if (!categoryOptions.includes(specificItem)) {
+          categoryOptions.unshift(specificItem) // Add to beginning
         }
 
-        return { type: choiceKey, count: 1, specificOptions: uniqueOptions }
+        const choiceKey = `choice_${tool.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase()}`
+        availableChoices[choiceKey] = categoryOptions
+
+        return { type: choiceKey, count: 1, specificOptions: categoryOptions }
       }
     }
-
-    if (toolLower.includes('musical instrument')) {
-      return { type: 'musicalInstruments', count: extractNumber(tool) || 1 }
-    }
-    if (toolLower.includes('gaming set')) {
-      return { type: 'gamingSets', count: 1 }
-    }
-    if (toolLower.includes('artisan') && toolLower.includes('choice')) {
-      return { type: 'artisanTools', count: extractNumber(tool) || 1 }
-    }
-    if (toolLower.includes('vehicles')) {
-      return { type: 'vehicles', count: 1 }
-    }
-    return null
   }
-  function extractNumber (text) {
-    const match = text.match(/(\w+)\s+musical\s+instruments?/i)
-    if (match) {
-      const wordToNum = {
-        'one': 1, 'two': 2, 'three': 3, 'four': 4, 'five': 5,
-        'six': 6, 'seven': 7, 'eight': 8, 'nine': 9, 'ten': 10,
+
+  // Check for simple "X or Y" patterns first (like "Dungeoneer's pack or Explorer's pack")
+  if (toolLower.includes(' or ')) {
+    // Extract the specific options from the text
+    const options = tool.split(/\s+or\s+/i).map((option) => option.trim())
+    if (options.length === 2) {
+      // Special handling for "Artisan's tools or Musical instrument"
+      if (options.some((opt) => opt.toLowerCase().includes('artisan') && opt.toLowerCase().includes('tool')) && options.some((opt) => opt.toLowerCase().includes('musical instrument'))) {
+        // Create a two-stage choice: first choose category, then specific item
+        const choiceKey = `choice_${tool.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase()}`
+        const categoryOptions = ["Artisan's Tools", 'Musical Instrument']
+
+        if (!availableChoices[choiceKey]) {
+          availableChoices[choiceKey] = categoryOptions
+        }
+
+        return { type: choiceKey, count: 1, specificOptions: categoryOptions, isMultiStage: true }
       }
-      return wordToNum[match[1].toLowerCase()] || parseInt(match[1]) || 1
+
+      // Handle special cases like "second weapon" -> expand to weapon options
+      const expandedOptions = []
+
+      options.forEach((option) => {
+        const optionLower = option.toLowerCase()
+        if (optionLower.includes('weapon')) {
+          // If one option is "weapon" or "second weapon", expand it
+          expandedOptions.push(...availableChoices.weapons)
+        } else {
+          expandedOptions.push(option)
+        }
+      })
+
+      // Remove duplicates
+      const uniqueOptions = [...new Set(expandedOptions)]
+
+      // Create a unique key for this specific choice
+      const choiceKey = `choice_${tool.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase()}`
+
+      // Store the available options for this specific choice
+      if (!availableChoices[choiceKey]) {
+        availableChoices[choiceKey] = uniqueOptions
+      }
+
+      return { type: choiceKey, count: 1, specificOptions: uniqueOptions }
     }
-    return 1
   }
 
-  function openEquipmentChoice (choiceType, requiredCount) {
+  if (toolLower.includes('musical instrument')) {
+    return { type: 'musicalInstruments', count: extractNumber(tool) || 1 }
+  }
+  if (toolLower.includes('gaming set')) {
+    return { type: 'gamingSets', count: 1 }
+  }
+  if (toolLower.includes('artisan') && toolLower.includes('choice')) {
+    return { type: 'artisanTools', count: extractNumber(tool) || 1 }
+  }
+  if (toolLower.includes('vehicles')) {
+    return { type: 'vehicles', count: 1 }
+  }
+  return null
+}
+function extractNumber(text) {
+  const match = text.match(/(\w+)\s+musical\s+instruments?/i)
+  if (match) {
+    const wordToNum = {
+      one: 1,
+      two: 2,
+      three: 3,
+      four: 4,
+      five: 5,
+      six: 6,
+      seven: 7,
+      eight: 8,
+      nine: 9,
+      ten: 10,
+    }
+    return wordToNum[match[1].toLowerCase()] || parseInt(match[1]) || 1
+  }
+  return 1
+}
+
+function openEquipmentChoice(choiceType, requiredCount) {
+  equipmentChoices.value[choiceType] = []
+  choiceDialogs.value[choiceType] = true
+  choiceDialogs.value.requiredCount = requiredCount
+}
+
+function addEquipmentChoice(choiceType, choice) {
+  const required = choiceDialogs.value.requiredCount || 1
+  const current = equipmentChoices.value[choiceType] || []
+
+  if (current.includes(choice)) {
+    equipmentChoices.value[choiceType] = current.filter((c) => c !== choice)
+  } else if (current.length < required) {
+    equipmentChoices.value[choiceType] = [...current, choice]
+  }
+}
+
+function confirmEquipmentChoices(choiceType) {
+  choiceDialogs.value[choiceType] = false
+}
+
+function getEquipmentDisplay(tool) {
+  const choice = detectEquipmentChoices(tool)
+  if (!choice) return capitalizeEquipmentName(tool)
+
+  const selected = equipmentChoices.value[choice.type] || []
+  if (selected.length === 0) {
+    return tool // Show original text if no choices made
+  }
+
+  return selected.join(', ')
+}
+
+function isEquipmentChoiceComplete(tool) {
+  const choice = detectEquipmentChoices(tool)
+  if (!choice) return true
+
+  const selected = equipmentChoices.value[choice.type] || []
+  return selected.length >= choice.count
+}
+
+// Helper function to get available choices for a type
+function getAvailableChoicesForType(type) {
+  return availableChoices[type] || []
+}
+
+// Helper function to check if an instrument is already selected in any other choice
+const isInstrumentSelectedElsewhere = (instrument, currentChoiceType) => {
+  // Check if the instrument is a musical instrument
+  const isMusicalInstrument = availableChoices.musicalInstruments?.includes(instrument)
+  if (!isMusicalInstrument) return false
+
+  // Get all equipment choice types and check each one
+  for (const [choiceType, selections] of Object.entries(equipmentChoices.value)) {
+    // Skip the current choice type
+    if (choiceType === currentChoiceType) continue
+
+    // Check if this choice type could contain musical instruments
+    const couldContainInstruments = choiceType === 'musicalInstruments' || (availableChoices[choiceType] && availableChoices[choiceType].includes(instrument))
+
+    if (couldContainInstruments && selections.includes(instrument)) {
+      return true
+    }
+  }
+
+  return false
+}
+
+// Helper function to check if an instrument choice should be disabled
+const isInstrumentChoiceDisabled = (option, currentChoiceType) => {
+  // Check if this option is a musical instrument
+  const isInstrument = availableChoices.musicalInstruments?.includes(option)
+
+  if (isInstrument) {
+    return isInstrumentSelectedElsewhere(option, currentChoiceType)
+  }
+
+  return false
+}
+
+// Helper function to toggle equipment choice
+function toggleEquipmentChoice(choiceType, choice, maxCount, isMultiStage = false) {
+  // Handle multi-stage choices (category selection)
+  if (isMultiStage && (choice === "Artisan's Tools" || choice === 'Musical Instrument')) {
+    // Clear any previous selection for this choice type
+    multiStageChoices.value[choiceType] = { category: choice, specificItem: null }
     equipmentChoices.value[choiceType] = []
-    choiceDialogs.value[choiceType] = true
-    choiceDialogs.value.requiredCount = requiredCount
+    return
   }
 
-  function addEquipmentChoice (choiceType, choice) {
-    const required = choiceDialogs.value.requiredCount || 1
-    const current = equipmentChoices.value[choiceType] || []
+  // Handle second stage of multi-stage choices (specific item selection)
+  if (multiStageChoices.value[choiceType]?.category && !multiStageChoices.value[choiceType].specificItem) {
+    multiStageChoices.value[choiceType].specificItem = choice
+    equipmentChoices.value[choiceType] = [choice]
 
-    if (current.includes(choice)) {
-      equipmentChoices.value[choiceType] = current.filter(c => c !== choice)
-    } else if (current.length < required) {
-      equipmentChoices.value[choiceType] = [...current, choice]
+    // Re-enabled character store integration
+    if (characterStore && typeof characterStore.selectEquipmentChoice === 'function') {
+      characterStore.selectEquipmentChoice(choiceType, choice)
     }
+    return
   }
 
-  function confirmEquipmentChoices (choiceType) {
-    choiceDialogs.value[choiceType] = false
-  }
+  // Handle regular single-stage choices
+  const current = equipmentChoices.value[choiceType] || []
 
-  function getEquipmentDisplay (tool) {
-    const choice = detectEquipmentChoices(tool)
-    if (!choice) return capitalizeEquipmentName(tool)
-
-    const selected = equipmentChoices.value[choice.type] || []
-    if (selected.length === 0) {
-      return tool // Show original text if no choices made
-    }
-
-    return selected.join(', ')
-  }
-
-  function isEquipmentChoiceComplete (tool) {
-    const choice = detectEquipmentChoices(tool)
-    if (!choice) return true
-
-    const selected = equipmentChoices.value[choice.type] || []
-    return selected.length >= choice.count
-  }
-
-  // Helper function to get available choices for a type
-  function getAvailableChoicesForType (type) {
-    return availableChoices[type] || []
-  }
-
-  // Helper function to check if an instrument is already selected in any other choice
-  const isInstrumentSelectedElsewhere = (instrument, currentChoiceType) => {
-    // Check if the instrument is a musical instrument
-    const isMusicalInstrument = availableChoices.musicalInstruments?.includes(instrument)
-    if (!isMusicalInstrument) return false
-
-    // Get all equipment choice types and check each one
-    for (const [choiceType, selections] of Object.entries(equipmentChoices.value)) {
-      // Skip the current choice type
-      if (choiceType === currentChoiceType) continue
-
-      // Check if this choice type could contain musical instruments
-      const couldContainInstruments =
-        choiceType === 'musicalInstruments' ||
-        (availableChoices[choiceType] && availableChoices[choiceType].includes(instrument))
-
-      if (couldContainInstruments && selections.includes(instrument)) {
-        return true
-      }
-    }
-
-    return false
-  }
-
-  // Helper function to check if an instrument choice should be disabled
-  const isInstrumentChoiceDisabled = (option, currentChoiceType) => {
-    // Check if this option is a musical instrument
-    const isInstrument = availableChoices.musicalInstruments?.includes(option)
-
-    if (isInstrument) {
-      return isInstrumentSelectedElsewhere(option, currentChoiceType)
-    }
-
-    return false
-  }
-
-  // Helper function to toggle equipment choice
-  function toggleEquipmentChoice (choiceType, choice, maxCount, isMultiStage = false) {
-    // Handle multi-stage choices (category selection)
-    if (isMultiStage && (choice === 'Artisan\'s Tools' || choice === 'Musical Instrument')) {
-      // Clear any previous selection for this choice type
-      multiStageChoices.value[choiceType] = { category: choice, specificItem: null }
-      equipmentChoices.value[choiceType] = []
-      return
-    }
-
-    // Handle second stage of multi-stage choices (specific item selection)
-    if (multiStageChoices.value[choiceType]?.category && !multiStageChoices.value[choiceType].specificItem) {
-      multiStageChoices.value[choiceType].specificItem = choice
-      equipmentChoices.value[choiceType] = [choice]
-
-      // Re-enabled character store integration
-      if (characterStore && typeof characterStore.selectEquipmentChoice === 'function') {
-        characterStore.selectEquipmentChoice(choiceType, choice)
-      }
-      return
-    }
-
-    // Handle regular single-stage choices
-    const current = equipmentChoices.value[choiceType] || []
-
-    if (current.includes(choice)) {
-      // Remove the choice
-      equipmentChoices.value[choiceType] = current.filter(c => c !== choice)
-      // Also clear multi-stage data if removing
-      if (multiStageChoices.value[choiceType]) {
-        multiStageChoices.value[choiceType] = null
-      }
-
-      // Re-enabled character store integration
-      if (characterStore && typeof characterStore.selectEquipmentChoice === 'function') {
-        characterStore.selectEquipmentChoice(choiceType, null)
-      }
-    } else if (current.length < maxCount) {
-      // Add the choice
-      equipmentChoices.value[choiceType] = [...current, choice]
-
-      // Re-enabled character store integration
-      if (characterStore && typeof characterStore.selectEquipmentChoice === 'function') {
-        characterStore.selectEquipmentChoice(choiceType, choice)
-      }
-    }
-  }
-
-  // Clear all selections for a specific choice type
-  function clearEquipmentChoices (choiceType) {
-    equipmentChoices.value[choiceType] = []
-    // Also clear multi-stage data
+  if (current.includes(choice)) {
+    // Remove the choice
+    equipmentChoices.value[choiceType] = current.filter((c) => c !== choice)
+    // Also clear multi-stage data if removing
     if (multiStageChoices.value[choiceType]) {
       multiStageChoices.value[choiceType] = null
     }
@@ -2827,17 +2638,40 @@
     if (characterStore && typeof characterStore.selectEquipmentChoice === 'function') {
       characterStore.selectEquipmentChoice(choiceType, null)
     }
+  } else if (current.length < maxCount) {
+    // Add the choice
+    equipmentChoices.value[choiceType] = [...current, choice]
+
+    // Re-enabled character store integration
+    if (characterStore && typeof characterStore.selectEquipmentChoice === 'function') {
+      characterStore.selectEquipmentChoice(choiceType, choice)
+    }
+  }
+}
+
+// Clear all selections for a specific choice type
+function clearEquipmentChoices(choiceType) {
+  equipmentChoices.value[choiceType] = []
+  // Also clear multi-stage data
+  if (multiStageChoices.value[choiceType]) {
+    multiStageChoices.value[choiceType] = null
   }
 
-  // Get specific options for a selected category in multi-stage choices
-  function getSpecificOptionsForCategory (category) {
-    if (category === 'Artisan\'s Tools') {
-      return availableChoices.artisanTools
-    } else if (category === 'Musical Instrument') {
-      return availableChoices.musicalInstruments
-    }
-    return []
+  // Re-enabled character store integration
+  if (characterStore && typeof characterStore.selectEquipmentChoice === 'function') {
+    characterStore.selectEquipmentChoice(choiceType, null)
   }
+}
+
+// Get specific options for a selected category in multi-stage choices
+function getSpecificOptionsForCategory(category) {
+  if (category === "Artisan's Tools") {
+    return availableChoices.artisanTools
+  } else if (category === 'Musical Instrument') {
+    return availableChoices.musicalInstruments
+  }
+  return []
+}
 </script>
 
 <style scoped>

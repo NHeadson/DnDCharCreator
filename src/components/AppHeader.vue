@@ -14,14 +14,7 @@
 
     <!-- Desktop Navigation Buttons (hidden at 1117px and below) -->
     <div class="nav-buttons d-none nav-buttons-desktop">
-      <v-btn
-        class="nav-btn"
-        :class="{ 'nav-btn--active': $route.path === '/' }"
-        rounded="lg"
-        :size="$vuetify.display.mobile ? 'small' : 'default'"
-        to="/"
-        variant="flat"
-      >
+      <v-btn class="nav-btn" :class="{ 'nav-btn--active': $route.path === '/' }" rounded="lg" :size="$vuetify.display.mobile ? 'small' : 'default'" to="/" variant="flat">
         <v-icon :class="$vuetify.display.mobile ? '' : 'me-2'" icon="mdi-home" />
         <span class="d-none d-md-inline nav-text">Home</span>
       </v-btn>
@@ -35,7 +28,7 @@
       >
         <v-icon :class="$vuetify.display.mobile ? '' : 'me-2'" icon="mdi-account-group" />
         <span class="d-none d-md-inline nav-text">Create</span>
-        <span class="d-none d-lg-inline nav-text"> Character</span>
+        <span class="d-none d-lg-inline nav-text">Character</span>
       </v-btn>
       <v-btn
         v-if="adminStore.isAdminUser"
@@ -60,22 +53,9 @@
   </v-app-bar>
 
   <!-- Navigation Drawer for Mobile/Tablet -->
-  <v-navigation-drawer
-    v-model="drawer"
-    app
-    class="theme-primary-bg"
-    location="right"
-    temporary
-  >
+  <v-navigation-drawer v-model="drawer" app class="theme-primary-bg" location="right" temporary>
     <v-list class="nav-drawer-list">
-      <v-list-item
-        class="nav-drawer-item"
-        :class="{ 'nav-drawer-item--active': $route.path === '/' }"
-        prepend-icon="mdi-home"
-        title="Home"
-        to="/"
-        @click="drawer = false"
-      />
+      <v-list-item class="nav-drawer-item" :class="{ 'nav-drawer-item--active': $route.path === '/' }" prepend-icon="mdi-home" title="Home" to="/" @click="drawer = false" />
 
       <v-list-item
         class="nav-drawer-item"
@@ -100,24 +80,23 @@
 </template>
 
 <script setup>
-  import { computed, ref } from 'vue'
-  import { useRoute, useRouter } from 'vue-router'
-  import { useAdminStore } from '@/stores/adminStore'
+import { computed, ref } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { useAdminStore } from '@/stores/adminStore'
 
-  const router = useRouter()
-  const $route = useRoute()
-  const adminStore = useAdminStore()
+const router = useRouter()
+const $route = useRoute()
+const adminStore = useAdminStore()
 
-  // Drawer state for hamburger menu
-  const drawer = ref(false)
+// Drawer state for hamburger menu
+const drawer = ref(false)
 
-  // Use isAuthenticated for admin-only UI
-  const hasAccess = computed(() => adminStore.hasAccess)
-  const requireAccessForCreation = () => {
-    adminStore.requireAccess(() => {
-      router.push('/character-form')
-    }, 'create a new character')
-  }
+// Use isAuthenticated for admin-only UI
+// Regular users can create without authentication; admin login remains optional
+const hasAccess = computed(() => true)
+const requireAccessForCreation = () => {
+  router.push('/character-form')
+}
 </script>
 
 <style scoped>
@@ -126,15 +105,18 @@
 /* Nav button active state */
 .nav-btn {
   background-color: var(--theme-secondary) !important;
-  color: var(--theme-on-secondary, #1A1A1A) !important;
+  color: var(--theme-on-secondary, #1a1a1a) !important;
   opacity: 0.92;
-  transition: background 0.2s, color 0.2s, opacity 0.2s;
+  transition:
+    background 0.2s,
+    color 0.2s,
+    opacity 0.2s;
   margin-right: 8px;
 }
 
 .nav-btn--active {
   background-color: var(--theme-secondary-darken-2, #bfa22e) !important;
-  color: var(--theme-on-secondary, #1A1A1A) !important;
+  color: var(--theme-on-secondary, #1a1a1a) !important;
   opacity: 1 !important;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
   z-index: 1;
@@ -175,7 +157,7 @@
   align-items: center;
   transition: all 0.3s ease;
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
-  color: #F5F5DC !important;
+  color: #f5f5dc !important;
   /* Force a warm off-white color */
   width: 100%;
 }
@@ -183,28 +165,28 @@
 .title-link:hover {
   transform: translateY(-1px);
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);
-  color: #FFFFFF !important;
+  color: #ffffff !important;
   /* Pure white on hover */
 }
 
 /* Theme-specific title colors */
-[data-theme="default"] .title-link {
-  color: #F5DEB3 !important;
+[data-theme='default'] .title-link {
+  color: #f5deb3 !important;
   /* Wheat color for D&D theme */
 }
 
-[data-theme="custom"] .title-link {
-  color: #B8D8D8 !important;
+[data-theme='custom'] .title-link {
+  color: #b8d8d8 !important;
   /* Light gray for Mystical Waters */
 }
 
-[data-theme="elegant"] .title-link {
-  color: #EEF5DB !important;
+[data-theme='elegant'] .title-link {
+  color: #eef5db !important;
   /* Cream for Elegant Sage */
 }
 
-[data-theme="light"] .title-link {
-  color: #4F6367 !important;
+[data-theme='light'] .title-link {
+  color: #4f6367 !important;
   /* Dark gray for light theme */
 }
 
@@ -270,22 +252,22 @@
 
 /* Theme-specific button text colors for proper contrast */
 /* D&D Classic Dark theme - bronze/copper secondary needs dark text */
-[data-theme="default"] .nav-btn {
+[data-theme='default'] .nav-btn {
   color: rgba(0, 0, 0, 0.87) !important;
 }
 
 /* Mystical Waters theme - dark gray secondary needs light text */
-[data-theme="custom"] .nav-btn {
+[data-theme='custom'] .nav-btn {
   color: rgba(255, 255, 255, 0.95) !important;
 }
 
 /* Elegant Sage theme - medium gray secondary needs dark text */
-[data-theme="elegant"] .nav-btn {
+[data-theme='elegant'] .nav-btn {
   color: rgba(0, 0, 0, 0.87) !important;
 }
 
 /* Sage Light theme - medium gray secondary needs dark text */
-[data-theme="light"] .nav-btn {
+[data-theme='light'] .nav-btn {
   color: rgba(0, 0, 0, 0.87) !important;
 }
 
@@ -330,7 +312,7 @@
 
 /* Hamburger Menu Button */
 .hamburger-btn {
-  color: var(--theme-on-primary, #F5F5DC) !important;
+  color: var(--theme-on-primary, #f5f5dc) !important;
   transition: all 0.3s ease;
   border-radius: 8px !important;
   padding-left: 0 !important;
@@ -359,7 +341,7 @@
   font-weight: 700;
   transition: all 0.3s ease;
   background-color: var(--theme-secondary) !important;
-  color: var(--theme-on-secondary, #1A1A1A) !important;
+  color: var(--theme-on-secondary, #1a1a1a) !important;
   opacity: 0.92;
 }
 
@@ -380,19 +362,19 @@
 }
 
 /* Theme-specific drawer item colors */
-[data-theme="default"] .nav-drawer-item {
+[data-theme='default'] .nav-drawer-item {
   color: rgba(0, 0, 0, 0.87) !important;
 }
 
-[data-theme="custom"] .nav-drawer-item {
+[data-theme='custom'] .nav-drawer-item {
   color: rgba(255, 255, 255, 0.95) !important;
 }
 
-[data-theme="elegant"] .nav-drawer-item {
+[data-theme='elegant'] .nav-drawer-item {
   color: rgba(0, 0, 0, 0.87) !important;
 }
 
-[data-theme="light"] .nav-drawer-item {
+[data-theme='light'] .nav-drawer-item {
   color: rgba(0, 0, 0, 0.87) !important;
 }
 
@@ -438,7 +420,6 @@
 
 /* At 600px and below, hide all text, show only icon */
 @media (max-width: 600px) {
-
   .title-full,
   .title-medium {
     display: none !important;

@@ -1,35 +1,31 @@
 <template>
-  <v-dialog v-model="showAccessDialog" max-width="500" persistent>
+  <v-dialog v-model="showAccessDialog" max-width="500">
     <v-card class="admin-auth-card">
-      <v-card-title class="d-flex align-center justify-center pa-6 bg-gradient">
-        <v-icon class="me-3" color="accent" size="large">mdi-shield-key</v-icon>
-        <span class="text-h5 font-weight-bold">Access Code Required</span>
+      <v-card-title class="d-flex align-center justify-space-between pa-6 bg-gradient">
+        <div class="d-flex align-center">
+          <v-icon class="me-3" color="accent" size="large">mdi-shield-key</v-icon>
+          <span class="text-h5 font-weight-bold">Access Code Required</span>
+        </div>
+        <v-btn :aria-label="'Close'" color="default" icon variant="text" @click="closeAccessDialog">
+          <v-icon>mdi-close</v-icon>
+        </v-btn>
       </v-card-title>
 
       <v-divider />
 
       <v-card-text class="pa-6">
         <v-alert class="mb-4" type="info" variant="tonal">
-          <v-alert-title>
-            Restricted Access
-          </v-alert-title>
-          Enter your group access code or admin password to continue.<br>
+          <v-alert-title>Restricted Access</v-alert-title>
+          Enter admin password to continue with admin privileges.
+          <br />
           <span v-if="accessType === 'admin'" class="text-success font-weight-bold">Admin privileges granted.</span>
           <span v-else-if="accessType === 'user'" class="text-primary font-weight-bold">Standard access granted.</span>
         </v-alert>
 
         <v-form @submit.prevent="handleAccessSubmit">
-          <v-text-field
-            v-model="accessPasswordInput"
-            autofocus
-            class="mb-3"
-            :error-messages="accessError"
-            label="Access Code or Admin Password"
-            prepend-inner-icon="mdi-lock"
-            type="password"
-            variant="outlined"
-            @keyup.enter="handleAccessSubmit"
-          />
+          <v-text-field v-model="accessPasswordInput" autofocus class="mb-3" :error-messages="accessError"
+            label="Access Code or Admin Password" prepend-inner-icon="mdi-lock" type="password" variant="outlined"
+            @keyup.enter="handleAccessSubmit" />
 
           <div class="text-caption text-grey mb-4">
             <v-icon class="me-1" size="small">mdi-clock-outline</v-icon>
@@ -38,40 +34,29 @@
         </v-form>
       </v-card-text>
 
-      <v-card-actions class="pa-6 pt-0">
-        <v-btn
-          class="flex-grow-1"
-          color="primary"
-          :disabled="!accessPasswordInput.trim()"
-          prepend-icon="mdi-key"
-          variant="elevated"
-          @click="handleAccessSubmit"
-        >
-          Authenticate
-        </v-btn>
+      <v-card-actions class="pa-6 pt-0 d-flex flex-column flex-sm-row">
+        <v-btn class="flex-grow-1 mb-2 mb-sm-0 mr-sm-2" color="grey" prepend-icon="mdi-close-circle" variant="text"
+          @click="closeAccessDialog">Cancel</v-btn>
+        <v-btn class="flex-grow-1" color="primary" :disabled="!accessPasswordInput.trim()" prepend-icon="mdi-key"
+          variant="elevated" @click="handleAccessSubmit">Authenticate</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
 </template>
 
 <script setup>
-  import { useAdminStore } from '@/stores/adminStore'
-  import { storeToRefs } from 'pinia'
+import { useAdminStore } from '@/stores/adminStore'
+import { storeToRefs } from 'pinia'
 
-  const adminStore = useAdminStore()
-  const {
-    showAccessDialog,
-    accessPasswordInput,
-    accessError,
-    accessType,
-  } = storeToRefs(adminStore)
+const adminStore = useAdminStore()
+const { showAccessDialog, accessPasswordInput, accessError, accessType } = storeToRefs(adminStore)
 
-  const handleAccessSubmit = () => {
-    adminStore.handleAccessSubmit()
-  }
-  const closeAccessDialog = () => {
-    adminStore.closeAccessDialog()
-  }
+const handleAccessSubmit = () => {
+  adminStore.handleAccessSubmit()
+}
+const closeAccessDialog = () => {
+  adminStore.closeAccessDialog()
+}
 </script>
 
 <style scoped>

@@ -1,19 +1,9 @@
 // Array of fantasy name patterns
 const namePatterns = {
-  human: [
-    '{{prefix}}{{suffix}}',
-    '{{prefix}}{{connector}}{{suffix}}',
-    '{{firstName}} {{lastName}}',
-  ],
-  elf: [
-    '{{elfPrefix}}{{elfSuffix}}',
-    '{{elfPrefix}}{{connector}}{{elfSuffix}}',
-  ],
-  dwarf: [
-    '{{dwarfPrefix}}{{dwarfSuffix}}',
-    '{{dwarfPrefix}} {{clanPrefix}}{{clanSuffix}}',
-  ],
-};
+  human: ['{{prefix}}{{suffix}}', '{{prefix}}{{connector}}{{suffix}}', '{{firstName}} {{lastName}}'],
+  elf: ['{{elfPrefix}}{{elfSuffix}}', '{{elfPrefix}}{{connector}}{{elfSuffix}}'],
+  dwarf: ['{{dwarfPrefix}}{{dwarfSuffix}}', '{{dwarfPrefix}} {{clanPrefix}}{{clanSuffix}}'],
+}
 
 // Name components
 const components = {
@@ -102,29 +92,7 @@ const components = {
     'Zan',
     'Zil',
   ],
-  suffix: [
-    'a',
-    'ac',
-    'ae',
-    'al',
-    'am',
-    'an',
-    'ar',
-    'as',
-    'ea',
-    'el',
-    'en',
-    'er',
-    'ess',
-    'ett',
-    'ic',
-    'id',
-    'il',
-    'in',
-    'is',
-    'or',
-    'us',
-  ],
+  suffix: ['a', 'ac', 'ae', 'al', 'am', 'an', 'ar', 'as', 'ea', 'el', 'en', 'er', 'ess', 'ett', 'ic', 'id', 'il', 'in', 'is', 'or', 'us'],
   connector: ['', '-', "'"],
   elfPrefix: [
     'Ae',
@@ -859,23 +827,23 @@ const components = {
     'Goldfinder',
     'Ironfist',
   ],
-};
-
-function getRandomItem (array) {
-  return array[Math.floor(Math.random() * array.length)];
 }
 
-function generateName (pattern) {
+function getRandomItem(array) {
+  return array[Math.floor(Math.random() * array.length)]
+}
+
+function generateName(pattern) {
   return pattern.replace(/\{\{(\w+)\}\}/g, (match, component) => {
     if (components[component]) {
-      return getRandomItem(components[component]);
+      return getRandomItem(components[component])
     }
-    return match;
-  });
+    return match
+  })
 }
 
-export function generateCharacterName (race = 'human') {
-  const racePatterns = namePatterns[race.toLowerCase()] || namePatterns.human;
-  const pattern = getRandomItem(racePatterns);
-  return generateName(pattern);
+export function generateCharacterName(race = 'human') {
+  const racePatterns = namePatterns[race.toLowerCase()] || namePatterns.human
+  const pattern = getRandomItem(racePatterns)
+  return generateName(pattern)
 }

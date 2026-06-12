@@ -1,5 +1,5 @@
-import { defineStore } from 'pinia';
-import { computed, ref } from 'vue';
+import { defineStore } from 'pinia'
+import { computed, ref } from 'vue'
 
 export const useUserStore = defineStore('user', {
   state: () => ({
@@ -14,91 +14,84 @@ export const useUserStore = defineStore('user', {
     error: null,
   }),
   actions: {
-    authenticate (password) {
-      const ADMIN_PASSWORD = import.meta.env.VITE_ADMIN_PASSWORD;
-      const SESSION_TIMEOUT = 30 * 60 * 1000;
+    authenticate(password) {
+      const ADMIN_PASSWORD = import.meta.env.VITE_ADMIN_PASSWORD
+      const SESSION_TIMEOUT = 30 * 60 * 1000
       if (!ADMIN_PASSWORD) {
-        this.authError = 'Admin authentication is not properly configured.';
-        return false;
+        this.authError = 'Admin authentication is not properly configured.'
+        return false
       }
       if (password === ADMIN_PASSWORD) {
-        this.isAuthenticated = true;
-        this.authExpiresAt = Date.now() + SESSION_TIMEOUT;
-        this.authError = '';
-        this.showAuthDialog = false;
-        this.passwordInput = '';
+        this.isAuthenticated = true
+        this.authExpiresAt = Date.now() + SESSION_TIMEOUT
+        this.authError = ''
+        this.showAuthDialog = false
+        this.passwordInput = ''
         if (this.pendingAction) {
-          this.pendingAction();
-          this.pendingAction = null;
+          this.pendingAction()
+          this.pendingAction = null
         }
-        return true;
+        return true
       } else {
-        this.authError = 'Invalid password.';
-        return false;
+        this.authError = 'Invalid password.'
+        return false
       }
     },
-    logout () {
-      this.isAuthenticated = false;
-      this.authExpiresAt = null;
-      this.showAuthDialog = false;
-      this.passwordInput = '';
-      this.authError = '';
-      this.pendingAction = null;
+    logout() {
+      this.isAuthenticated = false
+      this.authExpiresAt = null
+      this.showAuthDialog = false
+      this.passwordInput = ''
+      this.authError = ''
+      this.pendingAction = null
     },
-    checkAdminAccess () {
-      if (this.isSessionValid) return true;
-      if (
-        this.isAuthenticated &&
-        this.authExpiresAt &&
-        Date.now() >= this.authExpiresAt
-      ) {
-        this.logout();
+    checkAdminAccess() {
+      if (this.isSessionValid) return true
+      if (this.isAuthenticated && this.authExpiresAt && Date.now() >= this.authExpiresAt) {
+        this.logout()
       }
-      return false;
+      return false
     },
-    requireAuth (action) {
+    requireAuth(action) {
       if (this.checkAdminAccess()) {
-        action();
+        action()
       } else {
-        this.pendingAction = action;
-        this.showAuthDialog = true;
+        this.pendingAction = action
+        this.showAuthDialog = true
       }
     },
-    handleAuthSubmit () {
+    handleAuthSubmit() {
       if (!this.passwordInput.trim()) {
-        this.authError = 'Please enter a password';
-        return;
+        this.authError = 'Please enter a password'
+        return
       }
-      this.authenticate(this.passwordInput);
+      this.authenticate(this.passwordInput)
     },
-    closeAuthDialog () {
-      this.showAuthDialog = false;
-      this.passwordInput = '';
-      this.authError = '';
-      this.pendingAction = null;
+    closeAuthDialog() {
+      this.showAuthDialog = false
+      this.passwordInput = ''
+      this.authError = ''
+      this.pendingAction = null
     },
-    extendSession () {
-      const SESSION_TIMEOUT = 30 * 60 * 1000;
+    extendSession() {
+      const SESSION_TIMEOUT = 30 * 60 * 1000
       if (this.isAuthenticated) {
-        this.authExpiresAt = Date.now() + SESSION_TIMEOUT;
+        this.authExpiresAt = Date.now() + SESSION_TIMEOUT
       }
     },
-    setUser (user) {
-      this.user = user;
-      this.isAuthenticated = !!user;
+    setUser(user) {
+      this.user = user
+      this.isAuthenticated = !!user
     },
-    setLoading (val) {
-      this.loading = val;
+    setLoading(val) {
+      this.loading = val
     },
-    setError (err) {
-      this.error = err;
+    setError(err) {
+      this.error = err
     },
   },
   getters: {
-    isSessionValid: state =>
-      state.isAuthenticated &&
-      state.authExpiresAt &&
-      Date.now() < state.authExpiresAt,
-    isAdmin: state => state.isSessionValid,
+    isSessionValid: (state) => state.isAuthenticated && state.authExpiresAt && Date.now() < state.authExpiresAt,
+    isAdmin: (state) => state.isSessionValid,
   },
-});
+})

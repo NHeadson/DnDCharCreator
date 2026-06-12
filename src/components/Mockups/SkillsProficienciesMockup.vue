@@ -1,9 +1,7 @@
 <template>
   <v-card flat>
     <v-card-title class="text-h4 text-center mb-4">🧠 Skills & Proficiencies</v-card-title>
-    <v-card-subtitle class="text-center mb-4">
-      What your character knows how to do
-    </v-card-subtitle>
+    <v-card-subtitle class="text-center mb-4">What your character knows how to do</v-card-subtitle>
 
     <!-- Quick Reference Stats -->
     <v-row class="mb-6">
@@ -14,7 +12,8 @@
             <div class="text-h3 text-error">32</div>
             <div class="text-caption">Maximum HP</div>
             <div class="text-body-2 mt-2">
-              <strong>Base:</strong> d10 + 2 (Con)
+              <strong>Base:</strong>
+              d10 + 2 (Con)
             </div>
           </v-card-text>
         </v-card>
@@ -27,7 +26,8 @@
             <div class="text-h3 text-blue">13</div>
             <div class="text-caption">AC</div>
             <div class="text-body-2 mt-2">
-              <strong>Base:</strong> 10 + 3 (Dex)
+              <strong>Base:</strong>
+              10 + 3 (Dex)
             </div>
           </v-card-text>
         </v-card>
@@ -39,9 +39,7 @@
           <v-card-text class="text-center">
             <div class="text-h3 text-purple">+2</div>
             <div class="text-caption">Bonus</div>
-            <div class="text-body-2 mt-2">
-              Added to proficient skills
-            </div>
+            <div class="text-body-2 mt-2">Added to proficient skills</div>
           </v-card-text>
         </v-card>
       </v-col>
@@ -53,13 +51,9 @@
         <v-icon class="mr-2" color="green">mdi-brain</v-icon>
         Skill Proficiencies
         <v-spacer />
-        <v-chip color="green" size="small" variant="tonal">
-          6 Skills
-        </v-chip>
+        <v-chip color="green" size="small" variant="tonal">6 Skills</v-chip>
       </v-card-title>
-      <v-card-subtitle class="text-body-2">
-        Skills your character has learned and can perform well
-      </v-card-subtitle>
+      <v-card-subtitle class="text-body-2">Skills your character has learned and can perform well</v-card-subtitle>
 
       <v-card-text>
         <!-- Background Skills -->
@@ -161,9 +155,7 @@
         <v-spacer />
         <v-chip color="info" size="small" variant="tonal">Knowledge</v-chip>
       </v-card-title>
-      <v-card-subtitle class="text-body-2">
-        Tools and equipment your character knows how to use effectively
-      </v-card-subtitle>
+      <v-card-subtitle class="text-body-2">Tools and equipment your character knows how to use effectively</v-card-subtitle>
 
       <v-card-text>
         <!-- Background Tool Proficiencies -->
@@ -186,9 +178,8 @@
 
         <v-alert class="mt-4" type="info" variant="tonal">
           <v-icon>mdi-information</v-icon>
-          <strong>What this means:</strong> You know how to use these tools effectively,
-          adding your proficiency bonus to relevant checks. You'll need to acquire the
-          physical tools separately in your equipment.
+          <strong>What this means:</strong>
+          You know how to use these tools effectively, adding your proficiency bonus to relevant checks. You'll need to acquire the physical tools separately in your equipment.
         </v-alert>
       </v-card-text>
     </v-card>
@@ -212,9 +203,7 @@
                 Musical Instruments
               </v-card-title>
               <v-card-text>
-                <div class="text-body-2 text-medium-emphasis mb-3">
-                  You can play these instruments skillfully
-                </div>
+                <div class="text-body-2 text-medium-emphasis mb-3">You can play these instruments skillfully</div>
                 <v-chip class="mr-2" color="purple" size="small" variant="elevated">
                   <v-icon size="x-small" start>mdi-brain</v-icon>
                   Lute
@@ -231,9 +220,7 @@
                 Gaming Sets
               </v-card-title>
               <v-card-text>
-                <div class="text-body-2 text-medium-emphasis mb-3">
-                  Games you know how to play well
-                </div>
+                <div class="text-body-2 text-medium-emphasis mb-3">Games you know how to play well</div>
                 <v-chip color="green" size="small" variant="elevated">
                   <v-icon size="x-small" start>mdi-brain</v-icon>
                   Dice set
@@ -250,15 +237,14 @@
             Vehicle Proficiencies
           </v-card-title>
           <v-card-text>
-            <div class="text-body-2 text-medium-emphasis mb-3">
-              Types of vehicles you can operate effectively
-            </div>
+            <div class="text-body-2 text-medium-emphasis mb-3">Types of vehicles you can operate effectively</div>
             <v-chip color="blue" size="small" variant="elevated">
               <v-icon size="x-small" start>mdi-brain</v-icon>
               Vehicles (land)
             </v-chip>
             <div class="text-caption mt-2 text-medium-emphasis">
-              <strong>Land vehicles:</strong> Carts, carriages, chariots, sleds, wagons
+              <strong>Land vehicles:</strong>
+              Carts, carriages, chariots, sleds, wagons
             </div>
           </v-card-text>
         </v-card>
@@ -273,9 +259,7 @@
         <v-spacer />
         <v-chip color="teal" size="small" variant="tonal">Communication</v-chip>
       </v-card-title>
-      <v-card-subtitle class="text-body-2">
-        Languages your character can speak and understand
-      </v-card-subtitle>
+      <v-card-subtitle class="text-body-2">Languages your character can speak and understand</v-card-subtitle>
 
       <v-card-text>
         <div class="d-flex flex-wrap ga-2">

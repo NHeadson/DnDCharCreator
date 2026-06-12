@@ -1,6 +1,6 @@
-import { defineStore } from 'pinia';
-import { ref } from 'vue';
-import { dndAPI } from '@/services/dndAPI.js';
+import { defineStore } from 'pinia'
+import { ref } from 'vue'
+import { dndAPI } from '@/services/dndAPI.js'
 
 export const useCharacterStore = defineStore('character', {
   state: () => ({
@@ -100,62 +100,61 @@ export const useCharacterStore = defineStore('character', {
   }),
   actions: {
     // Fetch cantrips and 1st-level spells for the selected class
-    async fetchSpellsForClass (classIndex) {
-      this.isLoadingSpells = true;
-      this.spellError = null;
+    async fetchSpellsForClass(classIndex) {
+      this.isLoadingSpells = true
+      this.spellError = null
       try {
         // Fetch cantrips (level 0)
-        const cantrips = await dndAPI.getSpellsForClassApi(classIndex, 0);
-        this.availableCantrips = cantrips;
+        const cantrips = await dndAPI.getSpellsForClassApi(classIndex, 0)
+        this.availableCantrips = cantrips
         // Fetch 1st-level spells
-        const spells = await dndAPI.getSpellsForClassApi(classIndex, 1);
-        this.availableSpells = spells;
+        const spells = await dndAPI.getSpellsForClassApi(classIndex, 1)
+        this.availableSpells = spells
       } catch (error) {
-        this.spellError = error.message || error;
-        this.availableCantrips = [];
-        this.availableSpells = [];
+        this.spellError = error.message || error
+        this.availableCantrips = []
+        this.availableSpells = []
       } finally {
-        this.isLoadingSpells = false;
+        this.isLoadingSpells = false
       }
     },
-    async loadSpeciesData () {
-      this.isLoadingSpecies = true;
-      this.speciesError = null;
+    async loadSpeciesData() {
+      this.isLoadingSpecies = true
+      this.speciesError = null
       try {
-        const apiSpecies = await dndAPI.getRaces();
+        const apiSpecies = await dndAPI.getRaces()
         if (apiSpecies && apiSpecies.length > 0) {
-          this.speciesData = apiSpecies;
+          this.speciesData = apiSpecies
         }
       } catch (error) {
-        this.speciesError = error.message || error;
+        this.speciesError = error.message || error
       } finally {
-        this.isLoadingSpecies = false;
+        this.isLoadingSpecies = false
       }
     },
-    async loadClassData () {
-      this.isLoadingClasses = true;
-      this.classError = null;
+    async loadClassData() {
+      this.isLoadingClasses = true
+      this.classError = null
       try {
-        const apiClasses = await dndAPI.getClasses();
+        const apiClasses = await dndAPI.getClasses()
         if (apiClasses && apiClasses.length > 0) {
-          this.classData = apiClasses;
+          this.classData = apiClasses
         }
       } catch (error) {
-        this.classError = error.message || error;
+        this.classError = error.message || error
       } finally {
-        this.isLoadingClasses = false;
+        this.isLoadingClasses = false
       }
     },
-    async loadBackgroundData () {
-      this.isLoadingBackgrounds = true;
-      this.backgroundError = null;
+    async loadBackgroundData() {
+      this.isLoadingBackgrounds = true
+      this.backgroundError = null
       // Fallback backgrounds (copy from useCharacterData.js)
       const fallbackBackgroundData = [
         {
           id: 'acolyte',
           name: 'Acolyte',
-          description:
-            'You have spent your life in the service of a temple to a specific god or pantheon of gods.',
+          description: 'You have spent your life in the service of a temple to a specific god or pantheon of gods.',
           skillProficiencies: ['Insight', 'Religion'],
           toolProficiencies: ["Calligrapher's Supplies"],
           languages: [],
@@ -171,8 +170,7 @@ export const useCharacterStore = defineStore('character', {
           startingMoney: { gp: 15 },
           feature: {
             name: 'Shelter of the Faithful',
-            description:
-              'You can perform religious ceremonies and gain shelter at temples.',
+            description: 'You can perform religious ceremonies and gain shelter at temples.',
           },
           feat: 'Magic Initiate (Cleric)',
           skillProfs: ['Insight', 'Religion'],
@@ -183,8 +181,7 @@ export const useCharacterStore = defineStore('character', {
         {
           id: 'criminal',
           name: 'Criminal',
-          description:
-            'You are an experienced criminal with a history of breaking the law.',
+          description: 'You are an experienced criminal with a history of breaking the law.',
           skillProficiencies: ['Deception', 'Stealth'],
           toolProficiencies: ["Thieves' Tools"],
           languages: [],
@@ -197,8 +194,7 @@ export const useCharacterStore = defineStore('character', {
           startingMoney: { gp: 15 },
           feature: {
             name: 'Criminal Contact',
-            description:
-              'You have a reliable contact in the criminal underworld.',
+            description: 'You have a reliable contact in the criminal underworld.',
           },
           feat: 'Alert',
           skillProfs: ['Sleight of Hand', 'Stealth'],
@@ -233,8 +229,7 @@ export const useCharacterStore = defineStore('character', {
         {
           id: 'soldier',
           name: 'Soldier',
-          description:
-            'You had a military career and are experienced in battle.',
+          description: 'You had a military career and are experienced in battle.',
           skillProficiencies: ['Athletics', 'Intimidation'],
           toolProficiencies: ['Gaming Set'],
           languages: [],
@@ -257,8 +252,7 @@ export const useCharacterStore = defineStore('character', {
         {
           id: 'hermit',
           name: 'Hermit',
-          description:
-            'You lived in seclusion for a formative part of your life.',
+          description: 'You lived in seclusion for a formative part of your life.',
           skillProficiencies: ['Medicine', 'Religion'],
           toolProficiencies: ['Herbalism Kit'],
           languages: [],
@@ -270,8 +264,7 @@ export const useCharacterStore = defineStore('character', {
           ],
           feature: {
             name: 'Discovery',
-            description:
-              'You discovered a unique and powerful secret about the cosmos.',
+            description: 'You discovered a unique and powerful secret about the cosmos.',
           },
           feat: 'Healer',
           skillProfs: ['Medicine', 'Religion'],
@@ -282,26 +275,14 @@ export const useCharacterStore = defineStore('character', {
         {
           id: 'entertainer',
           name: 'Entertainer',
-          description:
-            'You thrive in front of an audience and know how to entrance them.',
+          description: 'You thrive in front of an audience and know how to entrance them.',
           skillProficiencies: ['Acrobatics', 'Performance'],
           toolProficiencies: ['Disguise Kit', 'Musical Instrument'],
           languages: [],
           languageOptions: null,
           instrumentOptions: {
             choose: 1,
-            from: [
-              'Bagpipes',
-              'Drum',
-              'Dulcimer',
-              'Flute',
-              'Lute',
-              'Lyre',
-              'Horn',
-              'Pan Flute',
-              'Shawm',
-              'Viol',
-            ],
+            from: ['Bagpipes', 'Drum', 'Dulcimer', 'Flute', 'Lute', 'Lyre', 'Horn', 'Pan Flute', 'Shawm', 'Viol'],
           },
           startingEquipment: [
             { name: 'Musical Instrument', quantity: 1 },
@@ -321,21 +302,12 @@ export const useCharacterStore = defineStore('character', {
         {
           id: 'folk-hero',
           name: 'Folk Hero',
-          description:
-            'You come from a humble social rank, but you are destined for so much more.',
+          description: 'You come from a humble social rank, but you are destined for so much more.',
           skillProficiencies: ['Animal Handling', 'Survival'],
           toolProficiencies: ['Vehicles (Land)'],
           toolOptions: {
             choose: 1,
-            from: [
-              "Smith's Tools",
-              "Carpenter's Tools",
-              "Mason's Tools",
-              "Weaver's Tools",
-              "Leatherworker's Tools",
-              "Potter's Tools",
-              "Woodcarver's Tools",
-            ],
+            from: ["Smith's Tools", "Carpenter's Tools", "Mason's Tools", "Weaver's Tools", "Leatherworker's Tools", "Potter's Tools", "Woodcarver's Tools"],
           },
           languages: [],
           languageOptions: null,
@@ -346,8 +318,7 @@ export const useCharacterStore = defineStore('character', {
           ],
           feature: {
             name: 'Rustic Hospitality',
-            description:
-              'Common folk will provide you with simple accommodations and food.',
+            description: 'Common folk will provide you with simple accommodations and food.',
           },
           feat: 'Tough',
           skillProfs: ['Animal Handling', 'Survival'],
@@ -358,8 +329,7 @@ export const useCharacterStore = defineStore('character', {
         {
           id: 'noble',
           name: 'Noble',
-          description:
-            'You understand wealth, power, and privilege from birth.',
+          description: 'You understand wealth, power, and privilege from birth.',
           skillProficiencies: ['History', 'Persuasion'],
           toolProficiencies: ['Gaming Set'],
           languages: [],
@@ -371,8 +341,7 @@ export const useCharacterStore = defineStore('character', {
           ],
           feature: {
             name: 'Position of Privilege',
-            description:
-              'You are welcome in high society and can secure audiences with nobles.',
+            description: 'You are welcome in high society and can secure audiences with nobles.',
           },
           feat: 'Skilled',
           skillProfs: ['History', 'Persuasion'],
@@ -390,18 +359,7 @@ export const useCharacterStore = defineStore('character', {
           languageOptions: { choose: 1, from: ['Any'] },
           instrumentOptions: {
             choose: 1,
-            from: [
-              'Bagpipes',
-              'Drum',
-              'Dulcimer',
-              'Flute',
-              'Lute',
-              'Lyre',
-              'Horn',
-              'Pan Flute',
-              'Shawm',
-              'Viol',
-            ],
+            from: ['Bagpipes', 'Drum', 'Dulcimer', 'Flute', 'Lute', 'Lyre', 'Horn', 'Pan Flute', 'Shawm', 'Viol'],
           },
           startingEquipment: [
             { name: 'Staff', quantity: 1 },
@@ -410,8 +368,7 @@ export const useCharacterStore = defineStore('character', {
           ],
           feature: {
             name: 'Wanderer',
-            description:
-              'You have an excellent memory for geography and can find food and shelter.',
+            description: 'You have an excellent memory for geography and can find food and shelter.',
           },
           feat: 'Magic Initiate (Druid)',
           skillProfs: ['Athletics', 'Survival'],
@@ -419,113 +376,97 @@ export const useCharacterStore = defineStore('character', {
           equipmentChoice: 'A or B',
           abilityScores: ['Strength', 'Dexterity', 'Wisdom'],
         },
-      ];
+      ]
       try {
-        const apiBackgrounds = await dndAPI.getBackgrounds();
+        const apiBackgrounds = await dndAPI.getBackgrounds()
         if (apiBackgrounds && apiBackgrounds.length > 0) {
           if (apiBackgrounds.length >= 4) {
-            this.backgroundData = apiBackgrounds;
+            this.backgroundData = apiBackgrounds
           } else {
-            this.backgroundData = [...fallbackBackgroundData];
+            this.backgroundData = [...fallbackBackgroundData]
           }
         } else {
-          this.backgroundData = [...fallbackBackgroundData];
+          this.backgroundData = [...fallbackBackgroundData]
         }
       } catch (error) {
-        this.backgroundError = error.message || error;
-        this.backgroundData = [...fallbackBackgroundData];
+        this.backgroundError = error.message || error
+        this.backgroundData = [...fallbackBackgroundData]
       } finally {
-        this.isLoadingBackgrounds = false;
+        this.isLoadingBackgrounds = false
       }
     },
-    async loadEquipmentData () {
-      this.isLoadingEquipment = true;
-      this.equipmentError = null;
+    async loadEquipmentData() {
+      this.isLoadingEquipment = true
+      this.equipmentError = null
       try {
-        const apiEquipment = await dndAPI.getEquipment();
+        const apiEquipment = await dndAPI.getEquipment()
         if (apiEquipment && apiEquipment.length > 0) {
-          this.equipmentData = apiEquipment;
+          this.equipmentData = apiEquipment
         }
       } catch (error) {
-        this.equipmentError = error.message || error;
+        this.equipmentError = error.message || error
       } finally {
-        this.isLoadingEquipment = false;
+        this.isLoadingEquipment = false
       }
     },
-    setCharacter (data) {
-      this.character = { ...this.character, ...data };
+    setCharacter(data) {
+      this.character = { ...this.character, ...data }
     },
-    setLoading (val) {
-      this.loading = val;
+    setLoading(val) {
+      this.loading = val
     },
-    setError (err) {
-      this.error = err;
+    setError(err) {
+      this.error = err
     },
-    setCurrentStep (step) {
-      this.currentStep = step;
+    setCurrentStep(step) {
+      this.currentStep = step
     },
-    setAbilityGenerationMethod (method) {
-      this.abilityGenerationMethod = method;
+    setAbilityGenerationMethod(method) {
+      this.abilityGenerationMethod = method
     },
-    setRolledStats (stats) {
-      this.rolledStats = stats;
+    setRolledStats(stats) {
+      this.rolledStats = stats
     },
-    setRolling (val) {
-      this.rolling = val;
+    setRolling(val) {
+      this.rolling = val
     },
-    setTimesRerolled (val) {
-      this.timesRerolled = val;
+    setTimesRerolled(val) {
+      this.timesRerolled = val
     },
-    reset () {
+    reset() {
       // Reset character to initial state
-      this.$reset();
+      this.$reset()
     },
-    async loadAllData () {
-      await Promise.all([
-        this.loadSpeciesData(),
-        this.loadClassData(),
-        this.loadBackgroundData(),
-        this.loadEquipmentData(),
-      ]);
+    async loadAllData() {
+      await Promise.all([this.loadSpeciesData(), this.loadClassData(), this.loadBackgroundData(), this.loadEquipmentData()])
     },
 
     // Update species traits when species changes
-    updateSpeciesTraits () {
-      this.updateSpeciesTraitsWithStacking();
+    updateSpeciesTraits() {
+      this.updateSpeciesTraitsWithStacking()
     },
 
     // Update class traits when class changes
-    updateClassTraits () {
-      console.log('DEBUG - updateClassTraits called');
-      console.log('DEBUG - character.class:', this.character.class);
-      console.log(
-        'DEBUG - character.classDetails available:',
-        !!this.character.classDetails
-      );
+    updateClassTraits() {
+      console.log('DEBUG - updateClassTraits called')
+      console.log('DEBUG - character.class:', this.character.class)
+      console.log('DEBUG - character.classDetails available:', !!this.character.classDetails)
 
       // Use classDetails (detailed data) instead of classData (basic list)
       if (this.character.classDetails) {
-        const selectedClass = this.character.classDetails;
-        console.log('DEBUG - found classDetails:', selectedClass.name);
-        console.log(
-          'DEBUG - classDetails.armorTraining:',
-          selectedClass.armorTraining
-        );
-        console.log(
-          'DEBUG - classDetails.weaponProficiencies:',
-          selectedClass.weaponProficiencies
-        );
+        const selectedClass = this.character.classDetails
+        console.log('DEBUG - found classDetails:', selectedClass.name)
+        console.log('DEBUG - classDetails.armorTraining:', selectedClass.armorTraining)
+        console.log('DEBUG - classDetails.weaponProficiencies:', selectedClass.weaponProficiencies)
 
         // Update armor training
         if (selectedClass.armorTraining) {
-          this.character.armorTraining = { ...selectedClass.armorTraining };
+          this.character.armorTraining = { ...selectedClass.armorTraining }
         }
 
         // Update weapon proficiencies
         if (selectedClass.weaponProficiencies) {
-          this.character.weaponProficiencies = [
-            ...selectedClass.weaponProficiencies,
-          ];
+          this.character.weaponProficiencies = [...selectedClass.weaponProficiencies]
         }
 
         // Note: Starting equipment is handled by buildClassEquipment() method
@@ -533,38 +474,25 @@ export const useCharacterStore = defineStore('character', {
 
         // Add class traits to stacking system
         if (selectedClass.features) {
-          this.addTraitsToSource('class', selectedClass.features);
+          this.addTraitsToSource('class', selectedClass.features)
         }
 
-        console.log('DEBUG - After assignment:');
-        console.log(
-          'DEBUG - character.armorTraining:',
-          this.character.armorTraining
-        );
-        console.log(
-          'DEBUG - character.weaponProficiencies:',
-          this.character.weaponProficiencies
-        );
+        console.log('DEBUG - After assignment:')
+        console.log('DEBUG - character.armorTraining:', this.character.armorTraining)
+        console.log('DEBUG - character.weaponProficiencies:', this.character.weaponProficiencies)
 
         // Initialize skill proficiencies
-        this.character.skillProficiencies = {};
-        this.character.selectedClassSkills = [];
+        this.character.skillProficiencies = {}
+        this.character.selectedClassSkills = []
 
         // Initialize saving throw proficiencies
-        this.character.savingThrowProficiencies = {};
-        const abilityNames = [
-          'strength',
-          'dexterity',
-          'constitution',
-          'intelligence',
-          'wisdom',
-          'charisma',
-        ];
+        this.character.savingThrowProficiencies = {}
+        const abilityNames = ['strength', 'dexterity', 'constitution', 'intelligence', 'wisdom', 'charisma']
         for (const ability of abilityNames) {
           this.character.savingThrowProficiencies[ability] = {
             proficient: selectedClass.savingThrows?.includes(ability) || false,
             bonus: 0,
-          };
+          }
         }
       } else {
         this.character.armorTraining = {
@@ -572,51 +500,38 @@ export const useCharacterStore = defineStore('character', {
           medium: false,
           heavy: false,
           shields: false,
-        };
-        this.character.weaponProficiencies = [];
-        this.character.derivedTraits.class = [];
-        this.combineTraits();
+        }
+        this.character.weaponProficiencies = []
+        this.character.derivedTraits.class = []
+        this.combineTraits()
       }
 
       // Rebuild inventory to include class equipment
-      this.rebuildInventory();
+      this.rebuildInventory()
     },
 
     // Update background traits when background changes
-    updateBackgroundTraits () {
+    updateBackgroundTraits() {
       // First, remove any existing background feats
-      this.character.feats = this.character.feats.filter(
-        feat => feat.source !== 'Background'
-      );
+      this.character.feats = this.character.feats.filter((feat) => feat.source !== 'Background')
 
-      const selectedBackground = this.backgroundData.find(
-        b => b.id === this.character.background
-      );
+      const selectedBackground = this.backgroundData.find((b) => b.id === this.character.background)
       if (selectedBackground) {
-        this.character.backgroundDetails = selectedBackground;
+        this.character.backgroundDetails = selectedBackground
 
         // Update skill proficiencies from background
-        const skillProfs =
-          selectedBackground.skillProficiencies ||
-          selectedBackground.skillProfs ||
-          [];
+        const skillProfs = selectedBackground.skillProficiencies || selectedBackground.skillProfs || []
         for (const skillName of skillProfs) {
           if (this.character.skillProficiencies[skillName]) {
-            this.character.skillProficiencies[skillName].proficient = true;
+            this.character.skillProficiencies[skillName].proficient = true
           }
         }
 
         // Handle tool proficiencies
-        const toolProfs =
-          selectedBackground.toolProficiencies ||
-          [selectedBackground.toolProf].filter(Boolean);
+        const toolProfs = selectedBackground.toolProficiencies || [selectedBackground.toolProf].filter(Boolean)
         for (const toolProf of toolProfs) {
-          if (
-            toolProf &&
-            !toolProf.includes('(choice)') &&
-            !this.character.toolProficiencies.includes(toolProf)
-          ) {
-            this.character.toolProficiencies.push(toolProf);
+          if (toolProf && !toolProf.includes('(choice)') && !this.character.toolProficiencies.includes(toolProf)) {
+            this.character.toolProficiencies.push(toolProf)
           }
         }
 
@@ -626,34 +541,34 @@ export const useCharacterStore = defineStore('character', {
             name: selectedBackground.feat,
             source: 'Background',
             description: `Feat granted by ${selectedBackground.name} background`,
-          });
+          })
         }
 
         // Add background traits/features to stacking system
-        const backgroundTraits = [];
+        const backgroundTraits = []
         if (selectedBackground.feature) {
           backgroundTraits.push({
             name: selectedBackground.feature.name,
             description: selectedBackground.feature.description,
             source: 'background',
-          });
+          })
         }
-        this.addTraitsToSource('background', backgroundTraits);
+        this.addTraitsToSource('background', backgroundTraits)
 
         // Note: Background equipment is handled by buildBackgroundEquipment() method
         // to avoid duplicates and properly manage equipment sources
       } else {
-        this.character.backgroundDetails = null;
-        this.character.derivedTraits.background = [];
-        this.combineTraits();
+        this.character.backgroundDetails = null
+        this.character.derivedTraits.background = []
+        this.combineTraits()
       }
 
       // Rebuild inventory to include background equipment
-      this.rebuildInventory();
+      this.rebuildInventory()
     },
 
     // Calculate starting gold based on class
-    calculateStartingGold () {
+    calculateStartingGold() {
       const classGoldTable = {
         barbarian: { dice: 2, sides: 4, multiplier: 10 },
         bard: { dice: 5, sides: 4, multiplier: 10 },
@@ -667,351 +582,278 @@ export const useCharacterStore = defineStore('character', {
         sorcerer: { dice: 3, sides: 4, multiplier: 10 },
         warlock: { dice: 4, sides: 4, multiplier: 10 },
         wizard: { dice: 4, sides: 4, multiplier: 10 },
-      };
+      }
 
-      const classId = this.character.class?.toLowerCase();
+      const classId = this.character.class?.toLowerCase()
       const goldConfig = classGoldTable[classId] || {
         dice: 4,
         sides: 4,
         multiplier: 10,
-      };
+      }
 
       // For now, use average roll (simplified)
-      const averageRoll = Math.floor((goldConfig.sides + 1) / 2);
-      const goldAmount = goldConfig.dice * averageRoll * goldConfig.multiplier;
+      const averageRoll = Math.floor((goldConfig.sides + 1) / 2)
+      const goldAmount = goldConfig.dice * averageRoll * goldConfig.multiplier
 
-      this.character.coins.gp = goldAmount;
-      return goldAmount;
+      this.character.coins.gp = goldAmount
+      return goldAmount
     },
 
     // Spend gold for equipment
-    spendGold (amount) {
+    spendGold(amount) {
       if (this.character.coins.gp >= amount) {
-        this.character.coins.gp -= amount;
-        return true;
+        this.character.coins.gp -= amount
+        return true
       }
-      return false;
+      return false
     },
 
     // Add equipment to inventory
-    addEquipment (item) {
+    addEquipment(item) {
       this.character.equipment.push({
         ...item,
         source: 'purchased',
         equipped: false,
-      });
+      })
     },
 
     // Remove equipment from inventory
-    removeEquipment (itemName) {
-      const index = this.character.equipment.findIndex(
-        item => item.name === itemName
-      );
+    removeEquipment(itemName) {
+      const index = this.character.equipment.findIndex((item) => item.name === itemName)
       if (index > -1) {
-        this.character.equipment.splice(index, 1);
+        this.character.equipment.splice(index, 1)
       }
     },
 
     // Equipment choice management
-    setEquipmentChoices (choices) {
-      this.character.equipmentChoices = [...choices];
+    setEquipmentChoices(choices) {
+      this.character.equipmentChoices = [...choices]
     },
 
-    getEquipmentChoices () {
-      return this.character.equipmentChoices || [];
+    getEquipmentChoices() {
+      return this.character.equipmentChoices || []
     },
 
-    updateEquipmentChoice (choiceIndex, optionIndex) {
+    updateEquipmentChoice(choiceIndex, optionIndex) {
       if (!this.character.equipmentChoices) {
-        this.character.equipmentChoices = [];
+        this.character.equipmentChoices = []
       }
-      this.character.equipmentChoices[choiceIndex] = optionIndex;
+      this.character.equipmentChoices[choiceIndex] = optionIndex
     },
 
     // Get total gold value
-    getTotalGoldValue () {
-      return (
-        this.character.coins.gp +
-        this.character.coins.sp / 10 +
-        this.character.coins.ep / 2 +
-        this.character.coins.pp * 10
-      );
+    getTotalGoldValue() {
+      return this.character.coins.gp + this.character.coins.sp / 10 + this.character.coins.ep / 2 + this.character.coins.pp * 10
     },
 
     // Ability Score Bonus Management
-    applyAbilityScoreBonuses (source, bonuses) {
-      if (!Array.isArray(bonuses)) return;
+    applyAbilityScoreBonuses(source, bonuses) {
+      if (!Array.isArray(bonuses)) return
 
-      bonuses.forEach(bonus => {
-        const abilityName = bonus.ability?.toLowerCase();
+      bonuses.forEach((bonus) => {
+        const abilityName = bonus.ability?.toLowerCase()
         if (abilityName && this.character.abilityScores[abilityName]) {
-          this.character.abilityScores[abilityName].bonuses[source] =
-            bonus.bonus || 1;
+          this.character.abilityScores[abilityName].bonuses[source] = bonus.bonus || 1
         }
-      });
+      })
     },
 
-    removeAbilityScoreBonuses (source) {
-      Object.keys(this.character.abilityScores).forEach(ability => {
+    removeAbilityScoreBonuses(source) {
+      Object.keys(this.character.abilityScores).forEach((ability) => {
         if (this.character.abilityScores[ability].bonuses[source]) {
-          delete this.character.abilityScores[ability].bonuses[source];
+          delete this.character.abilityScores[ability].bonuses[source]
         }
-      });
+      })
     },
 
-    calculateFinalAbilityScores () {
-      Object.keys(this.character.abilityScores).forEach(ability => {
-        const abilityData = this.character.abilityScores[ability];
-        const bonusTotal = Object.values(abilityData.bonuses).reduce(
-          (sum, bonus) => sum + bonus,
-          0
-        );
-        const finalScore = Math.max(
-          1,
-          Math.min(30, abilityData.score + bonusTotal)
-        );
+    calculateFinalAbilityScores() {
+      Object.keys(this.character.abilityScores).forEach((ability) => {
+        const abilityData = this.character.abilityScores[ability]
+        const bonusTotal = Object.values(abilityData.bonuses).reduce((sum, bonus) => sum + bonus, 0)
+        const finalScore = Math.max(1, Math.min(30, abilityData.score + bonusTotal))
 
         // Update modifier based on final score
-        abilityData.modifier = Math.floor((finalScore - 10) / 2);
+        abilityData.modifier = Math.floor((finalScore - 10) / 2)
 
         // Store final score for easy access (optional)
-        abilityData.finalScore = finalScore;
-      });
+        abilityData.finalScore = finalScore
+      })
     },
 
     // Lineage Change Handler
-    updateLineageTraits (newLineageId) {
+    updateLineageTraits(newLineageId) {
       // Remove old lineage bonuses
-      this.removeAbilityScoreBonuses('lineage');
+      this.removeAbilityScoreBonuses('lineage')
 
       // Apply new lineage bonuses
       if (newLineageId && this.character.speciesDetails?.lineages) {
-        const selectedLineage = this.character.speciesDetails.lineages.find(
-          l => l.id === newLineageId
-        );
+        const selectedLineage = this.character.speciesDetails.lineages.find((l) => l.id === newLineageId)
         if (selectedLineage && selectedLineage.abilityBonus) {
-          this.applyAbilityScoreBonuses(
-            'lineage',
-            selectedLineage.abilityBonus
-          );
+          this.applyAbilityScoreBonuses('lineage', selectedLineage.abilityBonus)
         }
       }
 
       // Update character lineage
-      this.character.speciesLineage = newLineageId;
+      this.character.speciesLineage = newLineageId
 
       // Update combined traits
-      this.combineTraits();
+      this.combineTraits()
 
       // Recalculate final scores
-      this.calculateFinalAbilityScores();
+      this.calculateFinalAbilityScores()
     },
 
     // Trait Stacking System
-    addTraitsToSource (source, traits) {
-      if (!Array.isArray(traits)) return;
-      this.character.derivedTraits[source] = traits.map(trait => ({
+    addTraitsToSource(source, traits) {
+      if (!Array.isArray(traits)) return
+      this.character.derivedTraits[source] = traits.map((trait) => ({
         name: trait.name,
         description: trait.description || trait.desc || '',
         source,
         index: trait.index || null,
-      }));
-      this.combineTraits();
+      }))
+      this.combineTraits()
     },
 
-    combineTraits () {
-      const allTraits = [];
+    combineTraits() {
+      const allTraits = []
 
       // Combine traits from all sources
-      Object.keys(this.character.derivedTraits).forEach(source => {
-        if (
-          source !== 'combined' &&
-          Array.isArray(this.character.derivedTraits[source])
-        ) {
-          allTraits.push(...this.character.derivedTraits[source]);
+      Object.keys(this.character.derivedTraits).forEach((source) => {
+        if (source !== 'combined' && Array.isArray(this.character.derivedTraits[source])) {
+          allTraits.push(...this.character.derivedTraits[source])
         }
-      });
+      })
 
       // Remove duplicates and handle conflicts
-      const uniqueTraits = [];
-      const traitNames = new Set();
+      const uniqueTraits = []
+      const traitNames = new Set()
 
-      allTraits.forEach(trait => {
+      allTraits.forEach((trait) => {
         if (!traitNames.has(trait.name)) {
-          uniqueTraits.push(trait);
-          traitNames.add(trait.name);
+          uniqueTraits.push(trait)
+          traitNames.add(trait.name)
         } else {
           // Handle trait conflicts - prefer more specific sources
-          const existingIndex = uniqueTraits.findIndex(
-            t => t.name === trait.name
-          );
+          const existingIndex = uniqueTraits.findIndex((t) => t.name === trait.name)
           if (existingIndex !== -1) {
-            const existing = uniqueTraits[existingIndex];
+            const existing = uniqueTraits[existingIndex]
             // Priority: lineage > species > class > background
             const sourcePriority = {
               lineage: 4,
               species: 3,
               class: 2,
               background: 1,
-            };
-            if (
-              (sourcePriority[trait.source] || 0) >
-              (sourcePriority[existing.source] || 0)
-            ) {
-              uniqueTraits[existingIndex] = trait;
+            }
+            if ((sourcePriority[trait.source] || 0) > (sourcePriority[existing.source] || 0)) {
+              uniqueTraits[existingIndex] = trait
             }
           }
         }
-      });
+      })
 
-      this.character.derivedTraits.combined = uniqueTraits;
+      this.character.derivedTraits.combined = uniqueTraits
     },
 
     // Enhanced Species Traits Update
-    updateSpeciesTraitsWithStacking () {
-      const selectedSpecies = this.speciesData.find(
-        s => s.id === this.character.species
-      );
+    updateSpeciesTraitsWithStacking() {
+      const selectedSpecies = this.speciesData.find((s) => s.id === this.character.species)
       if (selectedSpecies) {
-        this.character.speciesDetails = selectedSpecies;
-        this.character.size = selectedSpecies.size;
-        this.character.speed = selectedSpecies.speed;
+        this.character.speciesDetails = selectedSpecies
+        this.character.size = selectedSpecies.size
+        this.character.speed = selectedSpecies.speed
 
         if (selectedSpecies.id === 'human') {
-          this.character.hasHeroicInspiration = true;
+          this.character.hasHeroicInspiration = true
         }
 
-        this.character.speciesLineage =
-          selectedSpecies.lineages.length > 0
-            ? selectedSpecies.lineages[0].id
-            : null;
+        this.character.speciesLineage = selectedSpecies.lineages.length > 0 ? selectedSpecies.lineages[0].id : null
 
         // Apply species ability score bonuses
-        this.applyAbilityScoreBonuses(
-          'species',
-          selectedSpecies.abilityBonus || []
-        );
+        this.applyAbilityScoreBonuses('species', selectedSpecies.abilityBonus || [])
 
         // Add species traits
-        this.addTraitsToSource('species', selectedSpecies.traits || []);
+        this.addTraitsToSource('species', selectedSpecies.traits || [])
 
         // Apply lineage bonuses and traits if applicable
         if (this.character.speciesLineage && selectedSpecies.lineages) {
-          const selectedLineage = selectedSpecies.lineages.find(
-            l => l.id === this.character.speciesLineage
-          );
+          const selectedLineage = selectedSpecies.lineages.find((l) => l.id === this.character.speciesLineage)
           if (selectedLineage) {
             if (selectedLineage.abilityBonus) {
-              this.applyAbilityScoreBonuses(
-                'lineage',
-                selectedLineage.abilityBonus
-              );
+              this.applyAbilityScoreBonuses('lineage', selectedLineage.abilityBonus)
             }
             if (selectedLineage.traits) {
-              this.addTraitsToSource('lineage', selectedLineage.traits);
+              this.addTraitsToSource('lineage', selectedLineage.traits)
             }
           }
         }
       } else {
-        this.character.speciesDetails = null;
-        this.character.size = '';
-        this.character.speed = 0;
-        this.character.hasHeroicInspiration = false;
-        this.character.speciesLineage = null;
+        this.character.speciesDetails = null
+        this.character.size = ''
+        this.character.speed = 0
+        this.character.hasHeroicInspiration = false
+        this.character.speciesLineage = null
 
         // Remove species and lineage bonuses/traits
-        this.removeAbilityScoreBonuses('species');
-        this.removeAbilityScoreBonuses('lineage');
-        this.character.derivedTraits.species = [];
-        this.character.derivedTraits.lineage = [];
-        this.combineTraits();
+        this.removeAbilityScoreBonuses('species')
+        this.removeAbilityScoreBonuses('lineage')
+        this.character.derivedTraits.species = []
+        this.character.derivedTraits.lineage = []
+        this.combineTraits()
       }
 
       // Recalculate final ability scores
-      this.calculateFinalAbilityScores();
+      this.calculateFinalAbilityScores()
     },
 
     // Validation System
-    validateCharacterBonuses () {
-      const issues = [];
+    validateCharacterBonuses() {
+      const issues = []
 
       // Validate ability score bonuses are applied
-      if (
-        this.character.species &&
-        this.character.speciesDetails?.abilityBonus
-      ) {
-        this.character.speciesDetails.abilityBonus.forEach(bonus => {
-          const abilityName = bonus.ability?.toLowerCase();
+      if (this.character.species && this.character.speciesDetails?.abilityBonus) {
+        this.character.speciesDetails.abilityBonus.forEach((bonus) => {
+          const abilityName = bonus.ability?.toLowerCase()
           if (abilityName && this.character.abilityScores[abilityName]) {
-            const appliedBonus =
-              this.character.abilityScores[abilityName].bonuses.species;
+            const appliedBonus = this.character.abilityScores[abilityName].bonuses.species
             if (appliedBonus !== bonus.bonus) {
-              issues.push(
-                `Species ability bonus for ${
-                  bonus.ability
-                } not properly applied. Expected: ${bonus.bonus}, Found: ${
-                  appliedBonus || 0
-                }`
-              );
+              issues.push(`Species ability bonus for ${bonus.ability} not properly applied. Expected: ${bonus.bonus}, Found: ${appliedBonus || 0}`)
             }
           }
-        });
+        })
       }
 
       // Validate lineage bonuses
-      if (
-        this.character.speciesLineage &&
-        this.character.speciesDetails?.lineages
-      ) {
-        const selectedLineage = this.character.speciesDetails.lineages.find(
-          l => l.id === this.character.speciesLineage
-        );
+      if (this.character.speciesLineage && this.character.speciesDetails?.lineages) {
+        const selectedLineage = this.character.speciesDetails.lineages.find((l) => l.id === this.character.speciesLineage)
         if (selectedLineage?.abilityBonus) {
-          selectedLineage.abilityBonus.forEach(bonus => {
-            const abilityName = bonus.ability?.toLowerCase();
+          selectedLineage.abilityBonus.forEach((bonus) => {
+            const abilityName = bonus.ability?.toLowerCase()
             if (abilityName && this.character.abilityScores[abilityName]) {
-              const appliedBonus =
-                this.character.abilityScores[abilityName].bonuses.lineage;
+              const appliedBonus = this.character.abilityScores[abilityName].bonuses.lineage
               if (appliedBonus !== bonus.bonus) {
-                issues.push(
-                  `Lineage ability bonus for ${
-                    bonus.ability
-                  } not properly applied. Expected: ${bonus.bonus}, Found: ${
-                    appliedBonus || 0
-                  }`
-                );
+                issues.push(`Lineage ability bonus for ${bonus.ability} not properly applied. Expected: ${bonus.bonus}, Found: ${appliedBonus || 0}`)
               }
             }
-          });
+          })
         }
       }
 
       // Validate final scores are calculated
-      Object.keys(this.character.abilityScores).forEach(ability => {
-        const abilityData = this.character.abilityScores[ability];
-        const expectedFinal =
-          abilityData.score +
-          Object.values(abilityData.bonuses).reduce(
-            (sum, bonus) => sum + bonus,
-            0
-          );
-        const clampedFinal = Math.max(1, Math.min(30, expectedFinal));
+      Object.keys(this.character.abilityScores).forEach((ability) => {
+        const abilityData = this.character.abilityScores[ability]
+        const expectedFinal = abilityData.score + Object.values(abilityData.bonuses).reduce((sum, bonus) => sum + bonus, 0)
+        const clampedFinal = Math.max(1, Math.min(30, expectedFinal))
 
         if (abilityData.finalScore !== clampedFinal) {
-          issues.push(
-            `Final score for ${ability} not calculated correctly. Expected: ${clampedFinal}, Found: ${
-              abilityData.finalScore || 'undefined'
-            }`
-          );
+          issues.push(`Final score for ${ability} not calculated correctly. Expected: ${clampedFinal}, Found: ${abilityData.finalScore || 'undefined'}`)
         }
 
-        const expectedModifier = Math.floor((clampedFinal - 10) / 2);
+        const expectedModifier = Math.floor((clampedFinal - 10) / 2)
         if (abilityData.modifier !== expectedModifier) {
-          issues.push(
-            `Modifier for ${ability} not calculated correctly. Expected: ${expectedModifier}, Found: ${abilityData.modifier}`
-          );
+          issues.push(`Modifier for ${ability} not calculated correctly. Expected: ${expectedModifier}, Found: ${abilityData.modifier}`)
         }
-      });
+      })
 
       // Validate traits are combined
       if (
@@ -1021,50 +863,50 @@ export const useCharacterStore = defineStore('character', {
           this.character.derivedTraits.class.length > 0 ||
           this.character.derivedTraits.background.length > 0)
       ) {
-        issues.push('Traits are not being combined properly');
+        issues.push('Traits are not being combined properly')
       }
 
       return {
         isValid: issues.length === 0,
         issues,
-      };
+      }
     },
 
-    validateAndRecalculate () {
-      this.calculateFinalAbilityScores();
-      this.combineTraits();
-      return this.validateCharacterBonuses();
+    validateAndRecalculate() {
+      this.calculateFinalAbilityScores()
+      this.combineTraits()
+      return this.validateCharacterBonuses()
     },
 
     // Debug helper to inspect current bonuses
-    debugBonuses () {
-      console.log('=== Character Bonuses Debug ===');
-      console.log('Species:', this.character.species);
-      console.log('Lineage:', this.character.speciesLineage);
-      console.log('Ability Scores with Bonuses:');
-      Object.keys(this.character.abilityScores).forEach(ability => {
-        const data = this.character.abilityScores[ability];
+    debugBonuses() {
+      console.log('=== Character Bonuses Debug ===')
+      console.log('Species:', this.character.species)
+      console.log('Lineage:', this.character.speciesLineage)
+      console.log('Ability Scores with Bonuses:')
+      Object.keys(this.character.abilityScores).forEach((ability) => {
+        const data = this.character.abilityScores[ability]
         console.log(`  ${ability}:`, {
           base: data.score,
           bonuses: data.bonuses,
           final: data.finalScore,
           modifier: data.modifier,
-        });
-      });
-      console.log('Derived Traits:', this.character.derivedTraits);
-      const validation = this.validateCharacterBonuses();
-      console.log('Validation:', validation);
-      return validation;
+        })
+      })
+      console.log('Derived Traits:', this.character.derivedTraits)
+      const validation = this.validateCharacterBonuses()
+      console.log('Validation:', validation)
+      return validation
     },
 
     // Initialize character from loaded data
-    initializeFromLoadedData () {
+    initializeFromLoadedData() {
       // Ensure bonuses object exists on all ability scores
-      Object.keys(this.character.abilityScores).forEach(ability => {
+      Object.keys(this.character.abilityScores).forEach((ability) => {
         if (!this.character.abilityScores[ability].bonuses) {
-          this.character.abilityScores[ability].bonuses = {};
+          this.character.abilityScores[ability].bonuses = {}
         }
-      });
+      })
 
       // Ensure derivedTraits structure exists
       if (!this.character.derivedTraits) {
@@ -1074,11 +916,11 @@ export const useCharacterStore = defineStore('character', {
           class: [],
           background: [],
           combined: [],
-        };
+        }
       }
 
       // Force recalculation
-      this.validateAndRecalculate();
+      this.validateAndRecalculate()
     },
 
     // =====================================
@@ -1086,16 +928,16 @@ export const useCharacterStore = defineStore('character', {
     // =====================================
 
     // Clear all equipment and start fresh
-    clearInventory () {
-      this.character.equipment = [];
-      console.log('Inventory cleared');
+    clearInventory() {
+      this.character.equipment = []
+      console.log('Inventory cleared')
     },
 
     // Add item to inventory with source tracking
-    addToInventory (item, source = 'unknown') {
+    addToInventory(item, source = 'unknown') {
       if (!item || !item.name) {
-        console.warn('Cannot add invalid item to inventory:', item);
-        return;
+        console.warn('Cannot add invalid item to inventory:', item)
+        return
       }
 
       const inventoryItem = {
@@ -1108,123 +950,107 @@ export const useCharacterStore = defineStore('character', {
         damage: item.damage || '',
         ac: item.ac || '',
         cost: item.cost || '',
-      };
+      }
 
-      this.character.equipment.push(inventoryItem);
-      console.log(
-        `Added to inventory: ${item.name} (${source})`,
-        inventoryItem
-      );
+      this.character.equipment.push(inventoryItem)
+      console.log(`Added to inventory: ${item.name} (${source})`, inventoryItem)
     },
 
     // Remove item from inventory
-    removeFromInventory (itemName, source = null) {
-      const index = this.character.equipment.findIndex(item => {
+    removeFromInventory(itemName, source = null) {
+      const index = this.character.equipment.findIndex((item) => {
         if (source) {
-          return item.name === itemName && item.source === source;
+          return item.name === itemName && item.source === source
         }
-        return item.name === itemName;
-      });
+        return item.name === itemName
+      })
 
       if (index !== -1) {
-        const removed = this.character.equipment.splice(index, 1)[0];
-        console.log(
-          `Removed from inventory: ${removed.name} (${removed.source})`
-        );
-        return removed;
+        const removed = this.character.equipment.splice(index, 1)[0]
+        console.log(`Removed from inventory: ${removed.name} (${removed.source})`)
+        return removed
       }
-      console.warn(`Item not found for removal: ${itemName}`);
-      return null;
+      console.warn(`Item not found for removal: ${itemName}`)
+      return null
     },
 
     // Update item quantity in inventory
-    updateInventoryQuantity (itemName, newQuantity, source = null) {
-      const item = this.character.equipment.find(item => {
+    updateInventoryQuantity(itemName, newQuantity, source = null) {
+      const item = this.character.equipment.find((item) => {
         if (source) {
-          return item.name === itemName && item.source === source;
+          return item.name === itemName && item.source === source
         }
-        return item.name === itemName;
-      });
+        return item.name === itemName
+      })
 
       if (item) {
-        item.quantity = newQuantity;
-        console.log(`Updated quantity: ${itemName} = ${newQuantity}`);
+        item.quantity = newQuantity
+        console.log(`Updated quantity: ${itemName} = ${newQuantity}`)
       } else {
-        console.warn(`Item not found for quantity update: ${itemName}`);
+        console.warn(`Item not found for quantity update: ${itemName}`)
       }
     },
 
     // Build inventory from class equipment choices
-    buildClassEquipment () {
-      console.log('Building class equipment...');
+    buildClassEquipment() {
+      console.log('Building class equipment...')
 
       // Remove existing class equipment
-      this.character.equipment = this.character.equipment.filter(
-        item => !['class', 'class-default'].includes(item.source)
-      );
+      this.character.equipment = this.character.equipment.filter((item) => !['class', 'class-default'].includes(item.source))
 
       // Add equipment from choices
-      const selectedChoices = this.character.equipmentChoices || [];
-      const equipmentChoices =
-        this.character.classDetails?.equipmentChoices || [];
+      const selectedChoices = this.character.equipmentChoices || []
+      const equipmentChoices = this.character.classDetails?.equipmentChoices || []
 
       equipmentChoices.forEach((choice, choiceIndex) => {
-        const selectedOptionIndex = selectedChoices[choiceIndex];
+        const selectedOptionIndex = selectedChoices[choiceIndex]
 
         if (selectedOptionIndex !== null && selectedOptionIndex !== undefined) {
-          const selectedOption = choice.options[selectedOptionIndex];
+          const selectedOption = choice.options[selectedOptionIndex]
 
           if (selectedOption && selectedOption.items) {
-            selectedOption.items.forEach(item => {
-              this.addToInventory(item, 'class');
-            });
+            selectedOption.items.forEach((item) => {
+              this.addToInventory(item, 'class')
+            })
           }
         }
-      });
+      })
 
       // Add starting equipment (avoid duplicates)
-      const startingEquipment =
-        this.character.classDetails?.startingEquipment || [];
-      const existingItems = this.character.equipment.map(item =>
-        item.name.toLowerCase()
-      );
+      const startingEquipment = this.character.classDetails?.startingEquipment || []
+      const existingItems = this.character.equipment.map((item) => item.name.toLowerCase())
 
-      startingEquipment.forEach(item => {
+      startingEquipment.forEach((item) => {
         if (!existingItems.includes(item.name.toLowerCase())) {
-          this.addToInventory(item, 'class-default');
+          this.addToInventory(item, 'class-default')
         }
-      });
+      })
 
-      console.log('Class equipment built');
+      console.log('Class equipment built')
     },
 
     // Build inventory from background
-    buildBackgroundEquipment () {
-      console.log('Building background equipment...');
+    buildBackgroundEquipment() {
+      console.log('Building background equipment...')
 
       // Remove existing background equipment
-      this.character.equipment = this.character.equipment.filter(
-        item => item.source !== 'background'
-      );
+      this.character.equipment = this.character.equipment.filter((item) => item.source !== 'background')
 
       // Add background equipment
-      const backgroundEquipment =
-        this.character.backgroundDetails?.equipment || [];
-      backgroundEquipment.forEach(item => {
-        this.addToInventory(item, 'background');
-      });
+      const backgroundEquipment = this.character.backgroundDetails?.equipment || []
+      backgroundEquipment.forEach((item) => {
+        this.addToInventory(item, 'background')
+      })
 
-      console.log('Background equipment built');
+      console.log('Background equipment built')
     },
 
     // Build basic starting equipment all characters get
-    buildBasicStartingEquipment () {
-      console.log('Building basic starting equipment...');
+    buildBasicStartingEquipment() {
+      console.log('Building basic starting equipment...')
 
       // Remove existing basic equipment
-      this.character.equipment = this.character.equipment.filter(
-        item => item.source !== 'basic'
-      );
+      this.character.equipment = this.character.equipment.filter((item) => item.source !== 'basic')
 
       // Basic equipment all characters should have
       const basicEquipment = [
@@ -1238,69 +1064,63 @@ export const useCharacterStore = defineStore('character', {
           name: 'Pouch',
           type: 'Container',
           quantity: 1,
-          description:
-            'A cloth or leather pouch for carrying coins and small items',
+          description: 'A cloth or leather pouch for carrying coins and small items',
         },
-      ];
+      ]
 
-      basicEquipment.forEach(item => {
-        this.addToInventory(item, 'basic');
-      });
+      basicEquipment.forEach((item) => {
+        this.addToInventory(item, 'basic')
+      })
 
-      console.log('Basic starting equipment built');
+      console.log('Basic starting equipment built')
     },
 
     // Rebuild entire inventory from current character state
-    rebuildInventory () {
+    rebuildInventory() {
       // Debounce rapid rebuild calls
       if (this._rebuildTimer) {
-        clearTimeout(this._rebuildTimer);
+        clearTimeout(this._rebuildTimer)
       }
 
       this._rebuildTimer = setTimeout(() => {
-        console.log('=== REBUILDING COMPLETE INVENTORY ===');
+        console.log('=== REBUILDING COMPLETE INVENTORY ===')
 
         // Save purchased items (if any)
-        const purchasedItems = this.character.equipment.filter(
-          item => item.source === 'purchased'
-        );
+        const purchasedItems = this.character.equipment.filter((item) => item.source === 'purchased')
 
         // Clear inventory
-        this.clearInventory();
+        this.clearInventory()
 
         // Rebuild from sources
-        this.buildClassEquipment();
-        this.buildBackgroundEquipment();
-        this.buildBasicStartingEquipment();
+        this.buildClassEquipment()
+        this.buildBackgroundEquipment()
+        this.buildBasicStartingEquipment()
 
         // Re-add purchased items
-        purchasedItems.forEach(item => {
-          this.addToInventory(item, 'purchased');
-        });
+        purchasedItems.forEach((item) => {
+          this.addToInventory(item, 'purchased')
+        })
 
-        console.log(
-          'Inventory rebuild complete. Total items:',
-          this.character.equipment.length
-        );
+        console.log('Inventory rebuild complete. Total items:', this.character.equipment.length)
         console.log(
           'Final inventory:',
-          this.character.equipment.map(i => `${i.name} (${i.source})`)
-        );
+          this.character.equipment.map((i) => `${i.name} (${i.source})`)
+        )
 
-        this._rebuildTimer = null;
-      }, 100); // 100ms debounce
+        this._rebuildTimer = null
+      }, 100) // 100ms debounce
     },
 
     // Get current inventory with proper grouping and quantities
-    getCurrentInventory () {
-      const itemMap = new Map();
+    getCurrentInventory() {
+      const itemMap = new Map()
 
-      this.character.equipment.forEach(item => {
-        const key = item.name.toLowerCase();
+      this.character.equipment.forEach((item) => {
+        const key = item.name.toLowerCase()
 
         if (itemMap.has(key)) {
-          const existing = itemMap.get(key);
-          existing.quantity += item.quantity;
+          const existing = itemMap.get(key)
+          existing.quantity += item.quantity
         } else {
           itemMap.set(key, {
             name: item.name,
@@ -1311,38 +1131,35 @@ export const useCharacterStore = defineStore('character', {
             properties: item.properties,
             damage: item.damage,
             ac: item.ac,
-          });
+          })
         }
-      });
+      })
 
-      return Array.from(itemMap.values()).map(item => ({
+      return Array.from(itemMap.values()).map((item) => ({
         ...item,
-        displayName:
-          item.quantity > 1 ? `${item.name} (${item.quantity})` : item.name,
-      }));
+        displayName: item.quantity > 1 ? `${item.name} (${item.quantity})` : item.name,
+      }))
     },
 
     // Handle equipment choice selection
-    selectEquipmentChoice (choiceIndex, optionIndex) {
-      console.log(
-        `Selecting equipment choice ${choiceIndex}, option ${optionIndex}`
-      );
+    selectEquipmentChoice(choiceIndex, optionIndex) {
+      console.log(`Selecting equipment choice ${choiceIndex}, option ${optionIndex}`)
 
       // Ensure equipmentChoices array exists and has proper length
       if (!this.character.equipmentChoices) {
-        this.character.equipmentChoices = [];
+        this.character.equipmentChoices = []
       }
 
       // Extend array if needed
       while (this.character.equipmentChoices.length <= choiceIndex) {
-        this.character.equipmentChoices.push(null);
+        this.character.equipmentChoices.push(null)
       }
 
       // Set the choice
-      this.character.equipmentChoices[choiceIndex] = optionIndex;
+      this.character.equipmentChoices[choiceIndex] = optionIndex
 
       // Rebuild inventory to reflect new choice
-      this.rebuildInventory();
+      this.rebuildInventory()
     },
   },
-});
+})

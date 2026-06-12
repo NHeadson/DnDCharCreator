@@ -1,7 +1,6 @@
 <template>
   <v-card class="ability-score-section-card" flat>
     <v-card-text>
-
       <AbilityScoreHeader
         :character="character"
         :character-data="characterData"
@@ -11,15 +10,7 @@
       />
 
       <div class="d-flex justify-end mb-2">
-        <v-btn
-          v-if="isAssigningScores || availableScores.length"
-          color="secondary"
-          size="small"
-          variant="text"
-          @click="manualEntry"
-        >
-          Manual Entry
-        </v-btn>
+        <v-btn v-if="isAssigningScores || availableScores.length" color="secondary" size="small" variant="text" @click="manualEntry">Manual Entry</v-btn>
       </div>
 
       <div v-if="isAssigningScores && availableScores.length" class="mb-4 d-flex justify-center">
@@ -28,9 +19,7 @@
             <span class="text-subtitle-1 font-weight-bold">{{ arrayLabel }}</span>
             <span v-if="!isNarrow" class="text-caption text-grey-darken-1 ms-2">(Drag a number onto an ability)</span>
             <div v-else class="text-caption text-grey-darken-1 mt-1">(Tap a number, then tap an ability)</div>
-            <div class="text-caption text-primary mt-1" style="font-size: 0.98em;">
-              Tip: You can also just click an attribute card to assign the highest available value.
-            </div>
+            <div class="text-caption text-primary mt-1" style="font-size: 0.98em">Tip: You can also just click an attribute card to assign the highest available value.</div>
           </div>
           <div class="available-scores-row">
             <v-card
@@ -50,13 +39,7 @@
         </v-card>
       </div>
 
-      <AbilityScoreGrid
-        :available-scores="availableScores"
-        :character="character"
-        :character-data="characterData"
-        :is-assigning-scores="isAssigningScores"
-        @assign-score="assignScore"
-      />
+      <AbilityScoreGrid :available-scores="availableScores" :character="character" :character-data="characterData" :is-assigning-scores="isAssigningScores" @assign-score="assignScore" />
 
       <!-- Ability Score Reference Dropdown -->
       <div class="d-flex justify-center mt-4">
@@ -129,174 +112,179 @@
   </v-card>
 </template>
 
-
 <script setup>
-  import { computed, onBeforeUnmount, onMounted, ref, toRefs } from 'vue'
-  import AbilityScoreGrid from '../shared/AbilityScoreGrid.vue'
-  import AbilityScoreHeader from '../shared/AbilityScoreHeader.vue'
-  // Computed label for array type
-  const arrayLabel = computed(() => {
-    const arr = availableScores.value
-    // Standard array, allow any order
-    const std = [15, 14, 13, 12, 10, 8]
-    if (arr.length === 6 && arr.slice().sort((a, b) => b - a).join(',') === std.join(',')) {
-      return 'Standard Array'
-    }
-    return 'Rolled Array'
-  })
-  // Custom breakpoint for tap/drag message
-  const isNarrow = ref(window.innerWidth <= 1117)
-  function handleResize () {
-    isNarrow.value = window.innerWidth <= 1117
+import { computed, onBeforeUnmount, onMounted, ref, toRefs } from 'vue'
+import AbilityScoreGrid from '../shared/AbilityScoreGrid.vue'
+import AbilityScoreHeader from '../shared/AbilityScoreHeader.vue'
+// Computed label for array type
+const arrayLabel = computed(() => {
+  const arr = availableScores.value
+  // Standard array, allow any order
+  const std = [15, 14, 13, 12, 10, 8]
+  if (
+    arr.length === 6 &&
+    arr
+      .slice()
+      .sort((a, b) => b - a)
+      .join(',') === std.join(',')
+  ) {
+    return 'Standard Array'
   }
-  onMounted(() => {
-    window.addEventListener('resize', handleResize)
-  })
-  onBeforeUnmount(() => {
-    window.removeEventListener('resize', handleResize)
-  })
+  return 'Rolled Array'
+})
+// Custom breakpoint for tap/drag message
+const isNarrow = ref(window.innerWidth <= 1117)
+function handleResize() {
+  isNarrow.value = window.innerWidth <= 1117
+}
+onMounted(() => {
+  window.addEventListener('resize', handleResize)
+})
+onBeforeUnmount(() => {
+  window.removeEventListener('resize', handleResize)
+})
 
-  const props = defineProps({
-    character: {
-      type: Object,
-      required: true,
-    },
-    characterData: {
-      type: Object,
-      required: true,
-    },
-  })
+const props = defineProps({
+  character: {
+    type: Object,
+    required: true,
+  },
+  characterData: {
+    type: Object,
+    required: true,
+  },
+})
 
-  // Destructure for template access (but keep props for script logic)
-  const { character, characterData } = toRefs(props)
+// Destructure for template access (but keep props for script logic)
+const { character, characterData } = toRefs(props)
 
-  const isAssigningScores = ref(false)
-  const availableScores = ref([])
-  const assignedStats = ref({})
-  const showReferenceMenu = ref(false)
-  const statKeys = ['strength', 'dexterity', 'constitution', 'intelligence', 'wisdom', 'charisma']
+const isAssigningScores = ref(false)
+const availableScores = ref([])
+const assignedStats = ref({})
+const showReferenceMenu = ref(false)
+const statKeys = ['strength', 'dexterity', 'constitution', 'intelligence', 'wisdom', 'charisma']
 
-  // Allow user to clear arrays and enter scores manually
-  const manualEntry = () => {
-    isAssigningScores.value = false
-    availableScores.value = []
-    assignedStats.value = {}
+// Allow user to clear arrays and enter scores manually
+const manualEntry = () => {
+  isAssigningScores.value = false
+  availableScores.value = []
+  assignedStats.value = {}
   // Optionally clear assigned scores if desired, or leave as-is for manual editing
+}
+
+const setStandardArray = () => {
+  isAssigningScores.value = true
+  availableScores.value = [15, 14, 13, 12, 10, 8]
+  assignedStats.value = {}
+  // Reset character scores
+  statKeys.forEach((key) => {
+    if (character.value.abilityScores[key]) {
+      character.value.abilityScores[key].score = null
+      character.value.abilityScores[key].modifier = 0
+    }
+  })
+}
+
+const rollAbilityScores = () => {
+  isAssigningScores.value = true
+  // Roll 4d6 drop lowest for each stat
+  const rolls = []
+  for (let i = 0; i < 6; i++) {
+    const dice = Array.from({ length: 4 }, () => Math.floor(Math.random() * 6) + 1)
+    dice.sort((a, b) => a - b)
+    dice.shift() // drop lowest
+    rolls.push(dice.reduce((a, b) => a + b, 0))
+  }
+  availableScores.value = rolls.sort((a, b) => b - a) // highest first
+  assignedStats.value = {}
+  statKeys.forEach((key) => {
+    if (character.value.abilityScores[key]) {
+      character.value.abilityScores[key].score = null
+      character.value.abilityScores[key].modifier = 0
+    }
+  })
+}
+
+let draggedScore = null
+let draggedIdx = null
+let selectedScore = null
+let selectedIdx = null
+
+const onDragStart = (score, idx) => {
+  draggedScore = score
+  draggedIdx = idx
+}
+
+const onChipClick = (score, idx) => {
+  // For mobile - select the chip on click
+  if (selectedScore === score && selectedIdx === idx) {
+    // Deselect if clicking the same chip
+    selectedScore = null
+    selectedIdx = null
+  } else {
+    selectedScore = score
+    selectedIdx = idx
+  }
+}
+
+const assignScore = (statName) => {
+  if (!isAssigningScores.value) return
+
+  // Prevent assigning to a stat that already has a value
+  if (character.value.abilityScores[statName]?.score !== null && character.value.abilityScores[statName]?.score !== undefined) {
+    return
   }
 
-  const setStandardArray = () => {
-    isAssigningScores.value = true
-    availableScores.value = [15, 14, 13, 12, 10, 8]
-    assignedStats.value = {}
-    // Reset character scores
-    statKeys.forEach(key => {
-      if (character.value.abilityScores[key]) {
-        character.value.abilityScores[key].score = null
-        character.value.abilityScores[key].modifier = 0
-      }
-    })
-  }
-
-  const rollAbilityScores = () => {
-    isAssigningScores.value = true
-    // Roll 4d6 drop lowest for each stat
-    const rolls = []
-    for (let i = 0; i < 6; i++) {
-      const dice = Array.from({ length: 4 }, () => Math.floor(Math.random() * 6) + 1)
-      dice.sort((a, b) => a - b)
-      dice.shift() // drop lowest
-      rolls.push(dice.reduce((a, b) => a + b, 0))
+  // Handle mobile selection first
+  if (selectedScore !== null && selectedIdx !== null) {
+    if (!character.value.abilityScores[statName]) {
+      character.value.abilityScores[statName] = { score: 0, modifier: 0 }
     }
-    availableScores.value = rolls.sort((a, b) => b - a) // highest first
-    assignedStats.value = {}
-    statKeys.forEach(key => {
-      if (character.value.abilityScores[key]) {
-        character.value.abilityScores[key].score = null
-        character.value.abilityScores[key].modifier = 0
-      }
-    })
-  }
-
-  let draggedScore = null
-  let draggedIdx = null
-  let selectedScore = null
-  let selectedIdx = null
-
-  const onDragStart = (score, idx) => {
-    draggedScore = score
-    draggedIdx = idx
-  }
-
-  const onChipClick = (score, idx) => {
-    // For mobile - select the chip on click
-    if (selectedScore === score && selectedIdx === idx) {
-      // Deselect if clicking the same chip
-      selectedScore = null
-      selectedIdx = null
-    } else {
-      selectedScore = score
-      selectedIdx = idx
-    }
-  }
-
-  const assignScore = statName => {
-    if (!isAssigningScores.value) return
-
-    // Prevent assigning to a stat that already has a value
-    if (character.value.abilityScores[statName]?.score !== null && character.value.abilityScores[statName]?.score !== undefined) {
-      return
-    }
-
-    // Handle mobile selection first
-    if (selectedScore !== null && selectedIdx !== null) {
-      if (!character.value.abilityScores[statName]) {
-        character.value.abilityScores[statName] = { score: 0, modifier: 0 }
-      }
-      character.value.abilityScores[statName].score = selectedScore
-      character.value.abilityScores[statName].modifier = Math.floor((selectedScore - 10) / 2)
-      availableScores.value.splice(selectedIdx, 1)
-      selectedScore = null
-      selectedIdx = null
-      // If all scores assigned, stop assigning
-      const allAssigned = statKeys.every(key => character.value.abilityScores[key]?.score !== null && character.value.abilityScores[key]?.score !== undefined)
-      if (allAssigned) {
-        isAssigningScores.value = false
-      }
-      return
-    }
-
-    // Handle drag and drop
-    if (draggedScore !== null && draggedIdx !== null) {
-      if (!character.value.abilityScores[statName]) {
-        character.value.abilityScores[statName] = { score: 0, modifier: 0 }
-      }
-      character.value.abilityScores[statName].score = draggedScore
-      character.value.abilityScores[statName].modifier = Math.floor((draggedScore - 10) / 2)
-      availableScores.value.splice(draggedIdx, 1)
-      draggedScore = null
-      draggedIdx = null
-      // If all scores assigned, stop assigning
-      const allAssigned = statKeys.every(key => character.value.abilityScores[key]?.score !== null && character.value.abilityScores[key]?.score !== undefined)
-      if (allAssigned) {
-        isAssigningScores.value = false
-      }
-      return
-    }
-    // Fallback: assign the first available score (works with duplicates)
-    if (availableScores.value.length > 0) {
-      const nextScore = availableScores.value[0]
-      if (!character.value.abilityScores[statName]) {
-        character.value.abilityScores[statName] = { score: 0, modifier: 0 }
-      }
-      character.value.abilityScores[statName].score = nextScore
-      character.value.abilityScores[statName].modifier = Math.floor((nextScore - 10) / 2)
-      availableScores.value.splice(0, 1)
-    }
-    const allAssigned = statKeys.every(key => character.value.abilityScores[key]?.score !== null && character.value.abilityScores[key]?.score !== undefined)
+    character.value.abilityScores[statName].score = selectedScore
+    character.value.abilityScores[statName].modifier = Math.floor((selectedScore - 10) / 2)
+    availableScores.value.splice(selectedIdx, 1)
+    selectedScore = null
+    selectedIdx = null
+    // If all scores assigned, stop assigning
+    const allAssigned = statKeys.every((key) => character.value.abilityScores[key]?.score !== null && character.value.abilityScores[key]?.score !== undefined)
     if (allAssigned) {
       isAssigningScores.value = false
     }
+    return
   }
+
+  // Handle drag and drop
+  if (draggedScore !== null && draggedIdx !== null) {
+    if (!character.value.abilityScores[statName]) {
+      character.value.abilityScores[statName] = { score: 0, modifier: 0 }
+    }
+    character.value.abilityScores[statName].score = draggedScore
+    character.value.abilityScores[statName].modifier = Math.floor((draggedScore - 10) / 2)
+    availableScores.value.splice(draggedIdx, 1)
+    draggedScore = null
+    draggedIdx = null
+    // If all scores assigned, stop assigning
+    const allAssigned = statKeys.every((key) => character.value.abilityScores[key]?.score !== null && character.value.abilityScores[key]?.score !== undefined)
+    if (allAssigned) {
+      isAssigningScores.value = false
+    }
+    return
+  }
+  // Fallback: assign the first available score (works with duplicates)
+  if (availableScores.value.length > 0) {
+    const nextScore = availableScores.value[0]
+    if (!character.value.abilityScores[statName]) {
+      character.value.abilityScores[statName] = { score: 0, modifier: 0 }
+    }
+    character.value.abilityScores[statName].score = nextScore
+    character.value.abilityScores[statName].modifier = Math.floor((nextScore - 10) / 2)
+    availableScores.value.splice(0, 1)
+  }
+  const allAssigned = statKeys.every((key) => character.value.abilityScores[key]?.score !== null && character.value.abilityScores[key]?.score !== undefined)
+  if (allAssigned) {
+    isAssigningScores.value = false
+  }
+}
 </script>
 
 <style scoped>
@@ -341,14 +329,13 @@
   margin: 0 auto;
 }
 
-
 .rolled-chip {
   font-size: 1.5rem;
   font-weight: 600;
   letter-spacing: 0.5px;
   cursor: grab;
   border-radius: 16px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.10);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   min-width: 48px;
   height: 48px;
   display: flex;
@@ -356,7 +343,6 @@
   justify-content: center;
   padding: 6px 12px;
 }
-
 
 /* Center the cards in the row */
 .available-scores-row {
@@ -391,7 +377,9 @@
   cursor: grab;
   user-select: none;
   border-radius: 12px;
-  transition: background 0.2s, box-shadow 0.2s;
+  transition:
+    background 0.2s,
+    box-shadow 0.2s;
   /* No manual box-shadow or background, let v-card handle it */
 }
 

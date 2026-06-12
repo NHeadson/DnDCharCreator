@@ -1,16 +1,7 @@
 // --- Robust LocalStorage Caching for Species (Races) ---
 // Helper for extracting spellcasting info (for use outside the class)
-function extractSpellcastingInfo (apiClass) {
-  const spellcastingClasses = [
-    'bard',
-    'cleric',
-    'druid',
-    'paladin',
-    'ranger',
-    'sorcerer',
-    'warlock',
-    'wizard',
-  ];
+function extractSpellcastingInfo(apiClass) {
+  const spellcastingClasses = ['bard', 'cleric', 'druid', 'paladin', 'ranger', 'sorcerer', 'warlock', 'wizard']
   if (spellcastingClasses.includes(apiClass.index)) {
     const abilities = {
       bard: 'Charisma',
@@ -21,7 +12,7 @@ function extractSpellcastingInfo (apiClass) {
       sorcerer: 'Charisma',
       warlock: 'Charisma',
       wizard: 'Intelligence',
-    };
+    }
     const cantrips = {
       bard: 2,
       cleric: 3,
@@ -29,246 +20,210 @@ function extractSpellcastingInfo (apiClass) {
       sorcerer: 4,
       warlock: 2,
       wizard: 3,
-    };
+    }
     // You can expand this as needed for more spellcasting info
     return {
       spellcastingAbility: abilities[apiClass.index] || '',
       cantripsKnown: cantrips[apiClass.index] || 0,
-    };
+    }
   }
-  return null;
+  return null
 }
 // API service for D&D data (races, classes, spells, etc.)
-const API_BASE_URL =
-  import.meta.env.VUE_APP_DND_API_BASE_URL ||
-  'https://www.dnd5eapi.co/api/2014';
+const API_BASE_URL = import.meta.env.VUE_APP_DND_API_BASE_URL || 'https://www.dnd5eapi.co/api/2014'
 
 export class DnDAPI {
-  constructor (apiKey = null) {
-    this.apiKey = apiKey || import.meta.env.VUE_APP_DND_API_KEY;
-    this.baseURL = API_BASE_URL;
-    this.authType = import.meta.env.VUE_APP_DND_API_AUTH_TYPE || 'bearer';
-    this.requestQueue = [];
-    this.isProcessingQueue = false;
-    this.lastRequestTime = 0;
-    this.minRequestInterval = 100; // Minimum 100ms between requests to avoid rate limiting
+  constructor(apiKey = null) {
+    this.apiKey = apiKey || import.meta.env.VUE_APP_DND_API_KEY
+    this.baseURL = API_BASE_URL
+    this.authType = import.meta.env.VUE_APP_DND_API_AUTH_TYPE || 'bearer'
+    this.requestQueue = []
+    this.isProcessingQueue = false
+    this.lastRequestTime = 0
+    this.minRequestInterval = 100 // Minimum 100ms between requests to avoid rate limiting
 
     // Simple cache to avoid re-fetching data
-    this.cache = new Map();
-    this.cacheExpiry = 5 * 60 * 1000; // 5 minutes cache
+    this.cache = new Map()
+    this.cacheExpiry = 5 * 60 * 1000 // 5 minutes cache
   }
 
   // --- Robust LocalStorage Caching for Species (Races) ---
-  static SPECIES_CACHE_KEY = 'dnd_species_data_v2';
-  static SPECIES_CACHE_TTL = 1000 * 60 * 60 * 24; // 24 hours
+  static SPECIES_CACHE_KEY = 'dnd_species_data_v2'
+  static SPECIES_CACHE_TTL = 1000 * 60 * 60 * 24 // 24 hours
 
-  static getCachedSpeciesData () {
+  static getCachedSpeciesData() {
     try {
-      const cached = localStorage.getItem(DnDAPI.SPECIES_CACHE_KEY);
-      if (!cached) return null;
-      const parsed = JSON.parse(cached);
-      if (
-        parsed &&
-        parsed.timestamp &&
-        Date.now() - parsed.timestamp < DnDAPI.SPECIES_CACHE_TTL &&
-        Array.isArray(parsed.data)
-      ) {
-        return parsed.data;
+      const cached = localStorage.getItem(DnDAPI.SPECIES_CACHE_KEY)
+      if (!cached) return null
+      const parsed = JSON.parse(cached)
+      if (parsed && parsed.timestamp && Date.now() - parsed.timestamp < DnDAPI.SPECIES_CACHE_TTL && Array.isArray(parsed.data)) {
+        return parsed.data
       }
-      return null;
+      return null
     } catch (e) {
-      return null;
+      return null
     }
   }
 
-  static setCachedSpeciesData (data) {
+  static setCachedSpeciesData(data) {
     try {
-      localStorage.setItem(
-        DnDAPI.SPECIES_CACHE_KEY,
-        JSON.stringify({ data, timestamp: Date.now() })
-      );
+      localStorage.setItem(DnDAPI.SPECIES_CACHE_KEY, JSON.stringify({ data, timestamp: Date.now() }))
     } catch (e) {}
   }
 
   // Check cache before making API requests
-  getCachedData (key) {
-    const cached = this.cache.get(key);
+  getCachedData(key) {
+    const cached = this.cache.get(key)
     if (cached && Date.now() - cached.timestamp < this.cacheExpiry) {
-      return cached.data;
+      return cached.data
     }
-    return null;
+    return null
   }
 
-  setCachedData (key, data) {
+  setCachedData(key, data) {
     this.cache.set(key, {
       data,
       timestamp: Date.now(),
-    });
+    })
   }
 
   // Rate-limited API request method
-  async apiRequest (endpoint, options = {}) {
+  async apiRequest(endpoint, options = {}) {
     return new Promise((resolve, reject) => {
-      this.requestQueue.push({ endpoint, options, resolve, reject });
-      this.processQueue();
-    });
+      this.requestQueue.push({ endpoint, options, resolve, reject })
+      this.processQueue()
+    })
   }
 
-  async processQueue () {
+  async processQueue() {
     if (this.isProcessingQueue || this.requestQueue.length === 0) {
-      return;
+      return
     }
 
-    this.isProcessingQueue = true;
+    this.isProcessingQueue = true
 
     // Process requests in batches for better performance
-    const batchSize = 3; // Process 3 requests in parallel
+    const batchSize = 3 // Process 3 requests in parallel
 
     while (this.requestQueue.length > 0) {
-      const batch = this.requestQueue.splice(0, batchSize);
+      const batch = this.requestQueue.splice(0, batchSize)
       // Process batch in parallel
-      const batchPromises = batch.map(
-        async ({ endpoint, options, resolve, reject }) => {
-          try {
-            const result = await this.makeActualRequest(endpoint, options);
-            this.lastRequestTime = Date.now();
-            resolve(result);
-          } catch (error) {
-            reject(error);
-          }
+      const batchPromises = batch.map(async ({ endpoint, options, resolve, reject }) => {
+        try {
+          const result = await this.makeActualRequest(endpoint, options)
+          this.lastRequestTime = Date.now()
+          resolve(result)
+        } catch (error) {
+          reject(error)
         }
-      );
-      await Promise.all(batchPromises);
+      })
+      await Promise.all(batchPromises)
       // Increased delay between batches to avoid 429 rate limit
       if (this.requestQueue.length > 0) {
-        await new Promise(resolve => setTimeout(resolve, 400)); // Increased to 400ms for better rate limiting
+        await new Promise((resolve) => setTimeout(resolve, 400)) // Increased to 400ms for better rate limiting
       }
     }
 
-    this.isProcessingQueue = false;
+    this.isProcessingQueue = false
   }
 
   // Generic API request method
-  async makeActualRequest (endpoint, options = {}) {
-    const url = `${this.baseURL}${endpoint}`;
+  async makeActualRequest(endpoint, options = {}) {
+    const url = `${this.baseURL}${endpoint}`
 
     const defaultHeaders = {
       Accept: 'application/json',
-    };
+    }
 
     // The 5e-bits API doesn't require authentication, but we'll keep this for other APIs
     if (this.apiKey) {
       if (this.authType === 'bearer') {
-        defaultHeaders['Authorization'] = `Bearer ${this.apiKey}`;
+        defaultHeaders['Authorization'] = `Bearer ${this.apiKey}`
       } else {
-        defaultHeaders['X-API-Key'] = this.apiKey;
+        defaultHeaders['X-API-Key'] = this.apiKey
       }
     }
 
     try {
       // Add timeout to prevent hanging
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 10_000); // 10 second timeout
+      const controller = new AbortController()
+      const timeoutId = setTimeout(() => controller.abort(), 10_000) // 10 second timeout
 
       const response = await fetch(url, {
         headers: defaultHeaders,
         signal: controller.signal,
         ...options,
-      });
+      })
 
-      clearTimeout(timeoutId);
+      clearTimeout(timeoutId)
 
       if (!response.ok) {
-        throw new Error(`API Error: ${response.status} ${response.statusText}`);
+        throw new Error(`API Error: ${response.status} ${response.statusText}`)
       }
 
-      return await response.json();
+      return await response.json()
     } catch (error) {
       if (error.name === 'AbortError') {
-        throw new Error('API request timed out');
+        throw new Error('API request timed out')
       }
-      console.error('API Request failed:', error);
-      throw error;
+      console.error('API Request failed:', error)
+      throw error
     }
   }
 
   // Helper methods for parsing race data
-  extractDarkvision (race) {
+  extractDarkvision(race) {
     try {
       // First check if there's a direct vision property
       if (race.vision && race.vision.darkvision) {
-        return race.vision.darkvision;
+        return race.vision.darkvision
       }
 
       // Check traits for darkvision
-      const darkvisionTrait = (race.traits || []).find(t =>
-        t.name?.toLowerCase().includes('darkvision')
-      );
+      const darkvisionTrait = (race.traits || []).find((t) => t.name?.toLowerCase().includes('darkvision'))
 
       if (darkvisionTrait) {
         // Handle both array and string descriptions
-        const descText = Array.isArray(darkvisionTrait.desc)
-          ? darkvisionTrait.desc[0]
-          : darkvisionTrait.desc;
+        const descText = Array.isArray(darkvisionTrait.desc) ? darkvisionTrait.desc[0] : darkvisionTrait.desc
 
         if (descText) {
-          const match = descText.match(/(\d+)/);
-          return match ? Number.parseInt(match[0]) : 60; // Default to 60 if no number found
+          const match = descText.match(/(\d+)/)
+          return match ? Number.parseInt(match[0]) : 60 // Default to 60 if no number found
         }
       }
 
       // Finally, check if the race name itself indicates darkvision
-      const darkVisionRaces = [
-        'dwarf',
-        'elf',
-        'drow',
-        'half-elf',
-        'half-orc',
-        'tiefling',
-        'gnome',
-      ];
-      if (
-        typeof race.index === 'string' &&
-        darkVisionRaces.includes(race.index.toLowerCase())
-      ) {
-        return 60;
+      const darkVisionRaces = ['dwarf', 'elf', 'drow', 'half-elf', 'half-orc', 'tiefling', 'gnome']
+      if (typeof race.index === 'string' && darkVisionRaces.includes(race.index.toLowerCase())) {
+        return 60
       }
 
-      return null;
+      return null
     } catch (error) {
-      console.error(
-        `Error extracting darkvision for ${race?.name || 'unknown'}:`,
-        error
-      );
-      return null;
+      console.error(`Error extracting darkvision for ${race?.name || 'unknown'}:`, error)
+      return null
     }
   }
 
-  extractResistances (race) {
+  extractResistances(race) {
     try {
       // Check direct damage_resistances property
       if (race.damage_resistances && race.damage_resistances.length > 0) {
         return race.damage_resistances
-          .map(dr => (typeof dr === 'string' ? dr : dr.name || dr.type || ''))
+          .map((dr) => (typeof dr === 'string' ? dr : dr.name || dr.type || ''))
           .filter(Boolean)
-          .join(', ');
+          .join(', ')
       }
 
       // Check traits for resistance information
       const resistanceTrait = (race.traits || []).find(
-        t =>
-          t.name?.toLowerCase().includes('damage resistance') ||
-          (t.desc &&
-            (Array.isArray(t.desc)
-              ? t.desc[0]?.toLowerCase().includes('resistance')
-              : t.desc?.toLowerCase().includes('resistance')))
-      );
+        (t) =>
+          t.name?.toLowerCase().includes('damage resistance') || (t.desc && (Array.isArray(t.desc) ? t.desc[0]?.toLowerCase().includes('resistance') : t.desc?.toLowerCase().includes('resistance')))
+      )
 
       if (resistanceTrait) {
-        const descText = Array.isArray(resistanceTrait.desc)
-          ? resistanceTrait.desc[0]
-          : resistanceTrait.desc;
-        return descText || null;
+        const descText = Array.isArray(resistanceTrait.desc) ? resistanceTrait.desc[0] : resistanceTrait.desc
+        return descText || null
       }
 
       // Check if race typically has resistances
@@ -276,73 +231,53 @@ export class DnDAPI {
         dragonborn: 'Acid, Cold, Fire, Lightning, or Poison (chosen)',
         dwarf: 'Poison',
         tiefling: 'Fire',
-      };
-
-      if (race.index?.toLowerCase && resistanceRaces[race.index]) {
-        return resistanceRaces[race.index];
       }
 
-      return null;
+      if (race.index?.toLowerCase && resistanceRaces[race.index]) {
+        return resistanceRaces[race.index]
+      }
+
+      return null
     } catch (error) {
-      console.error(
-        `Error extracting resistances for ${race?.name || 'unknown'}:`,
-        error
-      );
-      return null;
+      console.error(`Error extracting resistances for ${race?.name || 'unknown'}:`, error)
+      return null
     }
   }
 
-  extractBonusLanguage (race) {
+  extractBonusLanguage(race) {
     try {
       // Check direct languages property
       if (race.languages && race.languages.length > 0) {
-        const nonCommonLang = race.languages.find(
-          l =>
-            l.name?.toLowerCase() !== 'common' ||
-            l.index?.toLowerCase() !== 'common'
-        );
+        const nonCommonLang = race.languages.find((l) => l.name?.toLowerCase() !== 'common' || l.index?.toLowerCase() !== 'common')
         if (nonCommonLang) {
-          return nonCommonLang.name || nonCommonLang.index;
+          return nonCommonLang.name || nonCommonLang.index
         }
       }
 
       // Check language traits
       const languageTrait = (race.traits || []).find(
-        t =>
-          t.name?.toLowerCase().includes('language') ||
-          (t.desc &&
-            (Array.isArray(t.desc)
-              ? t.desc[0]?.toLowerCase().includes('language')
-              : t.desc?.toLowerCase().includes('language')))
-      );
+        (t) => t.name?.toLowerCase().includes('language') || (t.desc && (Array.isArray(t.desc) ? t.desc[0]?.toLowerCase().includes('language') : t.desc?.toLowerCase().includes('language')))
+      )
 
       if (languageTrait) {
-        const descText = Array.isArray(languageTrait.desc)
-          ? languageTrait.desc[0]
-          : languageTrait.desc;
-        return descText || null;
+        const descText = Array.isArray(languageTrait.desc) ? languageTrait.desc[0] : languageTrait.desc
+        return descText || null
       }
 
       // Check if race typically has bonus languages
-      const bonusLanguageRaces = ['high-elf', 'half-elf'];
-      if (
-        race.index?.toLowerCase &&
-        bonusLanguageRaces.includes(race.index?.toLowerCase())
-      ) {
-        return 'choice';
+      const bonusLanguageRaces = ['high-elf', 'half-elf']
+      if (race.index?.toLowerCase && bonusLanguageRaces.includes(race.index?.toLowerCase())) {
+        return 'choice'
       }
 
-      return null;
+      return null
     } catch (error) {
-      console.error(
-        `Error extracting bonus language for ${race?.name || 'unknown'}:`,
-        error
-      );
-      return null;
+      console.error(`Error extracting bonus language for ${race?.name || 'unknown'}:`, error)
+      return null
     }
   }
 
-  extractSubraces (race) {
+  extractSubraces(race) {
     try {
       // Enhanced fallback subrace data with ability bonuses
       const fallbackSubraces = {
@@ -399,112 +334,99 @@ export class DnDAPI {
             abilityBonus: [{ ability: 'constitution', bonus: 1 }],
           },
         ],
-      };
+      }
 
       if (race.subraces && Array.isArray(race.subraces)) {
         // If API returns only 0 or 1 subrace for a race that should have more, use fallback
-        const key = race.index?.toLowerCase();
+        const key = race.index?.toLowerCase()
         if (fallbackSubraces[key] && race.subraces.length < 2) {
-          return fallbackSubraces[key];
+          return fallbackSubraces[key]
         }
         return race.subraces
-          .filter(sub => sub && (sub.index || sub.name))
-          .map(sub => ({
+          .filter((sub) => sub && (sub.index || sub.name))
+          .map((sub) => ({
             id: sub.index || sub.name?.toLowerCase().replace(/\s+/g, '-'),
             name:
               sub.name ||
               sub.index
                 ?.split('-')
-                .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
                 .join(' '),
             abilityBonus:
-              sub.ability_bonuses?.map(bonus => ({
-                ability:
-                  bonus.ability_score?.name?.toLowerCase() ||
-                  bonus.ability_score?.index?.toLowerCase() ||
-                  'unknown',
+              sub.ability_bonuses?.map((bonus) => ({
+                ability: bonus.ability_score?.name?.toLowerCase() || bonus.ability_score?.index?.toLowerCase() || 'unknown',
                 bonus: bonus.bonus || 0,
               })) || [],
-          }));
+          }))
       }
 
       // If no subraces found, check fallback data
-      const key = race.index?.toLowerCase();
+      const key = race.index?.toLowerCase()
       if (fallbackSubraces[key]) {
-        return fallbackSubraces[key];
+        return fallbackSubraces[key]
       }
 
-      return [];
+      return []
     } catch (error) {
-      console.error(
-        `Error extracting subraces for ${race?.name || 'unknown'}:`,
-        error
-      );
-      return [];
+      console.error(`Error extracting subraces for ${race?.name || 'unknown'}:`, error)
+      return []
     }
   }
 
   // Get all D&D races
-  async getRaces () {
+  async getRaces() {
     // Try robust localStorage cache first
-    const cached = DnDAPI.getCachedSpeciesData();
+    const cached = DnDAPI.getCachedSpeciesData()
     if (cached && Array.isArray(cached) && cached.length > 0) {
-      console.log('Using robust localStorage species cache');
-      return cached;
+      console.log('Using robust localStorage species cache')
+      return cached
     }
 
-    const cacheKey = 'all-races';
-    const memCached = this.getCachedData(cacheKey);
+    const cacheKey = 'all-races'
+    const memCached = this.getCachedData(cacheKey)
     if (memCached) {
-      console.log('Using in-memory races data');
-      return memCached;
+      console.log('Using in-memory races data')
+      return memCached
     }
 
     try {
-      console.log('Fetching races from API...');
+      console.log('Fetching races from API...')
       const response = await this.apiRequest('/races', {
         headers: {
           'Content-Type': 'application/json',
           Accept: 'application/json',
         },
-      });
+      })
 
       if (!response || !response.results) {
-        console.warn('Invalid API response format, using fallback data');
-        return this.getFallbackRaces();
+        console.warn('Invalid API response format, using fallback data')
+        return this.getFallbackRaces()
       }
 
-      console.log(
-        `Found ${response.results.length} races, fetching details...`
-      );
+      console.log(`Found ${response.results.length} races, fetching details...`)
 
       // Get detailed information for each race in parallel
-      const racePromises = response.results.map(race =>
-        this.apiRequest(`/races/${race.index}`).catch(error => {
-          console.error(
-            `Failed to fetch details for race ${race.index}:`,
-            error
-          );
+      const racePromises = response.results.map((race) =>
+        this.apiRequest(`/races/${race.index}`).catch((error) => {
+          console.error(`Failed to fetch details for race ${race.index}:`, error)
           // Return a basic race object if detail fetch fails
           return {
             index: race.index,
             name: race.name,
             url: race.url,
             isBasicData: true,
-          };
+          }
         })
-      );
+      )
 
-      const raceDetails = await Promise.all(racePromises);
-      console.log(
-        `Successfully fetched details for ${raceDetails.length} races`
-      );
+      const raceDetails = await Promise.all(racePromises)
+      console.log(`Successfully fetched details for ${raceDetails.length} races`)
 
       const races = raceDetails
-        .map(race => {
+        .map((race) => {
           if (!race || !race.index) {
-            console.warn('Received invalid race data:', race);
-            return null;
+            console.warn('Received invalid race data:', race)
+            return null
           }
 
           try {
@@ -520,130 +442,108 @@ export class DnDAPI {
               lineages: this.extractSubraces(race),
               bonusLanguage: this.extractBonusLanguage(race),
               traits: [],
-            };
+            }
 
             // Add optional fields if they exist
             if (race.traits) {
-              processedRace.traits = race.traits.map(trait => ({
+              processedRace.traits = race.traits.map((trait) => ({
                 name: trait.name,
-                description: Array.isArray(trait.desc)
-                  ? trait.desc.join('\n')
-                  : trait.desc || '',
-              }));
+                description: Array.isArray(trait.desc) ? trait.desc.join('\n') : trait.desc || '',
+              }))
             }
 
             if (race.ability_bonuses) {
-              processedRace.abilityBonus = race.ability_bonuses.map(
-                bonus => ({
-                  ability:
-                    bonus.ability_score?.name ||
-                    bonus.ability_score?.index?.toUpperCase() ||
-                    'Unknown',
-                  bonus: bonus.bonus || 0,
-                })
-              );
+              processedRace.abilityBonus = race.ability_bonuses.map((bonus) => ({
+                ability: bonus.ability_score?.name || bonus.ability_score?.index?.toUpperCase() || 'Unknown',
+                bonus: bonus.bonus || 0,
+              }))
             }
 
-            console.log(`Successfully processed race: ${race.name}`);
-            return processedRace;
+            console.log(`Successfully processed race: ${race.name}`)
+            return processedRace
           } catch (error) {
-            console.error(
-              `Error processing race ${
-                race?.name || race?.index || 'unknown'
-              }:`,
-              error
-            );
-            return null;
+            console.error(`Error processing race ${race?.name || race?.index || 'unknown'}:`, error)
+            return null
           }
         })
-        .filter(race => race !== null);
+        .filter((race) => race !== null)
 
       if (races.length === 0) {
-        console.warn('No races processed successfully, using fallback data');
-        return this.getFallbackRaces();
+        console.warn('No races processed successfully, using fallback data')
+        return this.getFallbackRaces()
       }
 
-      console.log(`Returning ${races.length} processed races`);
-      this.setCachedData(cacheKey, races);
+      console.log(`Returning ${races.length} processed races`)
+      this.setCachedData(cacheKey, races)
       // Always return fully transformed race data
-      const transformed = races.map(race => this.transformRaceData(race));
-      DnDAPI.setCachedSpeciesData(transformed);
-      return transformed;
+      const transformed = races.map((race) => this.transformRaceData(race))
+      DnDAPI.setCachedSpeciesData(transformed)
+      return transformed
     } catch (error) {
-      console.error('Failed to fetch races:', error);
+      console.error('Failed to fetch races:', error)
       // Return fallback data or empty array
       // Always return fully transformed fallback data
-      const fallback = this.getFallbackRaces().map(race =>
-        this.transformRaceData(race)
-      );
-      DnDAPI.setCachedSpeciesData(fallback);
-      return fallback;
+      const fallback = this.getFallbackRaces().map((race) => this.transformRaceData(race))
+      DnDAPI.setCachedSpeciesData(fallback)
+      return fallback
     }
   }
 
   // Get specific race details (called when user selects a race)
-  async getRaceDetails (raceId) {
+  async getRaceDetails(raceId) {
     try {
-      console.log(`Fetching detailed race info for: ${raceId}`);
-      const details = await this.apiRequest(`/races/${raceId}`);
+      console.log(`Fetching detailed race info for: ${raceId}`)
+      const details = await this.apiRequest(`/races/${raceId}`)
 
       // Fetch detailed trait information
-      let traits = [];
+      let traits = []
       if (details.traits && Array.isArray(details.traits)) {
-        console.log(
-          `Found ${details.traits.length} traits for ${raceId}, fetching descriptions...`
-        );
-        const traitPromises = details.traits.map(async trait => {
+        console.log(`Found ${details.traits.length} traits for ${raceId}, fetching descriptions...`)
+        const traitPromises = details.traits.map(async (trait) => {
           try {
-            const traitDetail = await this.apiRequest(`/traits/${trait.index}`);
+            const traitDetail = await this.apiRequest(`/traits/${trait.index}`)
             return {
               name: traitDetail.name,
-              description: Array.isArray(traitDetail.desc)
-                ? traitDetail.desc.join('\n\n')
-                : traitDetail.desc || 'No description available.',
+              description: Array.isArray(traitDetail.desc) ? traitDetail.desc.join('\n\n') : traitDetail.desc || 'No description available.',
               index: traitDetail.index,
-            };
+            }
           } catch (e) {
-            console.warn(`Failed to fetch trait ${trait.index}:`, e);
+            console.warn(`Failed to fetch trait ${trait.index}:`, e)
             return {
               name: trait.name,
               description: 'Description not available.',
               index: trait.index,
-            };
+            }
           }
-        });
-        traits = await Promise.all(traitPromises);
+        })
+        traits = await Promise.all(traitPromises)
         console.log(
           `Successfully fetched detailed traits:`,
-          traits.map(t => ({ name: t.name, hasDesc: !!t.description }))
-        );
+          traits.map((t) => ({ name: t.name, hasDesc: !!t.description }))
+        )
       }
 
-      return this.transformRaceData(details, traits);
+      return this.transformRaceData(details, traits)
     } catch (error) {
-      console.error(`Failed to fetch race ${raceId}:`, error);
-      return null;
+      console.error(`Failed to fetch race ${raceId}:`, error)
+      return null
     }
   }
 
   // Transform single race data
-  transformRaceData (race, detailedTraits = null) {
-    const raceId = race.index || race.name?.toLowerCase().replace(/\s+/g, '_');
+  transformRaceData(race, detailedTraits = null) {
+    const raceId = race.index || race.name?.toLowerCase().replace(/\s+/g, '_')
 
     // Extract darkvision from traits
-    const darkvisionTrait = race.traits?.find(trait =>
-      trait.name?.toLowerCase().includes('darkvision')
-    );
+    const darkvisionTrait = race.traits?.find((trait) => trait.name?.toLowerCase().includes('darkvision'))
 
     // Extract damage resististances (some races might have this)
-    const damageResistances = race.damage_resistances || [];
+    const damageResistances = race.damage_resistances || []
 
-    let languages = Array.isArray(race.languages)
-      ? race.languages.map(l => (typeof l === 'string' ? l : l.name || l))
-      : [];
+    let languages = Array.isArray(race.languages) ? race.languages.map((l) => (typeof l === 'string' ? l : l.name || l)) : []
     // Fallback for Dragonborn if languages is empty
     if ((!languages || !languages.length) && race.index === 'dragonborn') {
-      languages = ['Common', 'Draconic'];
+      languages = ['Common', 'Draconic']
     }
     return {
       id: raceId,
@@ -651,17 +551,13 @@ export class DnDAPI {
       size: race.size || 'Medium',
       speed: race.speed || 30,
       darkvision: darkvisionTrait ? 60 : null, // Most D&D races with darkvision have 60ft
-      damageResistance:
-        damageResistances.length > 0
-          ? damageResistances.map(dr => dr.name || dr).join(', ')
-          : null,
+      damageResistance: damageResistances.length > 0 ? damageResistances.map((dr) => dr.name || dr).join(', ') : null,
       lineages: this.extractSubraces(race),
-      bonusLanguage:
-        race.languages?.find(lang => lang.name !== 'Common')?.name || null,
+      bonusLanguage: race.languages?.find((lang) => lang.name !== 'Common')?.name || null,
       // Use detailed traits if provided, otherwise basic trait info
       traits:
         detailedTraits ||
-        race.traits?.map(trait => ({
+        race.traits?.map((trait) => ({
           name: trait.name,
           index: trait.index,
           url: trait.url,
@@ -669,7 +565,7 @@ export class DnDAPI {
         })) ||
         [],
       abilityScoreIncrease:
-        race.ability_bonuses?.map(bonus => ({
+        race.ability_bonuses?.map((bonus) => ({
           ability: bonus.ability_score.name,
           bonus: bonus.bonus,
         })) || [],
@@ -680,23 +576,20 @@ export class DnDAPI {
       startingProficiencies: race.starting_proficiencies || [],
       languages,
       isBasicData: false,
-    };
+    }
   }
 
   // Transform API data to match your current data structure
-  transformRacesData (apiData) {
+  transformRacesData(apiData) {
     // Transform 5e-bits API format to match your existing structure
-    return apiData.map(race => {
-      const raceId =
-        race.index || race.name?.toLowerCase().replace(/\s+/g, '_');
+    return apiData.map((race) => {
+      const raceId = race.index || race.name?.toLowerCase().replace(/\s+/g, '_')
 
       // Extract darkvision from traits
-      const darkvisionTrait = race.traits?.find(trait =>
-        trait.name?.toLowerCase().includes('darkvision')
-      );
+      const darkvisionTrait = race.traits?.find((trait) => trait.name?.toLowerCase().includes('darkvision'))
 
       // Extract damage resististances (some races might have this)
-      const damageResistances = race.damage_resistances || [];
+      const damageResistances = race.damage_resistances || []
 
       return {
         id: raceId,
@@ -704,26 +597,22 @@ export class DnDAPI {
         size: race.size || 'Medium',
         speed: race.speed || 30,
         darkvision: darkvisionTrait ? 60 : null, // Most D&D races with darkvision have 60ft
-        damageResistance:
-          damageResistances.length > 0
-            ? damageResistances.map(dr => dr.name || dr).join(', ')
-            : null,
+        damageResistance: damageResistances.length > 0 ? damageResistances.map((dr) => dr.name || dr).join(', ') : null,
         lineages:
-          race.subraces?.map(sub => ({
+          race.subraces?.map((sub) => ({
             id: sub.index || sub.name?.toLowerCase().replace(/\s+/g, '_'),
             name: sub.name,
           })) || [],
-        bonusLanguage:
-          race.languages?.find(lang => lang.name !== 'Common')?.name || null,
+        bonusLanguage: race.languages?.find((lang) => lang.name !== 'Common')?.name || null,
         // Additional 5e-bits specific data
         traits:
-          race.traits?.map(trait => ({
+          race.traits?.map((trait) => ({
             name: trait.name,
             index: trait.index,
             url: trait.url,
           })) || [],
         abilityScoreIncrease:
-          race.ability_bonuses?.map(bonus => ({
+          race.ability_bonuses?.map((bonus) => ({
             ability: bonus.ability_score.name,
             bonus: bonus.bonus,
           })) || [],
@@ -733,19 +622,19 @@ export class DnDAPI {
         languageDescription: race.language_desc || null,
         startingProficiencies: race.starting_proficiencies || [],
         languages: race.languages || [],
-      };
-    });
+      }
+    })
   }
 
   // ========== CLASSES API ==========
 
   // Get all D&D classes with full details
-  async getClasses () {
-    const cacheKey = 'all-classes-basic';
-    const cached = this.getCachedData(cacheKey);
+  async getClasses() {
+    const cacheKey = 'all-classes-basic'
+    const cached = this.getCachedData(cacheKey)
     if (cached) {
-      console.log('Using cached basic classes data');
-      return cached;
+      console.log('Using cached basic classes data')
+      return cached
     }
 
     try {
@@ -754,165 +643,131 @@ export class DnDAPI {
           'Content-Type': 'application/json',
           Accept: 'application/json',
         },
-      });
+      })
 
       if (!response || !response.results) {
-        throw new Error('Invalid API response format');
+        throw new Error('Invalid API response format')
       }
 
       // Only fetch basic info for initial load
-      const basicClasses = response.results.map(dndClass => ({
+      const basicClasses = response.results.map((dndClass) => ({
         index: dndClass.index,
         name: dndClass.name,
-      }));
+      }))
 
-      this.setCachedData(cacheKey, basicClasses);
-      return basicClasses;
+      this.setCachedData(cacheKey, basicClasses)
+      return basicClasses
     } catch (error) {
-      console.error('Failed to fetch classes:', error);
-      return this.getFallbackClasses();
+      console.error('Failed to fetch classes:', error)
+      return this.getFallbackClasses()
     }
   }
 
   // Generate a character name based on race
-  generateCharacterName (race = 'human') {
+  generateCharacterName(race = 'human') {
     // Import and use the name generator
     try {
-      const { generateCharacterName } = require('./nameGenerator');
-      return generateCharacterName(race);
+      const { generateCharacterName } = require('./nameGenerator')
+      return generateCharacterName(race)
     } catch (error) {
-      console.error('Error generating name:', error);
-      return this.generateFallbackName(race);
+      console.error('Error generating name:', error)
+      return this.generateFallbackName(race)
     }
   }
 
   // Fallback name generation in case the main generator fails
-  generateFallbackName (race = 'human') {
+  generateFallbackName(race = 'human') {
     const fallbackNames = {
       human: ['John Smith', 'Mary Johnson', 'James Wilson', 'Sarah Brown'],
-      elf: [
-        'Aelindra Silverleaf',
-        'Celeborn Starweaver',
-        'Galador Moonwhisper',
-      ],
+      elf: ['Aelindra Silverleaf', 'Celeborn Starweaver', 'Galador Moonwhisper'],
       dwarf: ['Thorin Stonefist', 'Dwalin Ironbeard', 'Balin Rockbreaker'],
-    };
+    }
 
-    const names = fallbackNames[race.toLowerCase()] || fallbackNames.human;
-    return names[Math.floor(Math.random() * names.length)];
+    const names = fallbackNames[race.toLowerCase()] || fallbackNames.human
+    return names[Math.floor(Math.random() * names.length)]
   }
 
   // This method has been moved and combined with the other extractStartingEquipment implementation
 
   // Get specific class details (called when user selects a class)
-  async getClassDetails (classId) {
+  async getClassDetails(classId) {
     try {
-      const details = await this.apiRequest(`/classes/${classId}`);
+      const details = await this.apiRequest(`/classes/${classId}`)
       // Only fetch spellcasting info for classes that have it
-      const spellcastingClasses = [
-        'bard',
-        'cleric',
-        'druid',
-        'paladin',
-        'ranger',
-        'sorcerer',
-        'warlock',
-        'wizard',
-      ];
-      let spellcasting = null;
+      const spellcastingClasses = ['bard', 'cleric', 'druid', 'paladin', 'ranger', 'sorcerer', 'warlock', 'wizard']
+      let spellcasting = null
       if (spellcastingClasses.includes(details.index)) {
         try {
-          spellcasting = await this.apiRequest(
-            `/classes/${classId}/spellcasting`
-          );
+          spellcasting = await this.apiRequest(`/classes/${classId}/spellcasting`)
         } catch (e) {
-          spellcasting = null;
+          spellcasting = null
         }
       }
 
       // Fetch level 1 features from /classes/{classId}/levels/1
-      let features = [];
+      let features = []
       try {
-        const level1 = await this.apiRequest(`/classes/${classId}/levels/1`);
+        const level1 = await this.apiRequest(`/classes/${classId}/levels/1`)
         if (level1 && Array.isArray(level1.features)) {
-          const featurePromises = level1.features.map(async f => {
+          const featurePromises = level1.features.map(async (f) => {
             try {
-              const featureDetail = await this.apiRequest(
-                `/features/${f.index}`
-              );
-              return featureDetail;
+              const featureDetail = await this.apiRequest(`/features/${f.index}`)
+              return featureDetail
             } catch (e) {
-              return null;
+              return null
             }
-          });
-          features = (await Promise.all(featurePromises)).filter(Boolean);
+          })
+          features = (await Promise.all(featurePromises)).filter(Boolean)
         }
       } catch (e) {
         // fallback: no features found
-        features = [];
+        features = []
       }
 
-      return this.transformClassData(details, spellcasting, features);
+      return this.transformClassData(details, spellcasting, features)
     } catch (error) {
-      console.error(`Failed to fetch class ${classId}:`, error);
-      return null;
+      console.error(`Failed to fetch class ${classId}:`, error)
+      return null
     }
   }
 
   // Transform single class data
-  transformClassData (
-    classData,
-    spellcastingDetails = null,
-    featureDetails = null
-  ) {
-    console.log('Transforming class data:', classData);
-    console.log(
-      '[transformClassData] proficiency_choices:',
-      classData.proficiency_choices
-    );
-    const classId =
-      classData.index || classData.name?.toLowerCase().replace(/\s+/g, '_');
+  transformClassData(classData, spellcastingDetails = null, featureDetails = null) {
+    console.log('Transforming class data:', classData)
+    console.log('[transformClassData] proficiency_choices:', classData.proficiency_choices)
+    const classId = classData.index || classData.name?.toLowerCase().replace(/\s+/g, '_')
 
     // Normalize spellcasting
-    let spellcasting =
-      spellcastingDetails || extractSpellcastingInfo(classData);
+    let spellcasting = spellcastingDetails || extractSpellcastingInfo(classData)
     if (spellcastingDetails && spellcastingDetails.info) {
       spellcasting = {
         ability: spellcastingDetails.spellcasting_ability?.name || '',
         cantripsKnown: spellcastingDetails.cantrips_known,
         spellsKnown: spellcastingDetails.spells_known,
         spellSlots: spellcastingDetails.spell_slots,
-        info: spellcastingDetails.info.map(i => ({
+        info: spellcastingDetails.info.map((i) => ({
           name: i.name,
           desc: Array.isArray(i.desc) ? i.desc.join(' ') : i.desc,
         })),
-      };
+      }
     }
 
     // Normalize features
-    let features = [];
+    let features = []
     if (featureDetails && Array.isArray(featureDetails)) {
-      features = featureDetails.map(f => ({
+      features = featureDetails.map((f) => ({
         name: f.name,
-        description: Array.isArray(f.desc)
-          ? f.desc.join('\n\n')
-          : f.desc || 'No description available.',
-        desc: Array.isArray(f.desc)
-          ? f.desc.join('\n\n')
-          : f.desc || 'No description available.',
+        description: Array.isArray(f.desc) ? f.desc.join('\n\n') : f.desc || 'No description available.',
+        desc: Array.isArray(f.desc) ? f.desc.join('\n\n') : f.desc || 'No description available.',
         feature_specific: f.feature_specific || null,
-      }));
+      }))
     } else if (classData.features && Array.isArray(classData.features)) {
-      features = classData.features.map(f => ({
+      features = classData.features.map((f) => ({
         name: f.name,
-        description: Array.isArray(f.desc)
-          ? f.desc.join('\n\n')
-          : f.desc || 'No description available.',
-        desc: Array.isArray(f.desc)
-          ? f.desc.join('\n\n')
-          : f.desc || 'No description available.',
+        description: Array.isArray(f.desc) ? f.desc.join('\n\n') : f.desc || 'No description available.',
+        desc: Array.isArray(f.desc) ? f.desc.join('\n\n') : f.desc || 'No description available.',
         feature_specific: f.feature_specific || null,
-      }));
+      }))
     }
 
     const transformed = {
@@ -923,11 +778,8 @@ export class DnDAPI {
       hitDie: `D${classData.hit_die}`,
       hpDie: `D${classData.hit_die}`,
       primaryAbility: this.extractPrimaryAbility(classData),
-      savingThrows: classData.saving_throws?.map(st => st.name) || [],
-      skillChoices:
-        classData.proficiency_choices?.find(pc =>
-          pc.desc?.toLowerCase().includes('skill')
-        )?.choose || 2,
+      savingThrows: classData.saving_throws?.map((st) => st.name) || [],
+      skillChoices: classData.proficiency_choices?.find((pc) => pc.desc?.toLowerCase().includes('skill'))?.choose || 2,
       skills: this.extractSkillOptions(classData),
       armorTraining: this.extractArmorProficiencies(classData),
       startingEquipment: this.extractStartingEquipment(classData),
@@ -941,7 +793,7 @@ export class DnDAPI {
       expertiseSkills: [], // Will be class-specific
       spellcasting,
       subclasses:
-        classData.subclasses?.map(sub => ({
+        classData.subclasses?.map((sub) => ({
           id: sub.index,
           name: sub.name,
           url: sub.url,
@@ -950,22 +802,19 @@ export class DnDAPI {
       classLevels: classData.class_levels || null,
       features,
       // Additional fields for full detail display:
-      prerequisites:
-        classData.prerequisites ||
-        classData.multi_classing?.prerequisites ||
-        [],
+      prerequisites: classData.prerequisites || classData.multi_classing?.prerequisites || [],
       proficiencies: classData.proficiencies || [],
       proficiencyChoices: classData.proficiency_choices || [],
       startingEquipmentOptions: classData.starting_equipment_options || [],
       raw: classData, // Optionally include the full raw object for debugging/expansion
-    };
+    }
 
-    console.log('Transformed class data result:', transformed);
-    return transformed;
+    console.log('Transformed class data result:', transformed)
+    return transformed
   }
 
   // Helper methods for class transformation
-  extractPrimaryAbility (classData) {
+  extractPrimaryAbility(classData) {
     // This varies by class and isn't directly in the API
     const classAbilities = {
       barbarian: 'Strength',
@@ -980,81 +829,74 @@ export class DnDAPI {
       sorcerer: 'Charisma',
       warlock: 'Charisma',
       wizard: 'Intelligence',
-    };
+    }
 
-    return classAbilities[classData.index] || 'Varies';
+    return classAbilities[classData.index] || 'Varies'
   }
 
-  extractSkillOptions (classData) {
-    const skillChoice = classData.proficiency_choices?.find(pc =>
-      pc.desc?.toLowerCase().includes('skill')
-    );
+  extractSkillOptions(classData) {
+    const skillChoice = classData.proficiency_choices?.find((pc) => pc.desc?.toLowerCase().includes('skill'))
     if (skillChoice && skillChoice.from) {
-      let options = [];
-      if (
-        typeof skillChoice.from === 'object' &&
-        skillChoice.from !== null &&
-        Array.isArray(skillChoice.from.options)
-      ) {
+      let options = []
+      if (typeof skillChoice.from === 'object' && skillChoice.from !== null && Array.isArray(skillChoice.from.options)) {
         // Handles { option_set_type: 'options_array', options: [...] }
-        options = skillChoice.from.options;
+        options = skillChoice.from.options
       } else if (Array.isArray(skillChoice.from)) {
-        options = skillChoice.from;
+        options = skillChoice.from
       } else if (Array.isArray(skillChoice.from?.items)) {
-        options = skillChoice.from.items;
+        options = skillChoice.from.items
       } else if (typeof skillChoice.from === 'string') {
-        options = [skillChoice.from];
+        options = [skillChoice.from]
       }
-      console.log('[extractSkillOptions] options:', options);
+      console.log('[extractSkillOptions] options:', options)
       return options
-        .map(opt => {
-          let name = null;
+        .map((opt) => {
+          let name = null
           if (opt && opt.item && typeof opt.item.name === 'string') {
-            name = opt.item.name;
+            name = opt.item.name
           } else if (opt && typeof opt.name === 'string') {
-            name = opt.name;
+            name = opt.name
           }
           if (name && name.startsWith('Skill:')) {
             // Remove everything up to and including the colon and any whitespace
-            return name.replace(/^Skill:\s*/, '');
+            return name.replace(/^Skill:\s*/, '')
           } else if (name) {
-            return name;
+            return name
           }
-          return null;
+          return null
         })
-        .filter(Boolean);
+        .filter(Boolean)
     }
-    return [];
+    return []
   }
 
-  extractArmorProficiencies (classData) {
-    const proficiencies = classData.proficiencies || [];
+  extractArmorProficiencies(classData) {
+    const proficiencies = classData.proficiencies || []
 
     // Debug logging
-    console.log('Extracting armor proficiencies for class:', classData.name);
+    console.log('Extracting armor proficiencies for class:', classData.name)
     console.log(
       'All proficiencies:',
-      proficiencies.map(p => p.name)
-    );
+      proficiencies.map((p) => p.name)
+    )
 
     // Check for "All armor" proficiency which means light, medium, and heavy
-    const hasAllArmor = proficiencies.some(p => p.name === 'All armor');
+    const hasAllArmor = proficiencies.some((p) => p.name === 'All armor')
 
     const result = {
-      light: hasAllArmor || proficiencies.some(p => p.name === 'Light Armor'),
-      medium:
-        hasAllArmor || proficiencies.some(p => p.name === 'Medium Armor'),
-      heavy: hasAllArmor || proficiencies.some(p => p.name === 'Heavy Armor'),
-      shields: proficiencies.some(p => p.name === 'Shields'),
-    };
+      light: hasAllArmor || proficiencies.some((p) => p.name === 'Light Armor'),
+      medium: hasAllArmor || proficiencies.some((p) => p.name === 'Medium Armor'),
+      heavy: hasAllArmor || proficiencies.some((p) => p.name === 'Heavy Armor'),
+      shields: proficiencies.some((p) => p.name === 'Shields'),
+    }
 
-    console.log('Extracted armor training:', result);
-    return result;
+    console.log('Extracted armor training:', result)
+    return result
   }
 
-  extractWeaponProficiencies (classData) {
+  extractWeaponProficiencies(classData) {
     // Extract weapon proficiencies from the class data
-    const proficiencies = classData.proficiencies || [];
+    const proficiencies = classData.proficiencies || []
 
     // Common individual weapon names (for classes like Wizard)
     const individualWeapons = [
@@ -1081,223 +923,165 @@ export class DnDAPI {
       'Hand Crossbows',
       'Scimitar',
       'Scimitars',
-    ];
+    ]
 
     // Filter for weapon proficiencies
     const weapons = proficiencies
-      .filter(
-        p =>
-          p.name &&
-          (p.name.includes('Weapon') ||
-            p.name.match(/^(Simple|Martial) Weapons?$/i) ||
-            p.name.match(/\bWeapons?\b/i) ||
-            individualWeapons.includes(p.name))
-      )
-      .map(p => p.name);
+      .filter((p) => p.name && (p.name.includes('Weapon') || p.name.match(/^(Simple|Martial) Weapons?$/i) || p.name.match(/\bWeapons?\b/i) || individualWeapons.includes(p.name)))
+      .map((p) => p.name)
 
     // Group individual weapons into categories for cleaner display
-    const individualWeaponsFound = weapons.filter(w =>
-      individualWeapons.includes(w)
-    );
-    const categoryWeapons = weapons.filter(
-      w => !individualWeapons.includes(w)
-    );
+    const individualWeaponsFound = weapons.filter((w) => individualWeapons.includes(w))
+    const categoryWeapons = weapons.filter((w) => !individualWeapons.includes(w))
 
     // If we have individual weapons, group them by category
     if (individualWeaponsFound.length > 0) {
-      const result = [...categoryWeapons];
+      const result = [...categoryWeapons]
 
       // Simple weapons (daggers, darts, slings, quarterstaffs)
-      const simpleWeapons = ['Daggers', 'Darts', 'Slings', 'Quarterstaffs'];
-      if (individualWeaponsFound.some(w => simpleWeapons.includes(w))) {
-        result.push('Simple Weapons (select)');
+      const simpleWeapons = ['Daggers', 'Darts', 'Slings', 'Quarterstaffs']
+      if (individualWeaponsFound.some((w) => simpleWeapons.includes(w))) {
+        result.push('Simple Weapons (select)')
       }
 
       // Crossbows
-      const crossbows = [
-        'Light Crossbow',
-        'Light Crossbows',
-        'Crossbows, light',
-        'Hand Crossbow',
-        'Hand Crossbows',
-      ];
-      if (individualWeaponsFound.some(w => crossbows.includes(w))) {
-        result.push('Crossbows');
+      const crossbows = ['Light Crossbow', 'Light Crossbows', 'Crossbows, light', 'Hand Crossbow', 'Hand Crossbows']
+      if (individualWeaponsFound.some((w) => crossbows.includes(w))) {
+        result.push('Crossbows')
       }
 
       // Rogue-specific weapons (swords)
-      const finesse = [
-        'Longsword',
-        'Longswords',
-        'Rapier',
-        'Rapiers',
-        'Shortsword',
-        'Shortswords',
-        'Scimitar',
-        'Scimitars',
-      ];
-      if (individualWeaponsFound.some(w => finesse.includes(w))) {
-        result.push('Finesse Weapons');
+      const finesse = ['Longsword', 'Longswords', 'Rapier', 'Rapiers', 'Shortsword', 'Shortswords', 'Scimitar', 'Scimitars']
+      if (individualWeaponsFound.some((w) => finesse.includes(w))) {
+        result.push('Finesse Weapons')
       }
 
       // Bows
-      const bows = ['Shortbow', 'Shortbows'];
-      if (individualWeaponsFound.some(w => bows.includes(w))) {
-        result.push('Shortbows');
+      const bows = ['Shortbow', 'Shortbows']
+      if (individualWeaponsFound.some((w) => bows.includes(w))) {
+        result.push('Shortbows')
       }
 
-      return result.length > 0 ? result : weapons;
+      return result.length > 0 ? result : weapons
     }
 
-    return weapons;
+    return weapons
   }
 
-  extractToolProficiencies (classData) {
+  extractToolProficiencies(classData) {
     // Extract tool proficiencies from the class data
-    const proficiencies = classData.proficiencies || [];
+    const proficiencies = classData.proficiencies || []
     // Filter for tool proficiencies (usually contain 'Tool' in the name)
-    return proficiencies
-      .filter(p => p.name && p.name.toLowerCase().includes('tool'))
-      .map(p => p.name);
+    return proficiencies.filter((p) => p.name && p.name.toLowerCase().includes('tool')).map((p) => p.name)
   }
 
-  extractSkillProficiencies (classData) {
+  extractSkillProficiencies(classData) {
     // Extract skill proficiencies from the class data
-    console.log('[extractSkillProficiencies] class:', classData.name);
-    console.log(
-      '[extractSkillProficiencies] proficiency_choices:',
-      classData.proficiency_choices
-    );
-    const skillChoices = (classData.proficiency_choices || []).filter(pc => {
+    console.log('[extractSkillProficiencies] class:', classData.name)
+    console.log('[extractSkillProficiencies] proficiency_choices:', classData.proficiency_choices)
+    const skillChoices = (classData.proficiency_choices || []).filter((pc) => {
       // If from.options contains any option whose item.index starts with 'skill-', treat as skill proficiency
-      let options = [];
-      if (
-        pc.from &&
-        typeof pc.from === 'object' &&
-        Array.isArray(pc.from.options)
-      ) {
-        options = pc.from.options;
+      let options = []
+      if (pc.from && typeof pc.from === 'object' && Array.isArray(pc.from.options)) {
+        options = pc.from.options
       } else if (Array.isArray(pc.from)) {
-        options = pc.from;
+        options = pc.from
       } else if (Array.isArray(pc.from?.items)) {
-        options = pc.from.items;
+        options = pc.from.items
       } else if (typeof pc.from === 'string') {
-        options = [pc.from];
+        options = [pc.from]
       } else if (pc.from && typeof pc.from === 'object') {
-        const arrProp = Object.values(pc.from).find(Array.isArray);
-        if (arrProp) options = arrProp;
+        const arrProp = Object.values(pc.from).find(Array.isArray)
+        if (arrProp) options = arrProp
       }
       return options.some(
-        opt =>
-          (opt &&
-            opt.item &&
-            typeof opt.item.index === 'string' &&
-            opt.item.index.startsWith('skill-')) ||
-          (opt &&
-            typeof opt.index === 'string' &&
-            opt.index.startsWith('skill-'))
-      );
-    });
-    let allSkills = [];
-    let totalChoose = 0;
+        (opt) => (opt && opt.item && typeof opt.item.index === 'string' && opt.item.index.startsWith('skill-')) || (opt && typeof opt.index === 'string' && opt.index.startsWith('skill-'))
+      )
+    })
+    let allSkills = []
+    let totalChoose = 0
     for (const skillChoice of skillChoices) {
-      let options = [];
-      if (
-        skillChoice.from &&
-        typeof skillChoice.from === 'object' &&
-        Array.isArray(skillChoice.from.options)
-      ) {
-        options = skillChoice.from.options;
+      let options = []
+      if (skillChoice.from && typeof skillChoice.from === 'object' && Array.isArray(skillChoice.from.options)) {
+        options = skillChoice.from.options
       } else if (Array.isArray(skillChoice.from)) {
-        options = skillChoice.from;
+        options = skillChoice.from
       } else if (Array.isArray(skillChoice.from?.items)) {
-        options = skillChoice.from.items;
+        options = skillChoice.from.items
       } else if (typeof skillChoice.from === 'string') {
-        options = [skillChoice.from];
+        options = [skillChoice.from]
       } else if (skillChoice.from && typeof skillChoice.from === 'object') {
-        const arrProp = Object.values(skillChoice.from).find(Array.isArray);
+        const arrProp = Object.values(skillChoice.from).find(Array.isArray)
         if (arrProp) {
-          options = arrProp;
+          options = arrProp
         }
       }
 
       if (!options.length && skillChoice.from) {
-        console.warn(
-          '[extractSkillProficiencies] Unhandled skillChoice.from structure (no options):',
-          skillChoice.from
-        );
+        console.warn('[extractSkillProficiencies] Unhandled skillChoice.from structure (no options):', skillChoice.from)
       }
 
-      console.log('[extractSkillProficiencies] options:', options);
+      console.log('[extractSkillProficiencies] options:', options)
       let skills = options
-        .map(opt => {
-          let name = null;
+        .map((opt) => {
+          let name = null
           if (opt && opt.item && typeof opt.item.name === 'string') {
-            name = opt.item.name;
+            name = opt.item.name
           } else if (opt && typeof opt.name === 'string') {
-            name = opt.name;
+            name = opt.name
           }
           if (name && name.startsWith('Skill:')) {
-            return name.replace(/^Skill:\s*/, '');
+            return name.replace(/^Skill:\s*/, '')
           } else if (name) {
-            return name;
+            return name
           }
-          return null;
+          return null
         })
-        .filter(Boolean);
+        .filter(Boolean)
 
       if (!skills.length && Array.isArray(skillChoice.from)) {
         skills = skillChoice.from
-          .map(ref => {
-            if (ref && ref.name) return ref.name;
-            if (ref && ref.item && ref.item.name) return ref.item.name;
-            return null;
+          .map((ref) => {
+            if (ref && ref.name) return ref.name
+            if (ref && ref.item && ref.item.name) return ref.item.name
+            return null
           })
-          .filter(Boolean);
+          .filter(Boolean)
       }
 
       if (!skills.length) {
-        console.warn(
-          '[extractSkillProficiencies] Unhandled skillChoice object (no skills extracted):',
-          skillChoice
-        );
+        console.warn('[extractSkillProficiencies] Unhandled skillChoice object (no skills extracted):', skillChoice)
       }
       if (skills.length) {
-        allSkills.push(...skills);
-        totalChoose += skillChoice.choose || 0;
-        console.log(
-          '[extractSkillProficiencies] found skillChoice:',
-          skillChoice
-        );
-        console.log('[extractSkillProficiencies] skills:', skills);
+        allSkills.push(...skills)
+        totalChoose += skillChoice.choose || 0
+        console.log('[extractSkillProficiencies] found skillChoice:', skillChoice)
+        console.log('[extractSkillProficiencies] skills:', skills)
       }
     }
     if (allSkills.length) {
       // Remove duplicates
-      allSkills = [...new Set(allSkills)];
+      allSkills = [...new Set(allSkills)]
       return {
         count: totalChoose,
         from: allSkills,
-      };
+      }
     }
-    console.warn(
-      '[extractSkillProficiencies] No skill proficiencies found for class:',
-      classData.name
-    );
-    return { count: 0, from: [] };
+    console.warn('[extractSkillProficiencies] No skill proficiencies found for class:', classData.name)
+    return { count: 0, from: [] }
   }
 
-  extractStartingEquipment (classData) {
-    const equipment = classData.starting_equipment || [];
+  extractStartingEquipment(classData) {
+    const equipment = classData.starting_equipment || []
 
-    return equipment.map(item => ({
+    return equipment.map((item) => ({
       name: item.equipment.name,
       quantity: item.quantity,
       // Add more details as needed
-    }));
+    }))
   }
 
-  getCantripsForClass (classIndex) {
+  getCantripsForClass(classIndex) {
     // Starting cantrips at level 1
     const cantrips = {
       bard: 2,
@@ -1306,12 +1090,12 @@ export class DnDAPI {
       sorcerer: 4,
       warlock: 2,
       wizard: 3,
-    };
+    }
 
-    return cantrips[classIndex] || 0;
+    return cantrips[classIndex] || 0
   }
 
-  getSpellsForClass (classIndex) {
+  getSpellsForClass(classIndex) {
     // Starting spell slots at level 1
     const spells = {
       bard: 4,
@@ -1322,113 +1106,90 @@ export class DnDAPI {
       sorcerer: 2,
       warlock: 1,
       wizard: 6, // Wizards get spells in spellbook
-    };
+    }
 
-    return spells[classIndex] || 0;
+    return spells[classIndex] || 0
   }
 
   // ========== BACKGROUNDS API ==========
 
   // Get all available backgrounds
-  async getBackgrounds () {
-    const cacheKey = 'all-backgrounds';
-    const cached = this.getCachedData(cacheKey);
+  async getBackgrounds() {
+    const cacheKey = 'all-backgrounds'
+    const cached = this.getCachedData(cacheKey)
     if (cached) {
-      console.log('Using cached backgrounds data');
-      return cached;
+      console.log('Using cached backgrounds data')
+      return cached
     }
 
     try {
-      const data = await this.apiRequest('/backgrounds');
-      console.log('[dndAPI] Raw /backgrounds API response:', data);
+      const data = await this.apiRequest('/backgrounds')
+      console.log('[dndAPI] Raw /backgrounds API response:', data)
       if (!data) {
-        console.error('[dndAPI] /backgrounds API returned null or undefined.');
+        console.error('[dndAPI] /backgrounds API returned null or undefined.')
       } else if (!data.results) {
-        console.error(
-          "[dndAPI] /backgrounds API response missing 'results' property:",
-          data
-        );
+        console.error("[dndAPI] /backgrounds API response missing 'results' property:", data)
       } else if (Array.isArray(data.results) && data.results.length === 0) {
-        console.warn(
-          "[dndAPI] /backgrounds API response 'results' is an empty array:",
-          data
-        );
+        console.warn("[dndAPI] /backgrounds API response 'results' is an empty array:", data)
       }
 
       if (data && data.results) {
-        console.log(
-          `[dndAPI] Loading background details for ${data.results.length} backgrounds...`,
-          data.results
-        );
-        const backgrounds = [];
+        console.log(`[dndAPI] Loading background details for ${data.results.length} backgrounds...`, data.results)
+        const backgrounds = []
 
         // Load background details sequentially to avoid rate limiting
         for (const bg of data.results) {
           try {
-            const details = await this.getBackgroundDetails(bg.index);
+            const details = await this.getBackgroundDetails(bg.index)
             if (details) {
-              backgrounds.push(details);
+              backgrounds.push(details)
             }
           } catch (error) {
-            console.error(
-              `[dndAPI] Failed to fetch details for background ${bg.index}:`,
-              error,
-              bg
-            );
+            console.error(`[dndAPI] Failed to fetch details for background ${bg.index}:`, error, bg)
             // Return basic data if details fetch fails
             backgrounds.push({
               id: bg.index,
               name: bg.name,
               isBasicData: true,
-            });
+            })
           }
         }
 
-        console.log(
-          `[dndAPI] Successfully loaded ${backgrounds.length} backgrounds`,
-          backgrounds
-        );
-        this.setCachedData(cacheKey, backgrounds);
-        return backgrounds;
+        console.log(`[dndAPI] Successfully loaded ${backgrounds.length} backgrounds`, backgrounds)
+        this.setCachedData(cacheKey, backgrounds)
+        return backgrounds
       }
 
-      console.error(
-        '[dndAPI] Falling back to getFallbackBackgrounds due to missing/invalid API response.'
-      );
-      return this.getFallbackBackgrounds();
+      console.error('[dndAPI] Falling back to getFallbackBackgrounds due to missing/invalid API response.')
+      return this.getFallbackBackgrounds()
     } catch (error) {
-      console.error('[dndAPI] Failed to fetch backgrounds:', error);
-      return this.getFallbackBackgrounds();
+      console.error('[dndAPI] Failed to fetch backgrounds:', error)
+      return this.getFallbackBackgrounds()
     }
   }
 
   // Get detailed background information
-  async getBackgroundDetails (backgroundId) {
+  async getBackgroundDetails(backgroundId) {
     try {
-      const data = await this.apiRequest(`/backgrounds/${backgroundId}`);
-      return this.transformBackgroundData(data);
+      const data = await this.apiRequest(`/backgrounds/${backgroundId}`)
+      return this.transformBackgroundData(data)
     } catch (error) {
-      console.error(
-        `Failed to fetch background details for ${backgroundId}:`,
-        error
-      );
-      return null;
+      console.error(`Failed to fetch background details for ${backgroundId}:`, error)
+      return null
     }
   }
 
-  transformBackgroundData (backgroundData) {
+  transformBackgroundData(backgroundData) {
     return {
       id: backgroundData.index,
       name: backgroundData.name,
       description: backgroundData.description || '',
-      skillProficiencies:
-        backgroundData.skill_proficiencies?.map(skill => skill.name) || [],
-      toolProficiencies:
-        backgroundData.tool_proficiencies?.map(tool => tool.name) || [],
-      languages: backgroundData.languages?.map(lang => lang.name) || [],
+      skillProficiencies: backgroundData.skill_proficiencies?.map((skill) => skill.name) || [],
+      toolProficiencies: backgroundData.tool_proficiencies?.map((tool) => tool.name) || [],
+      languages: backgroundData.languages?.map((lang) => lang.name) || [],
       languageOptions: backgroundData.language_options || null,
       startingEquipment:
-        backgroundData.starting_equipment?.map(item => ({
+        backgroundData.starting_equipment?.map((item) => ({
           name: item.equipment?.name || item.name,
           quantity: item.quantity || 1,
         })) || [],
@@ -1439,16 +1200,15 @@ export class DnDAPI {
       bonds: backgroundData.bonds || null,
       flaws: backgroundData.flaws || null,
       isBasicData: false,
-    };
+    }
   }
 
-  getFallbackBackgrounds () {
+  getFallbackBackgrounds() {
     return [
       {
         id: 'acolyte',
         name: 'Acolyte',
-        description:
-          'You have spent your life in the service of a temple to a specific god or pantheon of gods.',
+        description: 'You have spent your life in the service of a temple to a specific god or pantheon of gods.',
         skillProficiencies: ['Insight', 'Religion'],
         toolProficiencies: [],
         languages: [],
@@ -1463,17 +1223,14 @@ export class DnDAPI {
         startingEquipmentOptions: [],
         feature: {
           name: 'Shelter of the Faithful',
-          desc: [
-            'As an acolyte, you command the respect of those who share your faith, and you can perform the religious ceremonies of your deity.',
-          ],
+          desc: ['As an acolyte, you command the respect of those who share your faith, and you can perform the religious ceremonies of your deity.'],
         },
         isBasicData: true,
       },
       {
         id: 'criminal',
         name: 'Criminal',
-        description:
-          'You have a history of breaking the law and surviving by your wits.',
+        description: 'You have a history of breaking the law and surviving by your wits.',
         skillProficiencies: ['Deception', 'Stealth'],
         toolProficiencies: ["Thieves' Tools"],
         languages: [],
@@ -1486,31 +1243,19 @@ export class DnDAPI {
         startingEquipmentOptions: [],
         feature: {
           name: 'Criminal Contact',
-          desc: [
-            'You have a reliable and trustworthy contact in the criminal underworld.',
-          ],
+          desc: ['You have a reliable and trustworthy contact in the criminal underworld.'],
         },
         isBasicData: true,
       },
       {
         id: 'folk-hero',
         name: 'Folk Hero',
-        description:
-          'You come from humble beginnings, but you are destined for greatness.',
+        description: 'You come from humble beginnings, but you are destined for greatness.',
         skillProficiencies: ['Animal Handling', 'Survival'],
         toolProficiencies: ['Vehicles (Land)'],
         toolOptions: {
           choose: 1,
-          from: [
-            "Smith's Tools",
-            "Brewer's Supplies",
-            "Carpenter's Tools",
-            "Leatherworker's Tools",
-            "Mason's Tools",
-            "Potter's Tools",
-            "Weaver's Tools",
-            "Woodcarver's Tools",
-          ],
+          from: ["Smith's Tools", "Brewer's Supplies", "Carpenter's Tools", "Leatherworker's Tools", "Mason's Tools", "Potter's Tools", "Weaver's Tools", "Woodcarver's Tools"],
         },
         languages: [],
         languageOptions: null,
@@ -1523,9 +1268,7 @@ export class DnDAPI {
         startingEquipmentOptions: [],
         feature: {
           name: 'Rustic Hospitality',
-          desc: [
-            'You can find a place to hide, rest, or recuperate among commoners.',
-          ],
+          desc: ['You can find a place to hide, rest, or recuperate among commoners.'],
         },
         isBasicData: true,
       },
@@ -1569,9 +1312,7 @@ export class DnDAPI {
         startingEquipmentOptions: [],
         feature: {
           name: 'Researcher',
-          desc: [
-            'When you attempt to learn or recall a piece of lore, if you do not know that information, you often know where and from whom you can obtain it.',
-          ],
+          desc: ['When you attempt to learn or recall a piece of lore, if you do not know that information, you often know where and from whom you can obtain it.'],
         },
         isBasicData: true,
       },
@@ -1599,8 +1340,7 @@ export class DnDAPI {
       {
         id: 'hermit',
         name: 'Hermit',
-        description:
-          'You lived in seclusion for a formative part of your life.',
+        description: 'You lived in seclusion for a formative part of your life.',
         skillProficiencies: ['Medicine', 'Religion'],
         toolProficiencies: ['Herbalism Kit'],
         languages: [],
@@ -1613,17 +1353,14 @@ export class DnDAPI {
         startingEquipmentOptions: [],
         feature: {
           name: 'Discovery',
-          desc: [
-            'You discovered a unique and powerful secret about the cosmos.',
-          ],
+          desc: ['You discovered a unique and powerful secret about the cosmos.'],
         },
         isBasicData: true,
       },
       {
         id: 'entertainer',
         name: 'Entertainer',
-        description:
-          'You thrive in front of an audience and know how to entrance them.',
+        description: 'You thrive in front of an audience and know how to entrance them.',
         skillProficiencies: ['Acrobatics', 'Performance'],
         toolProficiencies: ['Disguise Kit', 'Musical Instrument'],
         languages: [],
@@ -1643,8 +1380,7 @@ export class DnDAPI {
       {
         id: 'guild-artisan',
         name: 'Guild Artisan',
-        description:
-          "You are a member of an artisan's guild and skilled in a particular field.",
+        description: "You are a member of an artisan's guild and skilled in a particular field.",
         skillProficiencies: ['Insight', 'Persuasion'],
         toolProficiencies: ["Artisan's Tools"],
         languages: [],
@@ -1677,140 +1413,128 @@ export class DnDAPI {
         startingEquipmentOptions: [],
         feature: {
           name: 'Wanderer',
-          desc: [
-            'You have an excellent memory for geography and can find food and shelter.',
-          ],
+          desc: ['You have an excellent memory for geography and can find food and shelter.'],
         },
         isBasicData: true,
       },
-    ];
+    ]
   }
 
   // ========== EQUIPMENT API ==========
 
   // Get all available equipment
-  async getEquipment () {
+  async getEquipment() {
     try {
       // Load equipment from multiple categories to ensure we get weapons and armor
-      const categories = ['weapon', 'armor', 'adventuring-gear', 'tools'];
-      const allEquipment = [];
+      const categories = ['weapon', 'armor', 'adventuring-gear', 'tools']
+      const allEquipment = []
 
       for (const category of categories) {
         try {
-          const categoryEquipment = await this.getEquipmentByCategory(category);
-          allEquipment.push(...categoryEquipment);
+          const categoryEquipment = await this.getEquipmentByCategory(category)
+          allEquipment.push(...categoryEquipment)
         } catch (error) {
-          console.warn(`Failed to load ${category} equipment:`, error);
+          console.warn(`Failed to load ${category} equipment:`, error)
         }
       }
 
       if (allEquipment.length > 0) {
-        console.log(
-          `Successfully loaded ${allEquipment.length} equipment items from all categories`
-        );
-        return allEquipment;
+        console.log(`Successfully loaded ${allEquipment.length} equipment items from all categories`)
+        return allEquipment
       }
 
       // Fallback to the original method if category loading fails
-      const data = await this.apiRequest('/equipment');
+      const data = await this.apiRequest('/equipment')
 
       if (data && data.results) {
         // Load more items to include weapons and armor (increased from 20 to 100)
-        const equipmentIds = data.results.slice(0, 100).map(eq => eq.index);
+        const equipmentIds = data.results.slice(0, 100).map((eq) => eq.index)
 
-        console.log(
-          `Loading equipment details for ${equipmentIds.length} items...`
-        );
-        const equipment = [];
+        console.log(`Loading equipment details for ${equipmentIds.length} items...`)
+        const equipment = []
 
         // Load equipment details sequentially to avoid overwhelming the API
         for (const eqId of equipmentIds) {
           try {
-            const details = await this.getEquipmentDetails(eqId);
+            const details = await this.getEquipmentDetails(eqId)
             if (details) {
-              equipment.push(details);
+              equipment.push(details)
             }
           } catch (error) {
-            console.error(
-              `Failed to fetch details for equipment ${eqId}:`,
-              error
-            );
+            console.error(`Failed to fetch details for equipment ${eqId}:`, error)
             // Continue with other items even if one fails
           }
         }
 
-        console.log(`Successfully loaded ${equipment.length} equipment items`);
-        return equipment;
+        console.log(`Successfully loaded ${equipment.length} equipment items`)
+        return equipment
       }
 
-      return this.getFallbackEquipment();
+      return this.getFallbackEquipment()
     } catch (error) {
-      console.error('Failed to fetch equipment:', error);
-      return this.getFallbackEquipment();
+      console.error('Failed to fetch equipment:', error)
+      return this.getFallbackEquipment()
     }
   }
 
   // Get detailed equipment information
-  async getEquipmentDetails (equipmentId) {
+  async getEquipmentDetails(equipmentId) {
     try {
-      const data = await this.apiRequest(`/equipment/${equipmentId}`);
-      return this.transformEquipmentData(data);
+      const data = await this.apiRequest(`/equipment/${equipmentId}`)
+      return this.transformEquipmentData(data)
     } catch (error) {
       // Only log 404s as warnings, other errors as errors
       if (error.message && error.message.includes('404')) {
-        console.warn(`Equipment not found: ${equipmentId}`);
+        console.warn(`Equipment not found: ${equipmentId}`)
       } else {
-        console.error(
-          `Failed to fetch equipment details for ${equipmentId}:`,
-          error
-        );
+        console.error(`Failed to fetch equipment details for ${equipmentId}:`, error)
       }
-      return null;
+      return null
     }
   }
 
-  transformEquipmentData (equipmentData) {
+  transformEquipmentData(equipmentData) {
     return {
       id: equipmentData.index,
       name: equipmentData.name,
       category: equipmentData.equipment_category?.name || 'Miscellaneous',
       cost: equipmentData.cost
         ? {
-          quantity: equipmentData.cost.quantity,
-          unit: equipmentData.cost.unit,
-        }
+            quantity: equipmentData.cost.quantity,
+            unit: equipmentData.cost.unit,
+          }
         : { quantity: 0, unit: 'gp' },
       weight: equipmentData.weight || 0,
       description: equipmentData.desc?.join(' ') || '',
       // Weapon specific
       damage: equipmentData.damage
         ? {
-          dice: equipmentData.damage.damage_dice,
-          type: equipmentData.damage.damage_type?.name,
-        }
+            dice: equipmentData.damage.damage_dice,
+            type: equipmentData.damage.damage_type?.name,
+          }
         : null,
       weaponCategory: equipmentData.weapon_category || null,
       weaponRange: equipmentData.weapon_range || null,
-      properties: equipmentData.properties?.map(prop => prop.name) || [],
+      properties: equipmentData.properties?.map((prop) => prop.name) || [],
       // Armor specific
       armorCategory: equipmentData.armor_category || null,
       armorClass: equipmentData.armor_class
         ? {
-          base: equipmentData.armor_class.base,
-          dexBonus: equipmentData.armor_class.dex_bonus,
-          maxBonus: equipmentData.armor_class.max_bonus,
-        }
+            base: equipmentData.armor_class.base,
+            dexBonus: equipmentData.armor_class.dex_bonus,
+            maxBonus: equipmentData.armor_class.max_bonus,
+          }
         : null,
       strengthMinimum: equipmentData.str_minimum || null,
       stealthDisadvantage: equipmentData.stealth_disadvantage || false,
       isBasicData: false,
-    };
+    }
   }
 
   // Get equipment by specific category
-  async getEquipmentByCategory (category) {
+  async getEquipmentByCategory(category) {
     try {
-      const data = await this.apiRequest(`/equipment-categories/${category}`);
+      const data = await this.apiRequest(`/equipment-categories/${category}`)
 
       if (data && data.equipment) {
         // Filter out known problematic magical items that commonly return 404s
@@ -1874,43 +1598,36 @@ export class DnDAPI {
           'dragon-scale-mail-red',
           'dragon-scale-mail-silver',
           'dragon-scale-mail-white',
-        ]);
+        ])
 
-        const equipmentIds = data.equipment
-          .map(eq => eq.index)
-          .filter(id => !blacklistedItems.has(id));
-        const equipment = [];
+        const equipmentIds = data.equipment.map((eq) => eq.index).filter((id) => !blacklistedItems.has(id))
+        const equipment = []
 
-        console.log(
-          `Loading ${equipmentIds.length} items from ${category} category...`
-        );
+        console.log(`Loading ${equipmentIds.length} items from ${category} category...`)
 
         // Load equipment details for this category
         for (const eqId of equipmentIds) {
           try {
-            const details = await this.getEquipmentDetails(eqId);
+            const details = await this.getEquipmentDetails(eqId)
             if (details) {
-              equipment.push(details);
+              equipment.push(details)
             }
           } catch (error) {
-            console.warn(
-              `Failed to fetch details for ${category} equipment ${eqId}:`,
-              error
-            );
+            console.warn(`Failed to fetch details for ${category} equipment ${eqId}:`, error)
           }
         }
 
-        return equipment;
+        return equipment
       }
 
-      return [];
+      return []
     } catch (error) {
-      console.error(`Failed to fetch ${category} equipment:`, error);
-      return [];
+      console.error(`Failed to fetch ${category} equipment:`, error)
+      return []
     }
   }
 
-  getFallbackEquipment () {
+  getFallbackEquipment() {
     return [
       {
         id: 'longsword',
@@ -1953,11 +1670,11 @@ export class DnDAPI {
         description: 'A simple sleeping roll.',
         isBasicData: true,
       },
-    ];
+    ]
   }
 
   // Fallback data in case API fails
-  getFallbackClasses () {
+  getFallbackClasses() {
     return [
       {
         id: 'barbarian',
@@ -1991,17 +1708,17 @@ export class DnDAPI {
         primaryAbility: 'Intelligence',
         isBasicData: false,
       },
-    ];
+    ]
   }
 
-  getFallbackRaces () {
+  getFallbackRaces() {
     // Fallback races removed. This function now returns an empty array.
-    return [];
+    return []
   }
 }
 
 // Create API instance
-export const dndAPI = new DnDAPI();
+export const dndAPI = new DnDAPI()
 
 // Keep the old export for backward compatibility
-export const dndRacesAPI = dndAPI;
+export const dndRacesAPI = dndAPI

@@ -1,5 +1,5 @@
-import { computed, onMounted, reactive, ref, watch } from 'vue';
-import { dndAPI } from '@/services/dndAPI.js';
+import { computed, onMounted, reactive, ref, watch } from 'vue'
+import { dndAPI } from '@/services/dndAPI.js'
 
 // Loading placeholders - show immediately while API loads
 const loadingPlaceholders = {
@@ -22,7 +22,7 @@ const loadingPlaceholders = {
     },
     { id: 'loading-3', name: 'Getting features...', isPlaceholder: true },
   ],
-};
+}
 
 // Fallback species data in case API fails
 const fallbackSpeciesData = [
@@ -102,8 +102,7 @@ const fallbackSpeciesData = [
         traits: [
           {
             name: 'Stout Resilience',
-            description:
-              'You have advantage on saving throws against poison, and you have resistance against poison damage.',
+            description: 'You have advantage on saving throws against poison, and you have resistance against poison damage.',
           },
         ],
       },
@@ -140,7 +139,7 @@ const fallbackSpeciesData = [
     lineages: [],
     bonusLanguage: 'choice', // Half-elves get to choose extra languages
   },
-];
+]
 
 // Fallback class data in case API fails
 const fallbackClassData = [
@@ -151,14 +150,7 @@ const fallbackClassData = [
     hpDie: 'D12',
     savingThrows: ['Strength', 'Constitution'],
     skillChoices: 2,
-    skills: [
-      'Animal Handling',
-      'Athletics',
-      'Intimidation',
-      'Nature',
-      'Perception',
-      'Survival',
-    ],
+    skills: ['Animal Handling', 'Athletics', 'Intimidation', 'Nature', 'Perception', 'Survival'],
     armorTraining: { light: true, medium: true, heavy: false, shields: true },
     weaponProficiencies: ['Simple Weapons', 'Martial Weapons'],
     startingEquipment: [
@@ -208,17 +200,7 @@ const fallbackClassData = [
     hpDie: 'D10',
     savingThrows: ['Strength', 'Constitution'],
     skillChoices: 2,
-    skills: [
-      'Acrobatics',
-      'Animal Handling',
-      'Athletics',
-      'History',
-      'Insight',
-      'Intimidation',
-      'Persuasion',
-      'Perception',
-      'Survival',
-    ],
+    skills: ['Acrobatics', 'Animal Handling', 'Athletics', 'History', 'Insight', 'Intimidation', 'Persuasion', 'Perception', 'Survival'],
     armorTraining: { light: true, medium: true, heavy: true, shields: true },
     weaponProficiencies: ['Simple Weapons', 'Martial Weapons'],
     startingEquipment: [],
@@ -233,73 +215,56 @@ const fallbackClassData = [
     hpDie: 'D8',
     savingThrows: ['Dexterity', 'Intelligence'],
     skillChoices: 4,
-    skills: [
-      'Acrobatics',
-      'Athletics',
-      'Deception',
-      'Insight',
-      'Intimidation',
-      'Investigation',
-      'Perception',
-      'Persuasion',
-      'Sleight of Hand',
-      'Stealth',
-    ],
+    skills: ['Acrobatics', 'Athletics', 'Deception', 'Insight', 'Intimidation', 'Investigation', 'Perception', 'Persuasion', 'Sleight of Hand', 'Stealth'],
     armorTraining: { light: true, medium: false, heavy: false, shields: false },
-    weaponProficiencies: [
-      'Simple Weapons',
-      'Hand Crossbows',
-      'Longswords',
-      'Rapiers',
-      'Shortswords',
-    ],
+    weaponProficiencies: ['Simple Weapons', 'Hand Crossbows', 'Longswords', 'Rapiers', 'Shortswords'],
     startingEquipment: [],
     startingMoney: { rolls: '4d4', multiplier: 10, average: 100 }, // 4d4 × 10 gp
     toolProficiencies: ["Thieves' Tools"],
     expertiseSkills: ['Sleight of Hand', 'Stealth'],
   },
-];
+]
 
 // Dynamic species data loaded from API - start with loading placeholders
-const speciesData = ref([...loadingPlaceholders.species]);
-const isLoadingSpecies = ref(true);
-const speciesError = ref(null);
+const speciesData = ref([...loadingPlaceholders.species])
+const isLoadingSpecies = ref(true)
+const speciesError = ref(null)
 
 // Dynamic class data loaded from API - start with loading placeholders
-const classData = ref([...loadingPlaceholders.classes]);
-const isLoadingClasses = ref(true);
-const classError = ref(null);
+const classData = ref([...loadingPlaceholders.classes])
+const isLoadingClasses = ref(true)
+const classError = ref(null)
 
 // Load data from API
 const loadData = async () => {
   try {
     // Load species data
-    isLoadingSpecies.value = true;
-    const races = await dndAPI.getRaces();
+    isLoadingSpecies.value = true
+    const races = await dndAPI.getRaces()
     if (races && races.length > 0) {
-      speciesData.value = races;
+      speciesData.value = races
     }
-    isLoadingSpecies.value = false;
+    isLoadingSpecies.value = false
   } catch (error) {
-    console.error('Error loading species data:', error);
-    speciesError.value = error;
-    isLoadingSpecies.value = false;
+    console.error('Error loading species data:', error)
+    speciesError.value = error
+    isLoadingSpecies.value = false
   }
 
   try {
     // Load class data
-    isLoadingClasses.value = true;
-    const classes = await dndAPI.getClasses();
+    isLoadingClasses.value = true
+    const classes = await dndAPI.getClasses()
     if (classes && classes.length > 0) {
-      classData.value = classes;
+      classData.value = classes
     }
-    isLoadingClasses.value = false;
+    isLoadingClasses.value = false
   } catch (error) {
-    console.error('Error loading class data:', error);
-    classError.value = error;
-    isLoadingClasses.value = false;
+    console.error('Error loading class data:', error)
+    classError.value = error
+    isLoadingClasses.value = false
   }
-};
+}
 
 // Load initial data
 // (Remove this duplicate export function useCharacterData block)
@@ -309,8 +274,7 @@ const fallbackBackgroundData = [
   {
     id: 'acolyte',
     name: 'Acolyte',
-    description:
-      'You have spent your life in the service of a temple to a specific god or pantheon of gods.',
+    description: 'You have spent your life in the service of a temple to a specific god or pantheon of gods.',
     skillProficiencies: ['Insight', 'Religion'],
     toolProficiencies: ["Calligrapher's Supplies"],
     languages: [],
@@ -323,8 +287,7 @@ const fallbackBackgroundData = [
     startingMoney: { gp: 15 }, // Additional gold
     feature: {
       name: 'Shelter of the Faithful',
-      description:
-        'You can perform religious ceremonies and gain shelter at temples.',
+      description: 'You can perform religious ceremonies and gain shelter at temples.',
     },
     // Legacy fields for compatibility
     feat: 'Magic Initiate (Cleric)',
@@ -336,8 +299,7 @@ const fallbackBackgroundData = [
   {
     id: 'criminal',
     name: 'Criminal',
-    description:
-      'You are an experienced criminal with a history of breaking the law.',
+    description: 'You are an experienced criminal with a history of breaking the law.',
     skillProficiencies: ['Deception', 'Stealth'],
     toolProficiencies: ["Thieves' Tools"],
     languages: [],
@@ -423,8 +385,7 @@ const fallbackBackgroundData = [
     ],
     feature: {
       name: 'Discovery',
-      description:
-        'You discovered a unique and powerful secret about the cosmos.',
+      description: 'You discovered a unique and powerful secret about the cosmos.',
     },
     feat: 'Healer',
     skillProfs: ['Medicine', 'Religion'],
@@ -435,8 +396,7 @@ const fallbackBackgroundData = [
   {
     id: 'entertainer',
     name: 'Entertainer',
-    description:
-      'You thrive in front of an audience and know how to entrance them.',
+    description: 'You thrive in front of an audience and know how to entrance them.',
     skillProficiencies: ['Acrobatics', 'Performance'],
     toolProficiencies: ['Disguise Kit', 'Musical Instrument'],
     languages: [],
@@ -459,8 +419,7 @@ const fallbackBackgroundData = [
   {
     id: 'folk-hero',
     name: 'Folk Hero',
-    description:
-      'You come from a humble social rank, but you are destined for so much more.',
+    description: 'You come from a humble social rank, but you are destined for so much more.',
     skillProficiencies: ['Animal Handling', 'Survival'],
     toolProficiencies: ["Artisan's Tools", 'Vehicles (Land)'],
     languages: [],
@@ -472,8 +431,7 @@ const fallbackBackgroundData = [
     ],
     feature: {
       name: 'Rustic Hospitality',
-      description:
-        'Common folk will provide you with simple accommodations and food.',
+      description: 'Common folk will provide you with simple accommodations and food.',
     },
     feat: 'Tough',
     skillProfs: ['Animal Handling', 'Survival'],
@@ -496,8 +454,7 @@ const fallbackBackgroundData = [
     ],
     feature: {
       name: 'Position of Privilege',
-      description:
-        'You are welcome in high society and can secure audiences with nobles.',
+      description: 'You are welcome in high society and can secure audiences with nobles.',
     },
     feat: 'Skilled',
     skillProfs: ['History', 'Persuasion'],
@@ -520,8 +477,7 @@ const fallbackBackgroundData = [
     ],
     feature: {
       name: 'Wanderer',
-      description:
-        'You have an excellent memory for geography and can find food and shelter.',
+      description: 'You have an excellent memory for geography and can find food and shelter.',
     },
     feat: 'Magic Initiate (Druid)',
     skillProfs: ['Athletics', 'Survival'],
@@ -529,28 +485,24 @@ const fallbackBackgroundData = [
     equipmentChoice: 'A or B',
     abilityScores: ['Strength', 'Dexterity', 'Wisdom'],
   },
-];
+]
 
-const backgroundData = ref([...loadingPlaceholders.backgrounds]);
-const isLoadingBackgrounds = ref(true);
-const backgroundError = ref(null);
+const backgroundData = ref([...loadingPlaceholders.backgrounds])
+const isLoadingBackgrounds = ref(true)
+const backgroundError = ref(null)
 
 const loadSpeciesData = async () => {
-  isLoadingSpecies.value = true;
-  speciesError.value = null;
+  isLoadingSpecies.value = true
+  speciesError.value = null
 
   try {
-    const apiSpecies = await dndAPI.getRaces();
+    const apiSpecies = await dndAPI.getRaces()
 
     if (apiSpecies && apiSpecies.length > 0) {
       // Merge API data with our enhanced fallback data
-      const mergedSpecies = apiSpecies.map(apiRace => {
+      const mergedSpecies = apiSpecies.map((apiRace) => {
         // Find corresponding fallback race for enhanced data
-        const fallbackRace = fallbackSpeciesData.find(
-          fb =>
-            fb.id === apiRace.id ||
-            fb.name.toLowerCase() === apiRace.name.toLowerCase()
-        );
+        const fallbackRace = fallbackSpeciesData.find((fb) => fb.id === apiRace.id || fb.name.toLowerCase() === apiRace.name.toLowerCase())
 
         // If we have enhanced fallback data, merge it with API data
         if (fallbackRace) {
@@ -559,7 +511,7 @@ const loadSpeciesData = async () => {
             fallbackId: fallbackRace.id,
             apiLineages: apiRace.lineages,
             fallbackLineages: fallbackRace.lineages,
-          });
+          })
 
           const merged = {
             ...apiRace,
@@ -567,160 +519,135 @@ const loadSpeciesData = async () => {
             bonusLanguage: fallbackRace.bonusLanguage,
             // Keep API data for other fields, but fall back to our data if API is missing something
             darkvision: apiRace.darkvision || fallbackRace.darkvision,
-            damageResistance:
-              apiRace.damageResistance || fallbackRace.damageResistance,
-          };
+            damageResistance: apiRace.damageResistance || fallbackRace.damageResistance,
+          }
 
-          console.log(`Final merged dwarf data:`, merged);
-          return merged;
+          console.log(`Final merged dwarf data:`, merged)
+          return merged
         }
 
-        console.log(`No fallback data found for: ${apiRace.name}`);
-        return apiRace;
-      });
+        console.log(`No fallback data found for: ${apiRace.name}`)
+        return apiRace
+      })
 
-      speciesData.value = mergedSpecies;
-      console.log('Final species data loaded:', speciesData.value);
+      speciesData.value = mergedSpecies
+      console.log('Final species data loaded:', speciesData.value)
     }
     // If API fails, we keep the fallback data that's already loaded
   } catch (error) {
-    console.error('Failed to load species data:', error);
-    speciesError.value = error.message;
+    console.error('Failed to load species data:', error)
+    speciesError.value = error.message
     // Keep fallback data on error
   } finally {
-    isLoadingSpecies.value = false;
+    isLoadingSpecies.value = false
   }
-};
+}
 
 // Function to load class data from API
 const loadClassData = async () => {
-  isLoadingClasses.value = true;
-  classError.value = null;
+  isLoadingClasses.value = true
+  classError.value = null
 
   try {
-    const apiClasses = await dndAPI.getClasses();
+    const apiClasses = await dndAPI.getClasses()
 
     if (apiClasses && apiClasses.length > 0) {
       // Replace fallback data with API data
-      classData.value = apiClasses;
+      classData.value = apiClasses
     }
     // If API fails, we keep the fallback data that's already loaded
   } catch (error) {
-    console.error('Failed to load class data:', error);
-    classError.value = error.message;
+    console.error('Failed to load class data:', error)
+    classError.value = error.message
     // Keep fallback data on error
   } finally {
-    isLoadingClasses.value = false;
+    isLoadingClasses.value = false
   }
-};
+}
 
 // Dynamic equipment data loaded from API
-const equipmentData = ref([]);
-const isLoadingEquipment = ref(false);
-const equipmentError = ref(null);
+const equipmentData = ref([])
+const isLoadingEquipment = ref(false)
+const equipmentError = ref(null)
 
 // Function to load backgrounds data from API
 const loadBackgroundData = async () => {
-  isLoadingBackgrounds.value = true;
-  backgroundError.value = null;
+  isLoadingBackgrounds.value = true
+  backgroundError.value = null
 
   try {
-    const apiBackgrounds = await dndAPI.getBackgrounds();
-    console.log('API Backgrounds loaded:', apiBackgrounds);
+    const apiBackgrounds = await dndAPI.getBackgrounds()
+    console.log('API Backgrounds loaded:', apiBackgrounds)
 
     if (apiBackgrounds && apiBackgrounds.length > 0) {
       // Use API data if we got a reasonable amount of backgrounds
       if (apiBackgrounds.length >= 4) {
-        backgroundData.value = apiBackgrounds;
+        backgroundData.value = apiBackgrounds
       } else {
         // If API only returned a few backgrounds, merge with fallback data
-        console.log('API returned limited backgrounds, using fallback data');
-        backgroundData.value = [...fallbackBackgroundData];
+        console.log('API returned limited backgrounds, using fallback data')
+        backgroundData.value = [...fallbackBackgroundData]
       }
     } else {
       // If API returned no data, use fallback
-      console.log('API returned no backgrounds, using fallback data');
-      backgroundData.value = [...fallbackBackgroundData];
+      console.log('API returned no backgrounds, using fallback data')
+      backgroundData.value = [...fallbackBackgroundData]
     }
   } catch (error) {
-    console.error('Failed to load background data:', error);
-    backgroundError.value = error.message;
+    console.error('Failed to load background data:', error)
+    backgroundError.value = error.message
     // Ensure we always have fallback data available
-    backgroundData.value = [...fallbackBackgroundData];
+    backgroundData.value = [...fallbackBackgroundData]
   } finally {
-    isLoadingBackgrounds.value = false;
+    isLoadingBackgrounds.value = false
   }
-};
+}
 
 // Function to load equipment data from API
 const loadEquipmentData = async () => {
-  isLoadingEquipment.value = true;
-  equipmentError.value = null;
+  isLoadingEquipment.value = true
+  equipmentError.value = null
 
   try {
-    const apiEquipment = await dndAPI.getEquipment();
+    const apiEquipment = await dndAPI.getEquipment()
 
     if (apiEquipment && apiEquipment.length > 0) {
       // Store API equipment data
-      equipmentData.value = apiEquipment;
+      equipmentData.value = apiEquipment
     }
     // Equipment is optional, so no fallback needed
   } catch (error) {
-    console.error('Failed to load equipment data:', error);
-    equipmentError.value = error.message;
+    console.error('Failed to load equipment data:', error)
+    equipmentError.value = error.message
   } finally {
-    isLoadingEquipment.value = false;
+    isLoadingEquipment.value = false
   }
-};
+}
 
-const standardLanguages = [
-  'Common Sign Language',
-  'Draconic',
-  'Dwarvish',
-  'Elvish',
-  'Giant',
-  'Gnomish',
-  'Goblin',
-  'Halfling',
-  'Orc',
-];
+const standardLanguages = ['Common Sign Language', 'Draconic', 'Dwarvish', 'Elvish', 'Giant', 'Gnomish', 'Goblin', 'Halfling', 'Orc']
 
-const alignmentOptions = [
-  'Lawful Good',
-  'Neutral Good',
-  'Chaotic Good',
-  'Lawful Neutral',
-  'Neutral',
-  'Chaotic Neutral',
-  'Lawful Evil',
-  'Neutral Evil',
-  'Chaotic Evil',
-];
+const alignmentOptions = ['Lawful Good', 'Neutral Good', 'Chaotic Good', 'Lawful Neutral', 'Neutral', 'Chaotic Neutral', 'Lawful Evil', 'Neutral Evil', 'Chaotic Evil']
 
 const skillList = [
   {
     name: 'Acrobatics',
     ability: 'Dexterity',
-    exampleUse:
-      'Stay on your feet in a tricky situation, or perform an acrobatic stunt.',
+    exampleUse: 'Stay on your feet in a tricky situation, or perform an acrobatic stunt.',
   },
   {
     name: 'Animal Handling',
     ability: 'Wisdom',
-    exampleUse:
-      'Calm or train an animal, or get an animal to behave in a certain way.',
+    exampleUse: 'Calm or train an animal, or get an animal to behave in a certain way.',
   },
   {
     name: 'Arcana',
     ability: 'Intelligence',
-    exampleUse:
-      'Recall lore about spells, magic items, and the planes of existence.',
+    exampleUse: 'Recall lore about spells, magic items, and the planes of existence.',
   },
   {
     name: 'Athletics',
     ability: 'Strength',
-    exampleUse:
-      'Jump farther than normal, stay afloat in rough water, or break something.',
+    exampleUse: 'Jump farther than normal, stay afloat in rough water, or break something.',
   },
   {
     name: 'Deception',
@@ -730,8 +657,7 @@ const skillList = [
   {
     name: 'History',
     ability: 'Intelligence',
-    exampleUse:
-      'Recall lore about historical events, people, nations, and cultures.',
+    exampleUse: 'Recall lore about historical events, people, nations, and cultures.',
   },
   {
     name: 'Insight',
@@ -746,14 +672,12 @@ const skillList = [
   {
     name: 'Investigation',
     ability: 'Intelligence',
-    exampleUse:
-      'Find obscure information in books, or deduce how something works.',
+    exampleUse: 'Find obscure information in books, or deduce how something works.',
   },
   {
     name: 'Medicine',
     ability: 'Wisdom',
-    exampleUse:
-      'Diagnose an illness, or determine what killed the recently slain.',
+    exampleUse: 'Diagnose an illness, or determine what killed the recently slain.',
   },
   {
     name: 'Nature',
@@ -763,8 +687,7 @@ const skillList = [
   {
     name: 'Perception',
     ability: 'Wisdom',
-    exampleUse:
-      "Using a combination of senses, notice something that's easy to miss.",
+    exampleUse: "Using a combination of senses, notice something that's easy to miss.",
   },
   {
     name: 'Performance',
@@ -784,8 +707,7 @@ const skillList = [
   {
     name: 'Sleight of Hand',
     ability: 'Dexterity',
-    exampleUse:
-      'Pick a pocket, conceal a handheld object, or perform legerdemain.',
+    exampleUse: 'Pick a pocket, conceal a handheld object, or perform legerdemain.',
   },
   {
     name: 'Stealth',
@@ -795,19 +717,11 @@ const skillList = [
   {
     name: 'Survival',
     ability: 'Wisdom',
-    exampleUse:
-      'Follow tracks, forage, find a trail, or avoid natural hazards.',
+    exampleUse: 'Follow tracks, forage, find a trail, or avoid natural hazards.',
   },
-];
+]
 
-const abilityNames = [
-  'strength',
-  'dexterity',
-  'constitution',
-  'intelligence',
-  'wisdom',
-  'charisma',
-];
+const abilityNames = ['strength', 'dexterity', 'constitution', 'intelligence', 'wisdom', 'charisma']
 
 const xpThresholds = {
   1: 0,
@@ -830,7 +744,7 @@ const xpThresholds = {
   18: 265_000,
   19: 305_000,
   20: 355_000,
-};
+}
 
 const proficiencyBonusLevels = {
   1: 2,
@@ -853,22 +767,17 @@ const proficiencyBonusLevels = {
   18: 6,
   19: 6,
   20: 6,
-};
+}
 
-export function useCharacterData () {
+export function useCharacterData() {
   // Load initial data
   onMounted(async () => {
     try {
-      await Promise.all([
-        loadSpeciesData(),
-        loadClassData(),
-        loadBackgroundData(),
-        loadEquipmentData(),
-      ]);
+      await Promise.all([loadSpeciesData(), loadClassData(), loadBackgroundData(), loadEquipmentData()])
     } catch (error) {
-      console.error('Error loading initial data:', error);
+      console.error('Error loading initial data:', error)
     }
-  });
+  })
 
   // Character state
   const character = reactive({
@@ -933,231 +842,186 @@ export function useCharacterData () {
     preparedSpells: [],
     expendedSpellSlots: {},
     notes: '',
-  });
+  })
 
   // UI state
-  const currentStep = ref(1);
-  const abilityGenerationMethod = ref('standard');
-  const rolledStats = ref([]);
-  const rolling = ref(false);
-  const timesRerolled = ref(0);
+  const currentStep = ref(1)
+  const abilityGenerationMethod = ref('standard')
+  const rolledStats = ref([])
+  const rolling = ref(false)
+  const timesRerolled = ref(0)
 
   // Computed properties
-  const speciesOptions = computed(() =>
-    speciesData.value.map(s => ({ name: s.name, id: s.id }))
-  );
-  const classOptions = computed(() =>
-    classData.value.map(c => ({ name: c.name, id: c.id }))
-  );
+  const speciesOptions = computed(() => speciesData.value.map((s) => ({ name: s.name, id: s.id })))
+  const classOptions = computed(() => classData.value.map((c) => ({ name: c.name, id: c.id })))
   const backgroundOptions = computed(() => {
-    console.log(
-      'Computing backgroundOptions, backgroundData.value:',
-      backgroundData.value
-    );
-    const options = backgroundData.value.map(b => ({
+    console.log('Computing backgroundOptions, backgroundData.value:', backgroundData.value)
+    const options = backgroundData.value.map((b) => ({
       name: b.name,
       id: b.id,
-    }));
-    console.log('Background options:', options);
-    return options;
-  });
+    }))
+    console.log('Background options:', options)
+    return options
+  })
 
   const totalGP = computed(() => {
-    return (
-      character.coins.gp +
-      character.coins.sp / 10 +
-      character.coins.ep / 2 +
-      character.coins.cp / 100 +
-      character.coins.pp * 10
-    );
-  });
+    return character.coins.gp + character.coins.sp / 10 + character.coins.ep / 2 + character.coins.cp / 100 + character.coins.pp * 10
+  })
 
   const carryingCapacity = computed(() => {
-    const baseCapacity = character.abilityScores.strength.score * 15;
-    return baseCapacity;
-  });
+    const baseCapacity = character.abilityScores.strength.score * 15
+    return baseCapacity
+  })
 
   const totalWeight = computed(() => {
-    return character.equipment.reduce((sum, item) => sum + item.weight, 0);
-  });
+    return character.equipment.reduce((sum, item) => sum + item.weight, 0)
+  })
 
   // Utility functions
-  const calculateAbilityModifier = score => {
-    return Math.floor((score - 10) / 2);
-  };
+  const calculateAbilityModifier = (score) => {
+    return Math.floor((score - 10) / 2)
+  }
 
-  const updateAbilityModifier = statName => {
-    character.abilityScores[statName].modifier = calculateAbilityModifier(
-      character.abilityScores[statName].score
-    );
-    updatePassivePerception();
-    updateInitiativeBonus();
-    updateSpellcastingDetails();
-  };
+  const updateAbilityModifier = (statName) => {
+    character.abilityScores[statName].modifier = calculateAbilityModifier(character.abilityScores[statName].score)
+    updatePassivePerception()
+    updateInitiativeBonus()
+    updateSpellcastingDetails()
+  }
 
   const updateAbilityModifierForAll = () => {
     for (const statName of abilityNames) {
-      character.abilityScores[statName].modifier = calculateAbilityModifier(
-        character.abilityScores[statName].score
-      );
+      character.abilityScores[statName].modifier = calculateAbilityModifier(character.abilityScores[statName].score)
     }
-  };
+  }
 
   const updateXPAndProficiency = () => {
-    character.xp = xpThresholds[character.level] || 0;
-    character.proficiencyBonus = proficiencyBonusLevels[character.level] || 0;
-    updateAbilityModifierForAll();
-    updateSpellcastingDetails();
-  };
+    character.xp = xpThresholds[character.level] || 0
+    character.proficiencyBonus = proficiencyBonusLevels[character.level] || 0
+    updateAbilityModifierForAll()
+    updateSpellcastingDetails()
+  }
 
   const updatePassivePerception = () => {
-    let perceptionBonus = character.abilityScores.wisdom.modifier;
+    let perceptionBonus = character.abilityScores.wisdom.modifier
     if (character.skillProficiencies.Perception?.proficient) {
-      perceptionBonus += character.proficiencyBonus;
+      perceptionBonus += character.proficiencyBonus
       if (character.skillProficiencies.Perception.expertise) {
-        perceptionBonus += character.proficiencyBonus;
+        perceptionBonus += character.proficiencyBonus
       }
     }
-    character.passivePerception = 10 + perceptionBonus;
-  };
+    character.passivePerception = 10 + perceptionBonus
+  }
 
   const updateInitiativeBonus = () => {
-    let initiativeMod = character.abilityScores.dexterity.modifier;
+    let initiativeMod = character.abilityScores.dexterity.modifier
     if (character.backgroundDetails?.feat === 'Alert') {
-      initiativeMod += character.proficiencyBonus;
+      initiativeMod += character.proficiencyBonus
     }
-    character.initiative = initiativeMod;
-  };
+    character.initiative = initiativeMod
+  }
 
   const updateSpellcastingDetails = () => {
-    const spellAbility = character.spellcastingAbilityName
-      ? character.spellcastingAbilityName.toLowerCase()
-      : '';
-    const abilityMod = character.abilityScores[spellAbility]?.modifier || 0;
-    character.spellSaveDC = 8 + abilityMod + character.proficiencyBonus;
-    character.spellAttackBonus = abilityMod + character.proficiencyBonus;
-  };
+    const spellAbility = character.spellcastingAbilityName ? character.spellcastingAbilityName.toLowerCase() : ''
+    const abilityMod = character.abilityScores[spellAbility]?.modifier || 0
+    character.spellSaveDC = 8 + abilityMod + character.proficiencyBonus
+    character.spellAttackBonus = abilityMod + character.proficiencyBonus
+  }
 
   const updateSpeciesTraits = () => {
-    const selectedSpecies = speciesData.value.find(
-      s => s.id === character.species
-    );
+    const selectedSpecies = speciesData.value.find((s) => s.id === character.species)
     if (selectedSpecies) {
-      character.speciesDetails = selectedSpecies;
-      character.size = selectedSpecies.size;
-      character.speed = selectedSpecies.speed;
+      character.speciesDetails = selectedSpecies
+      character.size = selectedSpecies.size
+      character.speed = selectedSpecies.speed
 
       if (selectedSpecies.id === 'human') {
-        character.hasHeroicInspiration = true;
+        character.hasHeroicInspiration = true
       }
-      character.speciesLineage =
-        selectedSpecies.lineages.length > 0
-          ? selectedSpecies.lineages[0].id
-          : null;
+      character.speciesLineage = selectedSpecies.lineages.length > 0 ? selectedSpecies.lineages[0].id : null
 
       // Always fetch detailed trait information to get descriptions
-      console.log(
-        `Fetching detailed traits for species: ${selectedSpecies.name}`
-      );
+      console.log(`Fetching detailed traits for species: ${selectedSpecies.name}`)
       // Non-blocking async call to fetch details
       dndAPI
         .getRaceDetails(selectedSpecies.id)
-        .then(detailedRace => {
+        .then((detailedRace) => {
           if (detailedRace) {
             // Preserve our enhanced lineages data
-            const enhancedLineages = selectedSpecies.lineages;
-            const enhancedBonusLanguage = selectedSpecies.bonusLanguage;
+            const enhancedLineages = selectedSpecies.lineages
+            const enhancedBonusLanguage = selectedSpecies.bonusLanguage
 
             // Merge detailed API data with our enhanced data
             const finalRaceData = {
               ...detailedRace,
               lineages: enhancedLineages, // Keep our enhanced lineages
               bonusLanguage: enhancedBonusLanguage, // Keep our enhanced bonus language
-            };
+            }
 
-            const index = speciesData.value.findIndex(
-              s => s.id === selectedSpecies.id
-            );
+            const index = speciesData.value.findIndex((s) => s.id === selectedSpecies.id)
             if (index !== -1) {
-              speciesData.value[index] = finalRaceData;
+              speciesData.value[index] = finalRaceData
               // Update character if this race is still selected
               if (character.species === selectedSpecies.id) {
-                character.speciesDetails = finalRaceData;
-                character.size = finalRaceData.size;
-                character.speed = finalRaceData.speed;
+                character.speciesDetails = finalRaceData
+                character.size = finalRaceData.size
+                character.speed = finalRaceData.speed
               }
             }
           }
         })
-        .catch(error => {
-          console.error('Failed to fetch detailed race info:', error);
-        });
+        .catch((error) => {
+          console.error('Failed to fetch detailed race info:', error)
+        })
     } else {
-      character.speciesDetails = null;
-      character.size = '';
-      character.speed = 0;
-      character.hasHeroicInspiration = false;
-      character.speciesLineage = null;
+      character.speciesDetails = null
+      character.size = ''
+      character.speed = 0
+      character.hasHeroicInspiration = false
+      character.speciesLineage = null
     }
-  };
+  }
 
   const updateClassTraits = () => {
-    const selectedClass = classData.value.find(c => c.id === character.class);
-    console.log('DEBUG - updateClassTraits called for:', character.class);
-    console.log('DEBUG - Found selectedClass:', selectedClass?.name);
-    console.log(
-      'DEBUG - selectedClass.armorTraining:',
-      selectedClass?.armorTraining
-    );
-    console.log(
-      'DEBUG - selectedClass.weaponProficiencies:',
-      selectedClass?.weaponProficiencies
-    );
+    const selectedClass = classData.value.find((c) => c.id === character.class)
+    console.log('DEBUG - updateClassTraits called for:', character.class)
+    console.log('DEBUG - Found selectedClass:', selectedClass?.name)
+    console.log('DEBUG - selectedClass.armorTraining:', selectedClass?.armorTraining)
+    console.log('DEBUG - selectedClass.weaponProficiencies:', selectedClass?.weaponProficiencies)
 
     if (selectedClass) {
       // Set basic class details immediately
-      character.classDetails = selectedClass;
+      character.classDetails = selectedClass
 
       // Set armor training from fallback data immediately
-      character.armorTraining = { ...selectedClass.armorTraining };
+      character.armorTraining = { ...selectedClass.armorTraining }
 
       // Set weapon proficiencies from fallback data immediately
-      character.weaponProficiencies = [
-        ...(selectedClass.weaponProficiencies || []),
-      ];
+      character.weaponProficiencies = [...(selectedClass.weaponProficiencies || [])]
 
-      console.log('DEBUG - After assignment:');
-      console.log('DEBUG - character.armorTraining:', character.armorTraining);
-      console.log(
-        'DEBUG - character.weaponProficiencies:',
-        character.weaponProficiencies
-      );
+      console.log('DEBUG - After assignment:')
+      console.log('DEBUG - character.armorTraining:', character.armorTraining)
+      console.log('DEBUG - character.weaponProficiencies:', character.weaponProficiencies)
 
       // If we have an index, fetch detailed data asynchronously
       if (selectedClass.index) {
-        console.log(
-          'Fetching detailed class data for index:',
-          selectedClass.index
-        );
+        console.log('Fetching detailed class data for index:', selectedClass.index)
         dndAPI
           .getClassDetails(selectedClass.index)
-          .then(detailedClass => {
-            console.log('Fetched detailed class data:', detailedClass);
+          .then((detailedClass) => {
+            console.log('Fetched detailed class data:', detailedClass)
             if (detailedClass) {
               // Preserve armor training from fallback data if API data doesn't have it
               const armorTraining = detailedClass.armorTraining ||
                 selectedClass.armorTraining || {
-                light: false,
-                medium: false,
-                heavy: false,
-                shields: false,
-              };
+                  light: false,
+                  medium: false,
+                  heavy: false,
+                  shields: false,
+                }
 
               // Preserve weapon proficiencies from API data, fallback to class data
-              const weaponProficiencies =
-                detailedClass.weaponProficiencies ||
-                selectedClass.weaponProficiencies ||
-                [];
+              const weaponProficiencies = detailedClass.weaponProficiencies || selectedClass.weaponProficiencies || []
 
               // Merge the detailed data with the existing basic data
               character.classDetails = {
@@ -1165,149 +1029,118 @@ export function useCharacterData () {
                 ...detailedClass,
                 armorTraining, // Ensure armor training is preserved
                 weaponProficiencies, // Ensure weapon proficiencies are preserved
-              };
+              }
 
               // Update character armor training and weapon proficiencies
-              character.armorTraining = { ...armorTraining };
-              character.weaponProficiencies = [...weaponProficiencies];
+              character.armorTraining = { ...armorTraining }
+              character.weaponProficiencies = [...weaponProficiencies]
 
-              console.log(
-                'Updated character.classDetails:',
-                character.classDetails
-              );
-              console.log('Updated armor training:', character.armorTraining);
-              console.log(
-                'Updated weapon proficiencies:',
-                character.weaponProficiencies
-              );
+              console.log('Updated character.classDetails:', character.classDetails)
+              console.log('Updated armor training:', character.armorTraining)
+              console.log('Updated weapon proficiencies:', character.weaponProficiencies)
             }
           })
-          .catch(error => {
-            console.error('Failed to fetch detailed class data:', error);
+          .catch((error) => {
+            console.error('Failed to fetch detailed class data:', error)
             // Keep the basic class data on error
-          });
+          })
       } else {
-        console.log('No index found for class, using basic data only');
+        console.log('No index found for class, using basic data only')
       }
-      character.equipment = [...(selectedClass.startingEquipment || [])];
-      character.toolProficiencies = [
-        ...(selectedClass.toolProficiencies || []),
-      ];
+      character.equipment = [...(selectedClass.startingEquipment || [])]
+      character.toolProficiencies = [...(selectedClass.toolProficiencies || [])]
 
       // Calculate starting money when class changes
-      calculateStartingMoney();
+      calculateStartingMoney()
 
       // Initialize skill proficiencies - don't auto-assign class skills
-      character.skillProficiencies = {};
+      character.skillProficiencies = {}
       for (const skill of skillList) {
         character.skillProficiencies[skill.name] = {
           proficient: false, // Changed: Don't auto-assign class skills
           expertise: false,
           bonus: 0,
-        };
+        }
       }
 
       // Initialize selected class skills if not already set
       if (character.selectedClassSkills) {
         // Reset selected skills when class changes
-        character.selectedClassSkills = [];
+        character.selectedClassSkills = []
       } else {
-        character.selectedClassSkills = [];
+        character.selectedClassSkills = []
       }
 
       // Initialize saving throw proficiencies
-      character.savingThrowProficiencies = {};
+      character.savingThrowProficiencies = {}
       for (const ability of abilityNames) {
         character.savingThrowProficiencies[ability] = {
           proficient: selectedClass.savingThrows?.includes(ability) || false,
           bonus: 0,
-        };
+        }
       }
 
       // Handle spellcasting classes - check if class has spellcasting info
       if (selectedClass.spellcasting?.isSpellcaster) {
-        character.spellcastingAbilityName =
-          selectedClass.spellcasting.spellcastingAbility || '';
-        character.damagingCantrips = [
-          { name: 'Fire Bolt', damage: '1d10', damageType: 'Fire' },
-        ];
-      } else if (
-        ['sorcerer', 'wizard', 'warlock', 'bard', 'cleric', 'druid'].includes(
-          character.class
-        )
-      ) {
+        character.spellcastingAbilityName = selectedClass.spellcasting.spellcastingAbility || ''
+        character.damagingCantrips = [{ name: 'Fire Bolt', damage: '1d10', damageType: 'Fire' }]
+      } else if (['sorcerer', 'wizard', 'warlock', 'bard', 'cleric', 'druid'].includes(character.class)) {
         // Fallback for basic class data
-        character.spellcastingAbilityName = selectedClass.primaryAbility || '';
-        character.damagingCantrips = [
-          { name: 'Fire Bolt', damage: '1d10', damageType: 'Fire' },
-        ];
+        character.spellcastingAbilityName = selectedClass.primaryAbility || ''
+        character.damagingCantrips = [{ name: 'Fire Bolt', damage: '1d10', damageType: 'Fire' }]
       } else {
-        character.spellcastingAbilityName = '';
-        character.damagingCantrips = [];
-        character.cantrips = [];
-        character.preparedSpells = [];
+        character.spellcastingAbilityName = ''
+        character.damagingCantrips = []
+        character.cantrips = []
+        character.preparedSpells = []
       }
     } else {
-      character.classDetails = null;
+      character.classDetails = null
       character.armorTraining = {
         light: false,
         medium: false,
         heavy: false,
         shields: false,
-      };
-      character.weaponProficiencies = [];
-      character.equipment = [];
-      character.skillProficiencies = {};
-      character.savingThrowProficiencies = {};
+      }
+      character.weaponProficiencies = []
+      character.equipment = []
+      character.skillProficiencies = {}
+      character.savingThrowProficiencies = {}
     }
-    updateSpellcastingDetails();
-  };
+    updateSpellcastingDetails()
+  }
 
   const updateBackgroundTraits = () => {
-    console.log('Updating background traits for:', character.background);
+    console.log('Updating background traits for:', character.background)
     console.log(
       'Available backgrounds:',
-      backgroundData.value.map(b => b.name)
-    );
+      backgroundData.value.map((b) => b.name)
+    )
 
-    const selectedBackground = backgroundData.value.find(
-      b => b.id === character.background
-    );
+    const selectedBackground = backgroundData.value.find((b) => b.id === character.background)
 
-    console.log('Selected background:', selectedBackground);
+    console.log('Selected background:', selectedBackground)
 
     if (selectedBackground) {
-      character.backgroundDetails = selectedBackground;
-      console.log(
-        'Updated character.backgroundDetails:',
-        character.backgroundDetails
-      );
+      character.backgroundDetails = selectedBackground
+      console.log('Updated character.backgroundDetails:', character.backgroundDetails)
 
       // Handle new API format (skillProficiencies) and legacy format (skillProfs)
-      const skillProfs =
-        selectedBackground.skillProficiencies ||
-        selectedBackground.skillProfs ||
-        [];
+      const skillProfs = selectedBackground.skillProficiencies || selectedBackground.skillProfs || []
 
       // Update skill proficiencies from background
       for (const skillName of skillProfs) {
         if (character.skillProficiencies[skillName]) {
-          character.skillProficiencies[skillName].proficient = true;
+          character.skillProficiencies[skillName].proficient = true
         }
       }
 
       // Re-apply class skill selections
-      updateClassSkillProficiencies(); // Handle tool proficiencies
-      const toolProfs =
-        selectedBackground.toolProficiencies ||
-        [selectedBackground.toolProf].filter(Boolean);
+      updateClassSkillProficiencies() // Handle tool proficiencies
+      const toolProfs = selectedBackground.toolProficiencies || [selectedBackground.toolProf].filter(Boolean)
       for (const toolProf of toolProfs) {
-        if (
-          toolProf &&
-          !toolProf.includes('(choice)') &&
-          !character.toolProficiencies.includes(toolProf)
-        ) {
-          character.toolProficiencies.push(toolProf);
+        if (toolProf && !toolProf.includes('(choice)') && !character.toolProficiencies.includes(toolProf)) {
+          character.toolProficiencies.push(toolProf)
         }
       }
 
@@ -1315,58 +1148,51 @@ export function useCharacterData () {
       if (selectedBackground.startingEquipment) {
         for (const item of selectedBackground.startingEquipment) {
           // Check if item already exists in equipment
-          const existingItem = character.equipment.find(
-            eq => eq.name === item.name
-          );
+          const existingItem = character.equipment.find((eq) => eq.name === item.name)
           if (existingItem) {
-            existingItem.quantity =
-              (existingItem.quantity || 1) + (item.quantity || 1);
+            existingItem.quantity = (existingItem.quantity || 1) + (item.quantity || 1)
           } else {
             character.equipment.push({
               name: item.name,
               quantity: item.quantity || 1,
               weight: 0, // We'll get this from equipment API later
               cost: 0,
-            });
+            })
           }
         }
       }
 
       // Calculate starting money when background changes
-      calculateStartingMoney();
+      calculateStartingMoney()
     } else {
-      character.backgroundDetails = null;
+      character.backgroundDetails = null
     }
-  };
+  }
 
   const updateClassSkillProficiencies = () => {
     if (!character.selectedClassSkills || !character.skillProficiencies) {
-      return;
+      return
     }
 
     // Reset class skill proficiencies first (keep background skills)
     for (const skill of skillList) {
       if (character.classDetails?.skills?.includes(skill.name)) {
         // This is a class skill, check if it's selected
-        character.skillProficiencies[skill.name].proficient =
-          character.selectedClassSkills.includes(skill.name);
+        character.skillProficiencies[skill.name].proficient = character.selectedClassSkills.includes(skill.name)
       }
     }
-  };
+  }
 
   // Initialize character data
   const initializeCharacter = () => {
-    updateAbilityModifierForAll();
-    updateXPAndProficiency();
-    updatePassivePerception();
-    updateInitiativeBonus();
+    updateAbilityModifierForAll()
+    updateXPAndProficiency()
+    updatePassivePerception()
+    updateInitiativeBonus()
 
     // Ensure all required fields are properly initialized
-    if (
-      character.spellcastingAbilityName === undefined ||
-      character.spellcastingAbilityName === null
-    ) {
-      character.spellcastingAbilityName = '';
+    if (character.spellcastingAbilityName === undefined || character.spellcastingAbilityName === null) {
+      character.spellcastingAbilityName = ''
     }
 
     // Initialize all skills
@@ -1375,7 +1201,7 @@ export function useCharacterData () {
         proficient: false,
         expertise: false,
         bonus: 0,
-      };
+      }
     }
 
     // Initialize all saving throws
@@ -1383,69 +1209,67 @@ export function useCharacterData () {
       character.savingThrowProficiencies[ability] = {
         proficient: false,
         bonus: 0,
-      };
+      }
     }
-  };
+  }
 
   // Starting money calculation
   // Starting money calculation
   const calculateStartingMoney = () => {
-    const selectedClass = classData.value.find(c => c.id === character.class);
-    const selectedBackground = backgroundData.value.find(
-      b => b.id === character.background
-    );
+    const selectedClass = classData.value.find((c) => c.id === character.class)
+    const selectedBackground = backgroundData.value.find((b) => b.id === character.background)
 
-    let totalGold = 0;
+    let totalGold = 0
 
     // Add class starting money
     if (selectedClass?.startingMoney && selectedClass.startingMoney.rolls) {
       // Roll dice for starting money (use average for simplicity)
-      totalGold += selectedClass.startingMoney.average || 0;
+      totalGold += selectedClass.startingMoney.average || 0
     }
 
     // Add background starting money
     if (selectedBackground?.startingMoney?.gp) {
-      totalGold += selectedBackground.startingMoney.gp;
+      totalGold += selectedBackground.startingMoney.gp
     }
 
     // Set the character's starting gold
-    character.coins.gp = totalGold;
-    character.coins.cp = 0;
-    character.coins.sp = 0;
-    character.coins.ep = 0;
-    character.coins.pp = 0;
+    character.coins.gp = totalGold
+    character.coins.cp = 0
+    character.coins.sp = 0
+    character.coins.ep = 0
+    character.coins.pp = 0
 
-    console.log(`Starting money calculated: ${totalGold} GP`);
-  };
+    console.log(`Starting money calculated: ${totalGold} GP`)
+  }
 
   // Watchers
   watch(
     () => character.level,
     () => {
-      updateXPAndProficiency();
+      updateXPAndProficiency()
     }
-  );
+  )
 
   watch(
     () => character.species,
     () => {
-      updateSpeciesTraits();
+      updateSpeciesTraits()
     }
-  );
+  )
 
   watch(
     () => character.class,
     () => {
-      updateClassTraits();
+      updateClassTraits()
     }
-  );
+  )
 
   watch(
     () => character.background,
     () => {
-      updateBackgroundTraits();
+      updateBackgroundTraits()
     }
-  );
+  )
 
   return {
     // State
@@ -1497,5 +1321,5 @@ export function useCharacterData () {
     alignmentOptions,
     skillList,
     abilityNames,
-  };
+  }
 }

@@ -1,5 +1,5 @@
-import { computed, onMounted, reactive, ref, watch } from 'vue';
-import { useTheme as useVuetifyTheme } from 'vuetify';
+import { computed, onMounted, reactive, ref, watch } from 'vue'
+import { useTheme as useVuetifyTheme } from 'vuetify'
 
 // Your custom color palette
 const customColorPalette = {
@@ -7,29 +7,19 @@ const customColorPalette = {
   mediumGray: '#7A9E9F', // Medium blue-gray
   darkGray: '#4F6367', // Dark blue-gray
   cream: '#EEF5DB', // Light cream/green
-};
+}
 
 // Generate color variations for better styling
-const generateColorVariations = baseColor => {
+const generateColorVariations = (baseColor) => {
   // Helper function to lighten/darken colors
   const adjustBrightness = (hex, percent) => {
-    const num = Number.parseInt(hex.replace('#', ''), 16);
-    const amt = Math.round(2.55 * percent);
-    const R = (num >> 16) + amt;
-    const G = ((num >> 8) & 0x00_ff) + amt;
-    const B = (num & 0x00_00_ff) + amt;
-    return (
-      '#' +
-      (
-        0x1_00_00_00 +
-        (R < 255 ? (R < 1 ? 0 : R) : 255) * 0x1_00_00 +
-        (G < 255 ? (G < 1 ? 0 : G) : 255) * 0x1_00 +
-        (B < 255 ? (B < 1 ? 0 : B) : 255)
-      )
-        .toString(16)
-        .slice(1)
-    );
-  };
+    const num = Number.parseInt(hex.replace('#', ''), 16)
+    const amt = Math.round(2.55 * percent)
+    const R = (num >> 16) + amt
+    const G = ((num >> 8) & 0x00_ff) + amt
+    const B = (num & 0x00_00_ff) + amt
+    return '#' + (0x1_00_00_00 + (R < 255 ? (R < 1 ? 0 : R) : 255) * 0x1_00_00 + (G < 255 ? (G < 1 ? 0 : G) : 255) * 0x1_00 + (B < 255 ? (B < 1 ? 0 : B) : 255)).toString(16).slice(1)
+  }
 
   return {
     lighten5: adjustBrightness(baseColor, 40),
@@ -42,8 +32,8 @@ const generateColorVariations = baseColor => {
     darken2: adjustBrightness(baseColor, -10),
     darken3: adjustBrightness(baseColor, -20),
     darken4: adjustBrightness(baseColor, -30),
-  };
-};
+  }
+}
 
 // Predefined theme configurations
 let themePresets = {
@@ -107,20 +97,20 @@ let themePresets = {
     surface: '#23272F', // Dark gray for cards/panels
     isDark: true,
   },
-};
+}
 
-export function useTheme () {
+export function useTheme() {
   // Current theme state
-  const currentTheme = ref('default');
-  const isLoading = ref(false);
+  const currentTheme = ref('default')
+  const isLoading = ref(false)
 
   // Vuetify theme instance
-  const vuetifyTheme = useVuetifyTheme();
+  const vuetifyTheme = useVuetifyTheme()
 
   // Reactive theme configuration
   const themeConfig = reactive({
     ...themePresets.default,
-  });
+  })
 
   // Available theme options for admin selector
   const availableThemes = computed(() =>
@@ -135,13 +125,13 @@ export function useTheme () {
         surface: theme.surface,
       },
     }))
-  );
+  )
 
   // Generate CSS custom properties for the current theme
   const cssVariables = computed(() => {
-    const primary = generateColorVariations(themeConfig.primary);
-    const secondary = generateColorVariations(themeConfig.secondary);
-    const accent = generateColorVariations(themeConfig.accent);
+    const primary = generateColorVariations(themeConfig.primary)
+    const secondary = generateColorVariations(themeConfig.secondary)
+    const accent = generateColorVariations(themeConfig.accent)
 
     return {
       // Primary color variations
@@ -194,28 +184,28 @@ export function useTheme () {
       // Border and divider colors
       '--theme-border': themeConfig.isDark ? '#404040' : '#E0E0E0',
       '--theme-divider': themeConfig.isDark ? '#303030' : '#F0F0F0',
-    };
-  });
+    }
+  })
 
   // Apply CSS variables to document root
   const applyCSSVariables = () => {
-    const root = document.documentElement;
-    const variables = cssVariables.value;
+    const root = document.documentElement
+    const variables = cssVariables.value
 
     for (const [property, value] of Object.entries(variables)) {
-      root.style.setProperty(property, value);
+      root.style.setProperty(property, value)
     }
-  };
+  }
 
   // Update Vuetify theme
   const updateVuetifyTheme = () => {
     if (!vuetifyTheme) {
-      return;
+      return
     }
 
-    const isDark = themeConfig.isDark;
+    const isDark = themeConfig.isDark
     if (vuetifyTheme.theme && typeof vuetifyTheme.theme.change === 'function') {
-      vuetifyTheme.theme.change(isDark ? 'dark' : 'light');
+      vuetifyTheme.theme.change(isDark ? 'dark' : 'light')
     }
 
     // Update theme colors
@@ -225,72 +215,70 @@ export function useTheme () {
       accent: themeConfig.accent,
       background: themeConfig.background,
       surface: themeConfig.surface,
-    };
-
-    // Apply to both light and dark themes
-    Object.assign(vuetifyTheme.themes.value.light.colors, themeColors);
-    Object.assign(vuetifyTheme.themes.value.dark.colors, themeColors);
-  };
-
-  // Change theme
-  const setTheme = async themeKey => {
-    if (!themePresets[themeKey]) {
-      console.warn(`Theme "${themeKey}" not found`);
-      return;
     }
 
-    isLoading.value = true;
+    // Apply to both light and dark themes
+    Object.assign(vuetifyTheme.themes.value.light.colors, themeColors)
+    Object.assign(vuetifyTheme.themes.value.dark.colors, themeColors)
+  }
+
+  // Change theme
+  const setTheme = async (themeKey) => {
+    if (!themePresets[themeKey]) {
+      console.warn(`Theme "${themeKey}" not found`)
+      return
+    }
+
+    isLoading.value = true
 
     try {
       // Update theme configuration
-      Object.assign(themeConfig, themePresets[themeKey]);
-      currentTheme.value = themeKey;
+      Object.assign(themeConfig, themePresets[themeKey])
+      currentTheme.value = themeKey
 
       // Apply changes
-      applyCSSVariables();
-      updateVuetifyTheme();
+      applyCSSVariables()
+      updateVuetifyTheme()
 
       // Set data attribute for theme-specific styling
-      document.documentElement.dataset.theme = themeKey;
+      document.documentElement.dataset.theme = themeKey
 
       // Save to localStorage
-      localStorage.setItem('dnd-app-theme', themeKey);
+      localStorage.setItem('dnd-app-theme', themeKey)
 
-      console.log(`Theme changed to: ${themePresets[themeKey].name}`);
+      console.log(`Theme changed to: ${themePresets[themeKey].name}`)
     } catch (error) {
-      console.error('Error applying theme:', error);
+      console.error('Error applying theme:', error)
     } finally {
-      isLoading.value = false;
+      isLoading.value = false
     }
-  };
+  }
 
   // Reset to default theme
   const resetTheme = () => {
-    setTheme('default');
-  };
+    setTheme('default')
+  }
 
   // Load theme from localStorage on mount
   const loadSavedTheme = () => {
     // Load custom themes from localStorage
-    const customThemes = JSON.parse(
-      localStorage.getItem('dnd-app-custom-themes') || '{}'
-    );
+    const customThemes = JSON.parse(localStorage.getItem('dnd-app-custom-themes') || '{}')
     if (customThemes && typeof customThemes === 'object') {
-      themePresets = { ...themePresets, ...customThemes };
+      themePresets = { ...themePresets, ...customThemes }
     }
-    const savedTheme = localStorage.getItem('dnd-app-theme');
+    const savedTheme = localStorage.getItem('dnd-app-theme')
     if (savedTheme && themePresets[savedTheme]) {
-      setTheme(savedTheme);
+      setTheme(savedTheme)
     } else {
       // Apply default theme
-      applyCSSVariables();
-      updateVuetifyTheme();
+      applyCSSVariables()
+      updateVuetifyTheme()
     }
-  };
+  }
 
   // Custom theme creation (for future expansion)
   const createCustomTheme = (name, colors) => {
-    const customKey = `custom_${Date.now()}`;
+    const customKey = `custom_${Date.now()}`
     // Expect colors to be an object with five keys: primary, secondary, accent, background, surface
     themePresets[customKey] = {
       name,
@@ -300,55 +288,51 @@ export function useTheme () {
       background: colors.background,
       surface: colors.surface,
       isDark: colors.isDark ?? true,
-    };
+    }
     // Save custom themes to localStorage
-    const customThemes = JSON.parse(
-      localStorage.getItem('dnd-app-custom-themes') || '{}'
-    );
-    customThemes[customKey] = themePresets[customKey];
-    localStorage.setItem('dnd-app-custom-themes', JSON.stringify(customThemes));
-    return customKey;
-  };
+    const customThemes = JSON.parse(localStorage.getItem('dnd-app-custom-themes') || '{}')
+    customThemes[customKey] = themePresets[customKey]
+    localStorage.setItem('dnd-app-custom-themes', JSON.stringify(customThemes))
+    return customKey
+  }
 
   // Watch for theme config changes
   watch(
     () => ({ ...themeConfig }),
     () => {
-      applyCSSVariables();
-      updateVuetifyTheme();
+      applyCSSVariables()
+      updateVuetifyTheme()
     },
     { deep: true }
-  );
+  )
 
   // Initialize on mount
   onMounted(() => {
-    loadSavedTheme();
-  });
+    loadSavedTheme()
+  })
 
   // Delete a custom theme
-  const deleteCustomTheme = themeKey => {
+  const deleteCustomTheme = (themeKey) => {
     if (!themeKey.startsWith('custom_')) {
-      console.warn('Can only delete custom themes');
-      return false;
+      console.warn('Can only delete custom themes')
+      return false
     }
 
     if (currentTheme.value === themeKey) {
       // If the theme being deleted is currently active, switch to default
-      setTheme('default');
+      setTheme('default')
     }
 
     // Remove from themePresets
-    delete themePresets[themeKey];
+    delete themePresets[themeKey]
 
     // Update localStorage
-    const customThemes = JSON.parse(
-      localStorage.getItem('dnd-app-custom-themes') || '{}'
-    );
-    delete customThemes[themeKey];
-    localStorage.setItem('dnd-app-custom-themes', JSON.stringify(customThemes));
+    const customThemes = JSON.parse(localStorage.getItem('dnd-app-custom-themes') || '{}')
+    delete customThemes[themeKey]
+    localStorage.setItem('dnd-app-custom-themes', JSON.stringify(customThemes))
 
-    return true;
-  };
+    return true
+  }
 
   return {
     // State
@@ -368,5 +352,5 @@ export function useTheme () {
     // Utilities
     customColorPalette,
     themePresets,
-  };
+  }
 }

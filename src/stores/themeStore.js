@@ -1,5 +1,5 @@
-import { defineStore } from 'pinia';
-import { computed, reactive, ref } from 'vue';
+import { defineStore } from 'pinia'
+import { computed, reactive, ref } from 'vue'
 
 export const useThemeStore = defineStore('theme', {
   state: () => ({
@@ -10,14 +10,14 @@ export const useThemeStore = defineStore('theme', {
     availableThemes: [],
   }),
   actions: {
-    initThemes () {
+    initThemes() {
       // Custom color palette
       const customColorPalette = {
         lightGray: '#B8D8D8',
         mediumGray: '#7A9E9F',
         darkGray: '#4F6367',
         cream: '#EEF5DB',
-      };
+      }
       // Theme presets
       this.themePresets = {
         default: {
@@ -56,90 +56,73 @@ export const useThemeStore = defineStore('theme', {
           surface: '#FFFFFF',
           isDark: false,
         },
-      };
+      }
       // Load custom themes from localStorage
-      const customThemes = JSON.parse(
-        localStorage.getItem('dnd-app-custom-themes') || '{}'
-      );
+      const customThemes = JSON.parse(localStorage.getItem('dnd-app-custom-themes') || '{}')
       if (customThemes && typeof customThemes === 'object') {
-        this.themePresets = { ...this.themePresets, ...customThemes };
+        this.themePresets = { ...this.themePresets, ...customThemes }
       }
       // Set default config
-      this.themeConfig = { ...this.themePresets.default };
+      this.themeConfig = { ...this.themePresets.default }
       // Set available themes
-      this.availableThemes = Object.entries(this.themePresets).map(
-        ([key, theme]) => ({
-          value: key,
-          name: theme.name,
-          preview: {
-            primary: theme.primary,
-            secondary: theme.secondary,
-            accent: theme.accent,
-            background: theme.background,
-          },
-        })
-      );
+      this.availableThemes = Object.entries(this.themePresets).map(([key, theme]) => ({
+        value: key,
+        name: theme.name,
+        preview: {
+          primary: theme.primary,
+          secondary: theme.secondary,
+          accent: theme.accent,
+          background: theme.background,
+        },
+      }))
     },
-    setTheme (themeKey) {
-      if (!this.themePresets[themeKey]) return;
-      this.isLoading = true;
+    setTheme(themeKey) {
+      if (!this.themePresets[themeKey]) return
+      this.isLoading = true
       try {
-        Object.assign(this.themeConfig, this.themePresets[themeKey]);
-        this.currentTheme = themeKey;
-        localStorage.setItem('dnd-app-theme', themeKey);
+        Object.assign(this.themeConfig, this.themePresets[themeKey])
+        this.currentTheme = themeKey
+        localStorage.setItem('dnd-app-theme', themeKey)
       } catch (e) {
-
-        console.error('Error applying theme:', e);
+        console.error('Error applying theme:', e)
       } finally {
-        this.isLoading = false;
+        this.isLoading = false
       }
     },
-    resetTheme () {
-      this.setTheme('default');
+    resetTheme() {
+      this.setTheme('default')
     },
-    loadSavedTheme () {
-      const savedTheme = localStorage.getItem('dnd-app-theme');
+    loadSavedTheme() {
+      const savedTheme = localStorage.getItem('dnd-app-theme')
       if (savedTheme && this.themePresets[savedTheme]) {
-        this.setTheme(savedTheme);
+        this.setTheme(savedTheme)
       }
     },
-    createCustomTheme (name, colors) {
-      const customKey = `custom_${Date.now()}`;
-      this.themePresets[customKey] = { name, ...colors };
-      const customThemes = JSON.parse(
-        localStorage.getItem('dnd-app-custom-themes') || '{}'
-      );
-      customThemes[customKey] = this.themePresets[customKey];
-      localStorage.setItem(
-        'dnd-app-custom-themes',
-        JSON.stringify(customThemes)
-      );
-      this.availableThemes.push({ value: customKey, name, preview: colors });
-      return customKey;
+    createCustomTheme(name, colors) {
+      const customKey = `custom_${Date.now()}`
+      this.themePresets[customKey] = { name, ...colors }
+      const customThemes = JSON.parse(localStorage.getItem('dnd-app-custom-themes') || '{}')
+      customThemes[customKey] = this.themePresets[customKey]
+      localStorage.setItem('dnd-app-custom-themes', JSON.stringify(customThemes))
+      this.availableThemes.push({ value: customKey, name, preview: colors })
+      return customKey
     },
-    deleteCustomTheme (themeKey) {
-      if (!themeKey.startsWith('custom_')) return false;
-      if (this.currentTheme === themeKey) this.setTheme('default');
-      delete this.themePresets[themeKey];
-      const customThemes = JSON.parse(
-        localStorage.getItem('dnd-app-custom-themes') || '{}'
-      );
-      delete customThemes[themeKey];
-      localStorage.setItem(
-        'dnd-app-custom-themes',
-        JSON.stringify(customThemes)
-      );
-      this.availableThemes = this.availableThemes.filter(
-        t => t.value !== themeKey
-      );
-      return true;
+    deleteCustomTheme(themeKey) {
+      if (!themeKey.startsWith('custom_')) return false
+      if (this.currentTheme === themeKey) this.setTheme('default')
+      delete this.themePresets[themeKey]
+      const customThemes = JSON.parse(localStorage.getItem('dnd-app-custom-themes') || '{}')
+      delete customThemes[themeKey]
+      localStorage.setItem('dnd-app-custom-themes', JSON.stringify(customThemes))
+      this.availableThemes = this.availableThemes.filter((t) => t.value !== themeKey)
+      return true
     },
   },
   getters: {
-    isDark: state => state.themeConfig.isDark,
-    theme: state => state.themeConfig,
-    themes: state => state.availableThemes,
-    loading: state => state.isLoading,
-    current: state => state.currentTheme,
+    isDark: (state) => state.themeConfig.isDark,
+    theme: (state) => state.themeConfig,
+    themes: (state) => state.availableThemes,
+    loading: (state) => state.isLoading,
+    current: (state) => state.currentTheme,
   },
-});
+})

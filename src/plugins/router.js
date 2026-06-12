@@ -5,14 +5,14 @@
  */
 
 // Composables
-import { createRouter, createWebHistory } from 'vue-router';
-import { useAdminStore } from '@/stores/adminStore';
+import { createRouter, createWebHistory } from 'vue-router'
+import { useAdminStore } from '@/stores/adminStore'
 
 // Pages
-import CharacterForm from '@/pages/character-form.vue';
-import Characters from '@/pages/characters.vue';
-import Theme from '@/pages/theme.vue';
-import MockupViewer from '@/pages/mockup-viewer.vue';
+import CharacterForm from '@/pages/character-form.vue'
+import Characters from '@/pages/characters.vue'
+import Theme from '@/pages/theme.vue'
+import MockupViewer from '@/pages/mockup-viewer.vue'
 
 const routes = [
   {
@@ -40,13 +40,13 @@ const routes = [
     name: 'MockupViewer',
     component: MockupViewer,
   },
-];
+]
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes,
-});
+})
 
 // Removed navigation guard; access control is now handled by the overlay dialog in the page/component.
 
-export default router;
+export default router

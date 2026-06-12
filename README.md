@@ -2,6 +2,19 @@
 
 This is a Vue.js application built with Vuetify for managing D&D 5e characters. It features Firebase integration for data storage and a comprehensive access control system to protect against unauthorized usage.
 
+## 🔄 Access Model Update (Dec 2025)
+
+- Regular users no longer need to authenticate. Creating and viewing characters is available without login.
+- Admin-only permissions (edit and delete) are unlocked via an explicit “Admin Login” button that prompts for the admin password.
+- A global save limit is enforced to protect the database. By default, new character saves are capped at 50. Configure via `VITE_MAX_CHARACTERS`.
+
+Example `.env` entry:
+
+```bash
+# Optional: cap total saved characters
+VITE_MAX_CHARACTERS=50
+```
+
 ## 🔐 Security Features
 
 This application includes a two-tier security system:

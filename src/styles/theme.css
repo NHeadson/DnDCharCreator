@@ -62,7 +62,8 @@ body {
 
 /* Global theme-aware styles */
 .theme-aware {
-  transition: background-color var(--theme-transition-normal) ease,
+  transition:
+    background-color var(--theme-transition-normal) ease,
     color var(--theme-transition-normal) ease,
     border-color var(--theme-transition-normal) ease;
 }
@@ -115,7 +116,8 @@ body {
 /* Enhanced character cards with theme support */
 .character-card {
   background-color: var(--theme-card-bg) !important;
-  transition: transform var(--theme-transition-fast) ease,
+  transition:
+    transform var(--theme-transition-fast) ease,
     box-shadow var(--theme-transition-fast) ease,
     background-color var(--theme-transition-normal) ease !important;
 }
@@ -127,12 +129,7 @@ body {
 
 /* Character header gradients with theme support */
 .character-header {
-  background: linear-gradient(
-    135deg,
-    var(--theme-primary) 0%,
-    var(--theme-primary-darken-2) 50%,
-    var(--theme-secondary) 100%
-  ) !important;
+  background: linear-gradient(135deg, var(--theme-primary) 0%, var(--theme-primary-darken-2) 50%, var(--theme-secondary) 100%) !important;
   transition: background var(--theme-transition-normal) ease;
 }
 
@@ -149,32 +146,21 @@ body {
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(
-    135deg,
-    rgba(var(--v-theme-primary), 0.05) 0%,
-    rgba(var(--v-theme-secondary), 0.03) 100%
-  );
+  background: linear-gradient(135deg, rgba(var(--v-theme-primary), 0.05) 0%, rgba(var(--v-theme-secondary), 0.03) 100%);
   z-index: -1;
   transition: background var(--theme-transition-normal) ease;
 }
 
 /* Enhanced buttons with theme support */
 .create-character-btn {
-  background: linear-gradient(
-    45deg,
-    var(--theme-primary) 0%,
-    var(--theme-primary-lighten-1) 100%
-  ) !important;
-  transition: background var(--theme-transition-fast) ease,
+  background: linear-gradient(45deg, var(--theme-primary) 0%, var(--theme-primary-lighten-1) 100%) !important;
+  transition:
+    background var(--theme-transition-fast) ease,
     transform var(--theme-transition-fast) ease;
 }
 
 .create-character-btn:hover {
-  background: linear-gradient(
-    45deg,
-    var(--theme-primary-darken-1) 0%,
-    var(--theme-primary) 100%
-  ) !important;
+  background: linear-gradient(45deg, var(--theme-primary-darken-1) 0%, var(--theme-primary) 100%) !important;
   transform: translateY(-1px);
 }
 
@@ -182,7 +168,8 @@ body {
 .themed-card {
   background-color: var(--theme-surface) !important;
   border: 1px solid var(--theme-border);
-  transition: background-color var(--theme-transition-normal) ease,
+  transition:
+    background-color var(--theme-transition-normal) ease,
     border-color var(--theme-transition-normal) ease;
 }
 
@@ -205,13 +192,10 @@ body {
 
 /* Ability score cards with theme support */
 .ability-score-card {
-  background: linear-gradient(
-    135deg,
-    var(--theme-surface) 0%,
-    var(--theme-primary-lighten-5) 100%
-  ) !important;
+  background: linear-gradient(135deg, var(--theme-surface) 0%, var(--theme-primary-lighten-5) 100%) !important;
   border: 1px solid var(--theme-border);
-  transition: background var(--theme-transition-normal) ease,
+  transition:
+    background var(--theme-transition-normal) ease,
     transform var(--theme-transition-fast) ease,
     border-color var(--theme-transition-normal) ease;
 }
@@ -223,11 +207,7 @@ body {
 
 /* Character creation stepper enhancement */
 .character-creator {
-  background: linear-gradient(
-    to bottom,
-    var(--theme-background) 0%,
-    var(--theme-surface) 100%
-  ) !important;
+  background: linear-gradient(to bottom, var(--theme-background) 0%, var(--theme-surface) 100%) !important;
   min-height: 100vh;
   transition: background var(--theme-transition-normal) ease;
 }
@@ -236,7 +216,8 @@ body {
 .equipment-card {
   background-color: var(--theme-surface) !important;
   border: 1px solid var(--theme-border);
-  transition: background-color var(--theme-transition-normal) ease,
+  transition:
+    background-color var(--theme-transition-normal) ease,
     border-color var(--theme-transition-normal) ease,
     box-shadow var(--theme-transition-fast) ease;
 }
@@ -248,32 +229,23 @@ body {
 
 /* Vitals section enhancement */
 .vitals-section {
-  background: linear-gradient(
-    135deg,
-    var(--theme-surface) 0%,
-    var(--theme-accent-lighten-5) 100%
-  ) !important;
+  background: linear-gradient(135deg, var(--theme-surface) 0%, var(--theme-accent-lighten-5) 100%) !important;
   border: 2px solid var(--theme-accent-lighten-3);
-  transition: background var(--theme-transition-normal) ease,
+  transition:
+    background var(--theme-transition-normal) ease,
     border-color var(--theme-transition-normal) ease;
 }
 
 /* Identity banner styling */
 .character-identity-banner {
-  background: linear-gradient(
-    90deg,
-    var(--theme-accent-lighten-4) 0%,
-    var(--theme-accent-lighten-2) 50%,
-    var(--theme-accent) 100%
-  ) !important;
+  background: linear-gradient(90deg, var(--theme-accent-lighten-4) 0%, var(--theme-accent-lighten-2) 50%, var(--theme-accent) 100%) !important;
   color: var(--theme-secondary-darken-3) !important;
   transition: background var(--theme-transition-normal) ease;
 }
 
 /* Smooth transitions for all themed elements */
 * {
-  transition-property: background-color, color, border-color, box-shadow,
-    transform;
+  transition-property: background-color, color, border-color, box-shadow, transform;
   transition-duration: var(--theme-transition-normal);
   transition-timing-function: ease;
 }
@@ -281,12 +253,7 @@ body {
 /* Dark theme specific overrides */
 .v-theme--dark {
   .character-header {
-    background: linear-gradient(
-      135deg,
-      var(--theme-primary) 0%,
-      var(--theme-primary-lighten-1) 50%,
-      var(--theme-accent-darken-2) 100%
-    ) !important;
+    background: linear-gradient(135deg, var(--theme-primary) 0%, var(--theme-primary-lighten-1) 50%, var(--theme-accent-darken-2) 100%) !important;
   }
 
   .themed-card {
@@ -294,11 +261,7 @@ body {
   }
 
   .page-header::before {
-    background: linear-gradient(
-      135deg,
-      rgba(var(--v-theme-primary), 0.1) 0%,
-      rgba(var(--v-theme-accent), 0.05) 100%
-    );
+    background: linear-gradient(135deg, rgba(var(--v-theme-primary), 0.1) 0%, rgba(var(--v-theme-accent), 0.05) 100%);
   }
 }
 

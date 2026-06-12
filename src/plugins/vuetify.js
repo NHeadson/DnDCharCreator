@@ -5,11 +5,11 @@
  */
 
 // Composables
-import { createVuetify } from 'vuetify';
+import { createVuetify } from 'vuetify'
 
 // Styles
-import '@mdi/font/css/materialdesignicons.css';
-import 'vuetify/styles';
+import '@mdi/font/css/materialdesignicons.css'
+import 'vuetify/styles'
 
 // Custom color palette
 const customColorPalette = {
@@ -17,7 +17,7 @@ const customColorPalette = {
   mediumGray: '#7A9E9F', // Medium blue-gray
   darkGray: '#4F6367', // Dark blue-gray
   cream: '#EEF5DB', // Light cream/green
-};
+}
 
 // https://vuetifyjs.com/en/introduction/why-vuetify/#feature-guides
 export default createVuetify({
@@ -63,4 +63,4 @@ export default createVuetify({
       xl: 1920,
     },
   },
-});
+})

@@ -1,4 +1,5 @@
 <template>
+  <!-- eslint-disable vue/max-attributes-per-line, vue/html-closing-bracket-newline, vue/html-indent, vue/singleline-html-element-content-newline, vue/multiline-html-element-content-newline -->
   <div class="characters-page theme-background theme-aware">
     <v-container class="pa-4">
       <!-- Quick Actions Bar -->
@@ -11,8 +12,7 @@
               <v-col class="d-flex justify-center px-3" cols="6" lg="2" md="3" order="1" order-lg="2" sm="6">
                 <div v-if="hasAccess" class="d-flex flex-column align-center">
                   <div class="d-flex align-center justify-center">
-                    <v-chip class="quick-actions-chip" color="success" prepend-icon="mdi-account-check" size="small"
-                      variant="elevated">
+                    <v-chip class="quick-actions-chip" color="success" prepend-icon="mdi-account-check" size="small" variant="elevated">
                       <span class="d-none d-md-inline">Group Access</span>
                       <span class="d-inline d-md-none">Group</span>
                     </v-chip>
@@ -20,8 +20,7 @@
                 </div>
                 <div v-else class="d-flex flex-column align-center">
                   <div class="d-flex align-center justify-center">
-                    <v-chip class="quick-actions-chip" color="warning" prepend-icon="mdi-lock" size="small"
-                      variant="elevated">
+                    <v-chip class="quick-actions-chip" color="warning" prepend-icon="mdi-lock" size="small" variant="elevated">
                       <span class="d-none d-md-inline">Access Required</span>
                       <span class="d-inline d-md-none">Access</span>
                     </v-chip>
@@ -33,13 +32,11 @@
               <v-col class="d-flex justify-center px-3" cols="6" lg="2" md="3" order="2" order-lg="3" sm="6">
                 <div v-if="adminStore.isAdminUser" class="d-flex flex-column align-center">
                   <div class="d-flex align-center justify-center">
-                    <v-chip class="ma-0 quick-actions-chip admin-status-chip" color="success"
-                      prepend-icon="mdi-shield-check" size="small" variant="elevated">
+                    <v-chip class="ma-0 quick-actions-chip admin-status-chip" color="success" prepend-icon="mdi-shield-check" size="small" variant="elevated">
                       <span class="d-none d-md-inline">Admin</span>
                       <span class="d-inline d-md-none">Admin</span>
                     </v-chip>
-                    <v-btn class="logout-btn ml-2" color="grey" size="medium" title="Logout from admin" variant="text"
-                      @click="adminLogout">
+                    <v-btn class="logout-btn ml-2" color="grey" size="medium" title="Logout from admin" variant="text" @click="adminLogout">
                       <v-icon size="medium">mdi-logout</v-icon>
                     </v-btn>
                   </div>
@@ -47,17 +44,14 @@
                 <!-- Admin Login Button -->
                 <div v-else-if="hasAccess" class="d-flex flex-column align-center">
                   <div class="d-flex align-center justify-center">
-                    <v-chip class="quick-actions-chip admin-status-chip" color="warning" data-admin-login
-                      prepend-icon="mdi-shield-key" size="small" variant="elevated" @click="showAdminLogin">
+                    <v-chip class="quick-actions-chip admin-status-chip" color="warning" data-admin-login prepend-icon="mdi-shield-key" size="small" variant="elevated" @click="showAdminLogin">
                       <span class="d-none d-md-inline">Admin Login</span>
                       <span class="d-inline d-md-none">Login</span>
                     </v-chip>
                   </div>
                 </div>
                 <div v-else class="d-flex flex-column align-center">
-                  <div class="text-caption text-grey">
-                    Admin requires access first
-                  </div>
+                  <div class="text-caption text-grey">Admin requires access first</div>
                 </div>
               </v-col>
 
@@ -66,20 +60,19 @@
                 <div class="d-flex align-center text-no-wrap">
                   <v-icon class="me-2 flex-shrink-0" color="accent" size="large">mdi-information</v-icon>
                   <span class="text-subtitle-1 theme-secondary text-no-wrap">
-                    <strong>{{ characters.length }}</strong> character{{ characters.length !== 1 ? 's' : '' }}
+                    <strong>{{ characters.length }}</strong>
+                    character{{ characters.length !== 1 ? 's' : '' }}
                   </span>
                 </div>
               </v-col>
 
               <!-- Create Character Button -->
               <v-col class="d-flex justify-center px-3" cols="6" lg="2" md="3" order="4" order-lg="4" sm="6">
-                <v-btn v-if="hasAccess" class="text-white create-character-btn align-center" color="accent"
-                  prepend-icon="mdi-plus" variant="elevated" @click="requireAccessForCreation">
+                <v-btn v-if="hasAccess" class="text-white create-character-btn align-center" color="accent" prepend-icon="mdi-plus" variant="elevated" @click="requireAccessForCreation">
                   <span class="d-none d-xl-inline">Create New</span>
                   <span class="d-inline d-xl-none">New</span>
                 </v-btn>
-                <v-btn v-else class="create-character-btn" color="grey" prepend-icon="mdi-lock" variant="outlined"
-                  @click="requireAccessForCreation">
+                <v-btn v-else class="create-character-btn" color="grey" prepend-icon="mdi-lock" variant="outlined" @click="requireAccessForCreation">
                   <span class="d-none d-xl-inline">Create New</span>
                   <span class="d-inline d-xl-none">New</span>
                 </v-btn>
@@ -95,19 +88,18 @@
                   <div class="d-flex align-center text-no-wrap">
                     <v-icon class="me-2 flex-shrink-0" color="accent" size="medium">mdi-information</v-icon>
                     <span class="text-subtitle-2">
-                      <strong>{{ characters.length }}</strong> character{{ characters.length !== 1 ? 's' : '' }}
+                      <strong>{{ characters.length }}</strong>
+                      character{{ characters.length !== 1 ? 's' : '' }}
                     </span>
                   </div>
                 </v-col>
 
                 <!-- Create Character Button -->
                 <v-col class="d-flex justify-center px-2" cols="6">
-                  <v-btn v-if="hasAccess" class="text-white create-character-btn-mobile" color="primary"
-                    prepend-icon="mdi-plus" size="small" variant="elevated" @click="requireAccessForCreation">
+                  <v-btn v-if="hasAccess" class="text-white create-character-btn-mobile" color="primary" prepend-icon="mdi-plus" size="small" variant="elevated" @click="requireAccessForCreation">
                     <span>New</span>
                   </v-btn>
-                  <v-btn v-else class="create-character-btn-mobile" color="grey" prepend-icon="mdi-lock" size="small"
-                    variant="outlined" @click="requireAccessForCreation">
+                  <v-btn v-else class="create-character-btn-mobile" color="grey" prepend-icon="mdi-lock" size="small" variant="outlined" @click="requireAccessForCreation">
                     <span>New</span>
                   </v-btn>
                 </v-col>
@@ -120,14 +112,12 @@
                     <!-- Access Status -->
                     <v-col class="d-flex justify-center px-2" cols="6">
                       <div v-if="hasAccess" class="d-flex flex-column align-center">
-                        <v-chip class="quick-actions-chip-mobile" color="success" prepend-icon="mdi-account-check"
-                          size="small" variant="elevated">
+                        <v-chip class="quick-actions-chip-mobile" color="success" prepend-icon="mdi-account-check" size="small" variant="elevated">
                           <span>Group Access</span>
                         </v-chip>
                       </div>
                       <div v-else class="d-flex flex-column align-center">
-                        <v-chip class="quick-actions-chip-mobile" color="warning" prepend-icon="mdi-lock" size="small"
-                          variant="elevated">
+                        <v-chip class="quick-actions-chip-mobile" color="warning" prepend-icon="mdi-lock" size="small" variant="elevated">
                           <span>Access Required</span>
                         </v-chip>
                       </div>
@@ -136,25 +126,28 @@
                     <!-- Admin Status -->
                     <v-col class="d-flex justify-center px-2" cols="6">
                       <div v-if="adminStore.isAdminUser" class="d-flex align-center">
-                        <v-chip class="quick-actions-chip-mobile admin-status-chip" color="success"
-                          prepend-icon="mdi-shield-check" size="small" variant="elevated">
+                        <v-chip class="quick-actions-chip-mobile admin-status-chip" color="success" prepend-icon="mdi-shield-check" size="small" variant="elevated">
                           <span>Admin</span>
                         </v-chip>
-                        <v-btn class="logout-btn ml-2" color="grey" size="small" title="Logout from admin"
-                          variant="text" @click="adminLogout">
+                        <v-btn class="logout-btn ml-2" color="grey" size="small" title="Logout from admin" variant="text" @click="adminLogout">
                           <v-icon size="small">mdi-logout</v-icon>
                         </v-btn>
                       </div>
                       <div v-else-if="hasAccess" class="d-flex flex-column align-center">
-                        <v-chip class="quick-actions-chip-mobile admin-status-chip" color="warning" data-admin-login
-                          prepend-icon="mdi-shield-key" size="small" variant="elevated" @click="showAdminLogin">
+                        <v-chip
+                          class="quick-actions-chip-mobile admin-status-chip"
+                          color="warning"
+                          data-admin-login
+                          prepend-icon="mdi-shield-key"
+                          size="small"
+                          variant="elevated"
+                          @click="showAdminLogin"
+                        >
                           <span>Admin Login</span>
                         </v-chip>
                       </div>
                       <div v-else class="d-flex flex-column align-center">
-                        <div class="text-caption text-grey text-center">
-                          Admin requires access first
-                        </div>
+                        <div class="text-caption text-grey text-center">Admin requires access first</div>
                       </div>
                     </v-col>
                   </v-row>
@@ -163,8 +156,7 @@
 
               <!-- Expand/Collapse Button -->
               <div class="text-center">
-                <v-btn class="expand-toggle-btn" color="primary" size="small" variant="text"
-                  @click="mobileActionsExpanded = !mobileActionsExpanded">
+                <v-btn class="expand-toggle-btn" color="primary" size="small" variant="text" @click="mobileActionsExpanded = !mobileActionsExpanded">
                   <v-icon size="small">{{ mobileActionsExpanded ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
                   <span class="ml-1">{{ mobileActionsExpanded ? 'Less' : 'More' }}</span>
                 </v-btn>
@@ -178,7 +170,7 @@
       <div class="page-header text-center mb-4">
         <h1 class="display-1 font-weight-bold text-primary mb-2">🎭 My Characters</h1>
         <p class="text-h6 text-grey-darken-1">Your collection of heroes and adventurers</p>
-        <v-divider class="mx-auto mt-4" style="max-width: 200px; border-color: var(--theme-accent);" />
+        <v-divider class="mx-auto mt-4" style="max-width: 200px; border-color: var(--theme-accent)" />
       </div>
 
       <!-- Loading State -->
@@ -190,31 +182,23 @@
       <!-- Error State -->
       <div v-else-if="error" class="text-center pa-8">
         <v-icon class="mb-4" color="error" size="64">mdi-alert-circle</v-icon>
-        <v-alert class="mb-4 mx-auto" style="max-width: 600px;" type="error" variant="tonal">
+        <v-alert class="mb-4 mx-auto" style="max-width: 600px" type="error" variant="tonal">
           <v-alert-title>Something went wrong</v-alert-title>
           {{ error }}
         </v-alert>
-        <v-btn color="accent" prepend-icon="mdi-refresh" variant="elevated" @click="loadCharacters">
-          Try Again
-        </v-btn>
+        <v-btn color="accent" prepend-icon="mdi-refresh" variant="elevated" @click="loadCharacters">Try Again</v-btn>
       </div>
 
       <!-- Empty State -->
       <div v-else-if="characters.length === 0" class="empty-state text-center pa-8">
-        <v-card class="mx-auto pa-8" style="max-width: 600px; background: var(--theme-card-bg);" variant="tonal">
+        <v-card class="mx-auto pa-8" style="max-width: 600px; background: var(--theme-card-bg)" variant="tonal">
           <v-icon class="mb-4" color="primary-lighten-1" size="80">mdi-sword-cross</v-icon>
           <h2 class="text-h4 font-weight-bold text-primary mb-3">Your Adventure Awaits</h2>
-          <p class="text-h6 text-grey-darken-1 mb-6">
-            You haven't created any characters yet. Start your legendary journey today!
-          </p>
-          <v-btn v-if="hasAccess" class="create-character-btn" color="accent" prepend-icon="mdi-plus-circle"
-            size="large" variant="elevated" @click="requireAccessForCreation">
+          <p class="text-h6 text-grey-darken-1 mb-6">You haven't created any characters yet. Start your legendary journey today!</p>
+          <v-btn v-if="hasAccess" class="create-character-btn" color="accent" prepend-icon="mdi-plus-circle" size="large" variant="elevated" @click="requireAccessForCreation">
             Create Your First Character
           </v-btn>
-          <v-btn v-else class="create-character-btn" color="grey" prepend-icon="mdi-lock" size="large"
-            variant="outlined" @click="requireAccessForCreation">
-            Get Access to Create Characters
-          </v-btn>
+          <v-btn v-else class="create-character-btn" color="grey" prepend-icon="mdi-lock" size="large" variant="outlined" @click="requireAccessForCreation">Get Access to Create Characters</v-btn>
         </v-card>
       </div>
 
@@ -229,8 +213,7 @@
                 <div class="character-overlay pa-3">
                   <div class="d-flex align-center mb-2">
                     <v-avatar class="me-3 elevation-2" color="white" size="48">
-                      <v-img v-if="character.portrait" :aspect-ratio="1" cover height="48" :src="character.portrait"
-                        width="48">
+                      <v-img v-if="character.portrait" :aspect-ratio="1" cover height="48" :src="character.portrait" width="48">
                         <template #placeholder>
                           <div class="d-flex align-center justify-center fill-height">
                             <v-progress-circular color="grey-lighten-1" indeterminate size="20" />
@@ -252,19 +235,16 @@
                   </div>
 
                   <div class="character-subtitle">
-                    <v-tooltip location="top"
-                      text="Character's current level - determines abilities and features available">
+                    <v-tooltip location="top" text="Character's current level - determines abilities and features available">
                       <template #activator="{ props }">
-                        <v-chip v-bind="props" class="me-2" size="small"
-                          style="background: var(--theme-card-bg); color: var(--theme-text-primary); font-weight: 600;">
+                        <v-chip v-bind="props" class="me-2" size="small" style="background: var(--theme-card-bg); color: var(--theme-text-primary); font-weight: 600">
                           Level {{ character.level || 1 }}
                         </v-chip>
                       </template>
                     </v-tooltip>
                     <v-tooltip location="top" text="Experience points earned - determines when character levels up">
                       <template #activator="{ props }">
-                        <v-chip v-bind="props" class="me-2" size="small"
-                          style="background: var(--theme-card-bg); color: var(--theme-text-primary); font-weight: 600;">
+                        <v-chip v-bind="props" class="me-2" size="small" style="background: var(--theme-card-bg); color: var(--theme-text-primary); font-weight: 600">
                           XP {{ character.xp || 0 }}
                         </v-chip>
                       </template>
@@ -286,18 +266,16 @@
                 <div class="essential-stats mb-3">
                   <v-row dense>
                     <v-col cols="3">
-                      <v-card class="text-center d-flex flex-column justify-center align-center essential-stat-card"
-                        style="background: var(--theme-surface); min-height: 80px;" variant="tonal">
+                      <v-card class="text-center d-flex flex-column justify-center align-center essential-stat-card" style="background: var(--theme-surface); min-height: 80px" variant="tonal">
                         <v-icon color="error" size="small">mdi-heart</v-icon>
                         <div class="text-caption font-weight-bold">HP</div>
                         <div class="text-h6 font-weight-bold">
-                          {{ (character.level * 8) + (character.abilityScores?.constitution?.modifier || 0) }}
+                          {{ character.level * 8 + (character.abilityScores?.constitution?.modifier || 0) }}
                         </div>
                       </v-card>
                     </v-col>
                     <v-col cols="3">
-                      <v-card class="text-center d-flex flex-column justify-center align-center essential-stat-card"
-                        style="background: var(--theme-surface); min-height: 80px;" variant="tonal">
+                      <v-card class="text-center d-flex flex-column justify-center align-center essential-stat-card" style="background: var(--theme-surface); min-height: 80px" variant="tonal">
                         <v-icon color="blue-darken-2" size="small">mdi-shield</v-icon>
                         <div class="text-caption font-weight-bold">AC</div>
                         <div class="text-h6 font-weight-bold">
@@ -306,8 +284,7 @@
                       </v-card>
                     </v-col>
                     <v-col cols="3">
-                      <v-card class="text-center d-flex flex-column justify-center align-center essential-stat-card"
-                        style="background: var(--theme-surface); min-height: 80px;" variant="tonal">
+                      <v-card class="text-center d-flex flex-column justify-center align-center essential-stat-card" style="background: var(--theme-surface); min-height: 80px" variant="tonal">
                         <v-icon color="green-darken-2" size="small">mdi-run-fast</v-icon>
                         <div class="text-caption font-weight-bold">Speed</div>
                         <div class="text-h6 font-weight-bold">
@@ -316,14 +293,10 @@
                       </v-card>
                     </v-col>
                     <v-col cols="3">
-                      <v-card class="text-center d-flex flex-column justify-center align-center essential-stat-card"
-                        style="background: var(--theme-surface); min-height: 80px;" variant="tonal">
+                      <v-card class="text-center d-flex flex-column justify-center align-center essential-stat-card" style="background: var(--theme-surface); min-height: 80px" variant="tonal">
                         <v-icon color="purple-darken-2" size="small">mdi-sword-cross</v-icon>
                         <div class="text-caption font-weight-bold">Init</div>
-                        <div class="text-h6 font-weight-bold">
-                          {{ (character.abilityScores?.dexterity?.modifier || 0) >= 0 ? '+' : '' }}{{
-                            character.abilityScores?.dexterity?.modifier || 0 }}
-                        </div>
+                        <div class="text-h6 font-weight-bold">{{ (character.abilityScores?.dexterity?.modifier || 0) >= 0 ? '+' : '' }}{{ character.abilityScores?.dexterity?.modifier || 0 }}</div>
                       </v-card>
                     </v-col>
                   </v-row>
@@ -339,17 +312,14 @@
                           <span class="info-label text-blue-darken-2">Species</span>
                           <span class="info-value">
                             {{ character.speciesDetails?.name || 'Unknown' }}
-                            <span v-if="getLineageName(character)" class="subrace-text">
-                              ({{ getLineageName(character) }})
-                            </span>
+                            <span v-if="getLineageName(character)" class="subrace-text">({{ getLineageName(character) }})</span>
                           </span>
                         </div>
                       </div>
                     </v-col>
                     <v-col class="info-col" cols="6">
                       <div class="d-flex align-start mb-2">
-                        <v-icon class="me-2 mt-1 flex-shrink-0" color="purple-darken-2"
-                          size="small">mdi-compass</v-icon>
+                        <v-icon class="me-2 mt-1 flex-shrink-0" color="purple-darken-2" size="small">mdi-compass</v-icon>
                         <div class="info-content">
                           <span class="info-label text-purple-darken-2">Alignment</span>
                           <span class="info-value">{{ character.alignment || 'Neutral' }}</span>
@@ -358,8 +328,7 @@
                     </v-col>
                     <v-col class="info-col" cols="6">
                       <div class="d-flex align-start">
-                        <v-icon class="me-2 mt-1 flex-shrink-0" color="green-darken-2"
-                          size="small">mdi-book-open-page-variant</v-icon>
+                        <v-icon class="me-2 mt-1 flex-shrink-0" color="green-darken-2" size="small">mdi-book-open-page-variant</v-icon>
                         <div class="info-content">
                           <span class="info-label text-green-darken-2">Background</span>
                           <span class="info-value">{{ getBackgroundName(character) }}</span>
@@ -368,8 +337,7 @@
                     </v-col>
                     <v-col class="info-col" cols="6">
                       <div class="d-flex align-start">
-                        <v-icon class="me-2 mt-1 flex-shrink-0" color="orange-darken-2"
-                          size="small">mdi-star-outline</v-icon>
+                        <v-icon class="me-2 mt-1 flex-shrink-0" color="orange-darken-2" size="small">mdi-star-outline</v-icon>
                         <div class="info-content">
                           <span class="info-label text-orange-darken-2">Proficiency</span>
                           <span class="info-value">+{{ Math.ceil(character.level / 4) + 1 }}</span>
@@ -386,22 +354,25 @@
                     Ability Scores
                   </h4>
                   <v-row dense>
-                    <v-col
-                      v-for="abilityKey in ['strength', 'dexterity', 'constitution', 'intelligence', 'wisdom', 'charisma']"
-                      :key="abilityKey" cols="4" lg="2" md="2" sm="4">
+                    <v-col v-for="abilityKey in ['strength', 'dexterity', 'constitution', 'intelligence', 'wisdom', 'charisma']" :key="abilityKey" cols="4" lg="2" md="2" sm="4">
                       <v-card class="pa-2 text-center ability-score-card-main" variant="outlined">
                         <div class="text-caption font-weight-bold text-primary">
-                          {{ ({
-                            strength: 'STR', dexterity: 'DEX', constitution: 'CON', intelligence: 'INT', wisdom: 'WIS',
-                            charisma: 'CHA'
-                          })[abilityKey] }}
+                          {{
+                            {
+                              strength: 'STR',
+                              dexterity: 'DEX',
+                              constitution: 'CON',
+                              intelligence: 'INT',
+                              wisdom: 'WIS',
+                              charisma: 'CHA',
+                            }[abilityKey]
+                          }}
                         </div>
-                        <div class="text-h6 font-weight-bold"
-                          :class="(character.abilityScores?.[abilityKey]?.modifier ?? 0) >= 0 ? 'text-success' : 'text-error'">
-                          {{ (character.abilityScores?.[abilityKey]?.modifier ?? 0) >= 0 ? '+' : '' }}{{
-                            character.abilityScores?.[abilityKey]?.modifier ?? 0 }}
+                        <div class="text-h6 font-weight-bold" :class="(character.abilityScores?.[abilityKey]?.modifier ?? 0) >= 0 ? 'text-success' : 'text-error'">
+                          {{ (character.abilityScores?.[abilityKey]?.modifier ?? 0) >= 0 ? '+' : '' }}{{ character.abilityScores?.[abilityKey]?.modifier ?? 0 }}
                         </div>
-                        <div class="text-caption">{{ character.abilityScores?.[abilityKey]?.score ?? '-' }}
+                        <div class="text-caption">
+                          {{ character.abilityScores?.[abilityKey]?.score ?? '-' }}
                         </div>
                       </v-card>
                     </v-col>
@@ -414,50 +385,72 @@
                     <v-icon class="me-2" color="brown-darken-2" size="small">mdi-bag-personal</v-icon>
                     Starting Inventory
                   </h4>
-                  <div class="d-flex flex-wrap" style="gap: 4px;">
-                    <v-tooltip v-for="item in getCharacterInventory(character)"
-                      :key="`${item.originalName}-${item.source}`" location="top" max-width="300">
+                  <div class="d-flex flex-wrap" style="gap: 4px">
+                    <v-tooltip v-for="item in getCharacterInventory(character)" :key="`${item.originalName}-${item.source}`" location="top" max-width="300">
                       <template #activator="{ props }">
-                        <v-chip v-bind="props" :color="item.source === 'class' || item.source === 'class-default' ? 'blue-lighten-4' :
-                          item.source === 'background' ? 'green-lighten-4' :
-                            'grey-lighten-3'" size="small" variant="tonal">
+                        <v-chip
+                          v-bind="props"
+                          :color="item.source === 'class' || item.source === 'class-default' ? 'blue-lighten-4' : item.source === 'background' ? 'green-lighten-4' : 'grey-lighten-3'"
+                          size="small"
+                          variant="tonal"
+                        >
                           {{ item.name }}
                         </v-chip>
                       </template>
                       <template v-if="getEquipmentTooltip(item.originalName)" #default>
-                        <div class="text-body-2 font-weight-bold mb-1">{{ item.name }}</div>
+                        <div class="text-body-2 font-weight-bold mb-1">
+                          {{ item.name }}
+                        </div>
                         <div v-if="getEquipmentTooltip(item.originalName).type" class="text-caption mb-1">
-                          <strong>Type:</strong> {{ getEquipmentTooltip(item.originalName).type }}
+                          <strong>Type:</strong>
+                          {{ getEquipmentTooltip(item.originalName).type }}
                         </div>
                         <div v-if="getEquipmentTooltip(item.originalName).damage" class="text-caption mb-1">
-                          <strong>Damage:</strong> {{ getEquipmentTooltip(item.originalName).damage }}
+                          <strong>Damage:</strong>
+                          {{ getEquipmentTooltip(item.originalName).damage }}
                         </div>
                         <div v-if="getEquipmentTooltip(item.originalName).ac" class="text-caption mb-1">
-                          <strong>AC:</strong> {{ getEquipmentTooltip(item.originalName).ac }}
+                          <strong>AC:</strong>
+                          {{ getEquipmentTooltip(item.originalName).ac }}
                         </div>
-                        <div
-                          v-if="getEquipmentTooltip(item.originalName).properties && getEquipmentTooltip(item.originalName).properties !== 'None'"
-                          class="text-caption mb-1">
-                          <strong>Properties:</strong> {{ getEquipmentTooltip(item.originalName).properties }}
+                        <div v-if="getEquipmentTooltip(item.originalName).properties && getEquipmentTooltip(item.originalName).properties !== 'None'" class="text-caption mb-1">
+                          <strong>Properties:</strong>
+                          {{ getEquipmentTooltip(item.originalName).properties }}
                         </div>
                         <div class="text-caption mt-2">
                           {{ getEquipmentTooltip(item.originalName).description }}
                         </div>
-                        <div class="text-caption mt-2 font-weight-bold" style="color: #1976d2;">
-                          Source: {{ item.source === 'class' || item.source === 'class-default' ? 'Class Equipment' :
-                            item.source === 'background' ? 'Background Equipment' :
-                              item.source === 'purchased' ? 'Purchased with Gold' :
-                                'Starting Equipment' }}
+                        <div class="text-caption mt-2 font-weight-bold" style="color: #1976d2">
+                          Source:
+                          {{
+                            item.source === 'class' || item.source === 'class-default'
+                              ? 'Class Equipment'
+                              : item.source === 'background'
+                                ? 'Background Equipment'
+                                : item.source === 'purchased'
+                                  ? 'Purchased with Gold'
+                                  : 'Starting Equipment'
+                          }}
                         </div>
                       </template>
                       <template v-else #default>
-                        <div class="text-body-2 font-weight-bold mb-1">{{ item.name }}</div>
-                        <div class="text-caption">{{ item.description || 'No description available' }}</div>
-                        <div class="text-caption mt-2 font-weight-bold" style="color: #1976d2;">
-                          Source: {{ item.source === 'class' || item.source === 'class-default' ? 'Class Equipment' :
-                            item.source === 'background' ? 'Background Equipment' :
-                              item.source === 'purchased' ? 'Purchased with Gold' :
-                                'Starting Equipment' }}
+                        <div class="text-body-2 font-weight-bold mb-1">
+                          {{ item.name }}
+                        </div>
+                        <div class="text-caption">
+                          {{ item.description || 'No description available' }}
+                        </div>
+                        <div class="text-caption mt-2 font-weight-bold" style="color: #1976d2">
+                          Source:
+                          {{
+                            item.source === 'class' || item.source === 'class-default'
+                              ? 'Class Equipment'
+                              : item.source === 'background'
+                                ? 'Background Equipment'
+                                : item.source === 'purchased'
+                                  ? 'Purchased with Gold'
+                                  : 'Starting Equipment'
+                          }}
                         </div>
                       </template>
                     </v-tooltip>
@@ -472,22 +465,18 @@
                         <v-icon class="me-2" color="primary" size="small">mdi-information-outline</v-icon>
                         <span class="text-subtitle-2 font-weight-bold">Show More Details</span>
                         <v-spacer />
-                        <v-chip color="primary" size="x-small" variant="tonal">
-                          {{ getCharacterDetailsCount(character) }} items
-                        </v-chip>
+                        <v-chip color="primary" size="x-small" variant="tonal">{{ getCharacterDetailsCount(character) }} items</v-chip>
                       </div>
                     </v-expansion-panel-title>
                     <v-expansion-panel-text class="pa-3">
-
                       <!-- Notable Features -->
                       <div v-if="getNotableFeatures(character).length > 0" class="notable-features mb-4">
                         <h4 class="text-subtitle-2 font-weight-bold mb-2 d-flex align-center">
                           <v-icon class="me-2" color="amber-darken-2" size="small">mdi-star-circle</v-icon>
                           Notable Features
                         </h4>
-                        <div class="d-flex flex-wrap" style="gap: 4px;">
-                          <v-chip v-for="feature in getNotableFeatures(character)" :key="feature" color="accent"
-                            size="small" variant="elevated">
+                        <div class="d-flex flex-wrap" style="gap: 4px">
+                          <v-chip v-for="feature in getNotableFeatures(character)" :key="feature" color="accent" size="small" variant="elevated">
                             {{ feature }}
                           </v-chip>
                         </div>
@@ -499,9 +488,8 @@
                           <v-icon class="me-2" color="green-darken-2" size="small">mdi-brain</v-icon>
                           Skill Proficiencies
                         </h4>
-                        <div class="d-flex flex-wrap" style="gap: 4px;">
-                          <v-tooltip v-for="skill in getCharacterSkills(character)" :key="skill" location="top"
-                            text="A trained ability that can be used for various actions and checks">
+                        <div class="d-flex flex-wrap" style="gap: 4px">
+                          <v-tooltip v-for="skill in getCharacterSkills(character)" :key="skill" location="top" text="A trained ability that can be used for various actions and checks">
                             <template #activator="{ props }">
                               <v-chip v-bind="props" color="green-lighten-4" size="small" variant="tonal">
                                 {{ skill }}
@@ -517,9 +505,8 @@
                           <v-icon class="me-2" color="purple-darken-2" size="small">mdi-translate</v-icon>
                           Languages
                         </h4>
-                        <div class="d-flex flex-wrap" style="gap: 4px;">
-                          <v-tooltip v-for="lang in getCharacterLanguages(character)" :key="lang" location="top"
-                            text="A language this character can speak, read, and write">
+                        <div class="d-flex flex-wrap" style="gap: 4px">
+                          <v-tooltip v-for="lang in getCharacterLanguages(character)" :key="lang" location="top" text="A language this character can speak, read, and write">
                             <template #activator="{ props }">
                               <v-chip v-bind="props" color="purple-lighten-4" size="small" variant="tonal">
                                 {{ lang }}
@@ -535,9 +522,8 @@
                           <v-icon class="me-2" color="orange-darken-2" size="small">mdi-tools</v-icon>
                           Tool Proficiencies
                         </h4>
-                        <div class="d-flex flex-wrap" style="gap: 4px;">
-                          <v-tooltip v-for="tool in getCharacterTools(character)" :key="tool" location="top"
-                            text="Equipment or tools this character is trained to use effectively">
+                        <div class="d-flex flex-wrap" style="gap: 4px">
+                          <v-tooltip v-for="tool in getCharacterTools(character)" :key="tool" location="top" text="Equipment or tools this character is trained to use effectively">
                             <template #activator="{ props }">
                               <v-chip v-bind="props" color="orange-lighten-4" size="small" variant="tonal">
                                 {{ tool }}
@@ -546,7 +532,6 @@
                           </v-tooltip>
                         </div>
                       </div>
-
                     </v-expansion-panel-text>
                   </v-expansion-panel>
                 </v-expansion-panels>
@@ -556,9 +541,15 @@
               <v-card-actions class="pa-4 pt-0">
                 <v-row dense>
                   <v-col cols="8">
-                    <v-btn block class="admin-action-btn" :class="{ 'admin-protected': !adminStore.isAdminUser }"
-                      :color="adminStore.isAdminUser ? 'primary' : 'grey'" size="large" variant="elevated"
-                      @click="editCharacter(character)">
+                    <v-btn
+                      block
+                      class="admin-action-btn"
+                      :class="{ 'admin-protected': !adminStore.isAdminUser }"
+                      :color="adminStore.isAdminUser ? 'primary' : 'grey'"
+                      size="large"
+                      variant="elevated"
+                      @click="editCharacter(character)"
+                    >
                       <template #prepend>
                         <v-icon>{{ adminStore.isAdminUser ? 'mdi-pencil' : 'mdi-shield-key' }}</v-icon>
                       </template>
@@ -566,10 +557,16 @@
                     </v-btn>
                   </v-col>
                   <v-col cols="4">
-                    <v-btn block class="admin-action-btn" :class="{ 'admin-protected': !adminStore.isAdminUser }"
-                      :color="adminStore.isAdminUser ? 'error' : 'grey'" size="large"
-                      :title="adminStore.isAdminUser ? 'Delete Character' : 'Delete (Admin Only)'" variant="outlined"
-                      @click="confirmDelete(character)">
+                    <v-btn
+                      block
+                      class="admin-action-btn"
+                      :class="{ 'admin-protected': !adminStore.isAdminUser }"
+                      :color="adminStore.isAdminUser ? 'error' : 'grey'"
+                      size="large"
+                      :title="adminStore.isAdminUser ? 'Delete Character' : 'Delete (Admin Only)'"
+                      variant="outlined"
+                      @click="confirmDelete(character)"
+                    >
                       <v-icon>{{ adminStore.isAdminUser ? 'mdi-delete' : 'mdi-shield-key' }}</v-icon>
                     </v-btn>
                   </v-col>
@@ -590,18 +587,16 @@
         </v-card-title>
         <v-card-text class="text-body-1">
           <p class="mb-3">
-            Are you sure you want to delete <strong>"{{ selectedCharacter?.name }}"</strong>?
+            Are you sure you want to delete
+            <strong>"{{ selectedCharacter?.name }}"</strong>
+            ?
           </p>
-          <v-alert class="mb-0" type="warning" variant="tonal">
-            This action cannot be undone. All character data will be permanently lost.
-          </v-alert>
+          <v-alert class="mb-0" type="warning" variant="tonal">This action cannot be undone. All character data will be permanently lost.</v-alert>
         </v-card-text>
         <v-card-actions class="pa-4">
           <v-spacer />
           <v-btn variant="outlined" @click="deleteDialog = false">Cancel</v-btn>
-          <v-btn color="error" prepend-icon="mdi-delete" variant="elevated" @click="deleteCharacter">
-            Delete Forever
-          </v-btn>
+          <v-btn color="error" prepend-icon="mdi-delete" variant="elevated" @click="deleteCharacter">Delete Forever</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -615,17 +610,14 @@
         </v-card-title>
         <v-card-text class="text-body-1">
           <p class="mb-3">
-            <strong>"{{ deletedCharacterName }}"</strong> has been successfully deleted.
+            <strong>"{{ deletedCharacterName }}"</strong>
+            has been successfully deleted.
           </p>
-          <v-alert class="mb-0" type="success" variant="tonal">
-            All character data has been permanently removed.
-          </v-alert>
+          <v-alert class="mb-0" type="success" variant="tonal">All character data has been permanently removed.</v-alert>
         </v-card-text>
         <v-card-actions class="pa-4">
           <v-spacer />
-          <v-btn color="primary" variant="elevated" @click="goHome">
-            Return Home
-          </v-btn>
+          <v-btn color="primary" variant="elevated" @click="goHome">Return Home</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -636,6 +628,7 @@
 </template>
 
 <script setup>
+/* eslint-disable */
 import { computed, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import AdminAuthDialog from '@/components/AdminAuthDialog.vue'
@@ -646,13 +639,10 @@ import { useFirestore } from '@/composables/useFirestore'
 const router = useRouter()
 const { getCharacters, deleteCharacter: deleteFromFirestore } = useFirestore()
 const adminStore = useAdminStore()
-const {
-  logout,
-  extendSession,
-} = useAdminAuth()
+const { logout, extendSession } = useAdminAuth()
 
-const hasAccess = computed(() => adminStore.isAccessValid)
-const requireAccess = adminStore.requireAccess
+// Regular users always have access; only admin actions require auth
+const hasAccess = computed(() => true)
 
 // Reactive data
 const characters = ref([])
@@ -665,7 +655,7 @@ const deleteSuccessDialog = ref(false)
 const deletedCharacterName = ref('')
 
 // Helper functions for styling
-const getCharacterHeaderStyle = character => {
+const getCharacterHeaderStyle = (character) => {
   const classColors = {
     Barbarian: 'linear-gradient(135deg, #8B4513 0%, #A0522D 100%)',
     Bard: 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)',
@@ -692,7 +682,7 @@ const getCharacterHeaderStyle = character => {
   }
 }
 
-const getClassIcon = className => {
+const getClassIcon = (className) => {
   const classIcons = {
     Barbarian: 'mdi-axe',
     Bard: 'mdi-music',
@@ -710,7 +700,7 @@ const getClassIcon = className => {
   return classIcons[className] || 'mdi-account'
 }
 
-const getClassColor = className => {
+const getClassColor = (className) => {
   const classColors = {
     Barbarian: '#8B4513',
     Bard: '#FFD700',
@@ -729,7 +719,7 @@ const getClassColor = className => {
 }
 
 // Get notable features for a character
-const getNotableFeatures = character => {
+const getNotableFeatures = (character) => {
   const features = []
 
   // Add racial traits
@@ -750,7 +740,7 @@ const getNotableFeatures = character => {
       Monk: ['Martial Arts', 'Ki'],
       Paladin: ['Divine Sense', 'Lay on Hands'],
       Ranger: ['Favored Enemy', 'Natural Explorer'],
-      Rogue: ['Sneak Attack', 'Thieves\' Cant'],
+      Rogue: ['Sneak Attack', "Thieves' Cant"],
       Sorcerer: ['Spellcasting', 'Sorcerous Origin'],
       Warlock: ['Otherworldly Patron', 'Pact Magic'],
       Wizard: ['Spellcasting', 'Arcane Recovery'],
@@ -769,7 +759,7 @@ const getNotableFeatures = character => {
 }
 
 // Helper function for character details expansion count
-const getCharacterDetailsCount = character => {
+const getCharacterDetailsCount = (character) => {
   let count = 0
 
   // Count notable features
@@ -790,15 +780,15 @@ const getCharacterDetailsCount = character => {
   return count
 }
 
-const getLineageName = character => {
+const getLineageName = (character) => {
   if (!character.speciesLineage || !character.speciesDetails?.lineages) return ''
-  const lineage = character.speciesDetails.lineages.find(l => l.id === character.speciesLineage)
+  const lineage = character.speciesDetails.lineages.find((l) => l.id === character.speciesLineage)
   return lineage?.name || character.speciesLineage
 }
 
-const getBackgroundName = character => {
+const getBackgroundName = (character) => {
   // Utility function to capitalize first letter
-  const capitalizeFirst = str => {
+  const capitalizeFirst = (str) => {
     if (!str) return str
     return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase()
   }
@@ -811,16 +801,16 @@ const getBackgroundName = character => {
   // Otherwise, look up the name from the background ID
   if (character.background) {
     const backgroundMap = {
-      'acolyte': 'Acolyte',
-      'criminal': 'Criminal',
+      acolyte: 'Acolyte',
+      criminal: 'Criminal',
       'folk-hero': 'Folk Hero',
-      'noble': 'Noble',
-      'sage': 'Sage',
-      'soldier': 'Soldier',
-      'hermit': 'Hermit',
-      'entertainer': 'Entertainer',
+      noble: 'Noble',
+      sage: 'Sage',
+      soldier: 'Soldier',
+      hermit: 'Hermit',
+      entertainer: 'Entertainer',
       'guild-artisan': 'Guild Artisan',
-      'outlander': 'Outlander',
+      outlander: 'Outlander',
     }
     return backgroundMap[character.background] || capitalizeFirst(character.background)
   }
@@ -828,7 +818,7 @@ const getBackgroundName = character => {
   return 'Unknown'
 }
 
-const getCharacterLanguages = character => {
+const getCharacterLanguages = (character) => {
   const languages = []
 
   // Add common/standard languages (Basic D&D assumption)
@@ -837,14 +827,14 @@ const getCharacterLanguages = character => {
   // Add species languages
   if (character.speciesDetails?.name) {
     const speciesLanguages = {
-      'Dragonborn': ['Draconic'],
-      'Dwarf': ['Dwarvish'],
-      'Elf': ['Elvish'],
-      'Gnome': ['Gnomish'],
+      Dragonborn: ['Draconic'],
+      Dwarf: ['Dwarvish'],
+      Elf: ['Elvish'],
+      Gnome: ['Gnomish'],
       'Half-Elf': ['Elvish'],
-      'Halfling': ['Halfling'],
+      Halfling: ['Halfling'],
       'Half-Orc': ['Orc'],
-      'Tiefling': ['Infernal'],
+      Tiefling: ['Infernal'],
     }
     const speciesLangs = speciesLanguages[character.speciesDetails.name] || []
     languages.push(...speciesLangs)
@@ -858,18 +848,18 @@ const getCharacterLanguages = character => {
   return [...new Set(languages)] // Remove duplicates
 }
 
-const getCharacterTools = character => {
+const getCharacterTools = (character) => {
   const tools = []
 
   // Add background tools (common examples)
   if (character.backgroundDetails?.name) {
     const backgroundTools = {
-      'Acolyte': [],
-      'Criminal': ['Thieves\' Tools'],
-      'Folk Hero': ['Smith\'s Tools', 'Vehicles (Land)'],
-      'Noble': ['Gaming Set'],
-      'Sage': [],
-      'Soldier': ['Gaming Set', 'Vehicles (Land)'],
+      Acolyte: [],
+      Criminal: ["Thieves' Tools"],
+      'Folk Hero': ["Smith's Tools", 'Vehicles (Land)'],
+      Noble: ['Gaming Set'],
+      Sage: [],
+      Soldier: ['Gaming Set', 'Vehicles (Land)'],
     }
     const bgTools = backgroundTools[character.backgroundDetails.name] || []
     tools.push(...bgTools)
@@ -883,57 +873,55 @@ const getCharacterTools = character => {
   return [...new Set(tools)] // Remove duplicates
 }
 
-const getCharacterInventory = character => {
-  console.log('=== CHARACTER INVENTORY FROM SNAPSHOT ===');
+const getCharacterInventory = (character) => {
+  console.log('=== CHARACTER INVENTORY FROM SNAPSHOT ===')
 
   // Check if finalInventory exists and is complete (has equipment choices)
-  const hasCompleteInventory = character?.finalInventory &&
-    Array.isArray(character.finalInventory) &&
-    character.finalInventory.length > 4; // More than just basic starting equipment
+  const hasCompleteInventory = character?.finalInventory && Array.isArray(character.finalInventory) && character.finalInventory.length > 4 // More than just basic starting equipment
 
   if (hasCompleteInventory) {
-    console.log('Using complete finalInventory snapshot:', character.finalInventory);
+    console.log('Using complete finalInventory snapshot:', character.finalInventory)
 
     // Format display names with quantities
-    const inventory = character.finalInventory.map(item => ({
+    const inventory = character.finalInventory.map((item) => ({
       ...item,
       originalName: item.name,
       name: item.quantity > 1 ? `${item.name} (${item.quantity})` : item.name,
-    }));
+    }))
 
     // Sort inventory: weapons first, then armor, then other items
     inventory.sort((a, b) => {
-      const aName = a.originalName.toLowerCase();
-      const bName = b.originalName.toLowerCase();
+      const aName = a.originalName.toLowerCase()
+      const bName = b.originalName.toLowerCase()
 
       // Weapons first
-      const aIsWeapon = aName.includes('sword') || aName.includes('axe') || aName.includes('bow') ||
-        aName.includes('dagger') || aName.includes('spear') || aName.includes('mace') || aName.includes('javelin');
-      const bIsWeapon = bName.includes('sword') || bName.includes('axe') || bName.includes('bow') ||
-        bName.includes('dagger') || bName.includes('spear') || bName.includes('mace') || bName.includes('javelin');
+      const aIsWeapon =
+        aName.includes('sword') || aName.includes('axe') || aName.includes('bow') || aName.includes('dagger') || aName.includes('spear') || aName.includes('mace') || aName.includes('javelin')
+      const bIsWeapon =
+        bName.includes('sword') || bName.includes('axe') || bName.includes('bow') || bName.includes('dagger') || bName.includes('spear') || bName.includes('mace') || bName.includes('javelin')
 
       // Armor second
-      const aIsArmor = aName.includes('armor') || aName.includes('mail') || aName === 'shield';
-      const bIsArmor = bName.includes('armor') || bName.includes('mail') || bName === 'shield';
+      const aIsArmor = aName.includes('armor') || aName.includes('mail') || aName === 'shield'
+      const bIsArmor = bName.includes('armor') || bName.includes('mail') || bName === 'shield'
 
-      if (aIsWeapon && !bIsWeapon) return -1;
-      if (bIsWeapon && !aIsWeapon) return 1;
-      if (aIsArmor && !bIsArmor && !bIsWeapon) return -1;
-      if (bIsArmor && !aIsArmor && !aIsWeapon) return 1;
+      if (aIsWeapon && !bIsWeapon) return -1
+      if (bIsWeapon && !aIsWeapon) return 1
+      if (aIsArmor && !bIsArmor && !bIsWeapon) return -1
+      if (bIsArmor && !aIsArmor && !aIsWeapon) return 1
 
       // Alphabetical for items in same category
-      return aName.localeCompare(bName);
-    });
+      return aName.localeCompare(bName)
+    })
 
-    return inventory;
+    return inventory
   }
 
   // Rebuild inventory for incomplete snapshots or missing finalInventory
-  console.log('Rebuilding inventory - incomplete or missing finalInventory. Current finalInventory:', character?.finalInventory);
-  console.log('Character equipment array (raw):', character?.equipment);
+  console.log('Rebuilding inventory - incomplete or missing finalInventory. Current finalInventory:', character?.finalInventory)
+  console.log('Character equipment array (raw):', character?.equipment)
 
   // Build corrected inventory using the same logic as CharacterSummary
-  const correctedInventory = [];
+  const correctedInventory = []
 
   // COPY EXACT EQUIPMENT CHOICES STRUCTURE FROM CharacterSummary
   const equipmentChoicesData = {
@@ -943,12 +931,20 @@ const getCharacterInventory = character => {
         options: [
           {
             items: [
-              { name: 'Scale Mail', quantity: 1, description: 'Medium armor, AC 14 + Dex modifier (max 2)' },
+              {
+                name: 'Scale Mail',
+                quantity: 1,
+                description: 'Medium armor, AC 14 + Dex modifier (max 2)',
+              },
             ],
           },
           {
             items: [
-              { name: 'Leather Armor', quantity: 1, description: 'Light armor, AC 11 + Dex modifier' },
+              {
+                name: 'Leather Armor',
+                quantity: 1,
+                description: 'Light armor, AC 11 + Dex modifier',
+              },
             ],
           },
         ],
@@ -958,12 +954,20 @@ const getCharacterInventory = character => {
         options: [
           {
             items: [
-              { name: 'Shortsword', quantity: 2, description: 'Martial weapon, 1d6 piercing, finesse' },
+              {
+                name: 'Shortsword',
+                quantity: 2,
+                description: 'Martial weapon, 1d6 piercing, finesse',
+              },
             ],
           },
           {
             items: [
-              { name: 'Handaxe', quantity: 2, description: 'Simple weapon, 1d6 slashing, thrown' },
+              {
+                name: 'Handaxe',
+                quantity: 2,
+                description: 'Simple weapon, 1d6 slashing, thrown',
+              },
             ],
           },
         ],
@@ -973,12 +977,20 @@ const getCharacterInventory = character => {
         options: [
           {
             items: [
-              { name: "Dungeoneer's Pack", quantity: 1, description: 'Backpack, crowbar, hammer, 10 pitons, 10 torches, tinderbox, 10 days of rations, waterskin, 50 feet of hemp rope' },
+              {
+                name: "Dungeoneer's Pack",
+                quantity: 1,
+                description: 'Backpack, crowbar, hammer, 10 pitons, 10 torches, tinderbox, 10 days of rations, waterskin, 50 feet of hemp rope',
+              },
             ],
           },
           {
             items: [
-              { name: "Explorer's Pack", quantity: 1, description: 'Backpack, bedroll, mess kit, tinderbox, 10 torches, 10 days of rations, waterskin, 50 feet of hemp rope' },
+              {
+                name: "Explorer's Pack",
+                quantity: 1,
+                description: 'Backpack, bedroll, mess kit, tinderbox, 10 torches, 10 days of rations, waterskin, 50 feet of hemp rope',
+              },
             ],
           },
         ],
@@ -990,12 +1002,20 @@ const getCharacterInventory = character => {
         options: [
           {
             items: [
-              { name: 'Rapier', quantity: 1, description: 'Martial weapon, 1d8 piercing, finesse' },
+              {
+                name: 'Rapier',
+                quantity: 1,
+                description: 'Martial weapon, 1d8 piercing, finesse',
+              },
             ],
           },
           {
             items: [
-              { name: 'Shortsword', quantity: 1, description: 'Martial weapon, 1d6 piercing, finesse' },
+              {
+                name: 'Shortsword',
+                quantity: 1,
+                description: 'Martial weapon, 1d6 piercing, finesse',
+              },
             ],
           },
         ],
@@ -1005,13 +1025,25 @@ const getCharacterInventory = character => {
         options: [
           {
             items: [
-              { name: 'Shortbow', quantity: 1, description: 'Ranged weapon, 1d6 piercing' },
-              { name: 'Arrow', quantity: 20, description: 'Ammunition for shortbow' },
+              {
+                name: 'Shortbow',
+                quantity: 1,
+                description: 'Ranged weapon, 1d6 piercing',
+              },
+              {
+                name: 'Arrow',
+                quantity: 20,
+                description: 'Ammunition for shortbow',
+              },
             ],
           },
           {
             items: [
-              { name: 'Shortsword', quantity: 1, description: 'Martial weapon, 1d6 piercing, finesse' },
+              {
+                name: 'Shortsword',
+                quantity: 1,
+                description: 'Martial weapon, 1d6 piercing, finesse',
+              },
             ],
           },
         ],
@@ -1021,133 +1053,208 @@ const getCharacterInventory = character => {
         options: [
           {
             items: [
-              { name: "Burglar's Pack", quantity: 1, description: 'Backpack, bag of 1000 ball bearings, 10 feet of string, bell, 5 candles, crowbar, hammer, 10 pitons, hooded lantern, 2 flasks of oil, 5 days rations, tinderbox, waterskin, 50 feet of hempen rope' },
+              {
+                name: "Burglar's Pack",
+                quantity: 1,
+                description:
+                  'Backpack, bag of 1000 ball bearings, 10 feet of string, bell, 5 candles, crowbar, hammer, 10 pitons, hooded lantern, 2 flasks of oil, 5 days rations, tinderbox, waterskin, 50 feet of hempen rope',
+              },
             ],
           },
           {
             items: [
-              { name: "Dungeoneer's Pack", quantity: 1, description: 'Backpack, crowbar, hammer, 10 pitons, 10 torches, tinderbox, 10 days of rations, waterskin, 50 feet of hemp rope' },
+              {
+                name: "Dungeoneer's Pack",
+                quantity: 1,
+                description: 'Backpack, crowbar, hammer, 10 pitons, 10 torches, tinderbox, 10 days of rations, waterskin, 50 feet of hemp rope',
+              },
             ],
           },
           {
             items: [
-              { name: "Explorer's Pack", quantity: 1, description: 'Backpack, bedroll, mess kit, tinderbox, 10 torches, 10 days of rations, waterskin, 50 feet of hemp rope' },
+              {
+                name: "Explorer's Pack",
+                quantity: 1,
+                description: 'Backpack, bedroll, mess kit, tinderbox, 10 torches, 10 days of rations, waterskin, 50 feet of hemp rope',
+              },
             ],
           },
         ],
       },
     ],
-  };
+  }
 
   // Add equipment from choices using the SAME LOGIC as CharacterSummary
-  const selectedChoices = character.equipmentChoices || [];
-  const className = character.class?.toLowerCase();
-  const classEquipmentChoices = equipmentChoicesData[className] || [];
+  const selectedChoices = character.equipmentChoices || []
+  const className = character.class?.toLowerCase()
+  const classEquipmentChoices = equipmentChoicesData[className] || []
 
-  console.log('Character cards - processing equipment choices for', className, 'with selections:', selectedChoices);
+  console.log('Character cards - processing equipment choices for', className, 'with selections:', selectedChoices)
 
   classEquipmentChoices.forEach((choice, choiceIndex) => {
-    const selectedOptionIndex = selectedChoices[choiceIndex];
+    const selectedOptionIndex = selectedChoices[choiceIndex]
     if (selectedOptionIndex !== null && selectedOptionIndex !== undefined) {
-      const selectedOption = choice.options?.[selectedOptionIndex];
+      const selectedOption = choice.options?.[selectedOptionIndex]
       if (selectedOption && selectedOption.items) {
-        selectedOption.items.forEach(item => {
-          console.log(`Character cards - adding equipment choice: ${item.name} x${item.quantity || 1}`);
+        selectedOption.items.forEach((item) => {
+          console.log(`Character cards - adding equipment choice: ${item.name} x${item.quantity || 1}`)
           correctedInventory.push({
             name: item.name,
             source: 'class',
             quantity: item.quantity || 1,
             category: 'gear', // Simplified for character cards
-          });
-        });
+          })
+        })
       }
     }
-  });
+  })
 
   // Track items already added from choices to avoid duplicates
-  const itemsFromChoices = correctedInventory.map(item => item.name.toLowerCase());
+  const itemsFromChoices = correctedInventory.map((item) => item.name.toLowerCase())
 
   // Add class starting equipment based on class (but avoid duplicates)
   if (className === 'ranger') {
     if (!itemsFromChoices.includes('longbow')) {
-      correctedInventory.push({ name: 'Longbow', source: 'class-default', quantity: 1, category: 'weapon' });
+      correctedInventory.push({
+        name: 'Longbow',
+        source: 'class-default',
+        quantity: 1,
+        category: 'weapon',
+      })
     }
     if (!itemsFromChoices.includes('arrow')) {
-      correctedInventory.push({ name: 'Arrow', source: 'class-default', quantity: 20, category: 'gear' });
+      correctedInventory.push({
+        name: 'Arrow',
+        source: 'class-default',
+        quantity: 20,
+        category: 'gear',
+      })
     }
   } else if (className === 'rogue') {
     if (!itemsFromChoices.includes('leather armor')) {
-      correctedInventory.push({ name: 'Leather Armor', source: 'class-default', quantity: 1, category: 'armor' });
+      correctedInventory.push({
+        name: 'Leather Armor',
+        source: 'class-default',
+        quantity: 1,
+        category: 'armor',
+      })
     }
     if (!itemsFromChoices.includes('dagger')) {
-      correctedInventory.push({ name: 'Dagger', source: 'class-default', quantity: 2, category: 'weapon' });
+      correctedInventory.push({
+        name: 'Dagger',
+        source: 'class-default',
+        quantity: 2,
+        category: 'weapon',
+      })
     }
     if (!itemsFromChoices.includes("thieves' tools")) {
-      correctedInventory.push({ name: "Thieves' Tools", source: 'class-default', quantity: 1, category: 'tool' });
+      correctedInventory.push({
+        name: "Thieves' Tools",
+        source: 'class-default',
+        quantity: 1,
+        category: 'tool',
+      })
     }
   }
 
   // Add background equipment based on background
-  const backgroundName = character.background?.toLowerCase();
+  const backgroundName = character.background?.toLowerCase()
   if (backgroundName === 'criminal') {
-    correctedInventory.push({ name: 'Crowbar', source: 'background', quantity: 1, category: 'tool' });
-    correctedInventory.push({ name: 'Dark Common Clothes', source: 'background', quantity: 1, category: 'gear' });
-    correctedInventory.push({ name: 'Belt Pouch', source: 'background', quantity: 1, category: 'gear' });
+    correctedInventory.push({
+      name: 'Crowbar',
+      source: 'background',
+      quantity: 1,
+      category: 'tool',
+    })
+    correctedInventory.push({
+      name: 'Dark Common Clothes',
+      source: 'background',
+      quantity: 1,
+      category: 'gear',
+    })
+    correctedInventory.push({
+      name: 'Belt Pouch',
+      source: 'background',
+      quantity: 1,
+      category: 'gear',
+    })
   } else if (backgroundName === 'acolyte') {
-    correctedInventory.push({ name: 'Holy Symbol', source: 'background', quantity: 1, category: 'tool' });
-    correctedInventory.push({ name: 'Prayer Book', source: 'background', quantity: 1, category: 'gear' });
-    correctedInventory.push({ name: 'Incense', source: 'background', quantity: 5, category: 'gear' });
+    correctedInventory.push({
+      name: 'Holy Symbol',
+      source: 'background',
+      quantity: 1,
+      category: 'tool',
+    })
+    correctedInventory.push({
+      name: 'Prayer Book',
+      source: 'background',
+      quantity: 1,
+      category: 'gear',
+    })
+    correctedInventory.push({
+      name: 'Incense',
+      source: 'background',
+      quantity: 5,
+      category: 'gear',
+    })
   }
 
   // Track all items already added
-  const allItemsAdded = correctedInventory.map(item => item.name.toLowerCase());
+  const allItemsAdded = correctedInventory.map((item) => item.name.toLowerCase())
 
   // Add basic starting equipment (but avoid duplicates)
-  const hasClothes = allItemsAdded.some(name =>
-    name.includes('clothes') || name.includes('costume') || name.includes('vestments')
-  );
+  const hasClothes = allItemsAdded.some((name) => name.includes('clothes') || name.includes('costume') || name.includes('vestments'))
   if (!hasClothes) {
-    correctedInventory.push({ name: 'Common Clothes', source: 'basic', quantity: 1, category: 'gear' });
+    correctedInventory.push({
+      name: 'Common Clothes',
+      source: 'basic',
+      quantity: 1,
+      category: 'gear',
+    })
   }
 
-  const hasPouch = allItemsAdded.some(name =>
-    name.includes('pouch') || name.includes('bag') || name.includes('sack')
-  );
+  const hasPouch = allItemsAdded.some((name) => name.includes('pouch') || name.includes('bag') || name.includes('sack'))
   if (!hasPouch) {
-    correctedInventory.push({ name: 'Pouch', source: 'basic', quantity: 1, category: 'gear' });
+    correctedInventory.push({
+      name: 'Pouch',
+      source: 'basic',
+      quantity: 1,
+      category: 'gear',
+    })
   }
 
   // Sort inventory by category: weapons first, then armor, tools, gear, packs last
-  const categoryOrder = { weapon: 1, armor: 2, tool: 3, gear: 4, pack: 5 };
+  const categoryOrder = { weapon: 1, armor: 2, tool: 3, gear: 4, pack: 5 }
 
   correctedInventory.sort((a, b) => {
-    const orderA = categoryOrder[a.category] || 6;
-    const orderB = categoryOrder[b.category] || 6;
+    const orderA = categoryOrder[a.category] || 6
+    const orderB = categoryOrder[b.category] || 6
 
     if (orderA !== orderB) {
-      return orderA - orderB;
+      return orderA - orderB
     }
 
     // Within same category, sort alphabetically
-    return a.name.localeCompare(b.name);
-  });
+    return a.name.localeCompare(b.name)
+  })
 
   // Format display names with quantities and add originalName
-  const formattedInventory = correctedInventory.map(item => ({
+  const formattedInventory = correctedInventory.map((item) => ({
     ...item,
     originalName: item.name,
     name: item.quantity > 1 ? `${item.name} (${item.quantity})` : item.name,
-  }));
+  }))
 
-  console.log('Corrected inventory:', formattedInventory);
-  return formattedInventory;
+  console.log('Corrected inventory:', formattedInventory)
+  return formattedInventory
 }
 
-const getEquipmentTooltip = itemName => {
-  if (!itemName) return null;
+const getEquipmentTooltip = (itemName) => {
+  if (!itemName) return null
 
   // Clean the item name
-  const cleanName = itemName.toLowerCase()
+  const cleanName = itemName
+    .toLowerCase()
     .replace(/^\d+\s*x?\s*/i, '') // Remove quantity prefix like "2x" or "2 "
     .replace(/\s*x\d+$/i, '') // Remove quantity suffix like " x2"
     .replace(/\s*\(\w+\)$/i, '') // Remove parenthetical like " (longsword)"
@@ -1155,133 +1262,399 @@ const getEquipmentTooltip = itemName => {
 
   const tooltips = {
     // Weapons
-    'rapier': { type: 'Martial Melee Weapon', damage: '1d8 piercing', properties: 'Finesse', description: 'A slender, sharply pointed sword ideal for thrusting attacks.' },
-    'dagger': { type: 'Simple Melee Weapon', damage: '1d4 piercing', properties: 'Finesse, Light, Thrown (range 20/60)', description: 'A simple, pointed blade. Can be thrown or used in melee.' },
-    'longsword': { type: 'Martial Melee Weapon', damage: '1d8 slashing', properties: 'Versatile (1d10)', description: 'A standard long blade weapon favored by many warriors.' },
-    'shortsword': { type: 'Martial Melee Weapon', damage: '1d6 piercing', properties: 'Finesse, Light', description: 'A short blade that is quick and nimble to use.' },
-    'scimitar': { type: 'Martial Melee Weapon', damage: '1d6 slashing', properties: 'Finesse, Light', description: 'A curved blade weapon that is both quick and deadly.' },
-    'handaxe': { type: 'Simple Melee Weapon', damage: '1d6 slashing', properties: 'Light, Thrown (range 20/60)', description: 'A small axe balanced for throwing or close combat.' },
-    'javelin': { type: 'Simple Melee Weapon', damage: '1d6 piercing', properties: 'Thrown (range 30/120)', description: 'A light spear designed for throwing.' },
-    'light crossbow': { type: 'Simple Ranged Weapon', damage: '1d8 piercing', properties: 'Ammunition (range 80/320), Loading, Two-handed', description: 'A smaller, easier to use crossbow that requires bolts.' },
-    'shortbow': { type: 'Simple Ranged Weapon', damage: '1d6 piercing', properties: 'Ammunition (range 80/320), Two-handed', description: 'A compact bow suitable for hunting and combat.' },
-    'crossbow bolts': { type: 'Ammunition', description: 'Ammunition for crossbows. Sold in bundles of 20.' },
+    rapier: {
+      type: 'Martial Melee Weapon',
+      damage: '1d8 piercing',
+      properties: 'Finesse',
+      description: 'A slender, sharply pointed sword ideal for thrusting attacks.',
+    },
+    dagger: {
+      type: 'Simple Melee Weapon',
+      damage: '1d4 piercing',
+      properties: 'Finesse, Light, Thrown (range 20/60)',
+      description: 'A simple, pointed blade. Can be thrown or used in melee.',
+    },
+    longsword: {
+      type: 'Martial Melee Weapon',
+      damage: '1d8 slashing',
+      properties: 'Versatile (1d10)',
+      description: 'A standard long blade weapon favored by many warriors.',
+    },
+    shortsword: {
+      type: 'Martial Melee Weapon',
+      damage: '1d6 piercing',
+      properties: 'Finesse, Light',
+      description: 'A short blade that is quick and nimble to use.',
+    },
+    scimitar: {
+      type: 'Martial Melee Weapon',
+      damage: '1d6 slashing',
+      properties: 'Finesse, Light',
+      description: 'A curved blade weapon that is both quick and deadly.',
+    },
+    handaxe: {
+      type: 'Simple Melee Weapon',
+      damage: '1d6 slashing',
+      properties: 'Light, Thrown (range 20/60)',
+      description: 'A small axe balanced for throwing or close combat.',
+    },
+    javelin: {
+      type: 'Simple Melee Weapon',
+      damage: '1d6 piercing',
+      properties: 'Thrown (range 30/120)',
+      description: 'A light spear designed for throwing.',
+    },
+    'light crossbow': {
+      type: 'Simple Ranged Weapon',
+      damage: '1d8 piercing',
+      properties: 'Ammunition (range 80/320), Loading, Two-handed',
+      description: 'A smaller, easier to use crossbow that requires bolts.',
+    },
+    shortbow: {
+      type: 'Simple Ranged Weapon',
+      damage: '1d6 piercing',
+      properties: 'Ammunition (range 80/320), Two-handed',
+      description: 'A compact bow suitable for hunting and combat.',
+    },
+    'crossbow bolts': {
+      type: 'Ammunition',
+      description: 'Ammunition for crossbows. Sold in bundles of 20.',
+    },
 
     // Armor
-    'leather armor': { type: 'Light Armor', ac: '11 + Dex modifier', properties: 'None', description: 'The breastplate and shoulder protectors of this armor are made of leather that has been stiffened by being boiled in oil.' },
-    'studded leather': { type: 'Light Armor', ac: '12 + Dex modifier', properties: 'None', description: 'Made from tough but flexible leather, studded leather is reinforced with close-set rivets or spikes.' },
-    'chain mail': { type: 'Heavy Armor', ac: '16', properties: 'Stealth Disadvantage', description: 'Made of interlocking metal rings. The suit includes gauntlets.' },
-    'scale mail': { type: 'Medium Armor', ac: '14 + Dex modifier (max 2)', properties: 'Stealth Disadvantage', description: 'This armor consists of a coat and leggings of leather covered with overlapping pieces of metal.' },
-    'shield': { type: 'Shield', ac: '+2', properties: 'None', description: 'A shield is made from wood or metal and is carried in one hand. Wielding a shield increases your Armor Class by 2.' },
+    'leather armor': {
+      type: 'Light Armor',
+      ac: '11 + Dex modifier',
+      properties: 'None',
+      description: 'The breastplate and shoulder protectors of this armor are made of leather that has been stiffened by being boiled in oil.',
+    },
+    'studded leather': {
+      type: 'Light Armor',
+      ac: '12 + Dex modifier',
+      properties: 'None',
+      description: 'Made from tough but flexible leather, studded leather is reinforced with close-set rivets or spikes.',
+    },
+    'chain mail': {
+      type: 'Heavy Armor',
+      ac: '16',
+      properties: 'Stealth Disadvantage',
+      description: 'Made of interlocking metal rings. The suit includes gauntlets.',
+    },
+    'scale mail': {
+      type: 'Medium Armor',
+      ac: '14 + Dex modifier (max 2)',
+      properties: 'Stealth Disadvantage',
+      description: 'This armor consists of a coat and leggings of leather covered with overlapping pieces of metal.',
+    },
+    shield: {
+      type: 'Shield',
+      ac: '+2',
+      properties: 'None',
+      description: 'A shield is made from wood or metal and is carried in one hand. Wielding a shield increases your Armor Class by 2.',
+    },
 
     // Equipment Packs
-    'entertainer\'s pack': {
+    "entertainer's pack": {
       type: 'Equipment Pack',
       description: 'Includes a backpack, a bedroll, 2 costumes, 5 candles, 5 days of rations, a waterskin, and a disguise kit.',
       contents: ['Backpack', 'Bedroll', '2 Costumes', '5 Candles', '5 days of rations', 'Waterskin', 'Disguise kit'],
     },
-    'diplomat\'s pack': {
+    "diplomat's pack": {
       type: 'Equipment Pack',
-      description: 'Includes a chest, 2 cases for maps and scrolls, a set of fine clothes, a bottle of ink, an ink pen, a lamp, 2 flasks of oil, 5 sheets of paper, a vial of perfume, sealing wax, and soap.',
+      description:
+        'Includes a chest, 2 cases for maps and scrolls, a set of fine clothes, a bottle of ink, an ink pen, a lamp, 2 flasks of oil, 5 sheets of paper, a vial of perfume, sealing wax, and soap.',
       contents: ['Chest', '2 Map/Scroll Cases', 'Fine Clothes', 'Ink Bottle', 'Ink Pen', 'Lamp', '2 Oil Flasks', '5 Sheets Paper', 'Perfume Vial', 'Sealing Wax', 'Soap'],
     },
-    'dungeoneer\'s pack': {
+    "dungeoneer's pack": {
       type: 'Equipment Pack',
       description: 'Includes a backpack, a crowbar, a hammer, 10 pitons, 10 torches, a tinderbox, 10 days of rations, and a waterskin.',
       contents: ['Backpack', 'Crowbar', 'Hammer', '10 Pitons', '10 Torches', 'Tinderbox', '10 days of rations', 'Waterskin'],
     },
-    'explorer\'s pack': {
+    "explorer's pack": {
       type: 'Equipment Pack',
       description: 'Includes a backpack, a bedroll, a mess kit, a tinderbox, 10 torches, 10 days of rations, a waterskin, and 50 feet of hemp rope.',
       contents: ['Backpack', 'Bedroll', 'Mess kit', 'Tinderbox', '10 Torches', '10 days of rations', 'Waterskin', '50 ft hemp rope'],
     },
-    'priest\'s pack': {
+    "priest's pack": {
       type: 'Equipment Pack',
       description: 'Includes a backpack, a blanket, 10 candles, a tinderbox, an alms box, 2 blocks of incense, a censer, vestments, 2 days of rations, and a waterskin.',
       contents: ['Backpack', 'Blanket', '10 Candles', 'Tinderbox', 'Alms box', '2 Incense blocks', 'Censer', 'Vestments', '2 days of rations', 'Waterskin'],
     },
-    'scholar\'s pack': {
+    "scholar's pack": {
       type: 'Equipment Pack',
       description: 'Includes a backpack, a book of lore, a bottle of ink, an ink pen, 10 sheets of parchment, a little bag of sand, and a small knife.',
       contents: ['Backpack', 'Book of lore', 'Ink bottle', 'Ink pen', '10 Parchment sheets', 'Bag of sand', 'Small knife'],
     },
-    'burglar\'s pack': {
+    "burglar's pack": {
       type: 'Equipment Pack',
-      description: 'Includes a backpack, a bag of 1,000 ball bearings, 10 feet of string, a bell, 5 candles, a crowbar, a hammer, 10 pitons, a hooded lantern, 2 flasks of oil, 5 days rations, a tinderbox, a waterskin, and 50 feet of hempen rope.',
-      contents: ['Backpack', '1,000 Ball bearings', '10 ft String', 'Bell', '5 Candles', 'Crowbar', 'Hammer', '10 Pitons', 'Hooded lantern', '2 Oil flasks', '5 days rations', 'Tinderbox', 'Waterskin', '50 ft hemp rope'],
+      description:
+        'Includes a backpack, a bag of 1,000 ball bearings, 10 feet of string, a bell, 5 candles, a crowbar, a hammer, 10 pitons, a hooded lantern, 2 flasks of oil, 5 days rations, a tinderbox, a waterskin, and 50 feet of hempen rope.',
+      contents: [
+        'Backpack',
+        '1,000 Ball bearings',
+        '10 ft String',
+        'Bell',
+        '5 Candles',
+        'Crowbar',
+        'Hammer',
+        '10 Pitons',
+        'Hooded lantern',
+        '2 Oil flasks',
+        '5 days rations',
+        'Tinderbox',
+        'Waterskin',
+        '50 ft hemp rope',
+      ],
     },
 
     // Tools
-    'carpenter\'s tools': { type: 'Artisan\'s Tools', description: 'These special tools include the items needed to pursue a craft or trade. Proficiency with these tools lets you add your proficiency bonus to any ability checks you make to craft objects with wood.' },
-    'potter\'s tools': { type: 'Artisan\'s Tools', description: 'These special tools include the items needed to pursue a craft or trade. Proficiency with these tools lets you add your proficiency bonus to any ability checks you make to craft objects with clay.' },
-    'smith\'s tools': { type: 'Artisan\'s Tools', description: 'These special tools include the items needed to pursue a craft or trade. Proficiency with these tools lets you add your proficiency bonus to any ability checks you make to craft metal objects.' },
-    'brewer\'s supplies': { type: 'Artisan\'s Tools', description: 'These special supplies include the items needed to pursue a craft or trade. Proficiency with these supplies lets you add your proficiency bonus to any ability checks you make to brew beer, ale, and other alcoholic beverages.' },
-    'calligrapher\'s supplies': { type: 'Artisan\'s Tools', description: 'These special supplies include the items needed to pursue a craft or trade. Proficiency with these supplies lets you add your proficiency bonus to any ability checks you make to create beautiful writing.' },
-    'cartographer\'s tools': { type: 'Artisan\'s Tools', description: 'These special tools include the items needed to pursue a craft or trade. Proficiency with these tools lets you add your proficiency bonus to any ability checks you make to create maps.' },
-    'cobbler\'s tools': { type: 'Artisan\'s Tools', description: 'These special tools include the items needed to pursue a craft or trade. Proficiency with these tools lets you add your proficiency bonus to any ability checks you make to craft and repair shoes.' },
-    'cook\'s utensils': { type: 'Artisan\'s Tools', description: 'These special utensils include the items needed to pursue a craft or trade. Proficiency with these utensils lets you add your proficiency bonus to any ability checks you make to prepare meals.' },
-    'glassblower\'s tools': { type: 'Artisan\'s Tools', description: 'These special tools include the items needed to pursue a craft or trade. Proficiency with these tools lets you add your proficiency bonus to any ability checks you make to craft glass objects.' },
-    'jeweler\'s tools': { type: 'Artisan\'s Tools', description: 'These special tools include the items needed to pursue a craft or trade. Proficiency with these tools lets you add your proficiency bonus to any ability checks you make to craft jewelry and appraise gems.' },
-    'leatherworker\'s tools': { type: 'Artisan\'s Tools', description: 'These special tools include the items needed to pursue a craft or trade. Proficiency with these tools lets you add your proficiency bonus to any ability checks you make to craft leather goods.' },
-    'mason\'s tools': { type: 'Artisan\'s Tools', description: 'These special tools include the items needed to pursue a craft or trade. Proficiency with these tools lets you add your proficiency bonus to any ability checks you make to craft stone structures.' },
-    'painter\'s supplies': { type: 'Artisan\'s Tools', description: 'These special supplies include the items needed to pursue a craft or trade. Proficiency with these supplies lets you add your proficiency bonus to any ability checks you make to create paintings.' },
-    'tinker\'s tools': { type: 'Artisan\'s Tools', description: 'These special tools include the items needed to pursue a craft or trade. Proficiency with these tools lets you add your proficiency bonus to any ability checks you make to craft and repair mechanical devices.' },
-    'weaver\'s tools': { type: 'Artisan\'s Tools', description: 'These special tools include the items needed to pursue a craft or trade. Proficiency with these tools lets you add your proficiency bonus to any ability checks you make to craft cloth and textiles.' },
-    'woodcarver\'s tools': { type: 'Artisan\'s Tools', description: 'These special tools include the items needed to pursue a craft or trade. Proficiency with these tools lets you add your proficiency bonus to any ability checks you make to craft wooden objects.' },
-    'thieves\' tools': { type: 'Tools', description: 'This set of tools includes a small file, a set of lock picks, a small mirror mounted on a metal handle, a set of narrow-bladed scissors, and a pair of pliers.' },
+    "carpenter's tools": {
+      type: "Artisan's Tools",
+      description:
+        'These special tools include the items needed to pursue a craft or trade. Proficiency with these tools lets you add your proficiency bonus to any ability checks you make to craft objects with wood.',
+    },
+    "potter's tools": {
+      type: "Artisan's Tools",
+      description:
+        'These special tools include the items needed to pursue a craft or trade. Proficiency with these tools lets you add your proficiency bonus to any ability checks you make to craft objects with clay.',
+    },
+    "smith's tools": {
+      type: "Artisan's Tools",
+      description:
+        'These special tools include the items needed to pursue a craft or trade. Proficiency with these tools lets you add your proficiency bonus to any ability checks you make to craft metal objects.',
+    },
+    "brewer's supplies": {
+      type: "Artisan's Tools",
+      description:
+        'These special supplies include the items needed to pursue a craft or trade. Proficiency with these supplies lets you add your proficiency bonus to any ability checks you make to brew beer, ale, and other alcoholic beverages.',
+    },
+    "calligrapher's supplies": {
+      type: "Artisan's Tools",
+      description:
+        'These special supplies include the items needed to pursue a craft or trade. Proficiency with these supplies lets you add your proficiency bonus to any ability checks you make to create beautiful writing.',
+    },
+    "cartographer's tools": {
+      type: "Artisan's Tools",
+      description:
+        'These special tools include the items needed to pursue a craft or trade. Proficiency with these tools lets you add your proficiency bonus to any ability checks you make to create maps.',
+    },
+    "cobbler's tools": {
+      type: "Artisan's Tools",
+      description:
+        'These special tools include the items needed to pursue a craft or trade. Proficiency with these tools lets you add your proficiency bonus to any ability checks you make to craft and repair shoes.',
+    },
+    "cook's utensils": {
+      type: "Artisan's Tools",
+      description:
+        'These special utensils include the items needed to pursue a craft or trade. Proficiency with these utensils lets you add your proficiency bonus to any ability checks you make to prepare meals.',
+    },
+    "glassblower's tools": {
+      type: "Artisan's Tools",
+      description:
+        'These special tools include the items needed to pursue a craft or trade. Proficiency with these tools lets you add your proficiency bonus to any ability checks you make to craft glass objects.',
+    },
+    "jeweler's tools": {
+      type: "Artisan's Tools",
+      description:
+        'These special tools include the items needed to pursue a craft or trade. Proficiency with these tools lets you add your proficiency bonus to any ability checks you make to craft jewelry and appraise gems.',
+    },
+    "leatherworker's tools": {
+      type: "Artisan's Tools",
+      description:
+        'These special tools include the items needed to pursue a craft or trade. Proficiency with these tools lets you add your proficiency bonus to any ability checks you make to craft leather goods.',
+    },
+    "mason's tools": {
+      type: "Artisan's Tools",
+      description:
+        'These special tools include the items needed to pursue a craft or trade. Proficiency with these tools lets you add your proficiency bonus to any ability checks you make to craft stone structures.',
+    },
+    "painter's supplies": {
+      type: "Artisan's Tools",
+      description:
+        'These special supplies include the items needed to pursue a craft or trade. Proficiency with these supplies lets you add your proficiency bonus to any ability checks you make to create paintings.',
+    },
+    "tinker's tools": {
+      type: "Artisan's Tools",
+      description:
+        'These special tools include the items needed to pursue a craft or trade. Proficiency with these tools lets you add your proficiency bonus to any ability checks you make to craft and repair mechanical devices.',
+    },
+    "weaver's tools": {
+      type: "Artisan's Tools",
+      description:
+        'These special tools include the items needed to pursue a craft or trade. Proficiency with these tools lets you add your proficiency bonus to any ability checks you make to craft cloth and textiles.',
+    },
+    "woodcarver's tools": {
+      type: "Artisan's Tools",
+      description:
+        'These special tools include the items needed to pursue a craft or trade. Proficiency with these tools lets you add your proficiency bonus to any ability checks you make to craft wooden objects.',
+    },
+    "thieves' tools": {
+      type: 'Tools',
+      description: 'This set of tools includes a small file, a set of lock picks, a small mirror mounted on a metal handle, a set of narrow-bladed scissors, and a pair of pliers.',
+    },
 
     // Musical Instruments
-    'bagpipes': { type: 'Musical Instrument', description: 'If you have proficiency with bagpipes, you can add your proficiency bonus to any ability checks you make to play music with the instrument. The haunting sound of bagpipes can inspire allies or intimidate enemies.' },
-    'lute': { type: 'Musical Instrument', description: 'If you have proficiency with a lute, you can add your proficiency bonus to any ability checks you make to play music with the instrument. The melodic strings of a lute are perfect for entertainment and bardic magic.' },
-    'flute': { type: 'Musical Instrument', description: 'If you have proficiency with a flute, you can add your proficiency bonus to any ability checks you make to play music with the instrument. The clear, sweet notes of a flute can carry far and wide.' },
-    'drum': { type: 'Musical Instrument', description: 'If you have proficiency with drums, you can add your proficiency bonus to any ability checks you make to play music with the instrument. The rhythmic beat of drums can rally troops and set the pace for marching.' },
-    'dulcimer': { type: 'Musical Instrument', description: 'If you have proficiency with a dulcimer, you can add your proficiency bonus to any ability checks you make to play music with the instrument. The gentle plucked strings create soothing melodies.' },
-    'horn': { type: 'Musical Instrument', description: 'If you have proficiency with a horn, you can add your proficiency bonus to any ability checks you make to play music with the instrument. The bold call of a horn can signal across great distances.' },
-    'lyre': { type: 'Musical Instrument', description: 'If you have proficiency with a lyre, you can add your proficiency bonus to any ability checks you make to play music with the instrument. The classical strings of a lyre evoke ancient traditions.' },
-    'pan flute': { type: 'Musical Instrument', description: 'If you have proficiency with a pan flute, you can add your proficiency bonus to any ability checks you make to play music with the instrument. The breathy notes create pastoral melodies.' },
-    'shawm': { type: 'Musical Instrument', description: 'If you have proficiency with a shawm, you can add your proficiency bonus to any ability checks you make to play music with the instrument. This double-reed instrument produces loud, penetrating tones.' },
-    'viol': { type: 'Musical Instrument', description: 'If you have proficiency with a viol, you can add your proficiency bonus to any ability checks you make to play music with the instrument. The bowed strings create rich, expressive tones.' },
+    bagpipes: {
+      type: 'Musical Instrument',
+      description:
+        'If you have proficiency with bagpipes, you can add your proficiency bonus to any ability checks you make to play music with the instrument. The haunting sound of bagpipes can inspire allies or intimidate enemies.',
+    },
+    lute: {
+      type: 'Musical Instrument',
+      description:
+        'If you have proficiency with a lute, you can add your proficiency bonus to any ability checks you make to play music with the instrument. The melodic strings of a lute are perfect for entertainment and bardic magic.',
+    },
+    flute: {
+      type: 'Musical Instrument',
+      description:
+        'If you have proficiency with a flute, you can add your proficiency bonus to any ability checks you make to play music with the instrument. The clear, sweet notes of a flute can carry far and wide.',
+    },
+    drum: {
+      type: 'Musical Instrument',
+      description:
+        'If you have proficiency with drums, you can add your proficiency bonus to any ability checks you make to play music with the instrument. The rhythmic beat of drums can rally troops and set the pace for marching.',
+    },
+    dulcimer: {
+      type: 'Musical Instrument',
+      description:
+        'If you have proficiency with a dulcimer, you can add your proficiency bonus to any ability checks you make to play music with the instrument. The gentle plucked strings create soothing melodies.',
+    },
+    horn: {
+      type: 'Musical Instrument',
+      description:
+        'If you have proficiency with a horn, you can add your proficiency bonus to any ability checks you make to play music with the instrument. The bold call of a horn can signal across great distances.',
+    },
+    lyre: {
+      type: 'Musical Instrument',
+      description:
+        'If you have proficiency with a lyre, you can add your proficiency bonus to any ability checks you make to play music with the instrument. The classical strings of a lyre evoke ancient traditions.',
+    },
+    'pan flute': {
+      type: 'Musical Instrument',
+      description:
+        'If you have proficiency with a pan flute, you can add your proficiency bonus to any ability checks you make to play music with the instrument. The breathy notes create pastoral melodies.',
+    },
+    shawm: {
+      type: 'Musical Instrument',
+      description:
+        'If you have proficiency with a shawm, you can add your proficiency bonus to any ability checks you make to play music with the instrument. This double-reed instrument produces loud, penetrating tones.',
+    },
+    viol: {
+      type: 'Musical Instrument',
+      description:
+        'If you have proficiency with a viol, you can add your proficiency bonus to any ability checks you make to play music with the instrument. The bowed strings create rich, expressive tones.',
+    },
 
     // Common items
-    'common clothes': { type: 'Adventuring Gear', description: 'Everyday clothing suitable for commoners and workers.' },
-    'belt pouch': { type: 'Adventuring Gear', description: 'A small pouch that can hold up to 20 sling bullets or 50 blowgun needles, among other things.' },
-    'shovel': { type: 'Adventuring Gear', description: 'A tool for digging and moving earth.' },
-    'backpack': { type: 'Adventuring Gear', description: 'A leather pack carried on the back, typically holding 30 pounds of gear.' },
-    'bedroll': { type: 'Adventuring Gear', description: 'A sleeping bag and blanket used for resting during travel.' },
-    'blanket': { type: 'Adventuring Gear', description: 'A warm cloth covering used for sleeping or warmth.' },
-    'tinderbox': { type: 'Adventuring Gear', description: 'A small container holding flint, fire steel, and tinder for starting fires.' },
-    'torch': { type: 'Adventuring Gear', description: 'A wooden rod with one end wrapped in cloth soaked in oil. Burns for 1 hour providing bright light.' },
-    'candle': { type: 'Adventuring Gear', description: 'A small wax candle that burns for 1 hour providing dim light in a 5-foot radius.' },
-    'rations': { type: 'Adventuring Gear', description: 'Dry foods suitable for extended travel. One day\'s worth of food for one person.' },
-    'waterskin': { type: 'Adventuring Gear', description: 'A leather container for holding water during travel.' },
-    'hemp rope': { type: 'Adventuring Gear', description: 'Strong rope made from hemp fibers, useful for climbing and securing equipment.' },
-    'hempen rope': { type: 'Adventuring Gear', description: 'Strong rope made from hemp fibers, useful for climbing and securing equipment.' },
-    'crowbar': { type: 'Adventuring Gear', description: 'A metal bar used as a lever to pry objects apart or open containers.' },
-    'hammer': { type: 'Adventuring Gear', description: 'A tool with a heavy head used for driving nails or breaking objects.' },
-    'piton': { type: 'Adventuring Gear', description: 'A metal spike that can be driven into rock or wood to serve as an anchor point.' },
-    'lantern': { type: 'Adventuring Gear', description: 'A portable light source that burns oil to provide bright illumination.' },
-    'oil flask': { type: 'Adventuring Gear', description: 'A small container of oil that can fuel lanterns or be used as a weapon when ignited.' },
-    'mess kit': { type: 'Adventuring Gear', description: 'A set of eating utensils and cookware for preparing and consuming meals while traveling.' },
-    'rope': { type: 'Adventuring Gear', description: 'Strong rope useful for climbing and securing equipment.' },
-    'fine clothes': { type: 'Clothing', description: 'Elegant clothing made from fine materials. Provides advantage on social interactions with nobles and wealthy merchants.' },
-    'set of fine clothes': { type: 'Clothing', description: 'Elegant clothing made from fine materials. Provides advantage on social interactions with nobles and wealthy merchants.' },
-    'disguise kit': { type: 'Tools', description: 'This kit includes cosmetics, hair dye, small props, and clothing necessary to create a disguise.' },
-  };
+    'common clothes': {
+      type: 'Adventuring Gear',
+      description: 'Everyday clothing suitable for commoners and workers.',
+    },
+    'belt pouch': {
+      type: 'Adventuring Gear',
+      description: 'A small pouch that can hold up to 20 sling bullets or 50 blowgun needles, among other things.',
+    },
+    shovel: {
+      type: 'Adventuring Gear',
+      description: 'A tool for digging and moving earth.',
+    },
+    backpack: {
+      type: 'Adventuring Gear',
+      description: 'A leather pack carried on the back, typically holding 30 pounds of gear.',
+    },
+    bedroll: {
+      type: 'Adventuring Gear',
+      description: 'A sleeping bag and blanket used for resting during travel.',
+    },
+    blanket: {
+      type: 'Adventuring Gear',
+      description: 'A warm cloth covering used for sleeping or warmth.',
+    },
+    tinderbox: {
+      type: 'Adventuring Gear',
+      description: 'A small container holding flint, fire steel, and tinder for starting fires.',
+    },
+    torch: {
+      type: 'Adventuring Gear',
+      description: 'A wooden rod with one end wrapped in cloth soaked in oil. Burns for 1 hour providing bright light.',
+    },
+    candle: {
+      type: 'Adventuring Gear',
+      description: 'A small wax candle that burns for 1 hour providing dim light in a 5-foot radius.',
+    },
+    rations: {
+      type: 'Adventuring Gear',
+      description: "Dry foods suitable for extended travel. One day's worth of food for one person.",
+    },
+    waterskin: {
+      type: 'Adventuring Gear',
+      description: 'A leather container for holding water during travel.',
+    },
+    'hemp rope': {
+      type: 'Adventuring Gear',
+      description: 'Strong rope made from hemp fibers, useful for climbing and securing equipment.',
+    },
+    'hempen rope': {
+      type: 'Adventuring Gear',
+      description: 'Strong rope made from hemp fibers, useful for climbing and securing equipment.',
+    },
+    crowbar: {
+      type: 'Adventuring Gear',
+      description: 'A metal bar used as a lever to pry objects apart or open containers.',
+    },
+    hammer: {
+      type: 'Adventuring Gear',
+      description: 'A tool with a heavy head used for driving nails or breaking objects.',
+    },
+    piton: {
+      type: 'Adventuring Gear',
+      description: 'A metal spike that can be driven into rock or wood to serve as an anchor point.',
+    },
+    lantern: {
+      type: 'Adventuring Gear',
+      description: 'A portable light source that burns oil to provide bright illumination.',
+    },
+    'oil flask': {
+      type: 'Adventuring Gear',
+      description: 'A small container of oil that can fuel lanterns or be used as a weapon when ignited.',
+    },
+    'mess kit': {
+      type: 'Adventuring Gear',
+      description: 'A set of eating utensils and cookware for preparing and consuming meals while traveling.',
+    },
+    rope: {
+      type: 'Adventuring Gear',
+      description: 'Strong rope useful for climbing and securing equipment.',
+    },
+    'fine clothes': {
+      type: 'Clothing',
+      description: 'Elegant clothing made from fine materials. Provides advantage on social interactions with nobles and wealthy merchants.',
+    },
+    'set of fine clothes': {
+      type: 'Clothing',
+      description: 'Elegant clothing made from fine materials. Provides advantage on social interactions with nobles and wealthy merchants.',
+    },
+    'disguise kit': {
+      type: 'Tools',
+      description: 'This kit includes cosmetics, hair dye, small props, and clothing necessary to create a disguise.',
+    },
+  }
 
-  return tooltips[cleanName] || null;
+  return tooltips[cleanName] || null
 }
 
-const getCharacterSkills = character => {
+const getCharacterSkills = (character) => {
   const skills = []
 
   // Add background skills (common examples)
   if (character.backgroundDetails?.name) {
     const backgroundSkills = {
-      'Acolyte': ['Insight', 'Religion'],
-      'Criminal': ['Deception', 'Stealth'],
+      Acolyte: ['Insight', 'Religion'],
+      Criminal: ['Deception', 'Stealth'],
       'Folk Hero': ['Animal Handling', 'Survival'],
-      'Noble': ['History', 'Persuasion'],
-      'Sage': ['Arcana', 'History'],
-      'Soldier': ['Athletics', 'Intimidation'],
+      Noble: ['History', 'Persuasion'],
+      Sage: ['Arcana', 'History'],
+      Soldier: ['Athletics', 'Intimidation'],
     }
     const bgSkills = backgroundSkills[character.backgroundDetails.name] || []
     skills.push(...bgSkills)
@@ -1317,7 +1690,7 @@ const loadCharacters = async () => {
 }
 
 // Edit character - requires admin authentication
-const editCharacter = character => {
+const editCharacter = (character) => {
   adminStore.requireAdminAccess(() => {
     router.push({
       name: 'CharacterForm',
@@ -1327,8 +1700,7 @@ const editCharacter = character => {
 }
 
 // Confirm character deletion - requires admin authentication
-const confirmDelete = character => {
-
+const confirmDelete = (character) => {
   adminStore.requireAdminAccess(() => {
     selectedCharacter.value = character
     deleteDialog.value = true
@@ -1344,7 +1716,7 @@ const deleteCharacter = async () => {
 
     if (result.success) {
       // Remove from local array
-      characters.value = characters.value.filter(c => c.id !== selectedCharacter.value.id)
+      characters.value = characters.value.filter((c) => c.id !== selectedCharacter.value.id)
 
       // Show success dialog
       deletedCharacterName.value = selectedCharacter.value.name
@@ -1384,10 +1756,8 @@ const adminLogout = () => {
 
 // Require access for character creation
 const requireAccessForCreation = () => {
-  requireAccess(() => {
-    // Navigate to character form
-    router.push('/character-form')
-  })
+  // Navigate to character form without requiring group access
+  router.push('/character-form')
 }
 
 // Go home after successful deletion
@@ -1498,16 +1868,16 @@ onMounted(() => {
 
 /* Admin login chip styles */
 .v-chip[data-admin-login] {
-  background: linear-gradient(135deg, #FFA726 0%, #FF9800 100%) !important;
+  background: linear-gradient(135deg, #ffa726 0%, #ff9800 100%) !important;
   color: #000000 !important;
-  box-shadow: 0 2px 8px rgba(255, 152, 0, 0.3);
+  box-shadow: none;
   transition: all 0.3s ease;
-  animation: gentle-pulse 3s ease-in-out infinite;
+  animation: none;
   cursor: pointer;
 }
 
 .v-chip[data-admin-login]:hover {
-  background: linear-gradient(135deg, #FFB74D 0%, #FFA726 100%) !important;
+  background: linear-gradient(135deg, #ffb74d 0%, #ffa726 100%) !important;
   color: #000000 !important;
   box-shadow: 0 4px 12px rgba(255, 152, 0, 0.4);
   transform: translateY(-1px);
@@ -1543,7 +1913,6 @@ onMounted(() => {
 }
 
 @keyframes gentle-pulse {
-
   0%,
   100% {
     box-shadow: 0 2px 8px rgba(255, 152, 0, 0.3);

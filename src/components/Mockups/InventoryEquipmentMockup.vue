@@ -1,9 +1,7 @@
 <template>
   <v-card flat>
     <v-card-title class="text-h4 text-center mb-4">🎒 Inventory & Equipment</v-card-title>
-    <v-card-subtitle class="text-center mb-4">
-      Physical items your character owns and carries
-    </v-card-subtitle>
+    <v-card-subtitle class="text-center mb-4">Physical items your character owns and carries</v-card-subtitle>
 
     <!-- Equipment Method Selection -->
     <v-card class="mb-6" variant="outlined">
@@ -11,48 +9,30 @@
         <v-icon class="mr-2" color="primary">mdi-package-variant</v-icon>
         Equipment Method
       </v-card-title>
-      <v-card-subtitle class="text-body-2">
-        Choose how to acquire your starting equipment
-      </v-card-subtitle>
+      <v-card-subtitle class="text-body-2">Choose how to acquire your starting equipment</v-card-subtitle>
 
       <v-card-text>
         <v-radio-group v-model="equipmentMethod">
           <v-row>
             <v-col cols="12" md="6">
-              <v-card
-                class="pa-4 cursor-pointer h-100"
-                :color="equipmentMethod === 'class' ? 'primary' : 'default'"
-                variant="outlined"
-                @click="equipmentMethod = 'class'"
-              >
+              <v-card class="pa-4 cursor-pointer h-100" :color="equipmentMethod === 'class' ? 'primary' : 'default'" variant="outlined" @click="equipmentMethod = 'class'">
                 <div class="d-flex align-center mb-2">
                   <v-radio value="class" />
                   <v-icon class="ml-2 mr-2">mdi-package-variant</v-icon>
                   <span class="font-weight-medium">Class Equipment Package</span>
                 </div>
-                <div class="text-body-2 text-medium-emphasis">
-                  Get a curated set of equipment based on your class and background.
-                  Quick and balanced for new players.
-                </div>
+                <div class="text-body-2 text-medium-emphasis">Get a curated set of equipment based on your class and background. Quick and balanced for new players.</div>
               </v-card>
             </v-col>
 
             <v-col cols="12" md="6">
-              <v-card
-                class="pa-4 cursor-pointer h-100"
-                :color="equipmentMethod === 'gold' ? 'primary' : 'default'"
-                variant="outlined"
-                @click="equipmentMethod = 'gold'"
-              >
+              <v-card class="pa-4 cursor-pointer h-100" :color="equipmentMethod === 'gold' ? 'primary' : 'default'" variant="outlined" @click="equipmentMethod = 'gold'">
                 <div class="d-flex align-center mb-2">
                   <v-radio value="gold" />
                   <v-icon class="ml-2 mr-2">mdi-gold</v-icon>
                   <span class="font-weight-medium">Buy with Starting Gold</span>
                 </div>
-                <div class="text-body-2 text-medium-emphasis">
-                  Start with gold and purchase exactly what you want.
-                  Maximum customization for experienced players.
-                </div>
+                <div class="text-body-2 text-medium-emphasis">Start with gold and purchase exactly what you want. Maximum customization for experienced players.</div>
               </v-card>
             </v-col>
           </v-row>
@@ -61,10 +41,9 @@
         <!-- Starting Gold Display -->
         <v-alert v-if="equipmentMethod === 'gold'" class="mt-4" type="success" variant="tonal">
           <v-icon>mdi-gold</v-icon>
-          <strong>Starting Gold:</strong> 175 gp
-          <div class="text-body-2 mt-1">
-            Use this to purchase weapons, armor, and adventuring gear below
-          </div>
+          <strong>Starting Gold:</strong>
+          175 gp
+          <div class="text-body-2 mt-1">Use this to purchase weapons, armor, and adventuring gear below</div>
         </v-alert>
       </v-card-text>
     </v-card>
@@ -82,9 +61,7 @@
               3 Owned
             </v-chip>
           </v-card-title>
-          <v-card-subtitle class="text-body-2">
-            Physical weapons in your possession
-          </v-card-subtitle>
+          <v-card-subtitle class="text-body-2">Physical weapons in your possession</v-card-subtitle>
 
           <v-card-text class="pa-2">
             <v-list density="comfortable">
@@ -156,9 +133,7 @@
               2 Pieces
             </v-chip>
           </v-card-title>
-          <v-card-subtitle class="text-body-2">
-            Protective gear you wear and carry
-          </v-card-subtitle>
+          <v-card-subtitle class="text-body-2">Protective gear you wear and carry</v-card-subtitle>
 
           <v-card-text class="pa-2">
             <v-list density="comfortable">
@@ -224,9 +199,7 @@
           12 Items
         </v-chip>
       </v-card-title>
-      <v-card-subtitle class="text-body-2">
-        Tools, supplies, and equipment in your inventory
-      </v-card-subtitle>
+      <v-card-subtitle class="text-body-2">Tools, supplies, and equipment in your inventory</v-card-subtitle>
 
       <v-card-text>
         <!-- Gear organized by category -->
@@ -241,9 +214,7 @@
                 <v-chip color="purple" size="small" variant="elevated">Owned Items</v-chip>
               </v-card-title>
               <v-card-text>
-                <div class="text-body-2 text-medium-emphasis mb-3">
-                  Actual tool sets you carry (separate from proficiency)
-                </div>
+                <div class="text-body-2 text-medium-emphasis mb-3">Actual tool sets you carry (separate from proficiency)</div>
 
                 <!-- List of owned physical tools -->
                 <v-chip class="mr-2 mb-2" color="purple" size="small" variant="tonal">
@@ -251,21 +222,15 @@
                   Smith's Tools
                 </v-chip>
 
-                <v-btn
-                  block
-                  class="mt-2"
-                  color="purple"
-                  size="small"
-                  variant="outlined"
-                >
+                <v-btn block class="mt-2" color="purple" size="small" variant="outlined">
                   <v-icon start>mdi-plus</v-icon>
                   Buy Tools
                 </v-btn>
 
                 <v-alert class="mt-3" density="compact" type="info" variant="tonal">
                   <div class="text-caption">
-                    <strong>Note:</strong> Having proficiency ≠ owning the tool.
-                    You need both proficiency (from Page 3) and the physical tool to get bonuses.
+                    <strong>Note:</strong>
+                    Having proficiency ≠ owning the tool. You need both proficiency (from Page 3) and the physical tool to get bonuses.
                   </div>
                 </v-alert>
               </v-card-text>
@@ -282,9 +247,7 @@
                 <v-chip color="indigo" size="small" variant="elevated">Owned Items</v-chip>
               </v-card-title>
               <v-card-text>
-                <div class="text-body-2 text-medium-emphasis mb-3">
-                  Instruments you physically carry
-                </div>
+                <div class="text-body-2 text-medium-emphasis mb-3">Instruments you physically carry</div>
 
                 <v-chip class="mr-2 mb-2" color="indigo" size="small" variant="tonal">
                   <v-icon size="x-small" start>mdi-package</v-icon>
@@ -293,8 +256,8 @@
 
                 <v-alert class="mt-3" density="compact" type="info" variant="tonal">
                   <div class="text-caption">
-                    <strong>Note:</strong> Instrument proficiency (Page 3) + owning the instrument = performance
-                    bonuses.
+                    <strong>Note:</strong>
+                    Instrument proficiency (Page 3) + owning the instrument = performance bonuses.
                   </div>
                 </v-alert>
               </v-card-text>
@@ -309,9 +272,7 @@
             General Equipment
           </v-card-title>
           <v-card-text>
-            <div class="text-body-2 text-medium-emphasis mb-3">
-              Supplies, containers, and miscellaneous items
-            </div>
+            <div class="text-body-2 text-medium-emphasis mb-3">Supplies, containers, and miscellaneous items</div>
 
             <!-- Grid of general gear items -->
             <v-row>
@@ -384,8 +345,10 @@
               <strong>120 / 225 lb</strong>
             </v-progress-linear>
             <div class="text-body-2">
-              <strong>Total Weight:</strong> 120 lb •
-              <strong>Capacity:</strong> 225 lb (15 Str × 15)
+              <strong>Total Weight:</strong>
+              120 lb •
+              <strong>Capacity:</strong>
+              225 lb (15 Str × 15)
             </div>
           </v-col>
           <v-col class="text-center" cols="12" md="4">
@@ -401,10 +364,10 @@
 </template>
 
 <script setup>
-  import { ref } from 'vue'
+import { ref } from 'vue'
 
-  // Mock data for the demo
-  const equipmentMethod = ref('class')
+// Mock data for the demo
+const equipmentMethod = ref('class')
 </script>
 
 <style scoped>

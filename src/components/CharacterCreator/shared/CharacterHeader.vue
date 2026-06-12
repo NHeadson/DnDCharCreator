@@ -5,21 +5,12 @@
       <v-col class="px-6 py-4" cols="12" sm="2">
         <div class="character-portrait-container">
           <div class="character-portrait" @click="isPortraitSelectorOpen = true">
-            <v-img
-              class="portrait-image"
-              cover
-              height="100"
-              :src="character.portrait || ''"
-              width="100"
-            >
+            <v-img class="portrait-image" cover height="100" :src="character.portrait || ''" width="100">
               <template #placeholder>
                 <div class="portrait-placeholder d-flex align-center justify-center fill-height">
                   <v-icon color="grey-lighten-2" size="36">mdi-account-circle</v-icon>
                 </div>
               </template>
-              <div class="portrait-overlay d-flex align-center justify-center">
-                <v-icon color="white" size="24">mdi-camera</v-icon>
-              </div>
             </v-img>
           </div>
         </div>
@@ -29,24 +20,11 @@
       <v-col class="px-6 py-4" cols="12" sm="7">
         <v-row dense>
           <v-col cols="12" md="8">
-            <v-text-field
-              v-model="character.name"
-              class="character-name-input"
-              density="compact"
-              hide-details
-              :placeholder="$vuetify.display.mobile ? 'Character Name' : 'Enter Character Name'"
-              variant="outlined"
-            >
+            <v-text-field v-model="character.name" class="character-name-input" density="compact" hide-details
+              :placeholder="$vuetify.display.mobile ? 'Character Name' : 'Enter Character Name'" variant="outlined">
               <template #append-inner>
-                <v-btn
-                  class="random-name-btn"
-                  color="primary"
-                  icon
-                  :loading="isGeneratingName"
-                  size="small"
-                  variant="text"
-                  @click="generateRandomName"
-                >
+                <v-btn class="random-name-btn" color="primary" icon :loading="isGeneratingName" size="small"
+                  variant="text" @click="generateRandomName">
                   <v-icon size="24">mdi-dice-6</v-icon>
                   <v-tooltip activator="parent" location="top">Generate random name</v-tooltip>
                 </v-btn>
@@ -54,13 +32,8 @@
             </v-text-field>
           </v-col>
           <v-col cols="12" md="4">
-            <v-text-field
-              v-model="character.playerName"
-              density="compact"
-              hide-details
-              label="Player Name"
-              variant="outlined"
-            />
+            <v-text-field v-model="character.playerName" density="compact" hide-details label="Player Name"
+              variant="outlined" />
           </v-col>
         </v-row>
       </v-col>
@@ -84,84 +57,150 @@
       </v-col>
     </v-row>
   </v-card>
-  <PortraitSelector
-    v-model="isPortraitSelectorOpen"
-    :character-race="character.species"
-    @select="handlePortraitSelect"
-  />
+  <PortraitSelector v-model="isPortraitSelectorOpen" @select="handlePortraitSelect" />
 </template>
 
 <script setup>
-  import { ref } from 'vue'
-  import PortraitSelector from './PortraitSelector.vue'
+import { nextTick, ref } from 'vue'
+import PortraitSelector from './PortraitSelector.vue'
 
-  const props = defineProps({
-    character: {
-      type: Object,
-      required: true,
-    },
-    characterData: {
-      type: Object,
-      required: true,
-    },
-  })
+const props = defineProps({
+  character: {
+    type: Object,
+    required: true,
+  },
+  characterData: {
+    type: Object,
+    required: true,
+  },
+})
 
-  const isGeneratingName = ref(false)
-  const isPortraitSelectorOpen = ref(false)
+const isGeneratingName = ref(false)
+const isPortraitSelectorOpen = ref(false)
 
-  // Initialize character properties if they don't exist
-  if (!props.character.playerName) props.character.playerName = ''
-  if (!props.character.portrait) props.character.portrait = ''
+// Initialize character properties if they don't exist
+if (!props.character.playerName) props.character.playerName = ''
+if (!props.character.portrait) props.character.portrait = ''
 
-
-  const generateRandomName = async () => {
-    if (!props.characterData?.generateName) {
-      // Fallback if no name generator available
-      generateFallbackName()
-      return
-    }
-
-    isGeneratingName.value = true
-    try {
-      // Use the species for name generation, fallback to 'human'
-      const race = props.character.species || 'human'
-      const generatedName = await props.characterData.generateName(race)
-      props.character.name = generatedName
-    } catch (error) {
-      console.error('Error generating name:', error)
-      generateFallbackName()
-    } finally {
-      isGeneratingName.value = false
-    }
+const generateRandomName = async () => {
+  if (!props.characterData?.generateName) {
+    // Fallback if no name generator available
+    generateFallbackName()
+    return
   }
 
-  const generateFallbackName = () => {
-    const firstNames = [
-      'Aeliana', 'Bran', 'Cora', 'Dain', 'Elen', 'Finn', 'Gwen', 'Hal',
-      'Ivy', 'Jace', 'Kira', 'Liam', 'Maya', 'Nox', 'Ora', 'Pike',
-      'Quinn', 'Rae', 'Sage', 'Tara', 'Uma', 'Vale', 'Wren', 'Zara',
-    ]
+  isGeneratingName.value = true
+  try {
+    // Use the species for name generation, fallback to 'human'
+    const race = props.character.species || 'human'
+    const generatedName = await props.characterData.generateName(race)
+    props.character.name = generatedName
+  } catch (error) {
+    console.error('Error generating name:', error)
+    generateFallbackName()
+  } finally {
+    isGeneratingName.value = false
+  }
+}
 
-    const lastNames = [
-      'Brightblade', 'Stormwind', 'Ironforge', 'Goldleaf', 'Shadowmere',
-      'Flameheart', 'Frostborn', 'Starweaver', 'Moonwhisper', 'Thornfield',
-      'Dragonbane', 'Swiftarrow', 'Battlehammer', 'Silverbough', 'Nightfall',
-      'Dawnbreaker', 'Riverstone', 'Wildmane', 'Emberfall', 'Crystalvein',
-      'Ashwood', 'Blackthorn', 'Greycloak', 'Redbeard', 'Silverhand',
-    ]
+const generateFallbackName = () => {
+  const firstNames = [
+    'Aeliana',
+    'Bran',
+    'Cora',
+    'Dain',
+    'Elen',
+    'Finn',
+    'Gwen',
+    'Hal',
+    'Ivy',
+    'Jace',
+    'Kira',
+    'Liam',
+    'Maya',
+    'Nox',
+    'Ora',
+    'Pike',
+    'Quinn',
+    'Rae',
+    'Sage',
+    'Tara',
+    'Uma',
+    'Vale',
+    'Wren',
+    'Zara',
+  ]
 
-    const firstName = firstNames[Math.floor(Math.random() * firstNames.length)]
-    const lastName = lastNames[Math.floor(Math.random() * lastNames.length)]
-    props.character.name = `${firstName} ${lastName}`
+  const lastNames = [
+    'Brightblade',
+    'Stormwind',
+    'Ironforge',
+    'Goldleaf',
+    'Shadowmere',
+    'Flameheart',
+    'Frostborn',
+    'Starweaver',
+    'Moonwhisper',
+    'Thornfield',
+    'Dragonbane',
+    'Swiftarrow',
+    'Battlehammer',
+    'Silverbough',
+    'Nightfall',
+    'Dawnbreaker',
+    'Riverstone',
+    'Wildmane',
+    'Emberfall',
+    'Crystalvein',
+    'Ashwood',
+    'Blackthorn',
+    'Greycloak',
+    'Redbeard',
+    'Silverhand',
+  ]
+
+  const firstName = firstNames[Math.floor(Math.random() * firstNames.length)]
+  const lastName = lastNames[Math.floor(Math.random() * lastNames.length)]
+  props.character.name = `${firstName} ${lastName}`
+}
+
+const handlePortraitSelect = async selection => {
+  console.log('CharacterHeader - Received selection:', selection)
+  props.character.portrait = selection.url
+  if (selection.race) {
+    console.log('Setting species to:', selection.race)
+    props.character.species = selection.race
   }
 
-  const handlePortraitSelect = selection => {
-    props.character.portrait = selection.url;
-    if (selection.race) {
-      props.character.species = selection.race;
+  // Use nextTick to set lineage after species watch has completed
+  if (selection.subspecies) {
+    await nextTick()
+
+    // Map portrait subspecies to API lineage IDs
+    const subspeciesMapping = {
+      // Elf subspecies
+      dark: 'dark-elf',
+      high: 'high-elf',
+      wood: 'wood-elf',
+      // Dwarf subspecies
+      hill: 'hill-dwarf',
+      mountain: 'mountain-dwarf',
+      // Gnome subspecies
+      forest: 'forest-gnome',
+      rock: 'rock-gnome',
+      // Halfling subspecies (check both with and without suffix)
+      lightfoot: 'lightfoot',
+      stout: 'stout',
     }
-    isPortraitSelectorOpen.value = false
+
+    const lineageId = subspeciesMapping[selection.subspecies] || selection.subspecies
+    console.log('Setting speciesLineage to:', lineageId, '(from subspecies:', selection.subspecies + ')')
+    props.character.speciesLineage = lineageId
+    console.log('Character after lineage update:', props.character)
   }
+
+  isPortraitSelectorOpen.value = false
+}
 </script>
 
 <style scoped>
@@ -209,21 +248,6 @@
   background: var(--v-theme-surface-variant);
   width: 100%;
   height: 100%;
-}
-
-.portrait-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.4);
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-
-.character-portrait:hover .portrait-overlay {
-  opacity: 1;
 }
 
 /* Name field styling */

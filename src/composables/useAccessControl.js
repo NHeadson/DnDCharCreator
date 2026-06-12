@@ -52,10 +52,7 @@ const saveAccessState = () => {
   try {
     sessionStorage.setItem(ACCESS_STATE_KEY, hasAccess.value.toString())
     if (accessExpiresAt.value) {
-      sessionStorage.setItem(
-        ACCESS_EXPIRES_KEY,
-        accessExpiresAt.value.toString(),
-      )
+      sessionStorage.setItem(ACCESS_EXPIRES_KEY, accessExpiresAt.value.toString())
     }
     if (accessType.value) {
       sessionStorage.setItem(ACCESS_TYPE_KEY, accessType.value)
@@ -79,32 +76,25 @@ const clearAccessStorage = () => {
 }
 
 let singletonInstance
-export function useAccessControlSingleton () {
+export function useAccessControlSingleton() {
   if (!singletonInstance) {
     singletonInstance = useAccessControl()
   }
   return singletonInstance
 }
 
-export function useAccessControl () {
+export function useAccessControl() {
   // Check if current access session is still valid
   const isAccessValid = computed(() => {
-    return (
-      hasAccess.value
-      && accessExpiresAt.value
-      && Date.now() < accessExpiresAt.value
-    )
+    return hasAccess.value && accessExpiresAt.value && Date.now() < accessExpiresAt.value
   })
 
   // Authenticate for general access
-  const authenticateAccess = password => {
+  const authenticateAccess = (password) => {
     // Check if environment variables are properly configured
     if (!ADMIN_PASSWORD || !ACCESS_PASSWORD) {
-      accessError.value
-        = 'Access control is not properly configured. Please contact the administrator.'
-      console.error(
-        'Missing required environment variables: VITE_ADMIN_PASSWORD and/or VITE_ACCESS_PASSWORD',
-      )
+      accessError.value = 'Access control is not properly configured. Please contact the administrator.'
+      console.error('Missing required environment variables: VITE_ADMIN_PASSWORD and/or VITE_ACCESS_PASSWORD')
       return false
     }
 
@@ -133,8 +123,7 @@ export function useAccessControl () {
 
       return true
     } else {
-      accessError.value
-        = 'Invalid access code. Please contact the DM for the correct code.'
+      accessError.value = 'Invalid access code. Please contact the DM for the correct code.'
       return false
     }
   }
@@ -160,11 +149,7 @@ export function useAccessControl () {
     }
 
     // Session expired, clear access
-    if (
-      hasAccess.value
-      && accessExpiresAt.value
-      && Date.now() >= accessExpiresAt.value
-    ) {
+    if (hasAccess.value && accessExpiresAt.value && Date.now() >= accessExpiresAt.value) {
       clearAccess()
     }
 
@@ -197,7 +182,7 @@ export function useAccessControl () {
   }
 
   // Handle access dialog submission
-  const handleAccessSubmit = event => {
+  const handleAccessSubmit = (event) => {
     if (!accessPasswordInput.value.trim()) {
       accessError.value = 'Please enter an access code'
       return false

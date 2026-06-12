@@ -5,12 +5,8 @@
       <v-card-subtitle>Preview of redesigned pages 3 & 4</v-card-subtitle>
       <v-card-text>
         <v-btn-toggle v-model="currentMockup" class="mb-4" variant="outlined">
-          <v-btn prepend-icon="mdi-brain" value="page3">
-            Page 3: Skills & Proficiencies
-          </v-btn>
-          <v-btn prepend-icon="mdi-bag-personal" value="page4">
-            Page 4: Inventory & Equipment
-          </v-btn>
+          <v-btn prepend-icon="mdi-brain" value="page3">Page 3: Skills & Proficiencies</v-btn>
+          <v-btn prepend-icon="mdi-bag-personal" value="page4">Page 4: Inventory & Equipment</v-btn>
         </v-btn-toggle>
       </v-card-text>
     </v-card>
@@ -24,11 +20,11 @@
 </template>
 
 <script setup>
-  import { ref } from 'vue'
-  import SkillsProficienciesMockup from '@/components/Mockups/SkillsProficienciesMockup.vue'
-  import InventoryEquipmentMockup from '@/components/Mockups/InventoryEquipmentMockup.vue'
+import { ref } from 'vue'
+import SkillsProficienciesMockup from '@/components/Mockups/SkillsProficienciesMockup.vue'
+import InventoryEquipmentMockup from '@/components/Mockups/InventoryEquipmentMockup.vue'
 
-  const currentMockup = ref('page3')
+const currentMockup = ref('page3')
 </script>
 
 <style scoped>

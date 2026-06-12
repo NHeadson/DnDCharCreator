@@ -1,9 +1,7 @@
 <template>
   <v-card flat>
     <v-card-title class="text-h4 text-center mb-4">🧠 Skills & Proficiencies</v-card-title>
-    <v-card-subtitle class="text-center mb-4">
-      What your character knows how to do
-    </v-card-subtitle>
+    <v-card-subtitle class="text-center mb-4">What your character knows how to do</v-card-subtitle>
 
     <!-- Quick Reference Stats -->
     <v-row class="mb-6">
@@ -14,20 +12,21 @@
             <div class="text-h3 text-error">{{ calculateHitPoints }}</div>
             <div class="text-caption">Maximum HP</div>
             <div class="text-body-2 mt-2">
-              <strong>Base:</strong> {{ getFormattedHPCalculation }}
+              <strong>Base:</strong>
+              {{ getFormattedHPCalculation }}
             </div>
             <!-- Weapon Proficiencies -->
             <div class="mt-3">
               <div v-if="hasWeaponProficiencies">
                 <div class="text-caption text-medium-emphasis mb-1">Weapon Training</div>
-                <div class="d-flex flex-wrap justify-center ga-1" style="min-height: 32px; align-items: center;">
+                <div class="d-flex flex-wrap justify-center ga-1" style="min-height: 32px; align-items: center">
                   <!-- Temporarily disabled to fix Vue errors -->
                   <div class="text-body-2">{{ character.weaponProficiencies?.length || 0 }} proficiencies</div>
                 </div>
               </div>
               <div v-else>
                 <div class="text-caption text-medium-emphasis mb-1">Weapon Training</div>
-                <div class="d-flex justify-center" style="min-height: 32px; align-items: center;">
+                <div class="d-flex justify-center" style="min-height: 32px; align-items: center">
                   <div class="text-body-2 text-disabled">No weapon proficiencies</div>
                 </div>
               </div>
@@ -43,20 +42,21 @@
             <div class="text-h3 text-blue">{{ calculateArmorClass }}</div>
             <div class="text-caption">AC</div>
             <div class="text-body-2 mt-2">
-              <strong>Base:</strong> {{ getFormattedACCalculation }}
+              <strong>Base:</strong>
+              {{ getFormattedACCalculation }}
             </div>
             <!-- Armor Proficiencies -->
             <div class="mt-3">
               <div v-if="hasArmorProficiencies">
                 <div class="text-caption text-medium-emphasis mb-1">Armor Training</div>
-                <div class="d-flex flex-wrap justify-center ga-1" style="min-height: 32px; align-items: center;">
+                <div class="d-flex flex-wrap justify-center ga-1" style="min-height: 32px; align-items: center">
                   <!-- Temporarily disabled to fix Vue errors -->
                   <div class="text-body-2">Armor proficiencies available</div>
                 </div>
               </div>
               <div v-else>
                 <div class="text-caption text-medium-emphasis mb-1">Armor Training</div>
-                <div class="d-flex justify-center" style="min-height: 32px; align-items: center;">
+                <div class="d-flex justify-center" style="min-height: 32px; align-items: center">
                   <div class="text-body-2 text-disabled">No armor proficiencies</div>
                 </div>
               </div>
@@ -71,13 +71,11 @@
           <v-card-text class="text-center">
             <div class="text-h3 text-purple">+{{ character.proficiencyBonus }}</div>
             <div class="text-caption">Bonus</div>
-            <div class="text-body-2 mt-2">
-              Added to proficient skills
-            </div>
+            <div class="text-body-2 mt-2">Added to proficient skills</div>
             <!-- Proficiency Applications -->
             <div class="mt-3">
               <div class="text-caption text-medium-emphasis mb-1">Applied To</div>
-              <div class="d-flex flex-wrap justify-center ga-1" style="min-height: 32px; align-items: center;">
+              <div class="d-flex flex-wrap justify-center ga-1" style="min-height: 32px; align-items: center">
                 <v-chip color="purple" size="small" variant="tonal">Skills</v-chip>
                 <v-chip color="purple" size="small" variant="tonal">Saves</v-chip>
                 <v-chip color="purple" size="small" variant="tonal">Attacks</v-chip>
@@ -101,15 +99,19 @@
           </template>
         </v-tooltip>
       </v-card-title>
-      <v-card-subtitle class="text-body-2">
-        Skills your character has learned and can perform well
-      </v-card-subtitle>
+      <v-card-subtitle class="text-body-2">Skills your character has learned and can perform well</v-card-subtitle>
 
       <v-card-text>
         <!-- Static Proficiencies (what you already have) -->
         <div
-          v-if="getBackgroundSkills.length || getSpeciesSkillProficiencies.length || (character.selectedClassSkills && character.selectedClassSkills.length) || (character.selectedExpertise && character.selectedExpertise.length)"
-          class="mb-6">
+          v-if="
+            getBackgroundSkills.length ||
+            getSpeciesSkillProficiencies.length ||
+            (character.selectedClassSkills && character.selectedClassSkills.length) ||
+            (character.selectedExpertise && character.selectedExpertise.length)
+          "
+          class="mb-6"
+        >
           <h3 class="text-h6 mb-3 text-success">Current Proficiencies</h3>
 
           <!-- Class Skills (selected) -->
@@ -177,14 +179,18 @@
           <div v-if="hasClassSkillChoices" class="ml-4 mb-4">
             <div class="text-body-2 text-medium-emphasis mb-2 d-flex align-center">
               <v-icon class="mr-2" color="primary" size="small">mdi-school</v-icon>
-              Choose Class Skills ({{ (character.selectedClassSkills?.length || 0) }}/{{ getClassSkillChoices }})
+              Choose Class Skills ({{ character.selectedClassSkills?.length || 0 }}/{{ getClassSkillChoices }})
             </div>
             <div class="ml-6">
               <div class="d-flex flex-wrap ga-2">
-                <v-chip v-for="skill in getClassSkillOptions" :key="skill.name" clickable
+                <v-chip
+                  v-for="skill in getClassSkillOptions"
+                  :key="skill.name"
+                  clickable
                   :color="character.selectedClassSkills?.includes(skill.name) ? 'primary' : 'default'"
                   :variant="character.selectedClassSkills?.includes(skill.name) ? 'elevated' : 'outlined'"
-                  @click="toggleClassSkill(skill.name)">
+                  @click="toggleClassSkill(skill.name)"
+                >
                   <v-icon size="x-small" start>mdi-brain</v-icon>
                   {{ skill.name }}
                 </v-chip>
@@ -196,14 +202,18 @@
           <div v-if="hasExpertiseChoices" class="ml-4 mb-4">
             <div class="text-body-2 text-medium-emphasis mb-2 d-flex align-center">
               <v-icon class="mr-2" color="success" size="small">mdi-star-circle</v-icon>
-              Choose Expertise ({{ (character.selectedExpertise?.length || 0) }}/{{ expertiseChoices }})
+              Choose Expertise ({{ character.selectedExpertise?.length || 0 }}/{{ expertiseChoices }})
             </div>
             <div class="ml-6">
               <div class="d-flex flex-wrap ga-2">
-                <v-chip v-for="skill in getAllSkillProficiencies" :key="skill.name" clickable
+                <v-chip
+                  v-for="skill in getAllSkillProficiencies"
+                  :key="skill.name"
+                  clickable
                   :color="character.selectedExpertise?.includes(skill.name) ? 'success' : 'default'"
                   :variant="character.selectedExpertise?.includes(skill.name) ? 'elevated' : 'outlined'"
-                  @click="toggleExpertise(skill.name)">
+                  @click="toggleExpertise(skill.name)"
+                >
                   <v-icon size="x-small" start>mdi-star</v-icon>
                   {{ skill.name }}
                 </v-chip>
@@ -215,19 +225,12 @@
         <!-- No Skills Message -->
         <div v-else-if="!character.backgroundDetails" class="text-center py-6">
           <v-icon class="mb-2" color="grey" size="large">mdi-information-outline</v-icon>
-          <div class="text-body-2 text-medium-emphasis">
-            Skill proficiencies will appear here once you complete character creation steps.
-          </div>
+          <div class="text-body-2 text-medium-emphasis">Skill proficiencies will appear here once you complete character creation steps.</div>
         </div>
 
         <!-- Reset Button for Skills -->
-        <div
-          v-if="(character.selectedClassSkills && character.selectedClassSkills.length) || (character.selectedExpertise && character.selectedExpertise.length)"
-          class="d-flex justify-end mt-4">
-          <v-btn color="warning" prepend-icon="mdi-refresh" size="small" variant="outlined"
-            @click="resetAllSkillSelections">
-            Reset
-          </v-btn>
+        <div v-if="(character.selectedClassSkills && character.selectedClassSkills.length) || (character.selectedExpertise && character.selectedExpertise.length)" class="d-flex justify-end mt-4">
+          <v-btn color="warning" prepend-icon="mdi-refresh" size="small" variant="outlined" @click="resetAllSkillSelections">Reset</v-btn>
         </div>
       </v-card-text>
     </v-card>
@@ -244,9 +247,7 @@
           </template>
         </v-tooltip>
       </v-card-title>
-      <v-card-subtitle class="text-body-2">
-        Tools and equipment your character knows how to use effectively
-      </v-card-subtitle>
+      <v-card-subtitle class="text-body-2">Tools and equipment your character knows how to use effectively</v-card-subtitle>
 
       <v-card-text>
         <!-- Static Proficiencies (what you already have) -->
@@ -289,15 +290,18 @@
           <div class="ml-4 mb-4">
             <div class="text-body-2 text-medium-emphasis mb-2 d-flex align-center">
               <v-icon class="mr-2" color="orange" size="small">mdi-briefcase</v-icon>
-              Choose Background Tools ({{ (character.selectedBackgroundTools?.length || 0) }}/{{ backgroundToolChoices
-              }})
+              Choose Background Tools ({{ character.selectedBackgroundTools?.length || 0 }}/{{ backgroundToolChoices }})
             </div>
             <div class="ml-6">
               <div class="d-flex flex-wrap ga-2">
-                <v-chip v-for="tool in backgroundToolOptions" :key="tool" clickable
+                <v-chip
+                  v-for="tool in backgroundToolOptions"
+                  :key="tool"
+                  clickable
                   :color="character.selectedBackgroundTools?.includes(tool) ? 'orange' : 'default'"
                   :variant="character.selectedBackgroundTools?.includes(tool) ? 'elevated' : 'outlined'"
-                  @click="toggleBackgroundTool(tool)">
+                  @click="toggleBackgroundTool(tool)"
+                >
                   <v-icon size="x-small" start>mdi-brain</v-icon>
                   {{ tool }}
                 </v-chip>
@@ -309,18 +313,12 @@
         <!-- No Tools Message -->
         <div v-else-if="!character.backgroundDetails" class="text-center py-6">
           <v-icon class="mb-2" color="grey" size="large">mdi-information-outline</v-icon>
-          <div class="text-body-2 text-medium-emphasis">
-            Tool proficiencies will appear here once you select a background in Step 1.
-          </div>
+          <div class="text-body-2 text-medium-emphasis">Tool proficiencies will appear here once you select a background in Step 1.</div>
         </div>
 
         <!-- Reset Button for Tools -->
-        <div v-if="character.selectedBackgroundTools && character.selectedBackgroundTools.length"
-          class="d-flex justify-end mt-4">
-          <v-btn color="warning" prepend-icon="mdi-refresh" size="small" variant="outlined"
-            @click="resetAllToolSelections">
-            Reset
-          </v-btn>
+        <div v-if="character.selectedBackgroundTools && character.selectedBackgroundTools.length" class="d-flex justify-end mt-4">
+          <v-btn color="warning" prepend-icon="mdi-refresh" size="small" variant="outlined" @click="resetAllToolSelections">Reset</v-btn>
         </div>
       </v-card-text>
     </v-card>
@@ -337,15 +335,20 @@
           </template>
         </v-tooltip>
       </v-card-title>
-      <v-card-subtitle class="text-body-2">
-        Specialized knowledge in instruments, games, and vehicles
-      </v-card-subtitle>
+      <v-card-subtitle class="text-body-2">Specialized knowledge in instruments, games, and vehicles</v-card-subtitle>
 
       <v-card-text>
         <!-- Static Proficiencies (what you already have) -->
         <div
-          v-if="getInstrumentProficiencies.length || getClassGamingSets.length || getBackgroundGamingSets.length || getVehicleProficiencies.length || (character.selectedBackgroundGamingSets && character.selectedBackgroundGamingSets.length)"
-          class="mb-6">
+          v-if="
+            getInstrumentProficiencies.length ||
+            getClassGamingSets.length ||
+            getBackgroundGamingSets.length ||
+            getVehicleProficiencies.length ||
+            (character.selectedBackgroundGamingSets && character.selectedBackgroundGamingSets.length)
+          "
+          class="mb-6"
+        >
           <h3 class="text-h6 mb-3 text-success">Current Proficiencies</h3>
 
           <!-- Musical Instruments -->
@@ -363,8 +366,7 @@
           </div>
 
           <!-- Gaming Sets -->
-          <div
-            v-if="getClassGamingSets.length || getBackgroundGamingSets.length || (character.selectedBackgroundGamingSets && character.selectedBackgroundGamingSets.length)">
+          <div v-if="getClassGamingSets.length || getBackgroundGamingSets.length || (character.selectedBackgroundGamingSets && character.selectedBackgroundGamingSets.length)">
             <!-- Class Gaming Sets -->
             <div v-if="getClassGamingSets.length" class="ml-4 mb-3">
               <div class="text-body-2 text-medium-emphasis mb-2 d-flex align-center">
@@ -394,15 +396,13 @@
             </div>
 
             <!-- Background Gaming Sets (selected) -->
-            <div v-if="character.selectedBackgroundGamingSets && character.selectedBackgroundGamingSets.length"
-              class="ml-4 mb-3">
+            <div v-if="character.selectedBackgroundGamingSets && character.selectedBackgroundGamingSets.length" class="ml-4 mb-3">
               <div class="text-body-2 text-medium-emphasis mb-2 d-flex align-center">
                 <v-icon class="mr-2" color="orange" size="small">mdi-briefcase</v-icon>
                 Gaming Sets - From Your Background
               </div>
               <div class="ml-6 d-flex flex-wrap ga-2">
-                <v-chip v-for="gameSet in character.selectedBackgroundGamingSets" :key="gameSet" color="orange"
-                  variant="tonal">
+                <v-chip v-for="gameSet in character.selectedBackgroundGamingSets" :key="gameSet" color="orange" variant="tonal">
                   <v-icon size="x-small" start>mdi-brain</v-icon>
                   {{ gameSet }}
                 </v-chip>
@@ -433,15 +433,18 @@
           <div v-if="hasBackgroundInstrumentChoices" class="ml-4 mb-4">
             <div class="text-body-2 text-medium-emphasis mb-2 d-flex align-center">
               <v-icon class="mr-2" color="purple" size="small">mdi-music</v-icon>
-              Choose Musical Instrument ({{ (character.selectedBackgroundInstruments?.length || 0) }}/{{
-                backgroundInstrumentChoices }})
+              Choose Musical Instrument ({{ character.selectedBackgroundInstruments?.length || 0 }}/{{ backgroundInstrumentChoices }})
             </div>
             <div class="ml-6">
               <div class="d-flex flex-wrap ga-2">
-                <v-chip v-for="instrument in backgroundInstrumentOptions" :key="instrument" clickable
+                <v-chip
+                  v-for="instrument in backgroundInstrumentOptions"
+                  :key="instrument"
+                  clickable
                   :color="character.selectedBackgroundInstruments?.includes(instrument) ? 'purple' : 'default'"
                   :variant="character.selectedBackgroundInstruments?.includes(instrument) ? 'elevated' : 'outlined'"
-                  @click="toggleBackgroundInstrument(instrument)">
+                  @click="toggleBackgroundInstrument(instrument)"
+                >
                   <v-icon size="x-small" start>mdi-music</v-icon>
                   {{ instrument }}
                 </v-chip>
@@ -453,20 +456,22 @@
           <div v-if="hasBackgroundGamingSetChoices" class="ml-4 mb-4">
             <div class="text-body-2 text-medium-emphasis mb-2 d-flex align-center">
               <v-icon class="mr-2" color="orange" size="small">mdi-briefcase</v-icon>
-              Choose Gaming Set ({{ (character.selectedBackgroundGamingSets?.length || 0) }}/{{
-                getBackgroundGamingSetChoices }})
+              Choose Gaming Set ({{ character.selectedBackgroundGamingSets?.length || 0 }}/{{ getBackgroundGamingSetChoices }})
             </div>
 
             <div class="ml-6">
               <div class="d-flex flex-wrap ga-2">
                 <template v-for="gamingSet in getBackgroundGamingSetOptions" :key="gamingSet">
-                  <v-tooltip v-if="gamingSet === 'Playing Card Set' && character.backgroundDetails?.name === 'Soldier'"
-                    location="top" max-width="300">
+                  <v-tooltip v-if="gamingSet === 'Playing Card Set' && character.backgroundDetails?.name === 'Soldier'" location="top" max-width="300">
                     <template v-slot:activator="{ props: tooltipProps }">
-                      <v-chip v-bind="tooltipProps" clickable
+                      <v-chip
+                        v-bind="tooltipProps"
+                        clickable
                         :color="character.selectedBackgroundGamingSets?.includes(gamingSet) ? 'orange' : 'primary'"
                         :variant="character.selectedBackgroundGamingSets?.includes(gamingSet) ? 'elevated' : 'tonal'"
-                        @click="toggleBackgroundGamingSet(gamingSet)" :prepend-icon="'mdi-star-outline'">
+                        @click="toggleBackgroundGamingSet(gamingSet)"
+                        :prepend-icon="'mdi-star-outline'"
+                      >
                         <v-icon size="x-small" start>mdi-cards-playing</v-icon>
                         {{ gamingSet }}
                       </v-chip>
@@ -474,16 +479,22 @@
                     <template v-slot:default>
                       <div class="text-caption">
                         <div class="font-weight-bold text-primary mb-1">💡 Recommended Choice</div>
-                        <div>Your Soldier background includes a <strong>Deck of Cards</strong> in your starting
-                          equipment.</div>
+                        <div>
+                          Your Soldier background includes a
+                          <strong>Deck of Cards</strong>
+                          in your starting equipment.
+                        </div>
                         <div>Choosing this matches what you already own!</div>
                       </div>
                     </template>
                   </v-tooltip>
-                  <v-chip v-else clickable
+                  <v-chip
+                    v-else
+                    clickable
                     :color="character.selectedBackgroundGamingSets?.includes(gamingSet) ? 'orange' : 'default'"
                     :variant="character.selectedBackgroundGamingSets?.includes(gamingSet) ? 'elevated' : 'outlined'"
-                    @click="toggleBackgroundGamingSet(gamingSet)">
+                    @click="toggleBackgroundGamingSet(gamingSet)"
+                  >
                     <v-icon size="x-small" start>mdi-dice-multiple</v-icon>
                     {{ gamingSet }}
                   </v-chip>
@@ -495,21 +506,22 @@
 
         <!-- Show message when no other proficiencies exist -->
         <div
-          v-else-if="!getInstrumentProficiencies.length && !getClassGamingSets.length && !getBackgroundGamingSets.length && !getVehicleProficiencies.length && !(character.selectedBackgroundGamingSets && character.selectedBackgroundGamingSets.length)"
-          class="text-center py-6">
+          v-else-if="
+            !getInstrumentProficiencies.length &&
+            !getClassGamingSets.length &&
+            !getBackgroundGamingSets.length &&
+            !getVehicleProficiencies.length &&
+            !(character.selectedBackgroundGamingSets && character.selectedBackgroundGamingSets.length)
+          "
+          class="text-center py-6"
+        >
           <v-icon class="mb-2" color="grey" size="large">mdi-information-outline</v-icon>
-          <div class="text-body-2 text-medium-emphasis">
-            No additional proficiencies from your background or species
-          </div>
+          <div class="text-body-2 text-medium-emphasis">No additional proficiencies from your background or species</div>
         </div>
 
         <!-- Reset Button for Gaming Sets -->
-        <div v-if="character.selectedBackgroundGamingSets && character.selectedBackgroundGamingSets.length"
-          class="d-flex justify-end mt-4">
-          <v-btn color="warning" prepend-icon="mdi-refresh" size="small" variant="outlined"
-            @click="resetAllOtherProficiencySelections">
-            Reset
-          </v-btn>
+        <div v-if="character.selectedBackgroundGamingSets && character.selectedBackgroundGamingSets.length" class="d-flex justify-end mt-4">
+          <v-btn color="warning" prepend-icon="mdi-refresh" size="small" variant="outlined" @click="resetAllOtherProficiencySelections">Reset</v-btn>
         </div>
       </v-card-text>
     </v-card>
@@ -526,14 +538,11 @@
           </template>
         </v-tooltip>
       </v-card-title>
-      <v-card-subtitle class="text-body-2">
-        Languages your character can speak and understand
-      </v-card-subtitle>
+      <v-card-subtitle class="text-body-2">Languages your character can speak and understand</v-card-subtitle>
 
       <v-card-text>
         <!-- Current Languages (what you already have) -->
-        <div v-if="getCommonLanguage.length || getSpeciesLanguages.length || getBackgroundLanguages.length"
-          class="mb-6">
+        <div v-if="getCommonLanguage.length || getSpeciesLanguages.length || getBackgroundLanguages.length" class="mb-6">
           <h3 class="text-h6 mb-3 text-success">Current Languages</h3>
 
           <!-- Common Language -->
@@ -585,8 +594,7 @@
               Languages Chosen From Background
             </div>
             <div class="ml-6 d-flex flex-wrap ga-2">
-              <v-chip v-for="language in character.selectedBackgroundLanguages" :key="language" color="orange"
-                variant="tonal">
+              <v-chip v-for="language in character.selectedBackgroundLanguages" :key="language" color="orange" variant="tonal">
                 <v-icon size="x-small" start>mdi-translate</v-icon>
                 {{ language }}
               </v-chip>
@@ -606,10 +614,14 @@
             </div>
             <div class="ml-6">
               <div class="d-flex flex-wrap ga-2">
-                <v-chip v-for="language in getAvailableLanguageChoices" :key="language" clickable
+                <v-chip
+                  v-for="language in getAvailableLanguageChoices"
+                  :key="language"
+                  clickable
                   :color="isLanguageSelected(language) ? 'orange' : 'default'"
                   :variant="isLanguageSelected(language) ? 'elevated' : 'outlined'"
-                  @click="toggleBackgroundLanguage(language)">
+                  @click="toggleBackgroundLanguage(language)"
+                >
                   <v-icon size="x-small" start>mdi-translate</v-icon>
                   {{ language }}
                 </v-chip>
@@ -619,21 +631,14 @@
         </div>
 
         <!-- No Languages Message (fallback) -->
-        <div
-          v-else-if="!getCommonLanguage.length && !getSpeciesLanguages.length && !getBackgroundLanguages.length && !getSelectedBackgroundLanguagesCount"
-          class="text-center py-6">
+        <div v-else-if="!getCommonLanguage.length && !getSpeciesLanguages.length && !getBackgroundLanguages.length && !getSelectedBackgroundLanguagesCount" class="text-center py-6">
           <v-icon class="mb-2" color="grey" size="large">mdi-information-outline</v-icon>
-          <div class="text-body-2 text-medium-emphasis">
-            No additional languages beyond Common
-          </div>
+          <div class="text-body-2 text-medium-emphasis">No additional languages beyond Common</div>
         </div>
 
         <!-- Reset Button for Languages -->
         <div v-if="getSelectedBackgroundLanguagesCount > 0" class="d-flex justify-end mt-4">
-          <v-btn color="warning" prepend-icon="mdi-refresh" size="small" variant="outlined"
-            @click="resetBackgroundLanguages">
-            Reset
-          </v-btn>
+          <v-btn color="warning" prepend-icon="mdi-refresh" size="small" variant="outlined" @click="resetBackgroundLanguages">Reset</v-btn>
         </div>
       </v-card-text>
     </v-card>
@@ -696,8 +701,7 @@ const hasArmorProficiencies = computed(() => {
 })
 
 const hasClassSkillChoices = computed(() => {
-  return character?.classDetails?.skillProficiencies?.count > 0 || 
-         character?.classDetails?.skillChoices > 0
+  return character?.classDetails?.skillProficiencies?.count > 0 || character?.classDetails?.skillChoices > 0
 })
 
 const hasExpertiseChoices = computed(() => {
@@ -723,16 +727,14 @@ const getDexModifier = computed(() => {
 // Skill-related computeds
 const hasClassSkillChoices = computed(() => {
   // Check both API structure and fallback structure
-  const totalChoices = character.classDetails?.skillProficiencies?.count ||
-    character.classDetails?.skillChoices || 0
+  const totalChoices = character.classDetails?.skillProficiencies?.count || character.classDetails?.skillChoices || 0
   const selectedCount = character.selectedClassSkills?.length || 0
   return totalChoices > 0 && selectedCount < totalChoices
 })
 
 const getClassSkillChoices = computed(() => {
   // Check both API structure and fallback structure
-  return character.classDetails?.skillProficiencies?.count ||
-    character.classDetails?.skillChoices || 0
+  return character.classDetails?.skillProficiencies?.count || character.classDetails?.skillChoices || 0
 })
 
 const getClassSkillOptions = computed(() => {
@@ -740,14 +742,14 @@ const getClassSkillOptions = computed(() => {
 
   // Check API structure first
   if (character.classDetails?.skillProficiencies?.from) {
-    allClassSkills = character.classDetails.skillProficiencies.from.map(skill => ({
+    allClassSkills = character.classDetails.skillProficiencies.from.map((skill) => ({
       name: skill.replace('Skill: ', ''),
       ability_score: { name: 'Unknown' }, // Would need skill lookup table
     }))
   }
   // Check fallback structure (skills array)
   else if (character.value.classDetails?.skills) {
-    allClassSkills = character.value.classDetails.skills.map(skill => ({
+    allClassSkills = character.value.classDetails.skills.map((skill) => ({
       name: skill,
       ability_score: { name: 'Unknown' }, // Would need skill lookup table
     }))
@@ -757,12 +759,9 @@ const getClassSkillOptions = computed(() => {
   const backgroundSkillNames = getBackgroundSkills.value
   const speciesSkillNames = getSpeciesSkillProficiencies.value
 
-  const existingSkills = new Set([
-    ...backgroundSkillNames,
-    ...speciesSkillNames,
-  ])
+  const existingSkills = new Set([...backgroundSkillNames, ...speciesSkillNames])
 
-  return allClassSkills.filter(skill => !existingSkills.has(skill.name))
+  return allClassSkills.filter((skill) => !existingSkills.has(skill.name))
 })
 
 const getBackgroundSkills = computed(() => {
@@ -789,7 +788,7 @@ const getAllSkillProficiencies = computed(() => {
 
   // Format 1: skill_proficiencies array
   if (character.value.backgroundDetails?.skill_proficiencies) {
-    character.value.backgroundDetails.skill_proficiencies.forEach(prof => {
+    character.value.backgroundDetails.skill_proficiencies.forEach((prof) => {
       const skillName = prof.name?.replace('Skill: ', '') || prof
       backgroundSkills.push(skillName)
     })
@@ -797,13 +796,13 @@ const getAllSkillProficiencies = computed(() => {
 
   // Format 2: skillProficiencies array
   if (character.value.backgroundDetails?.skillProficiencies) {
-    character.value.backgroundDetails.skillProficiencies.forEach(skillName => {
+    character.value.backgroundDetails.skillProficiencies.forEach((skillName) => {
       backgroundSkills.push(skillName)
     })
   }
 
   // Add background skills to main skills array
-  backgroundSkills.forEach(skillName => {
+  backgroundSkills.forEach((skillName) => {
     if (typeof skillName === 'string') {
       skills.push({
         name: skillName,
@@ -820,25 +819,37 @@ const getAllSkillProficiencies = computed(() => {
 
   // Add selected class skills
   if (character.value.selectedClassSkills) {
-    const classSkillObjects = character.value.selectedClassSkills.map(skillName => {
-      const skillOption = getClassSkillOptions.value.find(opt => opt.name === skillName)
+    const classSkillObjects = character.value.selectedClassSkills.map((skillName) => {
+      const skillOption = getClassSkillOptions.value.find((opt) => opt.name === skillName)
       return skillOption || { name: skillName, ability_score: { name: 'Unknown' } }
     })
-    skills.push(...classSkillObjects.map(skill => ({ ...skill, source: 'Class' })))
+    skills.push(...classSkillObjects.map((skill) => ({ ...skill, source: 'Class' })))
   }
 
   // Calculate modifiers
-  return skills.map(skill => {
+  return skills.map((skill) => {
     const abilityName = skill.ability_score.name.toLowerCase()
     let abilityModifier = 0
 
     switch (abilityName) {
-      case 'strength': abilityModifier = Math.floor(((character.value.strength || 10) - 10) / 2); break
-      case 'dexterity': abilityModifier = Math.floor(((character.value.dexterity || 10) - 10) / 2); break
-      case 'constitution': abilityModifier = Math.floor(((character.value.constitution || 10) - 10) / 2); break
-      case 'intelligence': abilityModifier = Math.floor(((character.value.intelligence || 10) - 10) / 2); break
-      case 'wisdom': abilityModifier = Math.floor(((character.value.wisdom || 10) - 10) / 2); break
-      case 'charisma': abilityModifier = Math.floor(((character.value.charisma || 10) - 10) / 2); break
+      case 'strength':
+        abilityModifier = Math.floor(((character.value.strength || 10) - 10) / 2)
+        break
+      case 'dexterity':
+        abilityModifier = Math.floor(((character.value.dexterity || 10) - 10) / 2)
+        break
+      case 'constitution':
+        abilityModifier = Math.floor(((character.value.constitution || 10) - 10) / 2)
+        break
+      case 'intelligence':
+        abilityModifier = Math.floor(((character.value.intelligence || 10) - 10) / 2)
+        break
+      case 'wisdom':
+        abilityModifier = Math.floor(((character.value.wisdom || 10) - 10) / 2)
+        break
+      case 'charisma':
+        abilityModifier = Math.floor(((character.value.charisma || 10) - 10) / 2)
+        break
     }
 
     const proficiencyBonus = character.value.proficiencyBonus || 2
@@ -885,7 +896,7 @@ const hasExpertiseChoices = computed(() => {
   return totalChoices > 0 && availableSkills > 0 && selectedCount < totalChoices && classSkillsComplete
 })
 
-const isExpertiseSkill = skillName => {
+const isExpertiseSkill = (skillName) => {
   return character.value.selectedExpertise?.includes(skillName) || false
 }
 
@@ -895,12 +906,9 @@ const classToolProficiencies = computed(() => {
 
   // Add class tool proficiencies (like Thieves' Tools for Rogues)
   if (character.value.classDetails?.toolProficiencies) {
-    character.value.classDetails.toolProficiencies.forEach(tool => {
+    character.value.classDetails.toolProficiencies.forEach((tool) => {
       // Only include tools that are NOT gaming sets or instruments (those have their own categories)
-      if (!tool.toLowerCase().includes('gaming') &&
-        !tool.toLowerCase().includes('instrument') &&
-        !tool.toLowerCase().includes('dice') &&
-        !tool.toLowerCase().includes('cards')) {
+      if (!tool.toLowerCase().includes('gaming') && !tool.toLowerCase().includes('instrument') && !tool.toLowerCase().includes('dice') && !tool.toLowerCase().includes('cards')) {
         tools.push(tool)
       }
     })
@@ -914,16 +922,18 @@ const backgroundToolProficiencies = computed(() => {
 
   // Get background tool proficiencies from the correct data structure
   if (character.value.backgroundDetails?.toolProficiencies) {
-    character.value.backgroundDetails.toolProficiencies.forEach(tool => {
+    character.value.backgroundDetails.toolProficiencies.forEach((tool) => {
       // Only include tools that are NOT gaming sets, instruments, vehicles, or choice placeholders
       // Also exclude tools already in class proficiencies to avoid duplication
-      if (!tool.toLowerCase().includes('gaming') &&
+      if (
+        !tool.toLowerCase().includes('gaming') &&
         !tool.toLowerCase().includes('instrument') &&
         !tool.toLowerCase().includes('dice') &&
         !tool.toLowerCase().includes('cards') &&
         !tool.toLowerCase().includes('vehicle') &&
         !tool.toLowerCase().includes('(choice)') &&
-        !classToolProficiencies.value.includes(tool)) {
+        !classToolProficiencies.value.includes(tool)
+      ) {
         tools.push(tool)
       }
     })
@@ -932,20 +942,22 @@ const backgroundToolProficiencies = computed(() => {
   // Also check toolProf as fallback
   if (character.value.backgroundDetails?.toolProf) {
     const toolProf = character.value.backgroundDetails.toolProf
-    if (!toolProf.toLowerCase().includes('gaming') &&
+    if (
+      !toolProf.toLowerCase().includes('gaming') &&
       !toolProf.toLowerCase().includes('instrument') &&
       !toolProf.toLowerCase().includes('dice') &&
       !toolProf.toLowerCase().includes('cards') &&
       !toolProf.toLowerCase().includes('vehicle') &&
       !toolProf.toLowerCase().includes('(choice)') &&
-      !classToolProficiencies.value.includes(toolProf)) {
+      !classToolProficiencies.value.includes(toolProf)
+    ) {
       tools.push(toolProf)
     }
   }
 
   // Add selected background tools (from choices like Folk Hero artisan tools)
   if (character.value.selectedBackgroundTools?.length) {
-    character.value.selectedBackgroundTools.forEach(tool => {
+    character.value.selectedBackgroundTools.forEach((tool) => {
       if (!classToolProficiencies.value.includes(tool)) {
         tools.push(tool)
       }
@@ -1004,7 +1016,7 @@ const getInstrumentProficiencies = computed(() => {
 
   // Check class tool proficiencies for instruments
   if (character.value.classDetails?.toolProficiencies) {
-    character.value.classDetails.toolProficiencies.forEach(tool => {
+    character.value.classDetails.toolProficiencies.forEach((tool) => {
       if (tool.toLowerCase().includes('instrument') && !tool.toLowerCase().includes('(choice)')) {
         instruments.push(tool)
       }
@@ -1013,7 +1025,7 @@ const getInstrumentProficiencies = computed(() => {
 
   // Check background tool proficiencies for instruments
   if (character.value.backgroundDetails?.toolProficiencies) {
-    character.value.backgroundDetails.toolProficiencies.forEach(tool => {
+    character.value.backgroundDetails.toolProficiencies.forEach((tool) => {
       if (tool.toLowerCase().includes('instrument')) {
         // Only include if it's not a generic "Musical Instrument" when there are options to choose from
         const hasInstrumentOptions = character.value.backgroundDetails?.instrumentOptions?.choose > 0
@@ -1026,7 +1038,7 @@ const getInstrumentProficiencies = computed(() => {
 
   // Add selected background instruments
   if (character.value.selectedBackgroundInstruments?.length) {
-    character.value.selectedBackgroundInstruments.forEach(instrument => {
+    character.value.selectedBackgroundInstruments.forEach((instrument) => {
       instruments.push(instrument)
     })
   }
@@ -1039,7 +1051,7 @@ const getGamingSetProficiencies = computed(() => {
 
   // Check class tool proficiencies for gaming sets
   if (character.value.classDetails?.toolProficiencies) {
-    character.value.classDetails.toolProficiencies.forEach(tool => {
+    character.value.classDetails.toolProficiencies.forEach((tool) => {
       if (tool.toLowerCase().includes('gaming')) {
         gamingSets.push(tool)
       }
@@ -1048,7 +1060,7 @@ const getGamingSetProficiencies = computed(() => {
 
   // Check background tool proficiencies for gaming sets
   if (character.value.backgroundDetails?.toolProficiencies) {
-    character.value.backgroundDetails.toolProficiencies.forEach(tool => {
+    character.value.backgroundDetails.toolProficiencies.forEach((tool) => {
       if (tool.toLowerCase().includes('gaming')) {
         gamingSets.push(tool)
       }
@@ -1071,7 +1083,7 @@ const getClassGamingSets = computed(() => {
   const gamingSets = []
 
   if (character.value.classDetails?.toolProficiencies) {
-    character.value.classDetails.toolProficiencies.forEach(tool => {
+    character.value.classDetails.toolProficiencies.forEach((tool) => {
       if (tool.toLowerCase().includes('gaming') && !tool.toLowerCase().includes('choice')) {
         gamingSets.push(tool)
       }
@@ -1087,7 +1099,7 @@ const getBackgroundGamingSets = computed(() => {
   // Only show static gaming sets if there are no choices available
   if (getBackgroundGamingSetChoices.value === 0) {
     if (character.value.backgroundDetails?.toolProficiencies) {
-      character.value.backgroundDetails.toolProficiencies.forEach(tool => {
+      character.value.backgroundDetails.toolProficiencies.forEach((tool) => {
         if (tool.toLowerCase().includes('gaming') && !tool.toLowerCase().includes('choice')) {
           gamingSets.push(tool)
         }
@@ -1102,9 +1114,11 @@ const getBackgroundGamingSetChoices = computed(() => {
   // Check if background offers gaming set choices
   let hasChoice = false
 
-  if (character.value.backgroundDetails?.toolProf &&
+  if (
+    character.value.backgroundDetails?.toolProf &&
     character.value.backgroundDetails.toolProf.toLowerCase().includes('gaming') &&
-    character.value.backgroundDetails.toolProf.toLowerCase().includes('choice')) {
+    character.value.backgroundDetails.toolProf.toLowerCase().includes('choice')
+  ) {
     hasChoice = true
   }
 
@@ -1119,12 +1133,7 @@ const hasBackgroundGamingSetChoices = computed(() => {
 
 const getBackgroundGamingSetOptions = computed(() => {
   // Common gaming sets for D&D 5e
-  return [
-    'Dice Set',
-    'Dragonchess Set',
-    'Playing Card Set',
-    'Three-Dragon Ante Set',
-  ]
+  return ['Dice Set', 'Dragonchess Set', 'Playing Card Set', 'Three-Dragon Ante Set']
 })
 
 const getVehicleProficiencies = computed(() => {
@@ -1142,7 +1151,7 @@ const getVehicleProficiencies = computed(() => {
 
   // Check background tool proficiencies for vehicles
   if (character.value.backgroundDetails?.toolProficiencies) {
-    character.value.backgroundDetails.toolProficiencies.forEach(tool => {
+    character.value.backgroundDetails.toolProficiencies.forEach((tool) => {
       if (tool.toLowerCase().includes('vehicle')) {
         vehicles.push(tool)
       }
@@ -1151,7 +1160,7 @@ const getVehicleProficiencies = computed(() => {
 
   // Check weapon proficiencies that might include vehicles
   if (character.value.classDetails?.weaponProficiencies) {
-    character.value.classDetails.weaponProficiencies.forEach(prof => {
+    character.value.classDetails.weaponProficiencies.forEach((prof) => {
       if (prof.toLowerCase().includes('vehicle')) {
         vehicles.push(prof)
       }
@@ -1166,7 +1175,7 @@ const getAllLanguages = computed(() => {
 
   // Add species languages
   if (character.value.speciesDetails?.languages) {
-    character.value.speciesDetails.languages.forEach(lang => {
+    character.value.speciesDetails.languages.forEach((lang) => {
       const langName = typeof lang === 'string' ? lang : lang.name
       if (langName && langName !== 'Common') {
         languages.push(langName)
@@ -1183,7 +1192,7 @@ const getAllLanguages = computed(() => {
 
   // Add background languages (from the correct data structure)
   if (character.value.backgroundDetails?.languages) {
-    character.value.backgroundDetails.languages.forEach(lang => {
+    character.value.backgroundDetails.languages.forEach((lang) => {
       const langName = typeof lang === 'string' ? lang : lang.name
       if (langName && !languages.includes(langName)) {
         languages.push(langName)
@@ -1204,7 +1213,7 @@ const getSpeciesLanguages = computed(() => {
 
   // Add species languages
   if (character.value.speciesDetails?.languages) {
-    character.value.speciesDetails.languages.forEach(lang => {
+    character.value.speciesDetails.languages.forEach((lang) => {
       const langName = typeof lang === 'string' ? lang : lang.name
       if (langName && langName !== 'Common') {
         languages.push(langName)
@@ -1262,7 +1271,7 @@ const getBackgroundLanguages = computed(() => {
 
   // Add background languages (from the correct data structure)
   if (character.value.backgroundDetails?.languages) {
-    character.value.backgroundDetails.languages.forEach(lang => {
+    character.value.backgroundDetails.languages.forEach((lang) => {
       const langName = typeof lang === 'string' ? lang : lang.name
       if (langName) {
         languages.push(langName)
@@ -1291,11 +1300,23 @@ const getAvailableLanguageChoices = computed(() => {
   // Complete D&D 2024 language list (excluding Common since everyone knows it)
   const standardLanguages = [
     // Standard Languages (from Guidelines: Common table choices)
-    'Draconic', 'Dwarvish', 'Elvish', 'Giant', 'Gnomish', 'Goblin', 'Halfling', 'Orc',
+    'Draconic',
+    'Dwarvish',
+    'Elvish',
+    'Giant',
+    'Gnomish',
+    'Goblin',
+    'Halfling',
+    'Orc',
     // Rare Languages (from Guidelines: available if granted by features)
-    'Abyssal', 'Celestial', 'Infernal',
+    'Abyssal',
+    'Celestial',
+    'Infernal',
     // Additional Languages (also commonly available)
-    'Deep Speech', 'Primordial', 'Sylvan', 'Undercommon',
+    'Deep Speech',
+    'Primordial',
+    'Sylvan',
+    'Undercommon',
   ]
 
   const languageOptions = character.value.backgroundDetails?.languageOptions
@@ -1304,32 +1325,29 @@ const getAvailableLanguageChoices = computed(() => {
   // If it's "Any", use standard languages minus those already known
   if (languageOptions.from && languageOptions.from.includes('Any')) {
     const knownLanguages = [...getCommonLanguage.value, ...getSpeciesLanguages.value, ...getBackgroundLanguages.value]
-    return standardLanguages.filter(lang => !knownLanguages.includes(lang))
+    return standardLanguages.filter((lang) => !knownLanguages.includes(lang))
   }
 
   // Otherwise use the specific languages from the background, but filter out already known languages
   const knownLanguages = [...getCommonLanguage.value, ...getSpeciesLanguages.value, ...getBackgroundLanguages.value]
   const specificLanguages = languageOptions.from || []
-  return specificLanguages.filter(lang => !knownLanguages.includes(lang))
+  return specificLanguages.filter((lang) => !knownLanguages.includes(lang))
 })
 
-const isLanguageSelected = language => {
+const isLanguageSelected = (language) => {
   if (!character.value.selectedBackgroundLanguages) return false
   return character.value.selectedBackgroundLanguages.includes(language)
 }
 
 // Armor and Weapon Proficiency computeds
 const hasArmorProficiencies = computed(() => {
-  return character.value.armorTraining?.light ||
-    character.value.armorTraining?.medium ||
-    character.value.armorTraining?.heavy ||
-    character.value.armorTraining?.shields
+  return character.value.armorTraining?.light || character.value.armorTraining?.medium || character.value.armorTraining?.heavy || character.value.armorTraining?.shields
 })
 
 const hasWeaponProficiencies = computed(() => {
   return character.value.weaponProficiencies?.length > 0
-})// Methods for selections
-const toggleClassSkill = skillName => {
+}) // Methods for selections
+const toggleClassSkill = (skillName) => {
   if (!character.value.selectedClassSkills) {
     character.value.selectedClassSkills = []
   }
@@ -1342,7 +1360,7 @@ const toggleClassSkill = skillName => {
   }
 }
 
-const toggleExpertise = skillName => {
+const toggleExpertise = (skillName) => {
   if (!character.value.selectedExpertise) {
     character.value.selectedExpertise = []
   }
@@ -1355,7 +1373,7 @@ const toggleExpertise = skillName => {
   }
 }
 
-const toggleBackgroundTool = toolName => {
+const toggleBackgroundTool = (toolName) => {
   if (!character.value.selectedBackgroundTools) {
     character.value.selectedBackgroundTools = []
   }
@@ -1368,7 +1386,7 @@ const toggleBackgroundTool = toolName => {
   }
 }
 
-const toggleBackgroundInstrument = instrumentName => {
+const toggleBackgroundInstrument = (instrumentName) => {
   if (!character.value.selectedBackgroundInstruments) {
     character.value.selectedBackgroundInstruments = []
   }
@@ -1381,7 +1399,7 @@ const toggleBackgroundInstrument = instrumentName => {
   }
 }
 
-const toggleBackgroundGamingSet = gamingSetName => {
+const toggleBackgroundGamingSet = (gamingSetName) => {
   if (!character.value.selectedBackgroundGamingSets) {
     character.value.selectedBackgroundGamingSets = []
   }
@@ -1394,7 +1412,7 @@ const toggleBackgroundGamingSet = gamingSetName => {
   }
 }
 
-const toggleBackgroundLanguage = language => {
+const toggleBackgroundLanguage = (language) => {
   if (!character.value.selectedBackgroundLanguages) {
     character.value.selectedBackgroundLanguages = []
   }

@@ -9,42 +9,26 @@
       <v-alert v-if="characterData.speciesError?.value" class="ma-4" type="warning">
         <v-alert-title>API Warning</v-alert-title>
         Failed to load races from API: {{ characterData.speciesError.value }}
-        <br>Using fallback data instead.
+        <br />
+        Using fallback data instead.
       </v-alert>
 
-      <v-stepper
-        v-model="localCurrentStep"
-        editable
-        elevation="2"
-        :items="stepItems"
-        :mobile="$vuetify.display.mdAndDown"
-      >
-        <template #next-text="{ next }">
-          <!-- Current step: {{ localCurrentStep }} -->
-          <v-btn v-if="localCurrentStep < 5" color="primary" variant="elevated" @click="next">
-            Next
-          </v-btn>
-        </template>
-
+      <v-stepper v-model="localCurrentStep" elevation="2" :items="stepItems" :mobile="$vuetify.display.mdAndDown">
         <template #actions="{ next, prev }">
           <div class="navigation-buttons" :class="{ 'mobile-nav': $vuetify.display.smAndDown }">
-            <v-btn
-              v-if="localCurrentStep > 1"
-              :size="$vuetify.display.smAndDown ? 'small' : 'default'"
-              variant="text"
-              @click="prev"
-            >
+            <v-btn v-if="localCurrentStep > 1" :size="$vuetify.display.smAndDown ? 'small' : 'default'" variant="text" @click="prev">
               <v-icon v-if="$vuetify.display.smAndDown" icon="mdi-chevron-left" />
               <span v-else>Previous</span>
             </v-btn>
             <v-spacer />
-            <v-btn
-              v-if="localCurrentStep < 5"
-              color="primary"
-              :size="$vuetify.display.smAndDown ? 'small' : 'default'"
-              variant="elevated"
-              @click="next"
-            >
+
+            <!-- Validation error message -->
+            <v-alert v-if="validationError && localCurrentStep < 5" class="validation-error-alert" density="compact" type="warning" variant="tonal">
+              {{ validationError }}
+            </v-alert>
+
+            <v-spacer />
+            <v-btn v-if="localCurrentStep < 5" color="primary" :disabled="!canProceedToNext" :size="$vuetify.display.smAndDown ? 'small' : 'default'" variant="elevated" @click="handleNext(next)">
               <span v-if="!$vuetify.display.smAndDown">Next</span>
               <v-icon v-else icon="mdi-chevron-right" />
             </v-btn>
@@ -103,90 +87,211 @@
 </template>
 
 <script setup>
-  import { ref, watch } from 'vue'
-  import AbilityScores from './steps/AbilityScores.vue'
-  import CharacterInformation from './steps/CharacterInformation.vue'
-  import CharacterSummary from './steps/CharacterSummary.vue'
-  import InventoryEquipment from './steps/InventoryEquipment.vue'
-  import SkillsProficiencies from './steps/SkillsProficiencies.vue'
+import { ref, watch, computed } from 'vue'
+import AbilityScores from './steps/AbilityScores.vue'
+import CharacterInformation from './steps/CharacterInformation.vue'
+import CharacterSummary from './steps/CharacterSummary.vue'
+import InventoryEquipment from './steps/InventoryEquipment.vue'
+import SkillsProficiencies from './steps/SkillsProficiencies.vue'
 
-  const props = defineProps({
-    character: {
-      type: Object,
-      required: true,
-    },
-    characterData: {
-      type: Object,
-      required: true,
-    },
-    currentStep: {
-      type: Number,
-      default: 1,
-    },
-  })
+const props = defineProps({
+  character: {
+    type: Object,
+    required: true,
+  },
+  characterData: {
+    type: Object,
+    required: true,
+  },
+  currentStep: {
+    type: Number,
+    default: 1,
+  },
+})
 
-  const emit = defineEmits(['update:current-step', 'submit-character'])
+const emit = defineEmits(['update:current-step', 'submit-character'])
 
-  const localCurrentStep = ref(props.currentStep)
+const localCurrentStep = ref(props.currentStep)
+const validationError = ref('')
 
-  // Save character function
-  const saveCharacter = () => {
-    console.log('Save Character button clicked on step:', localCurrentStep.value)
-    emit('submit-character')
+// Validation functions for each step
+const validateStep1 = () => {
+  // Step 1: Character Information - must have name, portrait, player name, species, class, background, and alignment
+  if (!props.character.name || props.character.name.trim() === '') {
+    return 'Please enter a character name'
+  }
+  if (!props.character.portrait) {
+    return 'Please select a character portrait'
+  }
+  if (!props.character.playerName || props.character.playerName.trim() === '') {
+    return 'Please enter a player name'
+  }
+  if (!props.character.species) {
+    return 'Please select a species'
+  }
+  if (!props.character.class) {
+    return 'Please select a class'
+  }
+  if (!props.character.background) {
+    return 'Please select a background'
+  }
+  if (!props.character.alignment) {
+    return 'Please select an alignment'
+  }
+  return null
+}
+
+const validateStep2 = () => {
+  // Step 2: Ability Scores - must have all 6 ability scores assigned
+  const abilities = ['strength', 'dexterity', 'constitution', 'intelligence', 'wisdom', 'charisma']
+  for (const ability of abilities) {
+    const score = props.character.abilityScores?.[ability]?.score
+    if (score === null || score === undefined || score < 1) {
+      return `Please assign a value to ${ability.charAt(0).toUpperCase() + ability.slice(1)}`
+    }
+  }
+  return null
+}
+
+const validateStep3 = () => {
+  // Step 3: Skills & Proficiencies - must select required number of class skills
+  const requiredSkills = props.character.classDetails?.skillProficiencies?.count || props.character.classDetails?.skillChoices || 0
+
+  if (requiredSkills > 0) {
+    const selectedSkills = props.character.selectedClassSkills?.length || 0
+    if (selectedSkills < requiredSkills) {
+      return `Please select ${requiredSkills} skill proficiencies (${selectedSkills}/${requiredSkills} selected)`
+    }
   }
 
-  // Watch for external currentStep changes
-  watch(() => props.currentStep, newStep => {
+  return null
+}
+
+const validateStep4 = () => {
+  // Step 4: Inventory & Equipment - must make all equipment choices
+  // Check if using package method (standard equipment)
+  const equipmentMethod = props.character.equipmentMethod || 'package'
+
+  if (equipmentMethod === 'package') {
+    // Count how many equipment choices are available
+    const classEquipmentOptions = props.character.classDetails?.startingEquipmentOptions || []
+
+    // Count choices that have multiple options (need user selection)
+    let choicesNeeded = 0
+    classEquipmentOptions.forEach((choice) => {
+      if (choice.choose && choice.from && choice.from.options && choice.from.options.length > 1) {
+        choicesNeeded++
+      }
+    })
+
+    // Check how many choices have been made
+    const equipmentChoices = props.character.equipmentChoices || []
+    const choicesMade = equipmentChoices.filter((choice) => choice !== null && choice !== undefined).length
+
+    if (choicesMade < choicesNeeded) {
+      return `Please make all equipment selections (${choicesMade}/${choicesNeeded} selected)`
+    }
+  }
+
+  return null
+}
+
+// Get validation error for current step
+const getCurrentStepValidation = () => {
+  switch (localCurrentStep.value) {
+    case 1:
+      return validateStep1()
+    case 2:
+      return validateStep2()
+    case 3:
+      return validateStep3()
+    case 4:
+      return validateStep4()
+    default:
+      return null
+  }
+}
+
+// Check if we can proceed to next step
+const canProceedToNext = computed(() => {
+  const error = getCurrentStepValidation()
+  validationError.value = error || ''
+  return !error
+})
+
+// Save character function
+const saveCharacter = () => {
+  console.log('Save Character button clicked on step:', localCurrentStep.value)
+  emit('submit-character')
+}
+
+// Watch for external currentStep changes
+watch(
+  () => props.currentStep,
+  (newStep) => {
     console.log('External step change:', newStep)
     localCurrentStep.value = newStep
-  })
-
-  // Watch for local step changes and emit them
-  watch(localCurrentStep, newStep => {
-    console.log('Local step change to:', newStep)
-    emit('update:current-step', newStep)
-  })
-
-  // Function to determine if a step should be enabled (optional validation)
-  const isStepEnabled = stepValue => {
-    // Allow clicking on any step for now - you can add validation later
-    // For example: return stepValue <= maxAllowedStep.value
-    return true
   }
+)
 
-  // Enhanced step items with better mobile-friendly titles
-  const stepItems = [
-    {
-      title: 'Character Info',
-      subtitle: 'Species, Class, Background',
-      value: 1,
-      icon: 'mdi-account-edit',
-    },
-    {
-      title: 'Abilities',
-      subtitle: 'Ability Scores',
-      value: 2,
-      icon: 'mdi-dice-6',
-    },
-    {
-      title: 'Skills & Proficiencies',
-      subtitle: 'What You Know',
-      value: 3,
-      icon: 'mdi-brain',
-    },
-    {
-      title: 'Inventory & Equipment',
-      subtitle: 'What You Own',
-      value: 4,
-      icon: 'mdi-package-variant',
-    },
-    {
-      title: 'Summary',
-      subtitle: 'Review & Save',
-      value: 5,
-      icon: 'mdi-check-circle',
-    },
-  ]
+// Watch for local step changes and emit them
+watch(localCurrentStep, (newStep) => {
+  console.log('Local step change to:', newStep)
+  validationError.value = '' // Clear validation error when changing steps
+  emit('update:current-step', newStep)
+})
+
+// Custom next function with validation
+const handleNext = (defaultNext) => {
+  const error = getCurrentStepValidation()
+  if (error) {
+    validationError.value = error
+    return
+  }
+  validationError.value = ''
+  defaultNext()
+}
+
+// Function to determine if a step should be enabled (optional validation)
+const isStepEnabled = (stepValue) => {
+  // Allow clicking on any step for now - you can add validation later
+  // For example: return stepValue <= maxAllowedStep.value
+  return true
+}
+
+// Enhanced step items with better mobile-friendly titles
+const stepItems = [
+  {
+    title: 'Character Info',
+    subtitle: 'Species, Class, Background',
+    value: 1,
+    icon: 'mdi-account-edit',
+  },
+  {
+    title: 'Abilities',
+    subtitle: 'Ability Scores',
+    value: 2,
+    icon: 'mdi-dice-6',
+  },
+  {
+    title: 'Skills & Proficiencies',
+    subtitle: 'What You Know',
+    value: 3,
+    icon: 'mdi-brain',
+  },
+  {
+    title: 'Inventory & Equipment',
+    subtitle: 'What You Own',
+    value: 4,
+    icon: 'mdi-package-variant',
+  },
+  {
+    title: 'Summary',
+    subtitle: 'Review & Save',
+    value: 5,
+    icon: 'mdi-check-circle',
+  },
+]
 </script>
 
 <style scoped>
@@ -200,6 +305,32 @@
 
 .equipment-category-header-compact {
   padding: 8px 16px;
+}
+
+.validation-error-alert {
+  max-width: 400px;
+  margin: 0 16px;
+  animation: shake 0.5s ease-in-out;
+}
+
+.validation-error-alert :deep(.v-alert__content) {
+  text-align: center;
+  width: 100%;
+}
+
+@keyframes shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+
+  25% {
+    transform: translateX(-10px);
+  }
+
+  75% {
+    transform: translateX(10px);
+  }
 }
 
 .save-character-btn {
